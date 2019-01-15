@@ -1,0 +1,65 @@
+{include_www file="admin/lib/header_new.html" title="列表"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen_load/admin/yyt_device')}"><i class="iconfont iconfont-logo2"></i>数据下载</a>
+            &gt;
+            <span>数据列表</span>
+            <a href="{AnUrl('screen_load/admin/yyt_device',"?start_time={$start_time}&end_time={$end_time}&is_export=1")}" class="btn btn-primary btn-sm pull-right">导出</a>
+          </div>
+          </br>
+          <div class="form-search row clearfix">
+            <div class="tabs2">
+
+                <div class="">
+                  <form action="{AnUrl('screen_load/admin/yyt_device')}" method="get" class="searchForm">
+                    <div class="form-inline" id="dateSelectBox" >
+                        <div class="form-group">
+                            <label for="exampleInputName2">时间：</label>
+                            <input type="text" class="form-control" style="width:100px; text-align:center;" name="start_time" id="start_time" value="{$start_time}" />
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputName2">至</label>
+                            <input type="text" class="form-control" style="width:100px; text-align:center;" name="end_time" id="end_time" value="{$end_time}" />
+                        </div>
+                        <button type="submit" class="btn btn-success btn-sm">搜索</button>
+                    </div>
+                    
+                  </form>
+                </div>
+            </div>
+        </div>
+          <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="text-align:center">省份</th>
+                  <th style="text-align:center">亮屏覆盖门店数</th>
+                  <th style="text-align:center">安装手机数≥5门店数</th>
+                  <th style="text-align:center">安装手机总数</th>
+                  <th style="text-align:center">设备在线数量</th>
+                </tr>
+              </thead>
+              <tbody>
+              {foreach $list as $k => $v} 
+                <tr>
+                      <td style="text-align:center">{$v.province}</td>
+                      <td style="text-align:center">{$v.yyt_list}</td>
+                      <td style="text-align:center">{$v.device_gt_5_yyt_list}</td>
+                       <td style="text-align:center">{$v.device_all_num}</td>
+                      <td style="text-align:center">{$v.device_online}</td>
+                </tr>
+               {foreachelse}
+                <tr><td colspan="6">暂无相关数据</td></tr>
+               {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        </div>
+
+{include_www file="admin/lib/footer_new.html"}

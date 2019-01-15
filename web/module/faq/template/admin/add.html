@@ -1,0 +1,147 @@
+{include_www file="admin/lib/header_new.html" title="常见问题管理"}
+<style>
+    .edui-popup-content.edui-default{
+        height: auto !important;
+         width:460px;
+    }
+</style>
+<!--start:右侧-->
+<div class="main mian2 ">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('faq/admin')}"><i class="iconfont iconfont-logo2"></i>常见问题</a>
+      &gt;
+      <span>编辑</span>
+      <a href="{AnUrl('faq/admin')}" class="btn btn-primary btn-sm pull-right">返回列表</a>
+    </div>
+
+    <div class="clearfix">
+      <div class="form-add pull-left" style="width:80%;">
+        {AnForm class='form-horizontal' action="{AnUrl('faq/admin/save')}" method="post" enctype="multipart/form-data"}
+         <input type='hidden' name='id' value="{$faq_info.id}">
+         {*创建者的隐藏*}
+         <input type='hidden' name='info[res_id]' value="{$member_info.res_id}">
+         <input type='hidden' name='info[res_name]' value="{$member_info.res_name}">
+         <input type='hidden' name='info[diff_project]' value="{$project}">
+         <div class="form-group">
+              <label class="col-sm-3 control-label coupon-num">标题</label>
+              <div class="col-sm-6">
+                  <input type="text"  name="info[question]" id="question"  value="{$faq_info.question}" class="form-control" placeholder="请输入常见问题标题">
+              </div>
+          </div>
+          
+                 <div class="form-group">
+                      <label class="col-sm-3 control-label">分类</label>
+                      <div class="col-sm-6">
+                        {$diff_question = faq_config::$screen_diff_question}
+                        <select class="form-control" name="info[diff_question]">
+                               <option value="">请选择问题类型</option>
+                              {foreach  $diff_question as $k => $v}
+                                <option value="{$k}" {if  $faq_info.diff_question == $k}selected = "selected"{/if} >{$v}</option>
+                              {/foreach}
+                        </select>
+                      </div>
+                   </div>
+          <div class="form-group form-inline">
+                <label class="col-sm-3 control-label">链接</label>  {*1 站内 0 站外*}
+                <div class="col-sm-9">
+                    {foreach faq_config::$site_type as $k => $v}
+                        <div class="checkbox col-sm-5">
+                            <label>
+                                {if $faq_info}
+                                <input type="radio"  name="info[site_type]" value="{$k}" {if $faq_info.site_type==$k}checked{/if} class='JS_siteType'>&nbsp;{$v}
+                                {else}
+                                <input type="radio"  name="info[site_type]"  value="{$k}" {if $k=="0"}checked{/if} class='JS_siteType'>&nbsp;{$v}
+                                {/if}
+                            </label>
+                        </div>
+                    {/foreach}
+                </div>
+            </div>
+           <!-- 线 -->
+           <div class="form-line" id="faq_line" {if $faq_info.answer }style="display:block;"{else}style="display:none;"{/if}><em></em></div>
+           <!-- 活动规则-->
+           <div class="form-group" id="faq_answer" {if $faq_info.answer }style="display:block;"{else}style="display:none;"{/if}><!--0站外 1 站内-->
+                    <label class="col-sm-3 control-label">问题描述</label>
+                    <div class="col-sm-6">
+                        {AnForm type="textarea" id="answer" name="info[answer]" value="{$faq_info.answer}" id="answer" class="answer" }
+                    </div>
+           </div>
+           <div class="form-group" id="faq_link" {if $faq_info.link || $add == 'add'}style='display:block;'{else}style='display:none;'{/if}>
+              <label class="col-sm-3 control-label coupon-num">链接地址</label>
+              <div class="col-sm-6">
+                  <input type="text"  id="link" name="info[link]" value="{$faq_info.link}" class="form-control" placeholder="请输入外部链接地址">
+              </div>
+          </div>
+          <br>
+          <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-10">
+              <button type="submit" class="btn btn-sm btn-success" id="btn"><span style='display: inline-block;width: 95px;' class='Sub'>保存</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+              <a type="button" class="btn btn-sm btn-warning" href="{AnUrl('faq/admin')}">&nbsp;&nbsp;返回&nbsp;&nbsp;</a>
+            </div> 
+          </div> 
+        {AnForm}
+      </div>
+
+    </div>
+  </div>
+</div>
+{load_js file='ueditor1_2_6_1/ueditor.config.js'}
+{load_js file='ueditor1_2_6_1/ueditor.all.min.js'}
+<script src="{$smarty.const.STATIC_URL}/module/faq/js/faq.js"></script>
+
+<script>
+$(function(){
+	//选择的对象
+	$('.JS_siteType').on('click',function(){
+		var $this = $(this);
+		var $val  = $this.val();
+		//判断
+		if ($val == 1) {
+			$('#faq_link').hide();
+			$('#faq_answer').show();
+			$('#faq_line').show();
+		} else {
+			$('#faq_link').show();
+			$('#faq_answer').hide();
+			$('#faq_line').hide();
+		}
+	})
+	//判断是否有空
+	$('#btn').on('click',function(e){
+		e.preventDefault();
+		
+		var $que = $('#question').val();
+		if (!$que) {
+			alert('标题不能为空');
+			return false;
+		}
+		
+		 var $check = $('.JS_siteType').attr('checked');
+		
+		if ($check != 'checked') {
+			var $answer = $('#answer').val();
+			if (!$answer) {
+				alert('问题描述不能为空');
+				return false;
+			}
+		} else {
+			var $link = $('#link').val();
+			console.log($link);
+			if (!$link) {
+				alert('外部链接地址不能为空');
+				return false;
+			}
+		} 
+		var frm = $(this).closest('form');
+        frm.submit();
+	})
+})
+/**
+ *  百度编辑器
+ */
+ 
+ editor.render("answer");
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

@@ -1,0 +1,84 @@
+{include_www file="admin/lib/header_new.html" title="消息记录"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen_auto/admin')}"><i class="iconfont iconfont-logo2"></i>{$module}管理</a>
+            &gt;
+            <span>{$action}列表</span>
+                {if $type}
+                    <a href="Javascript:history.go(-1)" class="btn btn-primary btn-sm pull-right">返回</a>
+                {else}
+                    <a href="{AnUrl('screen_auto/admin',"?search_filter[auto_start]={$search_filter.auto_start}&search_filter[business_hall_title]={$search_filter.business_hall_title}&search_filter[load]=1")}" class="btn btn-primary btn-sm pull-right">下载</a>
+                {/if}
+          </div>
+          <br>
+          
+          <div class="form-search clearfix">
+              <div class="pull-left">
+                <form action="{AnUrl('screen_auto/admin')}" method='get'>
+                  <label class="pull-left" for="exampleInputName2">&nbsp;&nbsp;&nbsp;类型&nbsp;&nbsp;</label>
+                  <select name="search_filter[auto_start]" style="width:100px" class="form-control input-sm pull-left ">
+                    <option value=99>全部</option>
+                    {$msg_type = screen_auto_config::$auto_type}
+                    {foreach $msg_type as $k=>$v}
+                    <option value="{$k}" {if $search_filter.auto_start === $k}selected{/if}>{$v}</option>
+                    {/foreach}
+                  </select>
+
+                  <label class="pull-left" for="exampleInputName2">&nbsp;&nbsp;&nbsp;设备ID&nbsp;&nbsp;</label>
+                  <input type="text" id="title" style="width: 200px;" name="search_filter[device_unique_id]" value="{$search_filter.device_unique_id}" class="form-control input-sm pull-left js_search ui-autocomplete-input" placeholder="按设备ID搜索" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
+                  <label class="pull-left" for="exampleInputName2">&nbsp;&nbsp;&nbsp;营业厅&nbsp;&nbsp;</label>
+                  <input type="text" id="title" style="width: 200px;" name="search_filter[business_hall_title]" value="{$search_filter.business_hall_title}" class="form-control input-sm pull-left js_search ui-autocomplete-input" placeholder="按营业厅名称搜索" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
+                  
+                  <button type="submit" class="btn-search pull-left">搜索</button>
+                </form>
+              </div>
+              <!-- <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a> -->
+         </div>
+
+         <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                 
+                  <th style="text-align:center">省</th>
+                  <th style="text-align:center">市</th>
+                  <th style="text-align:center">地区</th>
+                  <th style="text-align:center">营业厅</th>
+                  <th style="text-align:center">设备ID</th>
+                  <th style="text-align:center">类型</th>
+                  <th style="text-align:center">操作时间</th>
+                  <th style="text-align:center">添加时间</th>
+                </tr>
+              </thead>
+              <tbody>
+                {foreach $list as $k=>$v}
+                <tr>
+                    {$business_hall_info = business_hall_helper::get_info_name('business_hall', $v.business_hall_id)}
+                    <td style="text-align:center">{business_hall_helper::get_info_name('province', $business_hall_info.province_id, 'name')}</td>
+                    <td style="text-align:center">{business_hall_helper::get_info_name('city', $business_hall_info.city_id, 'name')}</td>
+                    <td style="text-align:center">{business_hall_helper::get_info_name('area', $business_hall_info.area_id, 'name')}</td>
+                    <td style="text-align:center">{$business_hall_info.title}</td>
+                    <td style="text-align:center">{$v.device_unique_id}</td>
+                    <td style="text-align:center">{screen_auto_config::$auto_type[$v.auto_start]}</td>
+                    <td style="text-align:center">{$v.operate_time}</td>
+                    <td style="text-align:center">{$v.add_time}</td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="8">暂无相关信息</td></tr>
+                {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        </div>
+<script>
+$('#title').autocomplete({
+    source: "/business_hall/admin/ajax/get_title_field",
+});
+</script>
+{include_www file="admin/lib/footer_new.html"}

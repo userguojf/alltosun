@@ -1,0 +1,153 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="x-ua-compatible" content="ie=7" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>{$title}</title>
+<link rel="shortcut icon" type="image/x-icon" href="{$smarty.const.STATIC_URL}/images/favicon.ico">
+<link href="{$smarty.const.STATIC_URL}/css/style.css" rel="stylesheet" type="text/css">
+  {if $module == 'opponent_analysis'}
+  <link rel="shortcut icon" href="{$smarty.const.SITE_URL}/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="{$smarty.const.SITE_URL}/css/infoviz.css" />
+  {/if}
+
+  {if $module == 't' || $module == "changweibo" || $module == 'user' || $module == 'analysis' || $module == 'log' || $module == 'app' || $module == 'opponent_analysis' || $module == 'timer' ||$module == 'report'}
+  <link rel="stylesheet" type="text/css" href="{$smarty.const.STATIC_URL}/css/emoticon.css" />
+<script src="{$smarty.const.STATIC_URL}/js/jquery.min.js" type="text/javascript"></script>
+  <script src="{$smarty.const.STATIC_URL}/js/jquery.mousewheel.js"></script>
+  <script src="{$smarty.const.STATIC_URL}/js/jScrollPane.js"></script>
+  <script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/jquery.ui.datepicker-zh-CN.js"></script>
+  <link rel="stylesheet" href="{$smarty.const.STATIC_URL}/css/jquery-ui.css" type="text/css" />
+  <script src="{$smarty.const.STATIC_URL}/js/emotions/jquery.emoticons.js" type="text/javascript"></script>
+  <script type="text/javascript" src="{$smarty.const.SITE_URL}/js/jquery.caretInsert.js"></script>
+  <script type="text/javascript" src="{$smarty.const.SITE_URL}/js/AnFace.js"></script>
+  <script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/validate/jquery.validate.js"></script>
+  <script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/validate/messages_cn.js"></script>
+  <script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/validate/additional-methods.js"></script>
+  <script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/admin.js"></script>
+  <script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/mio_lib_min.js"></script>
+  <script src="{$smarty.const.STATIC_URL}/js/weibo_length_min.js" type="text/javascript"></script>
+  <link href="{$smarty.const.STATIC_URL}/css/jScrollPane.css" rel="stylesheet" type="text/css">
+
+  <script type="text/javascript">
+  var site_url = "{$smarty.const.SITE_URL}";
+  var res_type = "{$res_type}";
+  </script>
+  {/if}
+<!--[if IE 6]>
+<link href="../css/ie6.css" rel="stylesheet" type="text/css">
+<script src="../js/DD_belatedPNG_0.0.8a-min.js"></script>
+<script>
+  DD_belatedPNG.fix('.fixpng,.text-box,.text-box .box-title .left,.nav2-title a,.check,.check-on');
+</script>
+<![endif]-->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-39498269-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<!-- 授权框 -->
+<div id="authbox" style="position: absolute; top:10px;z-index: 20000;width: 100%;height: 400px;overflow: hidden;display:none;">
+<iframe src="" id="authFloat" scrolling="no" style="position: absolute; left: 75px; height: 460px; width: 600px; border: 0; z-index: 20000;"></iframe>
+</div>
+<div id="authbox_bg" style="position:absolute;top:0px;width:100%;height:2000px;background:#000;filter:alpha(opacity=50);opacity:0.5;display:none;z-index:11998;">&nbsp;</div>
+<!-- 授权框 end-->
+   <!--start:应用过期提醒-->
+  <div class="float-box fixpng warn-box" id="add_weibo_notice_main" style="display:none">
+      <div class="float-con warn">
+          <div class="warn-title clearfix"><span class="left">应用过期提醒</span><a href="javascript:void(0)" class="btn-close-warn right" id="add_weibo_notice_close"></a></div>
+          <p>您的部分微博应用授权即将到期，过期后将不能进行定时任务、客户推荐等功能，请重新授权！</p>
+          <p class="green">请务必重新授权以下应用：</p>
+          <ul class="apply-list clearfix" id="add_weibo_notice">
+          </ul>
+          <p class="txtright"><a href="javascript:void(0)" id="add_weibo_notice_sure" class="btn-apply-sure"><span>确定</span></a></p>
+      </div>
+  </div>
+  <!--end:应用过期提醒-->
+<!--start:header-->
+<div class="header-bg ">
+  <div class="header {if $smarty.const.ONWEIBO} width760-header {/if}  clearfix">
+    <div class="logo fixpng left"></div>
+    <div class="user right">
+      {if !$smarty.const.ONWEIBO}<a href="{AnUrl('user/admin/admin_logout')}" class="icon-exit fixpng right"></a>{/if}
+    {if user_helper::is_super_admin()}
+    <div class="icon-set fixpng right">
+        <ul class="set-list" style="display:none">
+          <li><a href="{AnUrl('app/admin/add')}">添加应用</a></li>
+          <li><a href="{AnUrl('user/admin/member')}">管理员设置</a></li>
+          <li><a href="{AnUrl('app/admin')}">应用管理</a></li>
+        </ul>
+      </div>
+    {/if}
+      {if $is_admin == 1}<a href="{AnUrl('timer')}" id="tempBtn" class="icon-float fixpng right"></a>{/if}
+      <a href="{AnUrl("user/clear_token?token={$smarty.session.sinaweibo.token.access_token}")}" class="user-name right">延长定时时间</a> 
+      <a href="{AnUrl('app/admin')}" class="user-name right">{user_helper::display_name({user_helper::get_user_id()})}</a>
+      <span class="user-photo right"><img src="{_uri('user',{user_helper::get_user_id()},'avatar')}" width="37" height="37"></span>
+    </div>
+  </div>
+</div>
+<!--end:header-->
+
+<div id="wrap">
+<div class="container  {if $smarty.const.ONWEIBO} width760-added {/if} ">
+  <div class="h80"></div>
+
+  <div class="show_e"></div>
+
+<script>
+  $(function(){
+    //头部设置部分下拉菜单
+       $('.icon-set').mouseenter(function(){
+      $(this).addClass('icon-set-on');
+       $('.set-list').fadeIn(200);
+    });
+    $('.icon-set').mouseleave(function(e){
+       $(this).removeClass('icon-set-on');
+       $('.set-list').fadeOut(200);
+    });
+  })
+</script>
+
+{if $module != 'timer'}
+  {if user_helper::is_admin()}
+    <div id="nav" class="nav">
+      <a href="{AnUrl('app/admin')}" id="nav0" class="{if $module == 'app' && $action == 'index'}active{else}normal{/if}">应用管理</a>
+      <a href='{if $app_id}{AnUrl("analysis/admin?app_id={$app_id}")}{else}{AnUrl("analysis/admin")}{/if}' id="nav1" class="{if $module == 'analysis'}active{else}normal{/if}">应用分析</a>
+      <a href='{if $app_id}{AnUrl("user/admin?app_id={$app_id}")}{else}{AnUrl("user/admin")}{/if}' id="nav2" class="{if $mod == 'shuju' || $module == 'log'}active{else}normal{/if}">数据管理</a>
+    {if user_helper::is_super_admin()}<!--<a href="{AnUrl('app/admin/add')}" id="nav3" class="{if $module == 'app' && $action == 'add'}active{else}normal{/if}">应用创建</a>
+      <a href="{AnUrl('user/admin/member')}" id="nav4" class="{if $mod == 'member'}active{else}normal{/if}">管理员管理</a>  --> {/if}
+      <a href="{AnUrl('opponent_analysis/sync_tag')}" id="nav4" class="{if $module == 'opponent_analysis'}active{else}normal{/if}">粉丝监控</a>
+     <a href="{AnUrl('user/admin/auth')}" id="nav4" class="{if $mod == 'auth'}active{else}normal{/if}">授权信息管理</a>
+    {if user_helper::is_super_admin()}<a href="{AnUrl('user/admin/verified')}" id="nav4" class="{if $module == 'user' && $action == 'verified'}active{else}normal{/if}">蓝V用户管理</a>
+    {*<a href="{AnUrl('timer/admin/verified')}" id="nav4" class="{if $module == 'timer' && $action == 'verified'}active{else}normal{/if}">定时微博管理</a>*}
+    {/if}
+   </div>
+  {/if}
+{else}
+  {if $controller != 'index' && $controller == "NULL"}
+    {if user_helper::is_admin()}
+      <div id="nav" class="nav">
+        <a href="{AnUrl('app/admin')}" id="nav0" class="{if $module == 'app' && $action == 'index'}active{else}normal{/if}">应用管理</a>
+        <a href='{if $app_id}{AnUrl("analysis/admin?app_id={$app_id}")}{else}{AnUrl("analysis/admin")}{/if}' id="nav1" class="{if $module == 'analysis'}active{else}normal{/if}">应用分析</a>
+        <a href='{if $app_id}{AnUrl("user/admin?app_id={$app_id}")}{else}{AnUrl("user/admin")}{/if}' id="nav2" class="{if $mod == 'shuju' || $module == 'log'}active{else}normal{/if}">数据管理</a>
+      {if user_helper::is_super_admin()}<!--<a href="{AnUrl('app/admin/add')}" id="nav3" class="{if $module == 'app' && $action == 'add'}active{else}normal{/if}">应用创建</a>
+        <a href="{AnUrl('user/admin/member')}" id="nav4" class="{if $mod == 'member'}active{else}normal{/if}">管理员管理</a>  --> {/if}
+        <a href="{AnUrl('opponent_analysis/sync_tag')}" id="nav4" class="{if $module == 'opponent_analysis'}active{else}normal{/if}">粉丝监控</a>
+       <a href="{AnUrl('user/admin/auth')}" id="nav4" class="{if $mod == 'auth'}active{else}normal{/if}">授权信息管理</a>
+      {if user_helper::is_super_admin()}<a href="{AnUrl('user/admin/verified')}" id="nav4" class="{if $module == 'user' && $action == 'verified'}active{else}normal{/if}">蓝V用户管理</a>
+      {*<a href="{AnUrl('timer/admin/verified')}" id="nav4" class="{if $module == 'timer' && $action == 'verified'}active{else}normal{/if}">定时微博管理</a>*}
+      {/if}
+     </div>
+    {/if}
+  {/if}
+{/if}

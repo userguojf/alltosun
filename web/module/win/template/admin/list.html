@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <title>消息列表</title>
+    <link rel='Shortcut Icon' type='image/x-icon' href='{$smarty.const.SITE_URL}/images/win10/windows.ico'>
+    <script type="text/javascript" src="{$smarty.const.SITE_URL}/js/win/jquery-2.2.4.min.js"></script>
+    <link href="{$smarty.const.SITE_URL}/css/win/animate.css" rel="stylesheet">
+    <script type="text/javascript" src="{$smarty.const.SITE_URL}/component/layer-v3.0.3/layer/layer.js"></script>
+    <link rel="stylesheet" href="{$smarty.const.SITE_URL}/component/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link href="{$smarty.const.SITE_URL}/css/win/default.css" rel="stylesheet">
+     <link rel="stylesheet" href="{$smarty.const.SITE_URL}/css/layui/css/layui.css"  media="all">
+      <link rel="stylesheet" href="//res.layui.com/css/global.css?t=1522709297490-3" media="all">
+      
+    <script type="text/javascript" src="{$smarty.const.SITE_URL}/js/win/win10.js"></script>
+    <script type="text/javascript" src="{$smarty.const.SITE_URL}/js/win/win10.child.js"></script>
+        <base href="{$smarty.const.SITE_URL}/"></base>
+        
+   
+    <script type="text/javascript" src="{$smarty.const.SITE_URL}/js/win/win10.js"></script>
+    <script type="text/javascript" src="{$smarty.const.SITE_URL}/js/layui.js"></script>
+    
+    <style>
+        * {
+            font-family: "Microsoft YaHei", 微软雅黑, "MicrosoftJhengHei", 华文细黑, STHeiti, MingLiu
+        }
+    </style>
+</head>
+<body>
+<!-- <div class="layui-fluid">-->
+
+<div class="layui-container">
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>消息列表</legend>
+    </fieldset>
+    <div class="layui-btn-group">
+      <a href="{AnUrl('win/admin/index/add')}" class="layui-btn" >增加</a>
+    </div>
+     <table class="layui-table" lay-even="" lay-skin="row">
+      <colgroup>
+        <col width="150">
+        <col width="150">
+        <col width="200">
+        <col>
+      </colgroup>
+      <thead>
+          <tr>
+          <th >发送者</th>
+          <th >消息来源</th>
+          <th >信息</th>
+          <th >时间</th>
+          <th >操作</th>
+        </tr> 
+      </thead>
+      <tbody>
+            {foreach $list as $k => $v}
+                <tr>
+                    <td >{$v.username}</td>
+                    <td >{$v.message_from}</td>
+                    <td >{$v.message}</td>
+                    <td >{$v.time}</td> 
+                   <td data-field="10" align="center" data-off="true">
+                         <div class="layui-table-cell laytable-cell-1-10">
+                            <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a> 
+                            <a class="layui-btn layui-btn-xs" lay-event="edit" id="{$v.id}"  onclick='Win10_child.openUrl("{AnUrl("win/admin/edit/?id={$v.id}")}")' >编辑</a> 
+                            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" href="{AnUrl("win/admin/index/delete?id={$v.id}")}">删除</a>
+                            
+                         </div>
+                    </td>
+                </tr>
+            {foreachelse}
+            <tr><td colspan="5">暂无相关信息</td></tr>
+            {/foreach}
+      </tbody>
+    </table>
+</div>
+<!-- 内容区块 end -->
+<!-- 分页 start -->
+<script>
+var siteUrl = "{$smarty.const.SITE_URL}";
+
+  $(function() {
+
+    var isCli = false;
+
+    $('.edit_order').on('click',function(){
+      $(this).removeClass('edit_order').addClass('save_order');
+      $('.save_order').html('(保存)');
+      $('.save_order').on('click',function(){
+        window.location.reload();
+      });
+
+      $.each($('.edit_view'),function(i,n) {
+        var value=$('.edit_view').eq(i).text();
+        if(!isCli) {
+          $('.edit_view').eq(i).html('');
+          var con='<input type="text" class="edit_blur" value="'+value+'" style="width:50px;text-align:center;">';
+          $('.edit_view').eq(i).append(con);
+        }
+      });
+
+      isCli =true;
+    });
+  });
+  /**
+   * 编辑的框写入数据并且释放鼠标后执行
+   */
+  $(document).on('blur','.edit_blur',function(){
+    var value =$(this).val();
+    var str =$(this).closest('tr').attr('id');
+    var id =str.substring(8);
+    var url = "{AnUrl('action/admin/action/ajax_update')}";
+
+    $.post(url,{ id:id,value:value },function(json){},'json');
+
+    $(document).on('click','.save_order',function(){
+      window.location.reload();
+    });
+  });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,193 @@
+{include_www file="admin/lib/header_new.html" title="添加设备"}
+<style>
+    .pic-upload { width:250px;height:133px; }
+    .btn-upload{ width:106px; height: 33px; }
+    .btn-upload a{ display: block;position:relative;width: 104px;height: 33px;line-height: 18px;padding: 6px 0;text-align: center;color: #4c4c4c;background: #fff;border: 1px solid #eee;}
+    .btn-upload input{ width:106px; height:33px; position:relative; left:0px; top:-32px; z-index:1;filter:alpha(opacity=0);-moz-opacity:0;opacity:0; cursor:pointer;}
+    .js_upFileBox{ margin-left:0px;margin-top:30px;}
+</style>
+<!--start:右侧-->
+<div class="main mian2 ">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('probe_dev/admin')}"><i class="iconfont iconfont-logo2"></i>探针管理</a>
+            &gt;
+            <span>添加设备</span>
+            <a href="{AnUrl('probe_dev/admin')}" class="btn btn-primary btn-sm pull-right">返回探针列表</a>
+        </div>
+
+        <div class="clearfix">
+            <div class="form-add pull-left">
+                <form class="form-horizontal" action='{AnUrl("probe_dev/admin/save")}' method="post">
+                    <input type="hidden" name="id" value="{$info.id}" />
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">省</label>
+                        <div class="col-sm-9">
+                            <select name="province" class="form-control js_province required" default_text="全国(所有省份)" default_value="0">
+                                <option value="0">请选择</option>
+                                {*{foreach $p_list as $k => $v}
+                                    <option {if $k == $info.province_id}selected{/if} value="{$k}">{$v}</option>
+                                {/foreach}*}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">市</label>
+                        <div class="col-sm-9">
+                            <select name="city" class="form-control js_city required" default_text="全国(所有省份)" default_value="0">
+                                <option value="0">请选择</option>
+                                {*{foreach $c_list as $k => $v}
+                                    <option {if $k == $info.city_id}selected{/if} value="{$k}">{$v}</option>
+                                {/foreach}*}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">区</label>
+                        <div class="col-sm-9">
+                            <select name="area" class="form-control js_area required" default_text="全国(所有省份)" default_value="0">
+                                <option value="0">请选择</option>
+                                {*{foreach $a_list as $k => $v}
+                                    <option {if $v.id == $info.area_id}selected{/if} value="{$v.id}">{$v.name}</option>
+                                {/foreach}*}
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- <div class="form-group">
+                        <label class="col-sm-3 control-label">营业厅</label>
+                        <div class="col-sm-9">
+                            <select name="business" class="form-control js_business required" default_text="全国(所有省份)" default_value="0">
+                                <option value="0">请选择</option>
+                                {*{foreach $b_list as $k => $v}
+                                    <option {if $v.id == $info.business_id}selected{/if} value="{$v.id}">{$v.title}</option>
+                                {/foreach}*}
+                            </select>
+                        </div>
+                    </div> -->
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">营业厅</label>
+                        <div class="col-sm-7">
+                            <a class="less-box">
+                                <span>
+                                    <input type="text" name="business_title" value="{business_hall_helper::get_business_hall_info($info.business_id, 'title')}" class="form-control required selectBusiness" placeholder="请输入营业厅名称">
+                                    <input type="hidden" name="business" value="{$info.business_id}" class="selectBusinessId">
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">设备编号</label>
+                        <div class="col-sm-7">
+                            <a class="less-box">
+                                <span><input type="text" name="device" {if $info}readonly="readonly"{/if} value="{$info.device}" class="form-control required js_device" placeholder="请输入设备编号"></span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">探测范围</label>
+                        <div class="col-sm-7">
+                            <a class="less-box">
+                                <span><input type="text" name="rssi" value="{$info.rssi}" class="form-control required js_rssi" placeholder="请输入探测范围"></span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">备注信息</label>
+                        <div class="col-sm-7">
+                            <a class="less-box">
+                                <span><input type="text" name="remarks" value="{$info.remarks}" class="form-control required"></span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-10">
+                            <button type="submit" class="btn btn-sm btn-success selectSub">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;确定&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{$smarty.const.SITE_URL}/js/business_hall/admin/region_select.js"></script>
+
+<script>
+
+$(function(){
+    {if $info}
+        region({$info.province_id}, {$info.city_id}, {$info.area_id}, {$info.business_id});
+    {else}
+        region(0, 0, 0, 0);
+    {/if}
+
+    $('.selectSub').click(function(e) {
+        e.preventDefault();
+
+        var province_id = $('.js_province').val();
+        var city_id     = $('.js_city').val();
+        var area_id     = $('.js_area').val();
+        var business_id = $('.js_business').val();
+        var device      = $('.js_device').val();
+        var rssi        = $('.js_rssi').val();
+
+// console.log(province_id);
+        if ( province_id == 0 ) {
+            return error('请选择省');
+        }
+        if ( city_id == 0 ) {
+            return error('请选择市'); 
+        }
+        if ( area_id == 0) {
+            return error('请选择区');
+        }
+        if ( business_id == 0 ) {
+            return error('请选择营业厅');
+        }
+        if ( !device ) {
+        	return error('请输入设备编号');
+        }
+        if ( !rssi ) {
+            return error('请输入设备探测范围');
+        }
+        if ( isNaN(rssi) ) {
+        	return error('探测范围只能是数字');
+        }
+
+        $('.form-horizontal').submit();
+    });
+});
+
+function businessAutocomplete(business_hall_titles) {
+  console.log(business_hall_titles);
+  $('.selectBusiness').autocomplete({ 
+    
+    // 静态的数据源，根据label属性进行显示或模糊匹配，当给输入框设置value属性值
+    source: business_hall_titles,
+    
+    //选择
+    select: function(event, ui){
+      
+      $(this).val(ui.item.label);
+      //隐藏域
+      $('.selectBusinessId').val(ui.item.id);
+      // 必须阻止事件的默认行为，否则autocomplete默认会把ui.item.value设为输入框的value值
+      event.preventDefault();
+      
+    }
+  })
+}
+
+function error( msg )
+{
+    alert(msg);
+    return false;
+}
+</script>
+{include_www file="admin/lib/footer_new.html"}

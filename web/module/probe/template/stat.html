@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <title>统计</title>
+    </head>
+    <body>
+          <p>北京省: {$p_num}</p>
+          <p>北京市: {$c_num}</p>
+          <p>东城区: {$a_num}</p>
+          <p>北京电信营业厅: {$b_num}</p>
+          <p>详情：</p>
+          {foreach $list as $k => $v}
+              <p>{$k + 1}.------------------------</p>
+              <p>mac: {probe_helper::mac_encode($v.mac, ':')}</p>
+              <p>phone: ----</p>
+              <p>首次探测时间：{date('Y-m-d H:i:s', $v.frist_time)}</p>
+              <p>最后探测时间：{date('Y-m-d H:i:s', $v.this_time)}</p>
+              <p>最后探测设备: {$v.device_id}</p>
+              <p>最后探测信号: {$v.rssi}</p>
+          {/foreach}
+    </body>
+</html>

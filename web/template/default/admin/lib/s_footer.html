@@ -1,0 +1,75 @@
+       </section>
+       <footer class="footer">
+          <ul class="nav">
+              <li class="ty">
+                  <a href="{AnUrl('e/admin/rfid/stat')}"><span class="icon icon-rank"></span><span class="name">体验排行</span></a>
+              </li>
+              <li class="lp">
+                  <a href="{AnUrl('screen_dm/device/')}"><span class="icon icon-liangping"></span><span class="name">亮屏统计</span></a>
+              </li>
+              <li class="dz">
+                  <a href="{AnUrl('e/api/electron_price_login')}"><span class="icon icon-tag"></span><span class="name">电子价签</span></a>
+              </li>
+          </ul>
+      </footer>
+    </div>
+    <!-- 加载中弹层 wangjf add -->
+    <div class="pop-bg hidden" id="popLoading">
+      <div class="modal-dialog" style="width:100%; position: absolute; top: 30%;">
+        <div style="margin:0 auto;width:100px;"><img style="width:100px;" src="{$smarty_const.STATIC_URL}/images/loading2.gif"></div>
+      </div>
+    </div>
+     <script>
+       var model = window.location.pathname;
+       $(function(){
+           if(model == '/e/admin/rfid/stat'){
+               $('.ty').addClass('active');
+               $('.lp').removeClass('active');
+               $('.dz').removeClass('active');
+           }else if(model == '/e/api/electron_price_login'){
+        	   $('.ty').removeClass('active');
+               $('.lp').removeClass('active');
+               $('.dz').addClass('active');
+           }else{
+        	   $('.ty').removeClass('active');
+               $('.lp').addClass('active');
+               $('.dz').removeClass('active');
+           }
+           //判断是否微信登陆
+           function isWeiXin() {
+               var ua = window.navigator.userAgent.toLowerCase();
+               console.log(ua); //mozilla/5.0 (iphone; cpu iphone os 9_1 like mac os x) applewebkit/601.1.46 (khtml, like gecko)version/9.0 mobile/13b143 safari/601.1
+               if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+                   return true;
+               } else {
+                   return false;
+               }
+           }
+           if (isWeiXin()) {
+               console.log(" 是来自微信内置浏览器")
+               $('.header').addClass('hidden');
+               $('.container').css({ paddingTop: '0' })
+           } else {
+               console.log("不是来自微信内置浏览器")
+           }
+       })
+      </script>
+
+    <script type='text/javascript'>
+    // added by guojf  for dm stat
+        var _vds = _vds || [];
+        window._vds = _vds;
+        (function(){
+             _vds.push(['setAccountId', '933546cb41e8088e']);
+            (function() {
+                 var vds = document.createElement('script');
+                 vds.type='text/javascript';
+                 vds.async = true;
+                 vds.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'assets.growingio.com/vds.js';
+                 var s = document.getElementsByTagName('script')[0];
+                 s.parentNode.insertBefore(vds, s);
+            })();
+        })();
+    </script>
+  </body>
+</html>

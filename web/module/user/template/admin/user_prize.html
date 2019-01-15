@@ -1,0 +1,91 @@
+{include_www file="admin/lib/header_new.html" title="用户列表"}
+{include_www file="admin/lib/sidebar_new.html"}
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('user/admin/user_prize')}"><i class="iconfont iconfont-logo2"></i>用户奖品</a>
+            &gt;
+            <span>奖品列表</span>
+        </div>
+        <!--
+        <div class="tabs1">
+          <ul class="clearfix">
+            <li class="curr"><a href="###">全国投放列表</a></li>
+            <li class=""><a href="###">各省投放列表</a></li>
+          </ul>
+        </div>
+        -->
+        <div class="form-search clearfix">
+            <div class="pull-left">
+                <form action="{AnUrl('user/admin/user_prize')}" method="get">
+
+                    <input type="text" name="search_filter[user_phone]" placeholder="请输入手机号" value="{if $search_filter['user_phone']}{$search_filter['user_phone']}{/if}" class="form-control input-sm pull-left">
+                   <input type="text" name="search_filter[add_time]" placeholder="请输入添加时间" value="{if $search_filter['add_time']}{$search_filter['add_time']}{/if}" class="form-control input-sm pull-left">
+
+                    <button type="submit" class="btn-search pull-left">搜索</button>
+
+                </form>
+            </div>
+           
+            <div class="pull-right">
+                <!-- <span class="tips">*还可添加8个用户 </span> -->
+                <!--<a href="{AnUrl('focus/admin/add')}" class="btn btn-sm btn-success">添加用户</a>-->
+            </div>
+        </div>
+        {*
+        <div class="tabs2">
+            <ul class="clearfix">
+                {foreach focus_config::$search_type as $k => $v}
+                <li {if $search_filter['search_type'] == $k}class=" curr"{/if}><a  href="{compile_url($search_filter,'search_type',$k,'focus/admin')}">{$v}</a></li>
+                {/foreach}
+            </ul>
+        </div>
+        *}
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th class="td60"><input type="checkbox" class="selectAll"/>&nbsp;&nbsp;全选</th>
+                    <th>用户手机号</th>
+                    <th>奖品名称</th>
+                    <th>卡名</th>
+                    <th>获得途径</th>
+                    <th>奖品状态</th>
+                    <th>添加时间</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $k=>$v}
+                <tr id="dataList{$v.id}">
+                    <td><input type="checkbox" class="listSelect" /></td>
+                    <td>{user_helper::get_user_info($v.user_id,'phone')}</td>
+                    <!-- 获取prize_card表信息 -->
+                    {$prize_card_info = user_helper::get_info('prize_card' , $v.card_id)}
+                    <td>{user_helper::get_info('prize', $prize_card_info['prize_id'] , 'title')}</td>
+                    <td>{user_helper::get_user_prize_record_info($v.card_id,'name')}</td>
+                    <td>{if $v.getway == 1}转盘得奖{/if}</td>
+                    <td>{if $v.status == 0}已发放{elseif $v.status == 1}正常{elseif $v.status == 2}准备{/if}</td>
+                    <td>{$v.add_time}</td>
+                    <td class="txtcenter">
+                        <a title="删除" class="deleteOne btn btn-xs btn-danger" href="{AnUrl("user/admin/user_prize/delete?id={$v.id}")}">删除</a>
+                    </td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="8">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+                <tfoot><tr><td colspan="7"><input type="checkbox" class="selectAll">&nbsp;&nbsp;全选</td><td><a href="{AnUrl("user/admin/user_prize/delete?")}" class="btn btn-danger btn-xs deleteAll">批量删除</a></td></tr></tfoot>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+<!-- 分页 start -->
+
+<!-- 分页 end -->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

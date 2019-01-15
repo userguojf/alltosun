@@ -1,0 +1,54 @@
+{include_www file="admin/lib/header_new.html" title="{$action_res_name}"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    #main{
+        height:500px;
+        border:1px solid #ccc;
+        margin: 10px;
+        padding:10px;
+    }
+</style>
+
+{* 主内容START *}
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('probe_brand/admin')}"><i class="iconfont iconfont-logo2"></i>探针管理</a>
+            &gt;
+            <span>探针统计</span>
+        </div>
+
+        <div class="list">
+            <table class="table table-bordered table-striped center table_co_td">
+                <thead>
+                    <tr>
+                        <th>mac地址</th>
+                        <th>时间</th>
+                        <th>首次探测时间</th>
+                        <th>首次探测信息</th>
+                        <th>停留时长</th>
+                        <th>手机型号</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {foreach $list as $k=>$v}
+                        <tr>
+                            <td>{probe_helper::mac_encode($v.mac)}</td>
+                            <td>{$v.date}</td>
+                            <td>{date("Y-m-d H:i:s", $v.frist_time)}</td>
+                            <td>{$v.frist_rssi}</td>
+                            {$ary = probe_helper::get_remain($v.remain_time)}
+                            <td>{if $ary.hour}{$ary.hour}小时{$ary.min}分{$ary.sec}秒{elseif $ary.min}{$ary.min}分{$ary.sec}秒{else}{$ary.sec}秒{/if}</td>
+                            <td>{probe_helper::get_brand($v.mac)}</td>
+                        </tr>
+                    {foreachelse}
+                        <tr><td colspan="9">暂无相关信息</td></tr>
+                    {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+</div>
+
+{include_www file="admin/lib/footer_new.html"}

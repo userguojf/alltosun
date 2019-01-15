@@ -1,0 +1,136 @@
+{include_www file="admin/lib/header_new.html" title="体验统计"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('screen_stat/admin/experience_stat/stat_day')}"><i class="iconfont iconfont-logo2"></i>亮屏管理</a>
+      &gt;
+      <span>体验统计</span>
+      <span>({if $count}{$count}{else}0{/if})
+        
+      </span>
+      <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+    </div>
+
+    <div class="tabs1">
+      <ul class="clearfix">
+        <li {if $search_type == 'business'}class="curr"{/if}>
+          <a href="{AnUrl('screen_stat/admin/experience_stat/stat_day?search_type=business')}">按营业厅</a>
+        </li>
+        <li {if $search_type == 'device'}class="curr"{/if}>
+          <a href="{AnUrl('screen_stat/admin/experience_stat/stat_day?search_type=device')}">按设备</a>
+        </li>
+      </ul>
+    </div>
+    
+    <form action="{AnUrl('screen_stat/admin/experience_stat/stat_day')}" id="form_data" method="get">
+      <input type="hidden" value="{$search_type}" name="search_type">
+      {* 时间判断 *}
+      <div class="form-search row clearfix">
+        <div class="tabs2">
+          <div class="col-sm-8">
+            <div class="form-inline" id="dateSelectBox" >
+              <div class="form-group">
+                <label for="exampleInputName2">时间：</label>
+                <input type="text" class="form-control" style="width:100px; text-align:center;" name="search_filter[start_date]" id="start_time" value="{$search_filter.start_date}" />
+              </div>
+              <div class="form-group">
+                <label for="exampleInputName2">至</label>
+                <input type="text" class="form-control" style="width:100px; text-align:center;" name="search_filter[end_date]" id="end_time" value="{$search_filter.end_date}" />
+              </div>
+              <button type="button" class="btn btn-success btn-sm" id="searchData">搜索</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            {if $member_info.res_name != 'business_hall'}
+              <th>省</th>
+              <th>市</th>
+<!--               <th>区</th> -->
+              <th>厅</th>
+            {/if}
+            {if $search_type == 'business'}
+                <th>设备量</th>
+            {else}
+                <th>品牌</th>
+                <th>型号</th>
+                <th>IMEI</th>
+            {/if}
+            <th>动作数</th>
+            <th>
+                体验时长({screen_helper::format_timestamp_text($experience_times_count)})
+                {if $order_dir == 'asc' && $order_field == 'experience_times'}
+                    <span class="glyphicon  glyphicon-arrow-down order_type" aria-hidden="true" order_field="experience_times" order_dir='asc' "></span>
+                {else}
+                    <span class="glyphicon glyphicon-arrow-up order_type" aria-hidden="true" order_field="experience_times" order_dir='desc' ></span>
+                {/if}
+            </th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $stat_list as $k=>$v}
+          <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+          
+            {if $member_info.res_name != 'business_hall'}
+              <td>{_uri('province', $v.province_id, 'name')}</td>
+              <td>{_uri('city', $v.city_id, 'name')}</td>
+              <!-- <td>{_uri('area', $v.area_id, 'name')}</td> -->
+              <td>{_uri('business_hall', $v.business_id, 'title')}</td>
+            {/if}
+            {if $search_type == 'business'}
+                <td>{$v.device_nums}</td>
+            {else}
+                <td>{$v.phone_name}</td>
+                <td>{$v.phone_version}</td>
+                <td>{$v.imei}</td>
+            {/if}
+            <td>{$v.action_nums}</td>
+            <td>{screen_helper::format_timestamp_text($v.experience_times)}</td>
+            <td><a class="btn btn-xs btn-success" href="{AnUrl("screen_stat/admin/experience_stat/detail{$search_url_str}&device_code={$v.device_unique_id}&business_id={$v.business_id}")}">详情</a></td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="{if $search_type == 'business'}8{else}11{/if}">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+<script>
+$(function () {
+  //搜索
+  $('#searchData').on('click',function() {
+    $('#search_start_date').val($('#start_time').val());
+    $('#search_end_date').val($('#end_time').val());
+    $('#form_data').submit();
+  });
+  
+  //排序
+  $('.order_type').on('click', function () {
+
+    if ($(this).hasClass('glyphicon-arrow-up')) {
+      var order_dir = 'asc';
+    } else {
+      var order_dir = 'desc';
+    }
+    
+    window.location.href = window.location.href + '&order_dir=' + order_dir + '&order_field=' + $(this).attr('order_field');
+
+  });
+  
+});
+
+
+</script>
+{include_www file="admin/lib/footer_new.html"}

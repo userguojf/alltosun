@@ -1,0 +1,72 @@
+{* $Id: sidebar.html 54862M 2013-08-20 07:04:06Z (local) $ *}
+
+{* an_dump($module, $controller, $action, $specal_model, $curr_module, $dirs, $site, $curr_action) *}
+
+{*$action_module|@print_r*}
+<div id="sidebar" class="col-sm-3 col-md-2 sidebar">
+    {if $member_info['ranks'] <= 100}
+        <h4 class="sidebar-title"><a href="{AnUrl('probe_brand/admin')}" ><i class="iconfont iconfont-home"></i>
+            平台情况</a>
+        </h4>
+    {/if}
+
+  <ul class="nav nav-sidebar" >
+    {foreach $action_module as $k=>$v}
+    {if $v.is_ajax}
+    <li class="active main-menu">
+        <a href="javascript:void(0);" class="main-menu-tit "><i class="iconfont {$v['icon']}"></i>{$v.name}</a>
+        <ul class="nav nav-list sub-menu">
+            {foreach $v['action'] as $key=>$val}
+            {if $val['is_ajax']}
+            <li>
+            {if $member_info['res_name'] == 'business_hall'}
+                {$province_id = _uri('business_hall',$member_info['res_id'],'province_id')}
+            {/if}
+                <!-- <a href='{AnUrl("{$val.url}")}' {if  $specal_model==$val.action_name || $val.action_name==$curr_module }style="color:#3498db"{/if}>{$val.name}</a> -->
+                {if $province_id == 24 && $member_info['res_name'] == 'business_hall' && $val.action_name == 'screen_content/admin'}
+                {else}
+                <a href='{AnUrl("{$val.url}")}' {if  $sidebar_default_selected==$val.action_name }style="color:#3498db;" class="defalut_show" show_id={$k}{/if}>{$val.name}</a>
+                {/if}
+            </li>
+            {/if}
+            {/foreach}
+        </ul>
+    </li>
+    {/if}
+    {/foreach}
+  </ul>
+</div>
+<script type="text/javascript">
+$(function(){
+	var show_id = $('.defalut_show').attr('show_id');
+    var clickMenu = $.cookie('sMenu');
+
+    if ( show_id ) {
+        clickMenu = show_id;
+    }
+
+    if (clickMenu == null) {
+       clickMenu = 1;
+    }
+
+	$('.main-menu .main-menu-tit').each(function(i) {
+        if (i == clickMenu ) {
+            $(this).next().css('display', 'black');
+        } else {
+        	$(this).next().css('display', 'none');
+        }
+
+        $(this).click(function() {
+            if ($(this).next().css('display') == 'none') {
+                $('.main-menu .main-menu-tit').next().slideUp('fast');
+                $(this).next().slideDown('fast');
+                $.cookie('sMenu', i); 
+                // { expires: 3600 * 24 * 30, path: '/' }
+                // 这个地方也要注意，如果不设置这个东西，浏览器关闭之后此cookie就失效了
+            } else {
+                $(this).next().slideUp('fast');
+            }
+        });
+    });
+});
+</script>

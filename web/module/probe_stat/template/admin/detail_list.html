@@ -1,0 +1,80 @@
+{include_www file="admin/lib/header_new.html" title="{$action_res_name}"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    #main{
+        height:500px;
+        border:1px solid #ccc;
+        margin: 10px;
+        padding:10px;
+    }
+    .js_num{
+        cursor: pointer;
+    }
+</style>
+
+{* 主内容START *}
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('probe_new/admin/stat')}"><i class="iconfont iconfont-logo2"></i>统计管理</a>
+            &gt;
+            <span>探针统计</span>
+        </div>
+
+        <div class="list">
+            <table class="table table-bordered table-striped center table_co_td">
+                <thead>
+                    <tr>
+                        <th>
+                            时间
+                            {if $date_type == 'day'}
+                                （{$date}天）
+                            {else if $date_type == 'week'}
+                                （{$date}周）
+                            {else if $date_type == 'month'}
+                                （{$date}月）
+                            {/if}
+                        </th>
+                        <th>地区（营业厅）</th>
+                        <th>客流量</th>
+                        <th>室内人数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {foreach $list as $k => $v}
+                        <tr date_type="day" date="{$v['date_for_day']}">
+                            <td>{$v['date_for_day']}</td>
+                            <td>{$b_info['title']}</td>
+                            <td class="js_num" type="all_num">{$v['all_num']}</td>
+                            <td class="js_num" type="in_num">{$v['in_num']}</td>
+                        </tr>
+                    {foreachelse}
+                        <tr><td colspan="9">暂无相关信息</td></tr>
+                    {/foreach}
+                </tbody>
+            </table>
+<script>
+    var res_name = "{$res_name}";
+    var res_id   = "{$res_id}";
+
+    $('.js_num').click(function(){
+        var thisObj   = $(this);
+        var type      = thisObj.attr('type');
+        var trObj     = thisObj.closest('tr');
+        var date      = trObj.attr('date');
+        var date_type = trObj.attr('date_type');
+
+        if ( res_name == 'business' ) {
+        	window.location.href = siteUrl +'/probe/admin/stat/list/detail?date_type='+ date_type +'&date='+ date +'&res_name='+ res_name +'&res_id='+ res_id +'&type='+ type;
+        } else {
+            window.location.href = siteUrl +'/probe/admin/stat/list?date_type='+ date_type +'&date='+ date +'&res_name='+ res_name +'&res_id='+ res_id;
+        }
+        
+    });
+</script>
+{include_www file="admin/lib/pager_new.html"}
+</div>
+</div>
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

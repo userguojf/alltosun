@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+	<title>添加投放内容</title>
+	<link rel="stylesheet" type="text/css" href="../css/m-zhongduan.css">
+	<link rel="stylesheet" href="../js/iosSelect/iosSelect.css">
+    <script>
+      var htmlElm = document.getElementsByTagName('html')[0];
+      htmlElm.style.opacity = '0';
+      ! function (a, b) {
+        function c() {
+          var c, b = f.getBoundingClientRect().width;
+          b / i > 540 && (b = 540 * i), c = b / 10, f.style.fontSize = c + "px", k.rem = a.rem = c
+        }
+        var d, l, m, n, o, p, q, r, s, t, e = a.document,
+          f = e.documentElement,
+          g = e.querySelector('meta[name="viewport"]'),
+          h = e.querySelector('meta[name="flexible"]'),
+          i = 0,
+          j = 0,
+          k = b.flexible || (b.flexible = {});
+        g ? (l = g.getAttribute("content").match(/initial\-scale=([\d\.]+)/), l && (j = parseFloat(l[1]), i = parseInt(1 / j))) : h && (m = h.getAttribute("content"), m && (n = m.match(/initial\-dpr=([\d\.]+)/), o = m.match(/maximum\-dpr=([\d\.]+)/), n && (i = parseFloat(n[1]), j = parseFloat((1 / i).toFixed(2))), o && (i = parseFloat(o[1]), j = parseFloat((1 / i).toFixed(2))))), i || j || (p = a.navigator.userAgent, !!p.match(/android/gi), q = !!p.match(/iphone/gi), r = q && !!p.match(/OS 9_3/), s = a.devicePixelRatio, i = q && !r ? s >= 3 && (!i || i >= 3) ? 3 : s >= 2 && (!i || i >= 2) ? 2 : 1 : 1, j = 1 / i), f.setAttribute("data-dpr", i), g || (g = e.createElement("meta"), g.setAttribute("name", "viewport"), g.setAttribute("content", "initial-scale=" + j + ", maximum-scale=" + j + ", minimum-scale=" + j + ", user-scalable=no"), f.firstElementChild ? f.firstElementChild.appendChild(g) : (t = e.createElement("div"), t.appendChild(g), e.write(t.innerHTML))), a.addEventListener("resize", function () {
+          clearTimeout(d), d = setTimeout(c, 300)
+        }, !1), a.addEventListener("pageshow", function (a) {
+          a.persisted && (clearTimeout(d), d = setTimeout(c, 300))
+        }, !1), "complete" === e.readyState ? e.body.style.fontSize = 12 * i + "px" : e.addEventListener("DOMContentLoaded", function () {
+          e.body.style.fontSize = 12 * i + "px"
+        }, !1), c(), k.dpr = a.dpr = i, k.refreshRem = c, k.rem2px = function (a) {
+          var b = parseFloat(a) * this.rem;
+          return "string" == typeof a && a.match(/rem$/) && (b += "px"), b
+        }, k.px2rem = function (a) {
+          var b = parseFloat(a) / this.rem;
+          return "string" == typeof a && a.match(/px$/) && (b += "rem"), b
+        }
+      }(window, window.lib || (window.lib = {}));
+      window.onload = function () {
+        htmlElm.style.opacity = '1';
+      }
+    </script>
+</head>
+<body>
+	<div class="wrap">
+        <header class="header">
+            <a href="javascript:void(0);" class="btn-back"><i class="icon-arrow-left"></i>首页</a>
+            <h1>添加投放内容</h1>
+        </header>
+        <section class="container">
+        	<div class="add-form">
+	        	<form>
+	        		<div class="con">
+		        		<div class="item1">
+		        			<label>标题</label>
+		        			<span class="input"><input type="text" placeholder="请输入标题" name=""></span>
+		        		</div>
+		        		<div class="item1">
+		        			<label>类型</label>
+		        			<div class="btn-choose">
+		        				<span class="default">请选择</span>
+		        				<i class="icon-arrow-right"></i>
+		        			</div>
+		        		</div>
+					</div>
+					<div class="con">
+						<div class="item1">
+							<label>图片内容</label>
+							<div class="upload">
+								<div class="btn-upload btn-pic">
+									<input type="file" name="">
+								</div>
+							</div>
+						</div>
+						<div class="item1">
+							<label>视频内容</label>
+							<div class="upload">
+								<div class="btn-upload btn-video">
+									<input type="file" name="">
+								</div>
+							</div>
+						</div>
+						<div class="item1">
+		        			<label>轮播间隔</label>
+		        			<span class="input"><input type="text" value="10s" name=""></span>
+		        		</div>
+					</div>
+					<div class="con">
+						<div class="item1">
+							<label>上线时间</label>
+							<div class="date" id="selectDateBegin">
+		        				<span class="input"><input type="datetime-local" placeholder="请选择" name=""></span>
+		        				<i class="icon-arrow-right"></i>
+		        			</div>
+						</div>
+						<div class="item1">
+							<label>下线时间</label>
+							<div class="date" id="selectDateEnd">
+		        				<span class="input"><input type="datetime-local" placeholder="请选择" name=""></span>
+		        				<i class="icon-arrow-right"></i>
+		        			</div>
+						</div>
+					</div>
+					<div class="con">
+						<div class="item1">
+							<label>投放机型</label>
+							<div class="btn-choose">
+		        				<span class="default">请选择</span>
+		        				<i class="icon-arrow-right"></i>
+		        			</div>
+						</div>
+					</div>
+					<button type="submit" class="btn-submit disabled">确认</button>
+	        	</form>
+	        </div>
+        </section>
+    </div>
+    <script src="../js/jquery-2.1.1.min.js"></script>
+</body>
+</html>

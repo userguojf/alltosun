@@ -1,0 +1,70 @@
+{include_www file="admin/lib/header_new.html" title="轮播列表"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen_stat/admin/device_stat')}"><i class="iconfont iconfont-logo2"></i>亮屏数据中心</a>
+            &gt;
+            <span>统计详情{$start_time}至{$end_time}</span>
+            <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+          </div>
+          <div class="form-search row clearfix">
+            <div class="tabs2">
+              <form action="{AnUrl('screen_stat/admin/data_center/table_3_detail')}" method="get" class="searchForm">
+                <input type="hidden" name="start_time" value="{$start_time}">
+                <input type="hidden" name="end_time" value="{$end_time}">
+                <input type="hidden" name="date_type" value="{$date_type}">
+                <input type="hidden" name="table_type" value="{$table_type}">
+              </form>
+              <div class="pull-right">
+                <a href="javascript:void(0);" class="btn btn-success btn-sm right" id="is_export">导出</a>
+              </div>
+            </div>
+          </div>
+          <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="text-align:center">在线时间段</th>
+                  <th style="text-align:center">省</th>
+                  <th style="text-align:center">市</th>
+                  <th style="text-align:center">厅</th>
+                  <th style="text-align:center">设备</th>
+                  <th style="text-align:center">品牌</th>
+                  <th style="text-align:center">型号</th>
+                </tr>
+              </thead>
+              <tbody>
+                {foreach $device_list as $k => $v}
+                  <tr>
+                      <td style="text-align:center">{$v.date_type}</td>
+                      <td style="text-align:center">{$v.province_name}</td>
+                      <td style="text-align:center">{$v.city_name}</td>
+                      <td style="text-align:center">{$v.business_name}</td>
+                      <td style="text-align:center">{$v.device_unique_id}</td>
+                      <td style="text-align:center">{$v.name_nickname}</td>
+                      <td style="text-align:center">{$v.version_nickname}</td>
+                  </tr>
+               {foreachelse}
+                <tr><td colspan="2">暂无相关数据</td></tr>
+               {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+      </div>
+<script>
+  $(function () {
+    
+    $('#is_export').on('click', function () {
+      $('.searchForm').append('<input type="hidden" class="is_export" name="is_export" value="1">');
+      $('.searchForm').submit();
+      $('.is_export').remove();
+    });
+    
+  });
+</script>
+{include_www file="admin/lib/footer_new.html"}

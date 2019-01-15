@@ -1,0 +1,83 @@
+{include file="admin/rfid/header.html" title="分析详情"}
+
+<style>
+  .none-tips {
+      padding: 10% 0 0;
+      text-align: center;
+      color: #9d9d9d;
+      font-size: 14px;
+  }
+</style>
+
+  <div class="detail-intro">
+    <div class="con">
+      <div id="js_dataType" class="item1">
+        <div class="text">机型：<span class="name">{$label_info.phone_name} {$label_info.phone_version}</span>
+            <!-- <img src="{$smarty.const.STATIC_URL}/images/m-num-map/icon-edit.png" width="12"> -->
+        </div>
+      </div>
+      <div class="item1 item3">
+        <div class="text">IMEI：<span class="name">{rfid_helper::get_imei_by_label($label_info.label_id)}</span></div>
+      </div>
+      <div class="item1 item3">
+        <div class="text">日期：
+          <span class="name">
+            {$date_title}
+          </span>
+        </div>
+      </div>
+      <!-- <div class="date">
+         
+          <div id="js_dataDate" class="item2">
+              <span>选择时间</span>
+              <input type="date">
+          </div>
+          <span class="text">——</span>
+          <div id="js_dataDate" class="item2">
+              <span>选择时间</span>
+              <input type="date">
+          </div>
+      </div> -->
+    </div>
+    <div class="time">{rfid_helper::format_timestamp_text($time_count)}</div>
+  </div>
+  
+  {if $detail_list}
+    <div class="detail-list">
+      <div class="line"></div>
+      <ul>
+        {foreach $detail_list as $k => $v}
+          <li>
+            <em class="point"></em>
+            <div class="con">
+              <p>开始：{date('H:i:s', $v.start_timestamp)}</p>
+              <p>结束：{date('H:i:s', $v.end_timestamp)}</p>
+            </div>
+            <div class="time">{$v.remain_time}秒</div>
+            {$is_probe_user = rfid_helper::is_probe_user($v.id)}
+            {if $is_probe_user}
+              <a href="{AnUrl("e/admin/rfid/stat/flow_detail?detail_id={$v.id}")}"><div class="btn-detail">客流详情&nbsp;&gt;</div></a>
+            {/if}
+          </li>
+        {/foreach}
+      </ul>
+    </div>
+  {/if}
+
+  {if !$detail_list}
+    <div class="none-tips">暂无数据</div>
+  {/if}
+<script type="text/javascript">
+  $(function(){
+    $('#js_dataType select').change(function(e){
+      console.log(e.target.value)
+      $('#js_dataType .name').text(e.target.value)
+    })
+    $('#js_dataDate input').change(function(e){
+      console.log(e.target.value)
+      $(this).siblings('span').css({ opacity: 0 })
+      $(this).css({ opacity:1 })
+    })
+  })
+</script>
+{include file="admin/rfid/footer.html"}

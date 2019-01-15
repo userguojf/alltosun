@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <title>终端-体验排行-首页</title>
+    <link rel="stylesheet" type="text/css" href="{$smatry.const.STATIC_URL}/css/m-zhongduan.css">
+</head>
+
+<body>
+    <div class="wrap">
+        <header class="header">
+            <a href="javascript:void(0);" class="btn-back"><i class="icon-arrow-left"></i>首页</a>
+            <h1>终端</h1>
+        </header>
+        <section class="container">
+            <div class="tabs1">
+                <a href="javascript:void(0);" class='selectDateClick'>
+                <span>{if $search_filter.date_type == 1}今日{else if $search_filter.date_type == 2}近七日{else}任意时间段{/if}</span>
+                <i class="icon-arrow-down"></i></a>
+                <a href="javascript:void(0);" class='dateTypeTab'>
+                <span>{if $search_filter.data_type == 2}按体验次数{else}按体验时长{/if}</span>
+                <i class="icon-arrow-down"></i></a>
+                <a href="{AnUrl('e/admin/rfid/stat2')}" class="active"><span>标签管理</span></a>
+            </div>
+            <!--start:日期选择弹层-->
+            <div class="pop-bg selectDate hidden">
+               <form action="{AnUrl('e/admin/rfid/stat2')}" class="dateSubmit" method="get">
+                <div class="pop-date">
+                    <div class="title">
+                        <a href="javascript:void(0);" class="concel closeSelectDate">取消</a>
+                        <span>选择日期</span>
+                        <a href="javascript:void(0);" class="sure closeSelectDate">确定</a>
+                    </div>
+                         <input type="hidden" class="js_data_type" name="search_filter[data_type]" value="{$search_filter.data_type}">
+                    <div class="btns">
+                        <label>
+                            <input type="radio"  class="type" {if $search_filter.date_type ==1}checked {/if} name="search_filter[date_type]" value="1"><span>今天</span></label>
+                        <label>
+                            <input type="radio" class="type" {if $search_filter.date_type ==2}checked {/if} name="search_filter[date_type]" value="2"><span>近7日</span></label>
+                        <label>
+                            <input type="radio" class="type" {if $search_filter.date_type ==3}checked {/if} name="search_filter[date_type]" value="3"><span>任一段时间</span></label>
+                    </div>
+                    <div class="date">
+                        <div id="js_timeStart" class="item "><span>选择时间</span><input type="date" name="search_filter[start_date]"></div>
+                        <span class="txt">至</span>
+                        <div id="js_timeEnd" class="item "><span>选择时间</span><input type="date" name="search_filter[end_date]"></div>
+                        <span class="btn-concel js_clearDate"></span>
+                    </div>
+                </div>
+                </form>
+            </div>
+            <!--end:日期选择弹层-->
+
+    
+            <!--start:排行筛选弹层-->
+            <div class="pop-reorder hidden">
+            <form action="{AnUrl('e/admin/rfid/stat2')}" class="typeSubmit" method="get">
+                      <input type="hidden"  name="search_filter[date_type]" value="{$search_filter.date_type}">
+                      <input type="hidden"  name="search_filter[start_date]" value="{$search_filter.start_date}">
+                      <input type="hidden"  name="search_filter[end_date]" value="{$search_filter.end_date}">
+                      <input type ='hidden' name ="search_filter[data_type]"  value='' class='js_type'>
+                <ul>
+                    <li>
+                        <label><input type="radio"  class = 'select_type_num' ><span>按体验次数</span></label>
+                    <li>
+                        <label><input type="radio" class = 'select_type_time'><span>按体验时长</span></label>
+                    </li>
+                </ul>
+             </form>
+            </div>
+            
+            
+            <!--end:排行筛选弹层-->
+            <div class="tabs1-con">
+                <div class="line"></div>
+                {if $device_list}
+                <div class="count-map">
+                    <div class="count1-pic">
+                        <div class="con" id="echartPie" style="width: 180px; height: 180px;"></div>
+                         <ul class="list">
+                            {foreach $echarts_data as $k => $v}
+                                <li><em style="background-color: {$echarts_pie_colors[$k]}"></em>
+                                    <span class="name">{$v.name}</span>
+                                    <span class="time">
+                                        {if $field == 'experience_time'}
+                                            {rfid_helper::format_timestamp_text($v.value)}
+                                        {else}
+                                            {$v.value} 次
+                                        {/if}
+                                    </span>
+                                </li>
+                            {/foreach}
+                        </ul> 
+                    </div>
+                </div>
+                
+                <div class="count-rank">
+                    <div class="title">终端体验排行</div>
+                    <ul>
+                     {foreach $device_list as $k => $v}
+                        <li {if $k == 0}class="first" {/if}>
+                            <div class="num num01">{$k+1}</div>
+                            <div class="time">
+                                <h3>
+                                     {if $field == 'experience_time'}
+                                        {rfid_helper::format_timestamp_text($v[$field])}
+                                     {else}
+                                        {$v[$field]} 次
+                                    {/if}
+                                </h3>
+                                {if $search_filter.data_type == 2}
+                                    <p>体验次数</p>
+                                {else}
+                                    <p>体验时长</p>
+                                 {/if}
+                                
+                            </div>
+                            <div class="infos">
+                                <p>机型<span>{$v.phone_name}</span></p>
+                                <p>IMEI<span>{rfid_helper::get_imei_by_label($v.label_id)}</span></p>
+                            </div>
+                        </li>
+                        {/foreach}
+                    </ul>
+                </div>
+                 {else}
+                    <div class="count-rank">暂无数据</div>
+                {/if}
+            </div>
+        </section>
+      
+    <script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/echarts-2.2.7/echarts.js"></script>
+    
+    <script>
+    var echarts_data_json = {$echarts_data_json};
+    var defaultStartDate  = '{$search_filter.start_date}';
+    var defaultEndDate    = '{$search_filter.end_date}';
+    var dateType          = '{$search_filter.date_type}';
+    var dataType          = '{$search_filter.data_type}';
+    console.log(defaultStartDate,defaultEndDate);
+    
+  //设置默认值
+/*     setDateValue();
+    function setDateValue() {
+      if (defaultStartDate) {
+        $('#js_timeStart').find('span').text(defaultStartDate);
+      }
+      
+      if (defaultEndDate) {
+        $('#js_timeEnd').find('span').text(defaultEndDate);
+      }
+      
+    }
+     */
+         $('.dateTypeTab').on('click', function () {
+              $('.pop-reorder').removeClass('hidden');
+         });
+         
+         
+         $('.selectDateClick').on('click',function(){
+             $('.pop-bg').removeClass('hidden');
+         });
+         
+         
+        //日期类型
+            $('.date_type').on('click', function (e) {
+              e.stopPropagation();
+              if (parseInt(dateType) == 1) {
+                $('input:radio[value="2"]').attr('checked', 'checked');
+              } else {
+                $('input:radio[value="1"]').attr('checked', 'checked');
+              }
+              $('.dateSubmit').submit();
+              
+            });
+            
+            //数据类型
+            $('.data_type').on('click', function (e) {
+              e.stopPropagation();
+              alert(1);
+              if (parseInt(dataType) == 1) {
+                $('.js_data_type').val(2);
+              } else {
+                $('.js_data_type').val(1);
+              }
+              
+              $('.dateSubmit').submit();
+              
+            });
+            
+            
+            
+            //体验时长 体验次数
+            $('.select_type_num').on('click', function (e) {
+              //e.stopPropagation();
+              $('.js_type').val('2');
+              $('.pop-reorder').addClass('hidden');
+
+              $('.typeSubmit').submit();
+              
+            });
+            
+            $('.select_type_time').on('click', function (e) {
+                //e.stopPropagation();
+                $('.js_type').val('1');
+                $('.pop-reorder').addClass('hidden');
+
+                $('.typeSubmit').submit();
+                
+              });
+          
+            //关闭日期插件
+            $('.closeSelectDate').on('click', function () {
+              $('.selectDate').addClass('hidden');
+              if ($(this).hasClass('sure')) {
+                $('.dateSubmit').submit();
+              }
+            });
+            //清除日期
+            $('.js_clearDate').on('click', function () {
+
+              $('#js_timeStart').css({ opacity: 0 });
+              $('#js_timeStart input').css({ opacity:1 });
+              $('#js_timeEnd').css({ opacity: 0 });
+              $('#js_timeEnd input').css({ opacity:1 });
+            });
+    $(function(){
+      {literal}
+      option = {
+                series : [
+                  {
+                    type: 'pie',
+                    radius : '90%',
+                    center: ['50%', '50%'],
+                    data:echarts_data_json,
+                    label: {
+                      normal: {
+                           formatter: '{d}%',
+                            position: 'inner',
+                            color: '#ccc',
+                            fontSize: 5,
+                      },
+                    }
+                  }
+                ]
+              };
+              if (echarts_data_json.length > 0) {
+                var myChartPie = echarts.init(document.getElementById('echartPie'));
+                myChartPie.setOption(option);
+              }
+        {/literal}
+    });
+    
+    </script>
+    <script>
+    
+  
+  
+    $(function() {
+        //时间范围
+        var startTime, endTime;
+        $('#js_timeStart input').change(function(e) {
+            startTime = e.target.value
+            $(this).siblings('span').css({ opacity: 0 })
+            $(this).css({ opacity: 1 })
+            //alert(startTime)
+        })
+
+        $('#js_timeEnd input').change(function(e) {
+            endTime = e.target.value
+            console.log(e)
+            $(this).siblings('span').css({ opacity: 0 })
+            $(this).css({ opacity: 1 })
+            setTimeout(function() {
+                if (startTime > endTime) alert("结束时间必须大于开始时间")
+            }, 300)
+        })
+    
+        
+    })
+
+    $(function(){
+        //判断是否微信登陆
+        function isWeiXin() {
+            var ua = window.navigator.userAgent.toLowerCase();
+            console.log(ua); //mozilla/5.0 (iphone; cpu iphone os 9_1 like mac os x) applewebkit/601.1.46 (khtml, like gecko)version/9.0 mobile/13b143 safari/601.1
+            if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        if (isWeiXin()) {
+            console.log(" 是来自微信内置浏览器")
+            $('.header').addClass('hidden');
+            $('.pop-reorder').css({ top:'1.146rem' });
+        } else {
+            console.log("不是来自微信内置浏览器")
+        }
+    })
+    </script>
+    
+    <script>
+    var htmlElm = document.getElementsByTagName('html')[0];
+    htmlElm.style.opacity = '0';
+    ! function(a, b) {
+        function c() {
+            var c, b = f.getBoundingClientRect().width;
+            b / i > 540 && (b = 540 * i), c = b / 10, f.style.fontSize = c + "px", k.rem = a.rem = c
+        }
+        var d, l, m, n, o, p, q, r, s, t, e = a.document,
+            f = e.documentElement,
+            g = e.querySelector('meta[name="viewport"]'),
+            h = e.querySelector('meta[name="flexible"]'),
+            i = 0,
+            j = 0,
+            k = b.flexible || (b.flexible = {});
+        g ? (l = g.getAttribute("content").match(/initial\-scale=([\d\.]+)/), l && (j = parseFloat(l[1]), i = parseInt(1 / j))) : h && (m = h.getAttribute("content"), m && (n = m.match(/initial\-dpr=([\d\.]+)/), o = m.match(/maximum\-dpr=([\d\.]+)/), n && (i = parseFloat(n[1]), j = parseFloat((1 / i).toFixed(2))), o && (i = parseFloat(o[1]), j = parseFloat((1 / i).toFixed(2))))), i || j || (p = a.navigator.userAgent, !!p.match(/android/gi), q = !!p.match(/iphone/gi), r = q && !!p.match(/OS 9_3/), s = a.devicePixelRatio, i = q && !r ? s >= 3 && (!i || i >= 3) ? 3 : s >= 2 && (!i || i >= 2) ? 2 : 1 : 1, j = 1 / i), f.setAttribute("data-dpr", i), g || (g = e.createElement("meta"), g.setAttribute("name", "viewport"), g.setAttribute("content", "initial-scale=" + j + ", maximum-scale=" + j + ", minimum-scale=" + j + ", user-scalable=no"), f.firstElementChild ? f.firstElementChild.appendChild(g) : (t = e.createElement("div"), t.appendChild(g), e.write(t.innerHTML))), a.addEventListener("resize", function() {
+            clearTimeout(d), d = setTimeout(c, 300)
+        }, !1), a.addEventListener("pageshow", function(a) {
+            a.persisted && (clearTimeout(d), d = setTimeout(c, 300))
+        }, !1), "complete" === e.readyState ? e.body.style.fontSize = 12 * i + "px" : e.addEventListener("DOMContentLoaded", function() {
+            e.body.style.fontSize = 12 * i + "px"
+        }, !1), c(), k.dpr = a.dpr = i, k.refreshRem = c, k.rem2px = function(a) {
+            var b = parseFloat(a) * this.rem;
+            return "string" == typeof a && a.match(/rem$/) && (b += "px"), b
+        }, k.px2rem = function(a) {
+            var b = parseFloat(a) / this.rem;
+            return "string" == typeof a && a.match(/px$/) && (b += "rem"), b
+        }
+    }(window, window.lib || (window.lib = {}));
+    window.onload = function() {
+        htmlElm.style.opacity = '1';
+    }
+    </script>
+{include file="admin/rfid/footer2.html"}

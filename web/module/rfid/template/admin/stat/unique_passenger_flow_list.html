@@ -1,0 +1,56 @@
+{include_www file="admin/lib/header_new.html" title="客流详情"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{$action_res_url}"><i class="iconfont iconfont-logo2"></i>RFID统计</a>
+      &gt;RFID客流详情（{count($passenger_list)}）
+      <span>
+        
+      </span>
+      <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+    </div>
+
+    <br />
+    
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>MAC地址</th>
+            <!-- <th>首次探测时间</th> -->
+            <th>最后探测时间</th>
+            <!-- <th>操作</th> -->
+          </tr>
+        </thead>
+        <tbody>
+          {$i = 1}
+          {foreach $passenger_list as $k=>$v}
+          <tr id="dataList{$i}" view_id = "{$i}" class="view_id">
+            <td>{$k}</td>
+            <!-- <td>{date('Y-m-d H:i:s', $v.first_time)}</td> -->
+            <td>{date('Y-m-d H:i:s', $v)}</td>
+          </tr>
+           {$i = $i+1}
+          {foreachelse}
+          <tr><td colspan="2">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}
+<script>
+$(function () {
+  $('#searchData').on('click',function() {
+    refershUrl();
+  });
+});
+
+</script>

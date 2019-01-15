@@ -1,0 +1,29 @@
+{* $Id: footer.html 53047M 2013-08-14 01:39:08Z (local) $ *}  
+  <!--start:删除弹层-->
+  <div class="pop-bg js_pop_confirm hidden">
+      <div class="pop-confirm ">
+          <div class="con">
+              <p class="txtcenter">确定删除吗？</p>
+          </div>
+          <div class="bottom">
+              <button type="button" class="btn-default js_btn_concel">取消</button>
+              <button type="button" class="btn-primary">确定</button>
+          </div>
+      </div>
+  </div>
+  
+  <!--end:删除弹层-->
+  <script type="text/javascript">
+      $(function(){
+
+          $('.js_btn_delete').click(function(){
+              $('.js_pop_confirm').removeClass('hidden')
+          })
+          $('.js_btn_concel').click(function(){
+              $('.js_pop_confirm').addClass('hidden')
+          })
+
+      })
+  </script>
+</body>
+</html> 

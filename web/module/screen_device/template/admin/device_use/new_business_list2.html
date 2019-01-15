@@ -1,0 +1,132 @@
+{include_www file="admin/lib/header_new.html" title="亮屏新增"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('screen_stat/admin/device_stat')}"><i class="iconfont iconfont-logo2"></i>亮屏统计</a>
+
+      <a href="{AnUrl('screen_stat/admin/device_stat')}" class="btn btn-primary btn-sm pull-right">返回</a>
+      <!-- <a style="margin-right:10px;" href="{AnUrl("screen_device/admin/device_use_num/bunsiness_num{$search_filter_str}&is_export=1&search_filter[active_status]={$search_filter.active_status}&search_filter[online_status]={$search_filter.online_status}&search_filter[province_id]={$search_filter.province_id}&search_filter[city_id]={$search_filter.city_id}&search_filter[area_id]={$search_filter.area_id}&search_filter[date_type]={$search_filter.date_type}&search_filter[region_id]={$region_id}&search_filter[region_type]={$region_type}&phone_name={$phone_name}&phone_version={$phone_version}&device_unique_id={$device_unique_id}")}" class="btn btn-primary btn-sm pull-right">导出</a> -->
+    </div>
+    <br />
+    {$url = AnUrl("screen_stat/admin/device_stat/new_business/new_business{$search_filter_str}&search_filter[date_type]={$search_filter.date_type}&search_filter[region_id]={$search_filter.region_id}&search_filter[region_type]={$search_filter.region_type}")}
+
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            {if $member_info.res_name != 'business_hall'}
+              <th width="10%">省</th>
+              <th width="10%">市</th>
+              <th width="10%">营业厅名称厅</th>
+            {/if}
+            <th width="8%">设备量</th>
+            <th width="6%">活跃量</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $list as $k=>$v}
+
+          <tr id="dataList{$k}">
+            {if $member_info.res_name != 'business_hall'}
+
+              <td>{_uri('province', $v.province_id, 'name')}</td>
+              <td>{_uri('city', $v.city_id, 'name')}</td>
+
+              <td>{_uri('business_hall', $v.business_id, 'title')}</td>
+            {/if}
+            <td>{$v.new_device_num}</td>
+            <td>{$v.active_num}</td>
+
+            <!-- <td><a href="{AnUrl("screen_stat/admin/device_stat/experience_list/experience_list{$search_filter_str}&phone_name={$phone_name}&search_filter[business_id]={$v.business_id}&search_filter[region_id]={$search_filter.region_id}&search_filter[region_type]={$search_filter.region_type}&device_unique_id={$v.device_unique_id}&from=device_stat_business_hall_list")}">{screen_helper::format_timestamp_text($v.experience_time)}</a></td> -->
+          </tr>
+          {foreachelse}
+          <tr><td colspan="{if $member_info.res_name != 'business_hall'}10{else}7{/if}">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}
+
+<script>
+var isVersionEdit = false;
+
+$(function () {
+  $('#title').autocomplete({
+    source: "/business_hall/admin/ajax/get_title_field",
+  });
+  
+  $('#searchData').on('click',function() {
+    $('#subForm').submit();
+    //refershUrl();
+  });
+
+  $('.phone_info_submit').on('click', function () {
+    var el = $(this).closest('.js_nickname');
+    var newValue = el.find('div input').val();
+    
+    if (!newValue) {
+      alert('值不能为空');return false;
+    }
+    
+    el.find('span').text(newValue);
+    el.find('div').toggleClass('hidden');
+    el.find('span').toggleClass('hidden');
+    
+    var type = el.data('type');
+    var imei = el.attr('data-imei');
+
+    $.post(siteUrl+'/screen/admin/ajax/update_nickname', { new_nickname:newValue, type:type, imei:imei }, function (res) {
+      if (res.info != 'ok') {
+        alert(res.msg);
+      }
+    }, 'json');
+  });
+});
+
+//排序
+$('.order_type').on('click', function () {
+
+  if ($(this).hasClass('glyphicon-arrow-up')) {
+    var order_dir = 'asc';
+  } else {
+    var order_dir = 'desc';
+  }
+  
+  window.location.href = window.location.href + '&order_dir=' + order_dir + '&order_field=' + $(this).attr('order_field');
+
+});
+
+function refershUrl(){
+  var $params           = { };
+  $params.start_date    = $('#start_time').val();
+  $params.end_date      = $('#end_time').val();
+
+  $a = 1;
+  var urlParam = '';
+  for (var i in $params) {
+    if ($params[i]) {
+      if ($a == 1) {
+        urlParam += '?';
+      } else {
+        urlParam += '&';
+      }
+      
+      urlParam += 'search_filter['+ i + ']=' + $params[i];
+    }
+    
+    $a += 1;
+  }
+
+  var url = siteUrl+'/screen/admin/device'+urlParam;
+  window.location.href = url;
+
+}
+</script>

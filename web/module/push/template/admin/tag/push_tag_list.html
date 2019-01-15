@@ -1,0 +1,162 @@
+{include_www file="admin/lib/header_new.html" title="推送管理"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('push_tag/admin/')}"><i class="iconfont iconfont-logo2"></i>推送管理</a>
+      &gt;      
+      <span>设备列表（合计：{if $count}{$count}{else}0{/if}/台）</span>
+    
+    </div>
+    <br />
+
+    <div class="form-search clearfix">
+      <div class="pull-left"  style="float:left;">
+        <form action="{AnUrl('push/admin/')}" id="subForm" methhod='get'>
+          <select name="search_filter[tag_type]" class="pull-left search_tag_type">
+            <option value="">--请选择标签类型--</option>
+            {foreach push_config::$tag_type as $k => $v}
+              <option {if $k == $search_filter.tag_type}selected{/if} value="{$k}">{$v}</option>
+            {/foreach}
+          </select>
+          <input type="text" style="width: 250px;" name="search_filter[tag_nickname]" value="{$search_filter.tag_nickname}" class="form-control input-sm pull-left search_tag_nickname {if $search_filter.tag_type == 'phone_name_version'}hidden{/if}" placeholder="按标签昵称搜索(请先选择搜索类型)">
+          <button type="button" class="btn-search pull-left" id="searchData" data-url="{AnUrl('push/admin/')}" >搜索</button>          
+          <button type="button" class="btn-success  btn-sm pull-left s-tucao-btn clearValue">重置</button>
+        </form>
+      </div>
+      <div class="pull-right">
+        <a href="{AnUrl('push/admin/add')}" class="btn btn-sm btn-success">添加标签类型</a>
+        <a href="javascript:void(0);" class="btn btn-primary btn-sm spitslot_export">导出数据</a>
+      </div>
+    </div>
+
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+              <th width="10%">标签类型</th>
+              <th width="10%">标签昵称</th>
+              <th width="10%">标签</th>
+             <th width="10%">标签来源</th>
+             <th width="12%">添加时间</th>
+             <th width="15%">状态</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $push_list as $k=>$v}
+          <tr id="dataList{$k}">
+            <td>{push_config::$tag_type[$v.res_name]}</td>
+            <td>{push_helper::get_tag_nickname($v.res_name, $v.res_id)}</td>
+            <td>{$v.tag}</td>
+            <td>{$v.res_id}</td>
+             <td>{substr($v.add_time, 0, 10)}</td>
+            <td>
+                <a class="btn btn-xs btn-top btn-danger deleteOne" href="{AnUrl("push/admin/delete?id={$v.id}&tag={$v.tag}")}">删除</a>
+                {* 页面有错误，需调试，此入口暂时注释 *}
+                <!--  <a class="btn btn-xs btn-top btn-success " href="{AnUrl("push/admin/device_view?id={$v.id}")}">设备列表</a>-->
+                <a class="btn btn-xs btn-top btn-info js_push" href="javascript:void(0);" tag="{$v.tag}" push_type="101">推送新版本</a>
+                <a class="btn btn-xs btn-top btn-info js_push" href="javascript:void(0);" tag="{$v.tag}" push_type="2">推送新内容</a>
+            </td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="{if $member_info.res_name != 'business_hall'}10{else}7{/if}">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+
+<script>
+//推送升级锁
+var pushUpgradeLock = false;
+
+//推送锁
+var pushNewContent  = false;
+
+$(function () {
+  $('#searchData').on('click',function() {
+    $('#subForm').submit();
+  });
+  
+  $('.form-search .clearValue').on('click', function() {
+    $('.form-search input[type=text]').val('');
+
+  });
+
+  //导出
+  $('.spitslot_export').click(function(){
+    $('#subForm').append('<input type="hidden" name="is_export" value=1>');
+    $('#subForm').submit();
+    $('#subForm input[name="is_export"]').remove();
+  });
+  
+  //搜索事件
+  $('.search_tag_type').on('change', function(){
+    var tagType = $(this).val();
+    if (tagType && tagType != 'phone_name_version') {
+      $('.search_tag_nickname').removeClass('hidden');
+    } else {
+      $('.search_tag_nickname').addClass('hidden');
+    }
+  });
+  
+  //推送升级
+  $('.js_push').on('click', function () {
+    var tag         = $(this).attr('tag');
+    var push_type   = $(this).attr('push_type');
+    
+    if (!tag) {
+      display_msg('标签参数不完整');
+      return false;
+    }
+    
+    if (push_type != 2 && push_type != 101) {
+      display_msg('不存在的推送类型');
+      return false;
+    }
+    
+    if (pushUpgradeLock) {
+      display_msg('推送中..');
+      return false;
+    }
+    $('#putLoadingMsg').text('推送中..');
+    $('#putLoading').removeClass('hidden');
+
+    pushUpgradeLock = true;
+    $.post(siteUrl+'/push/admin/ajax/push_by_tag', { tag:tag, push_type:push_type }, function (res) {
+      pushUpgradeLock = false;
+      $('#putLoadingMsg').text('');
+      $('#putLoading').addClass('hidden');
+      if (res.info != 'ok') {
+        display_msg(res.info);
+        return false;
+      }
+      
+      display_msg('推送成功');
+
+    }, 'json');
+  });
+  
+});
+
+function display_msg(msg)
+{
+  alert(msg);
+}
+</script>
+
+
+<div class="pop-bg hidden" id="putLoading">
+  <div class="modal-dialog" style=" width:300px; margin:0 auto;top: 25%;">
+    <div style="margin:0 auto;width:100px;"><img style="width:100px;" src="{$smarty.const.STATIC_URL}/images/loading.gif"></div>
+    <div id="putLoadingMsg" style="margin:0 auto;width:150px;font-size:25px; color:#fee"></div>
+  </div>
+</div>
+
+{include_www file="admin/lib/footer_new.html"}

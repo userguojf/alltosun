@@ -1,0 +1,47 @@
+{include file="admin/rfid/header.html" title="客流量详情"}
+<link href="{$smarty.const.STATIC_URL}/css/m-num-map.css" rel="stylesheet" type="text/css">
+<section class="container-detail">
+  <div class="keliu-count">
+    <div class="icon"></div>
+    <div class="num">
+        <span>探测到{count($flow_list)}人</span>
+    </div>
+  </div>
+  <div class="keliu-list">
+    <div class="line"></div>
+    <table class="keliu-list">
+      <thead>
+        <tr>
+          <th>MAC地址</th>
+          <th>信号强度</th>
+          <th>探测时间</th>
+        </tr>
+      </thead>
+      <tbody>
+        {foreach $flow_list as $k => $v}
+          <tr>
+            <td>{$v.mac}</td>
+            <td class="color">{$v.up_rssi}</td>
+            <td>{date('Y-m-d H:i:s', $v.up_time)}</td>
+          </tr>
+        {foreachelse}
+          <tr><td colspan="2">暂无相关信息</td></tr>
+        {/foreach}
+      </tbody>
+    </table>
+  </div>
+</section>
+<script type="text/javascript">
+  $(function(){
+    $('#js_dataType select').change(function(e){
+      console.log(e.target.value)
+      $('#js_dataType .name').text(e.target.value)
+    })
+    $('#js_dataDate input').change(function(e){
+      console.log(e.target.value)
+      $(this).siblings('span').css({ opacity: 0 })
+      $(this).css({ opacity:1 })
+    })
+  })
+</script>
+

@@ -1,0 +1,58 @@
+{include_www file="admin/lib/e_header.html" title="探针统计"}
+<section class="container">
+    <div class="column-list1 column-list2">
+        <div class="crumd">
+            <a href="###">{$date}</a>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>时间</th>
+                    <th>
+                        {if $type == 1}
+                            室外人数
+                        {else if $type == 2}
+                            室内人数
+                        {else if $type == 3}
+                            新顾客
+                        {else if $type == 4}
+                            老顾客
+                        {/if}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {foreach $data as $k => $v}
+                    <tr>
+                        <td>{$k}:00-{$k}:59</td>
+                        <td><span class="blue js_num" hour="{$k}">{$v}</span></td>
+                    </tr>
+                {/foreach}
+            </tbody>
+        </table>
+    </div>
+</section>
+<script>
+$(function(){
+    var res_name = "{$member_info.res_name}";
+    var res_id   = "{$member_info.res_id}";
+    var date     = "{$date}";
+    var type     = "{$type}";
+
+    $('.js_num').click(function(){
+        var hour = $(this).attr('hour');
+        var url  = siteUrl + '/probe_stat/admin/m';
+
+        if ( res_name == 'business_hall' ) {
+        	url += '/mac_list?business_id='+ res_id;
+        } else {
+        	url += '/region_list?res_name='+ res_name + '&res_id='+ res_id;
+        }
+
+        url += '&date='+ date + '&hour='+ hour + '&type=' + type;
+
+        window.location.href = url;
+    });
+});
+</script>
+{include_www file="admin/lib/e_footer.html"}

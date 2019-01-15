@@ -1,0 +1,21 @@
+{include file="share_header.html" title="常见问题管理"}
+<section class="container">
+    <div class="question-detail">
+    {foreach $faq_info as $v}
+      <div class="title">{$v.question}</div>
+      <div class="txt">
+        {$v.answer}
+      </div>
+    {foreachelse}
+        <div class="title">暂无详细描述</div>
+        <div class="txt">
+        </div>
+     {/foreach}
+    </div>
+  </section>
+  <script>
+     $('.btn-back').on('click', function (e) {
+         window.history.back(-1);
+    }); 
+    </script>
+{include file="share_footer.html"}

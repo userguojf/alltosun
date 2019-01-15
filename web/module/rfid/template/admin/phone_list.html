@@ -1,0 +1,69 @@
+{include_www file="admin/lib/header_new.html" title="RFID管理"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('rfid/admin/phone')}"><i class="iconfont iconfont-logo2"></i>手机管理</a>
+            &gt;
+            <span>手机品牌列表</span>
+            {*<a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>*}
+          </div>
+
+          <br />
+          <div class="form-search clearfix">
+             <div class="pull-left">
+                 <form action="{AnUrl('rfid/admin/phone')}" method='post'>
+                   <input type="text" style="width:200px;"  name="search_filter[name]" value="{$search_filter.name}" class="form-control input-sm pull-left js_search"  placeholder="请按手机品牌搜索">
+                    {*2 == version add*}
+                   <input type="text" style="width:200px;"  name="search_filter[version]" value="{$search_filter.version}" class="form-control input-sm pull-left js_search"  placeholder="请按手机型号搜索">
+                   <select class="form-control input-sm pull-left" style="width:200px" name="search_filter[color]" >
+                         <option value="">请选择手机颜色</option>
+                          {$info = rfid_config::$phone_colors}
+                          {foreach  $info as $k=>$v}
+                         <option value="{$v}" {if $v == $search_filter.color}selected = "selected"{/if} >{$v}</option>
+                          {/foreach}
+                   </select>
+                   {*2 == version add*}
+                   <button type="submit" class="btn-search pull-left">搜索</button>
+                 </form>
+            </div>
+            <div class="pull-right">
+                <a href="{AnUrl('rfid/admin/phone/add')}" class="btn btn-sm btn-info">添加</a>
+            </div>
+        </div>
+
+          <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="width:25%;">品牌</th>
+                  <th style="width:25%;">型号</th>
+                  <th style="width:25%;">颜色</th>
+                  <th style="width:25%;">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {foreach $list as $k=>$v}
+                <tr id="dataList{$v.id}" >
+                  <td>{$v.name}</td>
+                  <td>{$v.version}</td>
+                  <td>{$v.color}</td>
+                  <td class="txtleft " resId={$v.id}>
+                        <a class="btn btn-xs  btn-top btn-success" href="{AnUrl("rfid/admin/phone/add?id={$v.id}")}">编辑</a>
+                        <a class="deleteOne btn btn-xs btn-top btn-danger" href="{AnUrl("rfid/admin/phone/delete?id={$v.id}")}">删除</a>
+                    </td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="4">暂无相关信息</td></tr>
+                {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        <!--end:列表-->
+      </div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

@@ -1,0 +1,67 @@
+{include_www file="admin/lib/header.html" title="地区列表"}
+{include_www file="admin/lib/sidebar.html"}   
+<!-- 主内容 start -->
+<div id="content" class="span10">
+  <!-- 标题 start -->
+  <div class="pageTit page-header">
+    <h1>地区管理 <small>在这里你可以对地区管理</small></h1>
+    <div class="opt">
+      <a class="btn btn-info" href="{AnUrl('city/admin/add')}">添加地区</a> 
+    </div>
+  </div>
+  <!-- 标题 end -->
+  
+     <!-- 搜索区块 start -->   
+  <div class="search">
+    <form class="well form-search" action="{AnUrl('city/admin')}" method="get">
+      <input type="hidden" value="city/admin" name="url" />
+      <span>&nbsp;&nbsp;&nbsp;地区名称：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="text" name="search_filter[name]" value="{if $search_filter['name']}{$search_filter['name']}{/if}" class="input-medium">
+      </span>
+      <br />
+      <span>&nbsp;&nbsp;&nbsp;添加时间：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="text" id="start_time" name="search_filter[start_time]" value="{$search_filter['start_time']}" class="input-medium"> --
+        <input type="text" id="end_time" name="search_filter[end_time]" value="{$search_filter['end_time']}" class="input-medium">
+      </span>
+      
+      <br />
+      
+        <button type="submit" class="btn">搜索</button>
+      <input type="reset" class="btn" value="重置" />
+      <input type="submit" class="btn" value="导出" name="is_excel" />
+    </form>
+  </div>
+  
+  
+  <!-- 内容区块 start -->
+  <div class="dataBox">
+    <table class="table table-bordered table-striped center">
+      <thead>
+        <tr>
+          <th class="td30"><input type="checkbox" class="selectAll"/></th>
+          <th>ID</th>
+          <th>省份</th>
+          <th>地区名称</th>
+        </tr>
+      </thead>
+      <tbody>
+        {foreach $list as $k=>$v}
+          <tr id="dataList{$v.id}">
+            <td><input type="checkbox" class="listSelect" /></td>
+            <td>{$v.id}</td>
+            <td>{$v.promary[0]}</td>
+            <td>{$v.name}</td>
+          </tr>
+        {foreachelse}
+          <tr><td colspan="9">暂无相关信息</td></tr>
+        {/foreach}
+      </tbody>
+    </table>
+  </div>
+  <!-- 内容区块 end -->
+  <!-- 分页 start -->
+  {include_www file="admin/lib/pager.html"}
+  <!-- 分页 end -->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer.html"}

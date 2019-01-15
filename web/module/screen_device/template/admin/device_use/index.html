@@ -1,0 +1,231 @@
+{include_www file="admin/lib/header_new.html" title="亮屏管理"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('screen_device/admin/device')}"><i class="iconfont iconfont-logo2"></i>亮屏管理</a>
+      &gt;
+      {if $business_hall_title}<span>{$business_hall_title}</span>&gt;{/if}
+      <span>总设备（合计：{$count}台）</span>
+      <!-- <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a> -->
+      <a style="margin-right:10px;" href="{AnUrl("screen_device/admin/device_use?is_export=1&search_filter[start_date]={$search_filter.start_date}&search_filter[end_date]={$search_filter.end_date}&search_filter[province_id]={$search_filter.province_id}&search_filter[city_id]={$search_filter.city_id}&search_filter[area_id]={$search_filter.area_id}&search_filter[business_hall_title]={$search_filter.business_hall_title}&phone_name={$phone_name}&phone_version={$phone_version}&search_type={$search_type}")}" class="btn btn-primary btn-sm pull-right">导出</a>
+    </div>
+
+   <div class="tabs1">
+      <ul class="clearfix">
+        <li {if $search_type == 'phone_version'}class="curr"{/if}>
+          <a href="{AnUrl('screen_device/admin/device_use?search_type=phone_version')}">按型号</a>
+        </li>
+        <li {if $search_type == 'phone_name'}class="curr"{/if}>
+          <a href="{AnUrl('screen_device/admin/device_use?search_type=phone_name')}">按品牌</a>
+        </li>
+      </ul>
+    </div>
+
+     <form action="{AnUrl('screen_device/admin/device_use')}" id="subForm" method="get">
+      <input type="hidden" value="{$search_type}" name="search_type">
+      
+      {* 时间判断 *}
+      <div class="form-search row clearfix">
+      
+      
+        <div class="tabs2">
+          <div class="form-inline" id="dateSelectBox">
+            {if $member_res_name != 'business_hall'}
+              {* 公共分权限搜索模块 *}
+              {widget model='screen' func='get_search_by_member' file='get_search_by_member.html' member_info="{$member_info}"}
+            {/if}
+            <div class="form-group">
+              <label for="exampleInputName2">时间：</label>
+              <input type="text" class="form-control" style="width:85px; text-align:center;" name="search_filter[start_date]" id="start_time" value="{$search_filter.start_date}" />
+            </div>
+            <div class="form-group">
+              <label for="exampleInputName2">至</label>
+              <input type="text" class="form-control" style="width:85px; text-align:center;" name="search_filter[end_date]" id="end_time" value="{$search_filter.end_date}" />
+            </div>
+            <input type='text' style="width: 80px;" name='search_filter[phone_name]' value="{$search_filter.phone_name}" text-align:center;" placeholder="请输入品牌"  id="autocomplete1"/>
+            <input type='text' style="width: 80px;" name='search_filter[phone_version]' value="{$search_filter.phone_version}" text-align:center;" placeholder="请输入型号"  id="autocomplete"/>
+            <button type="button" class="btn btn-success btn-sm" id="searchData">搜索</button>
+          </div>
+        </div> 
+      </div>
+    </form>
+
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+         <tr>
+          <th width="10%">品牌</th>
+          {if $search_type == 'phone_version'}
+            
+            <th width="10%">型号</th>
+          {else}
+            <th width="10%">名称</th>
+          {/if}
+            <th width="12%">
+            营业厅总数<br />({$business_all_num})
+            {if $order_dir == 'asc' && $order_field == 'business_hall_num'}
+              <span class="glyphicon  glyphicon-arrow-down order_type" aria-hidden="true" order_field="business_hall_num" order_dir='asc' "></span>
+            {else}
+              <span class="glyphicon glyphicon-arrow-up order_type" aria-hidden="true" order_field="business_hall_num" order_dir='desc' ></span>
+            {/if}
+            </th>
+            
+            <th width="10%">
+            设备总数<br />({$device_all_num})
+            {if $order_dir == 'asc' && $order_field == 'device_num'}
+              <span class="glyphicon  glyphicon-arrow-down order_type" aria-hidden="true" order_field="device_num" order_dir='asc' "></span>
+            {else}
+              <span class="glyphicon glyphicon-arrow-up order_type" aria-hidden="true" order_field="device_num" order_dir='desc' ></span>
+            {/if}
+            </th>
+            
+            <th width="9%">
+            新增门店<br />({$business_new_num})
+            </th>
+            <th width="9%">
+            新增设备<br />({$device_new_num})
+            </th>
+            
+            <th width="10%">
+            活跃量<br />({$active_device_num})
+            {if $order_dir == 'asc' && $order_field == 'active_device_num'}
+              <span class="glyphicon  glyphicon-arrow-down order_type" aria-hidden="true" order_field="active_device_num" order_dir='asc' "></span>
+            {else}
+              <span class="glyphicon glyphicon-arrow-up order_type" aria-hidden="true" order_field="active_device_num" order_dir='desc' ></span>
+            {/if}
+            </th>
+            
+            <th>平均活跃(天)</th>
+            
+            <th width="10%">
+             累计体验<br />({screen_helper::format_timestamp_text($experience_time_num)})
+            {if $order_dir == 'asc' && $order_field == 'experience_times'}
+              <span class="glyphicon  glyphicon-arrow-down order_type" aria-hidden="true" order_field="experience_times" order_dir='asc' "></span>
+            {else}
+              <span class="glyphicon glyphicon-arrow-up order_type" aria-hidden="true" order_field="experience_times" order_dir='desc' ></span>
+            {/if}
+            </th>
+            <th>平均体验</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $stat_list as $k=>$v}
+          <tr id="dataList{$k}">
+            
+            {if $search_type == 'phone_version'}
+                <td><a href="{AnUrl("screen_device/admin/device_use/detail?phone_name={$v.phone_name}")}">{$v.name_nickname}</a></td>
+                <td>{$v.version_nickname}</td>
+            {else}
+                <td><a href="{AnUrl("screen_device/admin/device_use/detail?phone_name={$v.phone_name}")}">{$v.phone_name}</a></td>
+                <td><a href="{AnUrl("screen_device/admin/device_use/detail?phone_name={$v.phone_name}")}">{$v.name_nickname}</a></td>
+            {/if}
+            <td><a href="{AnUrl("screen_device/admin/device_use/business_num{$search_filter_str}&phone_name={$v.phone_name}&phone_version={$v.phone_version}")}">{$v.business_hall_num}</a></td>
+            <td><a href="{AnUrl("screen_device/admin/device_use/device_num{$search_filter_str}&phone_name={$v.phone_name}&phone_version={$v.phone_version}")}">{$v.device_num}</a></td>
+            <td><a href="{AnUrl("screen_device/admin/device_use/business_num{$search_filter_str}&phone_name={$v.phone_name}&phone_version={$v.phone_version}&type=2")}">{$v.new_business_hall_num}</a></td>
+            <td><a href="{AnUrl("screen_device/admin/device_use/device_num{$search_filter_str}&phone_name={$v.phone_name}&phone_version={$v.phone_version}&type=2")}">{$v.new_device_num}</a></td>
+            <td>{$v.active_device_num}</td>
+            <td>{$v.active_days_average}</td>
+            <td><a href="{AnUrl("screen_device/admin/device_use/device_num{$search_filter_str}&phone_name={$v.phone_name}&phone_version={$v.phone_version}")}">{screen_helper::format_timestamp_text($v.experience_times)}</a></td>
+            <td>{$v.experience_time_average}</td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="{if $member_info.res_name != 'business_hall'}10{else}7{/if}">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}
+
+<script>
+var isVersionEdit = false;
+
+$(function () {
+  $('#title').autocomplete({
+    source: "/business_hall/admin/ajax/get_title_field",
+  });
+  
+  $('#searchData').on('click',function() {
+    $('#subForm').submit();
+    //refershUrl();
+  });
+  
+  $('.js_nickname span').on('click', function () {
+    
+    isVersionEdit = true;
+    $(this).closest('td').find('div').toggleClass('hidden');
+    $(this).toggleClass('hidden');
+    return false;
+  });
+  
+  
+  
+  $('.phone_info_submit').on('click', function () {
+    var el = $(this).closest('.js_nickname');
+    var newValue = el.find('div input').val();
+    
+    if (!newValue) {
+      alert('值不能为空');return false;
+    }
+    
+    el.find('span').text(newValue);
+    el.find('div').toggleClass('hidden');
+    el.find('span').toggleClass('hidden');
+    
+    var type = el.data('type');
+    var device_unique_id = el.attr('data-unique');
+
+    $.post(siteUrl+'/screen_device/admin/ajax/update_nickname', { new_nickname:newValue, type:type, device_unique_id:device_unique_id }, function (res) {
+      if (res.info != 'ok') {
+        alert(res.msg);
+      }
+    }, 'json');
+  });
+});
+
+//排序
+$('.order_type').on('click', function () {
+
+  if ($(this).hasClass('glyphicon-arrow-up')) {
+    var order_dir = 'asc';
+  } else {
+    var order_dir = 'desc';
+  }
+  
+  window.location.href = window.location.href + '&order_dir=' + order_dir + '&order_field=' + $(this).attr('order_field');
+
+});
+
+function refershUrl(){
+  var $params           = { };
+  $params.start_date    = $('#start_time').val();
+  $params.end_date      = $('#end_time').val();
+
+  $a = 1;
+  var urlParam = '';
+  for (var i in $params) {
+    if ($params[i]) {
+      if ($a == 1) {
+        urlParam += '?';
+      } else {
+        urlParam += '&';
+      }
+      
+      urlParam += 'search_filter['+ i + ']=' + $params[i];
+    }
+    
+    $a += 1;
+  }
+
+  var url = siteUrl+'/screen_device/admin/device'+urlParam;
+  window.location.href = url;
+
+}
+</script>

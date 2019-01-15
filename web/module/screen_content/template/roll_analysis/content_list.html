@@ -1,0 +1,273 @@
+{include_www file="admin/lib/header_new.html" title="内容列表"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<style>
+    .pop-bg p .w_url{
+	   word-wrap: break-word;
+    }
+    .btn_msg{
+       cursor:pointer;
+    }
+    .btn_msg:hover{
+        color:#23527c;
+    }
+</style>
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen_content/admin')}"><i class="iconfont iconfont-logo2"></i>亮屏管理</a>
+            &gt;
+            <span>内容轮播分析</span>
+          </div>
+          <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th width='15%'>标题</th>
+                  <th width='8%'>内容</th>
+                  <th width='8%'>类型</th>
+                  <th width='10%'>上线时间</th>
+                  <th width='10%'>下线时间</th>
+                  <th width='7%'>今日应轮播设备数</th>
+                  <th width='7%'>今日已轮播设备数</th>
+                </tr>
+              </thead>
+              <tbody>
+                {foreach $content_list as $k=>$v}
+                <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                  <td {if $search_filter.put_type ==3}class='btn_msg'{/if}>{$v.title}</td>
+                  <td>
+                    
+                    {if $v.type == 1 || $v.type == 4}
+                        {if $v.new_link}
+                        <a href="{_image($v.new_link)}" target='_blank'><img width="100" src="{_image($v.link)}"></a>
+                        {else}
+                         <a href="{_image($v.link)}" target='_blank'><img width="100" src="{_image($v.link)}"></a>
+                        {/if}
+                    {else if $v.type == 2}
+                        <!--  controls="controls" -->
+                        <video style="width:100px;">
+                            <source src='/upload/video/{$v.link}' type="video/mp4"></source>
+                        <video>
+                    {else if $v.type == 3}
+                        <a href="{$v.link}">点击跳转</a>
+                    {/if}
+                  </td>
+                  <td>{screen_content_config::$content_type[$v.type]}</td>
+                  <td class='btn_start'>{substr($v.start_time, 0, 10)}</td>
+                  <td class='btn_end'>{substr($v.end_time, 0, 10)}</td>
+                  <td ></td>
+                  <td ></td>
+                  <td ></td>
+                </tr>
+                {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        <!--end:列表-->
+        <!--start:弹层-->
+         <div class="pop-bg hidden" id="pop-bg">
+          <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close btn_close2" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title w_title" id="myModalLabel">添加型号昵称</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="media row">
+                      <div class=" col-xs-8">
+                          <div class="media-body">
+                                <input type="text"  name="phone_version_nickname" style="width:180px">
+                                <button type="button" class="btn btn-success btn-sm add_version_submit">确认</button>
+                           
+                          </div>
+                      </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+        </div> 
+<!-- 主内容 end -->
+      </div>
+<script>
+//排序
+$(function() {
+  //X点击隐藏
+  $('.btn_close').click(function(){
+      $('#pop-bg').addClass('hidden');
+  })
+
+	//具体信息弹框
+	$('.btn_msg').click(function(){
+		//获取
+		var title   = $(this).text();
+		var img     = $(this).siblings('td[class="btn_img"]').find('img').attr('src');
+		var url     = $(this).prev('input[class="btn_url"]').val();
+		var start   = $(this).siblings('td[class="btn_start"]').text();
+		var end     = $(this).siblings('td[class="btn_end"]').text();
+		var pro     = $(this).siblings('td[class="btn_pro"]').text();
+		var w_city  = $(this).siblings('td[class="btn_city"]').text();
+		var w_business     = $(this).siblings('td[class="btn_business"]').text();
+		$('.w_pro').text('投放范围：'+pro+'-'+w_city+'-'+w_business);
+		//写入
+		$('.w_title').text(title);
+		$('.w_img').attr('src',img);
+		$('.w_url').text(url);
+		$('.w_url').attr('href',url);
+		$('.w_start').text('上线时间：'+start);
+		$('.w_end').text('下线时间：'+end);
+		//点击显示
+		$('#message').addClass('show');
+	})
+	//X点击隐藏
+	$('.btn_close').click(function(){
+		$('#message').removeClass('show');
+	})
+	//点击量
+	$('.order_stat').click(function(){
+       			var title         = $('.title').val();
+       			var province      = $('.province').val();
+       			var city          = $('.city').val();
+       			var area          = $('.area').val();
+       			var business_hall = $('.business_hall').val();
+       			var type          = $('.type').val();
+       			var search_type   = $('.search_type').val();
+       			var put_type      = $('.put_type').val();
+       			
+       			var order_dir = $(this).attr('order_dir');
+       		window.location.href = "{AnUrl('screen_content/admin?')}"+"&search_filter[title]="+title+"&search_filter[province]="+province+"&search_filter[city]="+city+"&search_filter[area]="+area+"&search_filter[business_hall]="+business_hall+"&search_filter[type]="+type+"&search_filter[search_type]="+search_type+"&search_filter[put_type]="+put_type+"&order_dir="+order_dir;
+       		})
+	//三级联动
+		$('#province').change(function(){
+			 var province_id =  $(this).val();
+			 $.post("{AnUrl('business_hall/admin/ajax/get_city_name')}" , { province_id:province_id } ,function(json){
+				 if (json.msg=='ok') {
+					 var html = "<option selected='selected' value=''>请选择市</option>";
+					 var jsonnum = eval(json.city_info);
+				  for(var i=0; i< jsonnum.length; i++){
+					     html += "<option value= '"+jsonnum[i].id+"'>"+jsonnum[i].name+"</option>";
+					    }
+					    $('#city').html('').append(html);
+					    $('#city').trigger('change');
+					   }
+				 
+				 
+			 },'json')
+		 })
+		 
+	     $('#city').change(function(){
+	    	 var city_id =  $(this).val();
+	    	 $.post("{AnUrl('business_hall/admin/ajax/get_area_name')}" , { city_id:city_id } ,function(json){
+	    		 if (json.msg=='ok') {
+	    			 var html = "<option selected='selected' value=''>请选择地区</option>";
+	    			 var jsonnum = eval(json.area_info);
+	    		  for(var i=0; i< jsonnum.length; i++){
+	    			     html += "<option value= '"+jsonnum[i].id+"'>"+jsonnum[i].name+"</option>";
+	    			    }
+	    			    $('#area').html('').append(html);
+	    			   }else {
+	    				   var html = "<option selected='selected' value=''>请选择地区</option>";
+	    				   $('#area').html('').append(html);
+	    			   }
+	    	 },'json')
+	     })
+	     
+	
+    $( "#sortable" ).sortable({
+        update: function(event, ui){
+            resetViewOrder();
+          }
+        },
+        { cancel: '.show_option' }
+    );
+    $( "#sortable" ).disableSelection();
+});
+function resetViewOrder()
+{
+  var ids = [];
+  $.each($(".view_id"), function(k, v){
+     ids[k] = $(this).attr('view_id');
+  });
+
+  $.post("{AnUrl("screen_content/admin/view_order")}",{ data:ids },function(){});
+}
+</script>
+<script>
+ var updateStatus = {
+     _id:'',
+     _msg :'操作失败',
+     _url:"{AnUrl('screen_content/admin/ajax/update_res_status')}",
+     update:function(obj,status){
+         this._id = $(obj).parent().attr('resId');
+
+         $.post(this._url,{ id:this._id, status:status },function(json){
+             if (json.info == 'ok') {
+                 if (status == 0) {
+                     updateStatus.updateHtmlDown(obj);
+                 } else if (status == 1) {
+                     updateStatus.updateHtmlUp(obj);
+                 } else if (status == 2) {
+                     updateStatus.deleteHtml(obj);
+                 }
+             } else {
+                 alert(json.info);
+             }
+         },'json')
+     },
+     deleteHtml:function(obj){
+    	 $(obj).closest("tr").fadeOut(function(){
+            $(this).remove();
+            interLineColor();
+        });
+        return false;
+     },
+     updateHtmlDown:function(obj){
+         $(obj).html('立即发布');
+         $(obj).removeClass('btn-danger');
+         $(obj).removeClass('down_del');
+
+         $(obj).addClass('btn-info');
+         $(obj).addClass('up_del');
+        
+     },
+     updateHtmlUp:function(obj){
+         $(obj).html('手动下线');
+         $(obj).addClass('btn-danger');
+         $(obj).addClass('down_del');
+
+         $(obj).removeClass('btn-info');
+         $(obj).removeClass('up_del');
+     }
+ };
+
+ $('.down_del').live('click',function(event){
+     event.preventDefault();
+     var result = confirm('下线后的内容将不会展示， 确认下线？');
+     if (result) {
+       updateStatus.update(this,0);
+     }
+     
+     return false;
+     
+ })
+$('.up_del').live('click',function(event){
+     event.preventDefault();
+     updateStatus.update(this,1);
+ })
+
+ $('.delete_hot').live('click',function(event){
+     event.preventDefault();
+     event.stopPropagation();
+     if (!confirm("确定要删除该条记录吗？")) {
+       return false;
+     }
+     updateStatus.update(this,2);
+ })
+</script>
+<!-- 主内容 end -->
+<!-- 引入弹层 -->
+{include_www file="admin/lib/pop.html"}
+{include_www file="admin/lib/footer_new.html"}

@@ -1,0 +1,434 @@
+{include_www file="admin/lib/header_new.html" title="内容列表"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<style>
+    .pop-bg p .w_url{
+       word-wrap: break-word;
+    }
+    .btn_msg{
+       cursor:pointer;
+    }
+    .btn_msg:hover{
+        color:#23527c;
+    }
+</style>
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen_content/admin')}"><i class="iconfont iconfont-logo2"></i>亮屏管理</a>
+            &gt;
+            <span>内容发布（{$count}）</span>
+          </div>
+
+          <div class="tabs1">
+            <ul class="clearfix">
+              <li {if $search_filter['put_type'] == 1}class="curr" {/if}><a href="{AnUrl('screen_content/admin?search_filter[put_type]=1')}">
+              {if $member_info.ranks == 1}
+              集团投放列表
+              {else}
+              自身投放列表
+              {/if}
+              </a></li>
+
+              {if $member_info.res_name != 'group'}
+                <li {if $search_filter['put_type'] == 2}class="curr"{/if}><a href="{AnUrl('screen_content/admin?search_filter[put_type]=2')}">上级投放列表</a></li>
+              {/if}
+
+              {if $member_info.res_name != 'business_hall'}
+                <li {if $search_filter['put_type'] == 3}class="curr"{/if}><a href="{AnUrl('screen_content/admin?search_filter[put_type]=3')}">
+                {if $member_info.ranks == 1}
+                各省投放列表
+                {else}
+                下级投放列表
+                {/if}
+                </a></li>
+              {/if}
+            </ul>
+          </div>
+
+          <div class="form-search clearfix">
+            <div class="pull-left">
+              <form action="{AnUrl('screen_content/admin')}" methhod='get'>
+                <input type="hidden" name="anu" value="screen_content/admin">
+                <input type="hidden" class="search_type" name="search_filter[search_type]" value="{$search_filter.search_type}">
+                <input type="hidden" class="put_type" name="search_filter[put_type]" value="{$search_filter.put_type}">
+                {if $member_info.res_name == 'group' && $search_filter.put_type == 3}
+                  {* 公共分权限搜索模块 *}
+                  {widget model='screen' func='get_search_by_member' file='get_search_by_member.html' member_info="{$member_info}"}
+                {/if}
+                <input style="margin-left:10px;" type="text" name="search_filter[title]" value="{$search_filter.title}" class="form-control input-sm pull-left" placeholder="按标题搜索">
+                <button type="submit" class="btn-search pull-left">搜索</button>
+              </form>
+            </div>
+            <div class="pull-right">
+              <a href="{AnUrl('screen_content/admin/add')}" class="btn btn-sm btn-success">添加内容</a>
+            </div>
+          </div>
+
+          <div class="tabs2">
+            <ul class="clearfix">
+            {foreach screen_content_config::$search_type as $k => $v}
+              <li {if $search_filter['search_type'] == $k}class=" curr"{/if}><a  href="{compile_url($search_filter,'search_type',$k,'screen_content/admin')}">{$v}</a></li>
+            {/foreach}
+            </ul>
+          </div>
+
+          <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th width='15%'>基本信息</th>
+                  <th width='8%'>内容</th>
+                  <th width='15%'>创建者信息</th>
+                  {if $member_info.ranks != 1 || $search_filter.put_type !=3 }
+                    <th width='15%'>内容统计</th>
+                  {/if}
+                  <th width='15%'>发布地区</th>
+                  {if $search_filter.put_type ==1}
+                    <th width='10%'>操作</th>
+                  {else}
+                    <th width='10%'>操作</th>
+                  {/if}
+                </tr>
+              </thead>
+              <tbody>
+                {foreach $content_list as $k=>$v}
+                {* 基本信息 *}
+                <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                  <td>
+                    <b>标题：</b><span>{$v.title}</span><br /><br />
+                    <b>类型：</b><span>{screen_content_config::$content_type[$v.type]}</span><br /><br />
+                    <b>上线时间：</b><span>{substr($v.start_time, 0, 10)}</span><br /><br />
+                    <b>下线时间：</b><span>{substr($v.end_time, 0, 10)}</span><br /><br />
+                  </td>
+                  
+                  {* 内容 *}
+                  <td>
+                    {screen_content_helper::get_content_html_by_type($v)}
+                  </td>
+                  
+                  {* 发布者信息 *}
+                  <td>
+                    {$user_number  = member_helper::get_member_info($v.member_id,'')}
+                    <b>创建者：</b>
+                      <span>
+                        {if $v.res_name == 'group'}
+                          集团管理员
+                        {else if $v.res_name == 'business_hall'}
+                          {business_hall_helper::get_info_name($v.res_name, $v.res_id, 'title')}
+                        {else}
+                          {business_hall_helper::get_info_name($v.res_name, $v.res_id, 'name')}
+                        {/if}
+                      </span>
+                      <br/><br/>
+                      {if $member_info.ranks <= 2 && $search_filter.put_type ==3 }
+                        <b>归属地：</b>
+                        <span>
+                          {screen_content_helper::get_name($v , 'province', 'screen_content')}&nbsp;
+                          {screen_content_helper::get_name($v , 'city', 'screen_content')}&nbsp;
+                          {screen_content_helper::get_name($v , 'business_hall', 'screen_content')}&nbsp;
+                        </span>
+                      {/if}
+                  </td>
+                  
+                  {* 内容统计 *}
+                  {if $member_info.ranks != 1 || $search_filter.put_type !=3 }
+                  <td>
+                     <b>轮播数：</b>
+                     {if $search_filter.put_type != 2}
+                         <a href="{AnUrl("screen_stat/admin/roll_stat?content_id={$v.id}&res_name={$member_info.res_name}&res_id={$member_info.res_id}")}">
+                         {screen_stat_helper::get_content_stat_num($v.id, $member_info.res_name, $member_info.res_id)}
+                         </a>
+                     {else}
+                        {screen_stat_helper::get_content_stat_num($v.id, $member_info.res_name, $member_info.res_id)}
+                     {/if}
+                     <br /><br />
+                     <b>点击数：</b>
+                     {if $search_filter.put_type != 2}
+                         <a href="{AnUrl("screen_stat/admin/click_stat/stat_count?res_id={$v.id}")}">
+                            {screen_stat_helper::get_content_res_click_total($v.id)}
+                         </a>
+                     {else}
+                        {screen_stat_helper::get_content_res_click_total($v.id)}
+                     {/if}
+                     <br /><br />
+                  </td>
+                  {/if}
+                  
+                  {*发布地区*}
+                  <td>
+                    {$res_list = screen_content_helper::get_content_put_region($v.id)}
+                    {foreach $res_list as $k2 => $v2}
+                      {* 全国 *}
+                      {if $v2.group}
+                        全国
+                        {if $v2.province || $v2.city || $v2.area || $v2.business_hall || $v2.phone_name || $v2.phone_version}->{/if}
+                      {else}
+                        {* 省 *}
+                        {if $v2.province}
+                          {$v2.province}
+                          {if $v2.city || $v2.area || $v2.business_hall || $v2.phone_name || $v2.phone_version}->{/if}
+                        {/if}
+                        
+                        {* 市 *}
+                        {if $v2.city}
+                          {$v2.city}
+                          {if $v2.area || $v2.business_hall || $v2.phone_name || $v2.phone_version}->{/if}
+                        {/if}
+                        {* 区 *}
+                        {if $v2.area}
+                          {$v2.area}
+                          {if $v2.business_hall || $v2.phone_name || $v2.phone_version}->{/if}
+                        {/if}
+                        
+                        {* 厅 *}
+                        {if $v2.business_hall}
+                          {$v2.business_hall}
+                          {if $v2.phone_name || $v2.phone_version}->{/if}
+                        {/if}
+                      {/if}
+                      
+                      {* 品牌 *}
+                      {if $v2.phone_name}{$v2.phone_name}&nbsp;{/if}
+                      {* 型号 *}
+                      {if $v2.phone_version}{$v2.phone_version}{/if}
+                      <br /><br />
+                    {foreachelse}
+                      暂未发布
+                    {/foreach}
+                  </td>
+                  
+                  {* 操作 *}
+                  <td class="txtleft" resId={$v.id}>
+                  {* if $search_filter.put_type == 1 || $search_filter.put_type == 3 *}
+                  {if $search_filter.put_type == 2}
+                                                        暂无
+                  {else}
+                      {if !$v.status}
+                        <a class="btn btn-xs btn-info up_del" href="javascript:;">立即发布</a>
+                      {else}
+                        <a class="btn btn-xs btn-danger down_del" href="javascript:;">手动下线</a>
+                      {/if}
+                  {/if}
+                  
+                  {if $search_filter.put_type == 1}
+                      {if $v.type == 5}
+                      <a class="btn btn-xs btn-success" href="{AnUrl("screen_photo/admin?content_id={$v.id}")}">查看</a>
+                      {/if}
+                      <a class="btn btn-xs btn-success" href="{AnUrl("screen_content/admin/edit?id={$v.id}&search_type={$search_filter.search_type}")}">编辑</a>
+                      {*<a class="btn btn-xs btn-success" href="{AnUrl("screen_content/admin/put?id={$v.id}")}">投放</a>*}
+                      <a class="btn btn-xs btn-danger delete_hot" href="javascript:;">删除</a>
+                   {/if}
+                 </td>
+                </tr>
+                {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        <!--end:列表-->
+        <!--start:弹层-->
+         <div class="pop-bg hidden" id="pop-bg">
+          <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close btn_close2" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title w_title" id="myModalLabel">添加型号昵称</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="media row">
+                      <div class=" col-xs-8">
+                          <div class="media-body">
+                                <input type="text"  name="phone_version_nickname" style="width:180px">
+                                <button type="button" class="btn btn-success btn-sm add_version_submit">确认</button>
+                           
+                          </div>
+                      </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+        </div> 
+<!-- 主内容 end -->
+      </div>
+<script>
+//排序
+$(function() {
+  //X点击隐藏
+  $('.btn_close').click(function(){
+      $('#pop-bg').addClass('hidden');
+  })
+
+    //具体信息弹框
+    $('.btn_msg').click(function(){
+        //获取
+        var title   = $(this).text();
+        var img     = $(this).siblings('td[class="btn_img"]').find('img').attr('src');
+        var url     = $(this).prev('input[class="btn_url"]').val();
+        var start   = $(this).siblings('td[class="btn_start"]').text();
+        var end     = $(this).siblings('td[class="btn_end"]').text();
+        var pro     = $(this).siblings('td[class="btn_pro"]').text();
+        var w_city  = $(this).siblings('td[class="btn_city"]').text();
+        var w_business     = $(this).siblings('td[class="btn_business"]').text();
+        $('.w_pro').text('投放范围：'+pro+'-'+w_city+'-'+w_business);
+        //写入
+        $('.w_title').text(title);
+        $('.w_img').attr('src',img);
+        $('.w_url').text(url);
+        $('.w_url').attr('href',url);
+        $('.w_start').text('上线时间：'+start);
+        $('.w_end').text('下线时间：'+end);
+        //点击显示
+        $('#message').addClass('show');
+    })
+    //X点击隐藏
+    $('.btn_close').click(function(){
+        $('#message').removeClass('show');
+    })
+    //点击量
+    $('.order_stat').click(function(){
+                var title         = $('.title').val();
+                var province      = $('.province').val();
+                var city          = $('.city').val();
+                var area          = $('.area').val();
+                var business_hall = $('.business_hall').val();
+                var type          = $('.type').val();
+                var search_type   = $('.search_type').val();
+                var put_type      = $('.put_type').val();
+                
+                var order_dir = $(this).attr('order_dir');
+            window.location.href = "{AnUrl('screen_content/admin?')}"+"&search_filter[title]="+title+"&search_filter[province]="+province+"&search_filter[city]="+city+"&search_filter[area]="+area+"&search_filter[business_hall]="+business_hall+"&search_filter[type]="+type+"&search_filter[search_type]="+search_type+"&search_filter[put_type]="+put_type+"&order_dir="+order_dir;
+            })
+    //三级联动
+        $('#province').change(function(){
+             var province_id =  $(this).val();
+             $.post("{AnUrl('business_hall/admin/ajax/get_city_name')}" , { province_id:province_id } ,function(json){
+                 if (json.msg=='ok') {
+                     var html = "<option selected='selected' value=''>请选择市</option>";
+                     var jsonnum = eval(json.city_info);
+                  for(var i=0; i< jsonnum.length; i++){
+                         html += "<option value= '"+jsonnum[i].id+"'>"+jsonnum[i].name+"</option>";
+                        }
+                        $('#city').html('').append(html);
+                        $('#city').trigger('change');
+                       }
+                 
+                 
+             },'json')
+         })
+         
+         $('#city').change(function(){
+             var city_id =  $(this).val();
+             $.post("{AnUrl('business_hall/admin/ajax/get_area_name')}" , { city_id:city_id } ,function(json){
+                 if (json.msg=='ok') {
+                     var html = "<option selected='selected' value=''>请选择地区</option>";
+                     var jsonnum = eval(json.area_info);
+                  for(var i=0; i< jsonnum.length; i++){
+                         html += "<option value= '"+jsonnum[i].id+"'>"+jsonnum[i].name+"</option>";
+                        }
+                        $('#area').html('').append(html);
+                       }else {
+                           var html = "<option selected='selected' value=''>请选择地区</option>";
+                           $('#area').html('').append(html);
+                       }
+             },'json')
+         })
+         
+    
+    $( "#sortable" ).sortable({
+        update: function(event, ui){
+            resetViewOrder();
+          }
+        },
+        { cancel: '.show_option' }
+    );
+    $( "#sortable" ).disableSelection();
+});
+function resetViewOrder()
+{
+  var ids = [];
+  $.each($(".view_id"), function(k, v){
+     ids[k] = $(this).attr('view_id');
+  });
+
+  $.post("{AnUrl("screen_content/admin/view_order")}",{ data:ids },function(){});
+}
+</script>
+<script>
+ var updateStatus = {
+     _id:'',
+     _msg :'操作失败',
+     _url:"{AnUrl('screen_content/admin/ajax/update_res_status')}",
+     update:function(obj,status){
+         this._id = $(obj).parent().attr('resId');
+
+         $.post(this._url,{ id:this._id, status:status },function(json){
+             if (json.info == 'ok') {
+                 if (status == 0) {
+                     updateStatus.updateHtmlDown(obj);
+                 } else if (status == 1) {
+                     updateStatus.updateHtmlUp(obj);
+                 } else if (status == 2) {
+                     updateStatus.deleteHtml(obj);
+                 }
+             } else {
+                 alert(json.info);
+             }
+         },'json')
+     },
+     deleteHtml:function(obj){
+         $(obj).closest("tr").fadeOut(function(){
+            $(this).remove();
+            interLineColor();
+        });
+        return false;
+     },
+     updateHtmlDown:function(obj){
+         $(obj).html('立即发布');
+         $(obj).removeClass('btn-danger');
+         $(obj).removeClass('down_del');
+
+         $(obj).addClass('btn-info');
+         $(obj).addClass('up_del');
+        
+     },
+     updateHtmlUp:function(obj){
+         $(obj).html('手动下线');
+         $(obj).addClass('btn-danger');
+         $(obj).addClass('down_del');
+
+         $(obj).removeClass('btn-info');
+         $(obj).removeClass('up_del');
+     }
+ };
+
+ $('.down_del').live('click',function(event){
+     event.preventDefault();
+     var result = confirm('下线后的内容将不会展示， 确认下线？');
+     if (result) {
+       updateStatus.update(this,0);
+     }
+     
+     return false;
+     
+ })
+$('.up_del').live('click',function(event){
+     event.preventDefault();
+     updateStatus.update(this,1);
+ })
+
+ $('.delete_hot').live('click',function(event){
+     event.preventDefault();
+     event.stopPropagation();
+     if (!confirm("确定要删除该条记录吗？")) {
+       return false;
+     }
+     updateStatus.update(this,2);
+ })
+</script>
+<!-- 主内容 end -->
+<!-- 引入弹层 -->
+{include_www file="admin/lib/pop.html"}
+{include_www file="admin/lib/footer_new.html"}

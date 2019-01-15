@@ -1,0 +1,38 @@
+{include file="apply/header.html" title="关注申请"}
+<div class="success">
+    <div class="icon-success"></div>
+    <h3>提交成功</h3>
+    <p class="check-result">5秒后，将出审核结果</p>
+</div>
+<script>
+//获取验证码 倒计时
+var errcode = "{$errcode}";
+var clock   = '';
+var sec     = 5;
+function sendCode()
+{     
+    $('.check-result').text(sec+'秒后，将出审核结果');
+    clock = setInterval(doLoop, 1000); //一秒执行一次
+}
+function doLoop()
+{
+    sec--;
+    if(sec > 0){
+        $('.check-result').text(sec+'秒后，将出审核结果');
+    }else{
+         clearInterval(clock); //清除js定时器
+         $('.check-result').text('已出审核结果...');
+         //window.location.href = siteUrl + '/qydev/apply/mid';
+         //提示客户申请结果
+         if (parseInt(errcode) == 100001) {
+             window.location.href = siteUrl + '/qydev/apply/error';
+
+         } else {
+             window.location.href = siteUrl + '/qydev/apply/success';
+         }
+    }
+}
+//
+sendCode();
+</script>
+{include file="apply/footer.html" }

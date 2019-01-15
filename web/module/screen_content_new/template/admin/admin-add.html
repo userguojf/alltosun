@@ -1,0 +1,280 @@
+{include file="admin/lib/new_header.html" title="亮屏"}
+		<!--start:container-add-->
+		<div class="container-add">
+			<div class="bread clearfix">
+				<div class="left">
+					<a href="###">亮屏管理</a>
+					<i class="icon-arrow-right"></i>
+					<a href="###" class="active">内容发布（48）</a>
+				</div>
+				<div class="right">
+					<a href="###" class="active">返回内容列表&gt;&gt;</a>
+				</div>
+			</div>
+			<div class="add-form">
+				<form>
+					<div class="main">
+						<div class="item clearfix">
+							<label class="left">标题</label>
+							<div class="con left">
+								<div class="input"><input type="text" name="" placeholder="默认投放全国内容"></div>
+							</div>
+						</div>
+						<div class="item clearfix">
+							<label class="left">类型</label>
+							<div class="con left">
+								<div class="select">
+									<select>
+										<option>图片</option>
+									</select>
+									<div class="select-list hidden">
+										<p class="active">图片</p>
+										<p>图片</p>
+										<p>图片</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="item clearfix">
+							<label class="left">图片</label>
+							<div class="con left">
+								<div class="pic">
+									<img src="../img-liangping/test01.png">
+								</div>
+								<div class="btn-upload">
+									<span>重新选择</span>
+									<input type="file" name="">
+								</div>
+							</div>
+						</div>
+						<div class="item clearfix">
+							<label class="left">上线时间</label>
+							<div class="con left">
+								<div class="input">
+									<input type="text" name="" placeholder="">
+									<i class="icon-date"></i>
+								</div>
+							</div>
+						</div>
+						<div class="item clearfix">
+							<label class="left">下线时间</label>
+							<div class="con left">
+								<div class="input">
+									<input type="text" name="" placeholder="">
+									<i class="icon-date"></i>
+								</div>
+							</div>
+						</div>
+						<div class="item clearfix">
+							<label class="left">展示时长</label>
+							<div class="con left">
+								<div class="input">
+									<input type="text" name="" placeholder="10">
+									<div class="tips">展示时长时间单位为秒</div>
+								</div>
+							</div>
+						</div>
+						<div class="item clearfix">
+							<label class="left">展示时长</label>
+							<div class="con left">
+								<label class="radio">
+									<input type="radio" name="fanwei">
+									<span>全国</span>
+								</label>
+								<label class="radio">
+									<input type="radio" name="fanwei">
+									<span>投放到指定区域</span>
+									<a href="javascript:void(0);" class="btn-choose">选择投放地区</a>
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="btn-area">
+						<button type="submit" class="btn-primary">立即投放</button>
+						<button type="button" class="btn-default-primary">仅保存</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		<!--end:container-add-->
+		<!--start:上传背景图类型弹层-->
+		<div class="pop-bg hidden"></div>
+		<div class="pop-choose-types hidden">
+			<div class="pop-close"></div>
+			<div class="con">
+				<label><input type="radio" checked="" name="type"><span>使用平台制作一张宣传图</span></label>
+				<label><input type="radio" name="type"><span>不了，我要发布自己的宣传品</span></label>
+			</div>
+			<div class="bottom">
+				<button type="button" class="btn-default">取消</button>
+				<button type="button" class="btn-primary">下一步</button>
+			</div>
+		</div>
+		<!--end:上传背景图类型弹层-->
+		<!--start:选择背景弹层-->
+		
+		<div class="pop-choose hidden">
+			<div class="pop-close"></div>
+			<div class="pop-top">选择一张背景</div>
+			<div class="pop-main">
+				<ul class="choose-bgs clearfix">
+					<li>
+						<div class="upload">
+							<div class="icon-add"></div>
+							<div class="desc1">上传背景</div>
+						</div>
+					</li>
+					<li class="active">
+						<div class="pic"><img src="../img-liangping/test01.png"></div>
+						<div class="btn-radio"></div>
+					</li>
+					<li>
+						<div class="pic"><img src="../img-liangping/test01.png"></div>
+						<div class="btn-radio"></div>
+					</li>
+					<li>
+						<div class="pic"><img src="../img-liangping/test01.png"></div>
+						<div class="btn-radio"></div>
+					</li>
+					<li>
+						<div class="pic"><img src="../img-liangping/test01.png"></div>
+						<div class="btn-radio"></div>
+					</li>
+					<li>
+						<div class="pic"><img src="../img-liangping/test01.png"></div>
+						<div class="btn-radio"></div>
+					</li>
+					<li>
+						<div class="pic"><img src="../img-liangping/test01.png"></div>
+						<div class="btn-radio"></div>
+					</li>
+					<li>
+						<div class="pic"><img src="../img-liangping/test01.png"></div>
+						<div class="btn-radio"></div>
+					</li>
+				</ul>
+			</div>
+			<div class="pop-bottom">
+				<button type="button" class="btn-default">返回</button>
+				<button type="button" class="btn-primary">下一步</button>
+			</div>
+		</div>
+		<!--end:选择背景弹层-->
+		<!--start:选择投放地区弹层-->
+			<div class="pop-choose ">
+				<div class="pop-close"></div>
+				<div class="pop-top">编辑投放区域</div>
+				<div class="pop-main clearfix">
+					<div class="choose-list left">
+						<div class="title">添加投放地区</div>
+						<div class="box">
+							<div class="item clearfix">
+								<label class="left">省份</label>
+								<div class="select left">
+									<select>
+										<option>安徽</option>
+									</select>
+									<div class="select-list hidden" style="z-index: 4">
+										<p>王峰涛固镇仲兴街道</p>
+										<p class="active">王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+									</div>
+								</div>
+							</div>
+							<div class="item clearfix">
+								<label class="left">城市</label>
+								<div class="select left">
+									<select>
+										<option>蚌埠</option>
+									</select>
+									<div class="select-list hidden" style="z-index: 3">
+										<p>王峰涛固镇仲兴街道</p>
+										<p class="active">王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+									</div>
+								</div>
+							</div>
+							<div class="item clearfix">
+								<label class="left">地区</label>
+								<div class="select left">
+									<select>
+										<option>中市区</option>
+									</select>
+									<div class="select-list hidden" style="z-index: 2">
+										<p>王峰涛固镇仲兴街道</p>
+										<p class="active">王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+									</div>
+								</div>
+							</div>
+							<div class="item clearfix">
+								<label class="left">营业厅</label>
+								<div class="select left">
+									<select>
+										<option>王峰涛固镇仲兴街道</option>
+									</select>
+									<div class="select-list ">
+										<p>王峰涛固镇仲兴街道</p>
+										<p class="active">王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+										<p>王峰涛固镇仲兴街道</p>
+									</div>
+								</div>
+							</div>
+							<div class="btn">
+								<button type="button" class="btn-default-primary">添加至右侧列表</button>
+							</div>
+						</div>
+					</div>
+					<div class="choosed-list left">
+						<div class="title">已选地区（单击移除）</div>
+						<div class="box">
+							<div class="item-thead clearfix">
+								<div class="th info left">投放类型</div>
+								<div class="th desc left">投放地区</div>
+							</div>
+							<div class="item-tbody">
+								<div class="tr clearfix">
+									<div class="td info left">全省投放</div>
+									<div class="td desc left">贵州省</div>
+								</div>
+								<div class="tr clearfix">
+									<div class="td info left">城市投放</div>
+									<div class="td desc left">海南省－－海口市</div>
+								</div>
+								<div class="tr clearfix">
+									<div class="td info left">地区投放</div>
+									<div class="td desc left">河北省－－石家庄市－－长安区</div>
+								</div>
+								<div class="tr clearfix">
+									<div class="td info left">营业厅投放</div>
+									<div class="td desc left">河北省－－石家庄市－－长安区－－翼海众馨家园专营店翼海众馨家园专营店</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="pop-bottom">
+					<button type="button" class="btn-default">取消</button>
+					<button type="submit" class="btn-primary">保存</button>
+				</div>
+			</div>
+		
+		<!--end:选择投放地区弹层-->
+</body>
+</html>

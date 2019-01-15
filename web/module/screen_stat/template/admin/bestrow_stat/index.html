@@ -1,0 +1,139 @@
+{include_www file="admin/lib/header_new.html" title="亮屏覆盖量统计"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    #mainEchart{
+        height:500px;
+        border:1px solid #ccc;
+        margin: 10px;
+        padding:10px;
+    }
+</style>
+{* 主内容START *}
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('screen_stat/admin/device_stat')}"><i class="iconfont iconfont-logo2"></i>亮屏覆盖量统计</a>
+      &gt;
+      <span>设备统计</span>
+    </div>
+    {* 时间判断 *}
+    <div class="form-search row clearfix">
+      <div class="tabs2">
+        <ul class=" col-sm-4">
+          <li class="dateType {if $search_filter.date_type==1}curr{/if}" ><a href="{AnUrl("screen_stat/admin/bestrow_stat?search_filter[date_type]=1&is_index=1")}" >今日</a></li>
+          <li class="dateType {if $search_filter.date_type==2}curr{/if}" ><a href="{AnUrl("screen_stat/admin/bestrow_stat?search_filter[date_type]=2&is_index=1")}" >本周</a></li>
+          <li  class="dateType {if $search_filter.date_type==3}curr{/if}"><a href="{AnUrl("screen_stat/admin/bestrow_stat?search_filter[date_type]=3&is_index=1")}" >本月</a></li>
+        </ul>
+        <form action="{AnUrl('screen_stat/admin/bestrow_stat')}" method="get">
+          <input type="hidden" name="search_filter[date_type]" value="4">
+          <input type="hidden" name="is_index" value="1">
+          <div class="col-sm-8">
+            <div class="form-inline" id="dateSelectBox" >
+              <div class="form-group">
+                  <label for="exampleInputName2">时间：</label>
+                  <input type="text" class="form-control" style="width:100px; text-align:center;" name="search_filter[start_date]" id="start_time" value="{$search_filter.start_date}" />
+              </div>
+              <div class="form-group">
+                  <label for="exampleInputName2">至</label>
+                  <input type="text" class="form-control" style="width:100px; text-align:center;" name="search_filter[end_date]" id="end_time" value="{$search_filter.end_date}" />
+              </div>
+              <button type="button" class="btn btn-success btn-sm" id="searchData">搜索</button>
+            </div>
+          </div>
+        </form>
+        </div>
+      </div>
+      <div id="mainEchart">
+        <!-- 加载中弹层 wangjf add -->
+            <div style="margin:0 auto;width:100px; margin-top:20%"><img style="width:100px;" src="{$smarty_const.STATIC_URL}/images/loading2.gif"></div>
+      </div>
+      <div class="list">
+        <table class="table table-bordered table-striped center table_co_td">
+          <thead>
+            <tr>
+              <th width='10%;'>区域</th>
+              <th width='10%;'>营业厅总覆盖量</th>
+              <th width='10%;'>设备总安装量</th>
+              {if $member_info.res_name == 'group' && $is_today}
+                <th width='10%;'>在线数量</th>
+              {/if}
+              <th width='10%;'>新增营业厅</th>
+              <th width='10%;'>新增设备量</th>
+              <th width='10%;'>活跃数量</th>
+              <th width='10%;'>下柜数量</th>
+              {if $member_info.res_name == 'group'}
+                <th width='10%;'>体验时长</th>
+              {/if}
+            </tr>
+          </thead>
+          <tbody>
+            {foreach $data_list as $k => $v}
+              {if $k == 0}
+                {$res_name = $member_info.res_name}
+                {$res_id = $member_info.res_id}
+              {else}
+                {$res_name = $subordinate_res_name}
+                {$res_id = $v[$subordinate_res_id_field]}
+              {/if}
+              <tr id="dataList{$k}">
+                <td>{$v.region_name}</td>
+                <td>
+                  <a href="{AnUrl("screen_stat/admin/bestrow_stat/business_hall_cover{$search_filter_str}&res_name={$res_name}&res_id={$res_id}")}">{$v.cover_business_hall_count}</a>
+                </td>
+                <td>
+                  <a href="{AnUrl("screen_stat/admin/bestrow_stat/device_list{$search_filter_str}&res_name={$res_name}&res_id={$res_id}&type=1")}">{$v.install_device_count}</a>
+                </td>
+                <!-- 在线数量 -->
+                {if $member_info.res_name == 'group' && $is_today}
+                  <td>
+                   <a href="{AnUrl("screen_stat/admin/bestrow_stat/device_list{$search_filter_str}&res_name={$res_name}&res_id={$res_id}&type=2")}">{$v.online_device_count}</a>
+                  </td>
+                {/if}
+                <!-- 新增厅店 -->
+                <td>
+                  <a href="{AnUrl("screen_stat/admin/bestrow_stat/new_cover_business_hall{$search_filter_str}&res_name={$res_name}&res_id={$res_id}")}">{$v.new_cover_business_hall_count}</a>
+                </td>
+                 <!-- 新增设备 -->
+                <td>
+                  <a href="{AnUrl("screen_stat/admin/bestrow_stat/device_list{$search_filter_str}&res_name={$res_name}&res_id={$res_id}&type=3")}">{$v.new_device_count}</a>
+                </td>
+                <!-- 活跃数 -->
+                <td>
+                  <a href="{AnUrl("screen_stat/admin/bestrow_stat/device_list{$search_filter_str}&res_name={$res_name}&res_id={$res_id}&type=4")}">{$v.active_device_count}</a>
+                </td>
+                <!-- 下柜数 -->
+                <td>
+                  <a href="{AnUrl("screen_stat/admin/bestrow_stat/device_list{$search_filter_str}&res_name={$res_name}&res_id={$res_id}&type=5")}">{$v.drop_off_device_count}</a>
+                </td>
+                {if $member_info.res_name == 'group'}
+                  <!-- 体验时长 -->
+                  <td>
+                    <a href="{AnUrl("screen_stat/admin/bestrow_stat/experience_time_list{$search_filter_str}&res_name={$res_name}&res_id={$res_id}")}">{$v.experience_time_count}</a>
+                  </td>
+                {/if}
+              </tr>
+            {foreachelse}
+            <tr><td colspan="{if $member_info.res_name == 'group'}9{else}7{/if}">暂无相关信息</td></tr>
+            {/foreach}
+            </tbody>
+        </table>
+        {include_www file="admin/lib/pager_new.html"}
+      </div>
+  </div>
+    <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+<script src="{$smarty.const.STATIC_URL}/js/echarts-2.2.7/echarts.js"></script>
+<script>
+  //搜索
+  $(function () {
+    $('#searchData').on('click', function () {
+      $('form').submit();
+    });
+  }) 
+  $(window).load(function () {
+    $('#mainEchart').load('{AnUrl("screen_stat/admin/bestrow_stat/get_echart{$search_filter_str}")}');
+  });
+</script>
+<!-- <script src="{$smarty.const.STATIC_URL}/js/screen_stat/admin/bestrow_stat/device_stat_echart.js"></script> -->
+{include_www file="admin/lib/footer_new.html"}

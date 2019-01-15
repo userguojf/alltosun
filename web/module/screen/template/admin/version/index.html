@@ -1,0 +1,110 @@
+{include_www file="admin/lib/header_new.html" title="版本管理"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{$action_res_url}"><i class="iconfont iconfont-logo2"></i>亮屏管理</a>
+      &gt;
+      <span>版本列表</span>
+
+      <a href="{AnUrl("screen/admin/version/add")}" class="btn btn-primary btn-sm pull-right">添加版本</a>
+    </div>
+    <br />
+
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th width="20px;">版本号</th>
+<!--             <th>版本地址</th> -->
+            <th width="">版本简介</th>
+            <th width="180px;">安装包地址</th>
+            <th width="75px;">大小</th>
+            <th width="90px;">添加时间</th>
+            <th width="">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $screen_version_list as $k=>$v}
+          <tr id="dataList{$k}">
+            <td>{$v.version_no}</td>
+            <!-- <td>{$v.link}</td> -->
+            <td>{$v.intro}</td>
+            <td ><a href="{$smarty.const.STATIC_URL}/{$v.path}">{$v.path}</a></td>
+            <td>{if $v.size}{screen_helper::get_filesize({$v.size})}{else}--{/if}</td>
+            <td>{date("Y-m-d H:i", strtotime($v.add_time))}</td>
+            <td>
+                <a class="btn btn-xs btn-info" href="{$smarty.const.STATIC_URL}/{$v.path}">下载</a>
+                {if $v.status == 1}
+                <a class="btn btn-xs btn-info js_updateStatus" data-id={$v.id} data-status="2"; href="javascript:void(0);">立即发布</a>
+                {else $v.status == 2}
+                <a class="btn btn-xs btn btn-xs btn-danger" href="javascript:;")}">已发布</a>
+                {/if}
+
+                <a class="btn btn-xs btn-success" href="{AnUrl("screen/admin/version/edit?id={$v.id}")}">修改</a>
+                <a class="btn btn-xs btn btn-xs btn-danger" href="{AnUrl("screen/admin/version/delete?id={$v.id}")}">删除</a>
+            </td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="6">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}
+
+<script>
+$(function () {
+  $('#searchData').on('click',function() {
+    refershUrl();
+  });
+  
+  $(".js_updateStatus").click(function(){
+    var thisObj  = $(this);
+    var dataId = $(this).data('id');
+    var dataStatus = $(this).data('status');
+
+    $.post("{AnUrl("screen/admin/version/change_status")}",{ id:dataId, status:dataStatus },function(json){
+      if (json.info != 'ok') {
+        return json.info;
+      }
+      
+      thisObj.text('已发布');
+      thisObj.attr("class", "btn btn-xs btn btn-xs btn-danger");
+    }, 'json');
+  })
+});
+
+function refershUrl(){
+  var $params           = { };
+  $params.start_date    = $('#start_time').val();
+  $params.end_date      = $('#end_time').val();
+
+  $a = 1;
+  var urlParam = '';
+  for (var i in $params) {
+    if ($params[i]) {
+      if ($a == 1) {
+        urlParam += '?';
+      } else {
+        urlParam += '&';
+      }
+      
+      urlParam += 'search_filter['+ i + ']=' + $params[i];
+    }
+    
+    $a += 1;
+  }
+
+  var url = siteUrl+'/rfid/admin/stat/detail'+urlParam;
+  window.location.href = url;
+
+}
+</script>

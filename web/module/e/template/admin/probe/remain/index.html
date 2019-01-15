@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+	<title>智能考勤</title>
+	<link rel="stylesheet" type="text/css" href="{$smarty.const.STATIC_URL}/css/m-kaoqin.css">
+</head>
+<body>
+	<div class="wrap">
+		<div class="header">
+			<a href="javascript:void(0);" class="btn-back"><em class="icon-arrow-left"></em>返回</a>
+			<div class="title">智能考勤</div>
+		</div>
+<!-- 		<div class="header-user">
+			<div class="avatar"><img src="{$smarty.const.STATIC_URL}/images/share.jpg"></div>
+			<div class="name">
+				<span>李毅</span>
+				<a href="tel:13910605146" class="tel">13910605146</a>
+			</div>
+		</div> -->
+		<div class="kaoqin-list">
+			<div class="kaoqin-item">
+				<div>{$start_time}<br>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;至<br>
+                  {$end_time}
+                </div>
+				<div class="status status-warning">
+					<span class="tag" style="background-color:green;">总体验时长</span>
+					<span class="info">{$remain_time}</span>
+				</div>
+				<!-- <em class="icon-arrow-right"></em> -->
+			</div>
+		</div>
+		<div class="kaoqin-detail">
+			<table cellspacing="0" cellpadding="0">
+				<tr>
+					<th>探测时间</th>
+					<th>探测信号</th>
+				</tr>
+                {foreach $time_lines as $v}
+                  <tr>
+                    {$info = explode(':', $v)}
+                    <td>{date('Y-m-d H:i:s', $info[0])}</td>
+                    <td>{$info[1]}</td>
+                  </tr>
+                {/foreach}
+			</table>
+		</div>
+	</div>
+</body>
+</html>

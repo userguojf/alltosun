@@ -1,0 +1,133 @@
+{include_www file="admin/lib/header_new.html" title="企业号通讯录管理"}
+<!--start:右侧-->
+<div class="main mian2 ">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('qydev/admin')}"><i class="iconfont iconfont-logo2"></i>企业号通讯录管理</a>
+      &gt;
+      <span>{if !$user_info.id}通讯录添加{else}通讯录编辑{/if}</span>
+      <a href="{AnUrl('qydev/admin')}" class="btn btn-primary btn-sm pull-right">企业号通讯录列表</a>
+    </div>
+    <div class="clearfix">
+      <div class="form-add pull-left" style="width:80%;">
+        <form class='form-horizontal' action="{AnUrl('qydev/admin/save')}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="user_info[id]" value="{$user_info.id}">
+
+        {*added*}
+	            <div class="form-group form-inline" {if $user_info.id}style="display:none;"{/if}>
+	                <label class="col-sm-3 control-label coupon-card">添加方式</label>
+	                <div class="col-sm-9">
+	                    {foreach qydev_config::$user_add_type as $k => $v}
+	                    <div class="checkbox col-sm-5">
+	                        <label>
+	                            <input type="radio" name="type" value="{$k}" {if $k == 1} checked {/if} class='JS_siteType'>&nbsp;{$v}
+	                        </label>
+	                    </div>
+	                    {/foreach}
+	                </div>
+	            </div>
+            {*线*}
+            <div class="form-line" {if $user_info.id}style="display:none;"{/if}><em></em></div>
+             <!--导入-->
+            <div class="form-group together_add " style="display:none;">
+                <label class="col-sm-3 control-label coupon-num">导入</label>
+                <div class="col-sm-3">
+                    <input type="file" name="excel_data" value="">
+                </div>
+                
+                <div class="col-sm-3">
+                    <a type="button" class="btn btn-sm btn-warning" href="{AnUrl('qydev/admin/load_instruction')}">&nbsp;下载模板</a>
+                </div>
+            </div>
+            <!-- 导入 -->
+        {*added*}
+
+        <div class="form-group alone_add">
+          <label class="col-sm-3 control-label">联系人：</label>
+          <div class="col-sm-6">
+               <input type="text" name="user_info[user_name]" value="{$user_info.user_name}"  class="form-control"  filter="filter_string" placeholder="请输入联系人" >
+          </div>
+        </div>
+        <div class="form-group alone_add">
+          <label class="col-sm-3 control-label">联系电话：</label>
+          <div class="col-sm-6">
+               <input type="text" name="user_info[user_phone]" value="{$user_info.user_phone}"  class="form-control"  filter="filter_string" placeholder="请输入联系电话">
+          </div>
+        </div>
+        <div class="form-group alone_add">
+          <label class="col-sm-3 control-label">企业号账号：</label>
+           <div class="col-sm-6">
+                <input type="text" name="user_info[unique_id]" value="{$user_info.unique_id}"  class="form-control"  filter="filter_string" placeholder="请输入企业号账号">
+          </div>
+        </div>
+         <div class="form-group alone_add">
+          <label class="col-sm-3 control-label">渠道码：</label>
+           <div class="col-sm-6">
+                <input type="text" name="user_info[user_number]" value="{$user_info.user_number}"  class="form-control"  filter="filter_string" placeholder="请输入渠道码 ">
+          </div>
+        </div>
+        <div class="form-group alone_add">
+           <label class="col-sm-3 control-label">级别：</label>
+           <div class="col-sm-6">
+             <select class="form-control" name="user_info[type]">
+                    <option value="99">请选择级别</option>
+                   {$user_type_info = qydev_config::$user_type}
+                   {foreach  $user_type_info as $k => $v}
+                     <option value="{$k}" {if  $user_info.type == $k}selected = "selected"{/if} >{$v}</option>
+                   {/foreach}
+             </select>
+           </div>
+          </div>
+          <div class="form-group alone_add">
+             <label class="col-sm-3 control-label">所属部门：</label>
+              <div class="col-sm-8" style="margin-top: 20px;" >
+                  {$user_info_department = qydev_config::$qy_myself_department}
+                 {foreach $user_info_department as $k => $v}
+                     {if $user_info && in_array($k , explode("," , $user_info['from_id']))}
+                         <input type="checkbox" name="user_info[from_id][]" value="{$k}" checked="checked"  class="sub_category categoryInput" style="margin-top: 10px;"/>
+                     {else}
+                         <input type="checkbox" name="user_info[from_id][]" value="{$k}"  class="sub_category categoryInput" style="margin-top: 10px;"/>
+                     {/if}
+                     {$v}
+                     
+                 {/foreach}
+             </div>
+          </div>
+          <div class="form-group alone_add">
+          <label class="col-sm-3 control-label">analog_id：</label>
+           <div class="col-sm-6">
+                <input type="text" name="user_info[analog_id]" value="{$user_info.analog_id}"  class="form-control"  filter="filter_string" placeholder="请输入数字地图账号（可选，与企业号通讯录一致） ">
+          </div>
+        </div>
+        <div class="form-group alone_add">
+          <label class="col-sm-3 control-label">an_id：</label>
+           <div class="col-sm-6">
+               <input type="text" name="user_info[an_id]" value="{$user_info.an_id}"  class="form-control"  filter="filter_string" placeholder="请输入爱WiFi后台登录账号（可选，与企业号通讯录一致） ">
+          </div>
+        </div>
+       </div>
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-10">
+            <button type="submit" class="btn btn-sm btn-success" id="btn"><span style='display: inline-block;width: 95px;' class='Sub'>保存模板</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a type="button" class="btn btn-sm btn-warning" href="{AnUrl('qydev/admin')}">&nbsp;&nbsp;返回上一页&nbsp;&nbsp;</a>
+          </div> 
+        </div> 
+   </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$('.JS_siteType').click(function(){
+	  var type = $(this).val();
+	    if ( 2 == parseInt(type)) {
+	        $('.together_add').show();
+	        $('.alone_add').hide();
+	    } else {
+	        $('.together_add').hide();
+	        $('.alone_add').show();
+	    }
+	})
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

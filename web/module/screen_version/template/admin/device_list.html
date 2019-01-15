@@ -1,0 +1,181 @@
+{include_www file="admin/lib/header_new.html" title="亮屏管理"}
+{include_www file="admin/lib/sidebar_new.html"}
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('screen_version/admin')}"><i class="iconfont iconfont-logo2"></i>版本列表</a>
+            &gt;
+            {if $business_hall_title}<span>{$business_hall_title}</span>&gt;{/if}
+            <span>{$search_filter['version_no']}</span>
+            >
+            <span>{_uri('province', $search_filter['province_id'], 'name')}</span>
+            >
+            <span>{_uri('business_hall', $search_filter['business_id'], 'title')} 设备列表（合计：{if $count}{$count}{else}0{/if}/个）</span>
+        </div>
+        <br />
+
+        <div class="form-search clearfix">
+            <div class="pull-left">
+                <form action="{AnUrl('screen_version/admin/device_list')}" id="subForm" method='get'>
+                    <input type="hidden" name="search_filter[version_no]" value="{$search_filter['version_no']}">
+                    <input type="hidden" name="search_filter[business_id]" value="{$search_filter['business_id']}">
+                    <input type="hidden" name="search_filter[province_id]" value="{$search_filter['province_id']}">
+                    <select name="search_filter[online_status]" style="width:100px" class="form-control input-sm pull-left ">
+                        <option value='0' {if !$search_filter.online_status}selected{/if}>全部</option>
+                        <option value='1' {if $search_filter.online_status == 1}selected{/if}>上架</option>
+                        <option value='2' {if $search_filter.online_status == 2}selected{/if}>下架</option>
+                    </select>
+
+                    <input type="text" style="width: 130px;" name="device_unique_id" value="{$device_unique_id}" class="form-control input-sm pull-left " placeholder="按设备标识ID搜索">
+                    <button type="button" class="btn-search pull-left" id="searchData" >搜索</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    {if $member_info.res_name != 'business_hall'}
+                    <th width="5%">省</th>
+                    <th width="5%">市</th>
+                    <th width="10%">营业厅</th>
+                    {/if}
+                    <th width="5%">品牌</th>
+                    <th width="8%">型号</th>
+                    <th width="10%">标识ID</th>
+                    <th width="10%">IMEI</th>
+                    <th width="7%">版本</th>
+                    <th width="10%">安装时间</th>
+                    <th width="5%">补丁版本</th>
+                    <th width="12%">补丁安装时间</th>
+                    <th width="5%">状态</th>
+                    <th width="5%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $device_list as $k=>$v}
+                <tr id="dataList{$k}">
+                    {if $member_info.res_name != 'business_hall'}
+                    <td>{_uri('province', $v.province_id, 'name')}</td>
+                    <td>{_uri('city', $v.city_id, 'name')}</td>
+                    <td>{_uri('business_hall', $v.business_id, 'title')}</td>
+                    {/if}
+                    {if $v.phone_name_nickname}{$phone_name = $v.phone_name_nickname}{else}{$phone_name = $v.phone_name}{/if}
+                    <td>{$phone_name}</td>
+                    {if $v.phone_version_nickname}{$phone_version = $v.phone_version_nickname}{else}{$phone_version = $v.phone_version}{/if}
+                    <td>{$phone_version}</td>
+                    <td shoppe_id="{$v.shoppe_id}">{$v.device_unique_id}</td>
+                    <td>{if $v.imei}{$v.imei} {else}手机无imei{/if}</td>
+                    <td>{if $v.version_no}{$v.version_no}{else}--{/if}<br/>{if $v.type == 1}(TV){/if}</td>
+                    <td>{$v.day}</td>
+                    {$last_version_info = screen_device_helper::get_last_update_version($v.device_unique_id, array('handle_patch_version', 'add_time'))}
+                    <td>{if $last_version_info.handle_patch_version !== ''}{$last_version_info.handle_patch_version}{else}--{/if}</td>
+                    <td>{if $last_version_info.add_time}{substr($last_version_info.add_time, 0, 10)}{else}--{/if}</td>
+                    {$online_status = screen_helper::get_online_status($v.device_unique_id)}
+
+                    <td>{if $v.status && $online_status}<span class="label label-info">在线</span>{else}<span class="label label-warning">离线</span> <br/><br/>{/if}
+                        {if screen_device_helper::check_device_mac($v.mac,$v.business_id) == 2}<span class="label btn-danger btn-xs">异常</span>{/if}
+                    </td>
+
+
+
+                    <td >
+                <span class="js_Status">
+                  {if $v.status == 1}
+                    <a href="javascript:void(0);" data-id="{$v.id}" class="btn btn-danger btn-xs js_delete"><i class="icon-trash icon-white"></i>设备下架</a>
+                  {else}
+                    已下架
+                  {/if}
+                </span>
+                        <a href="{AnUrl("screen_content/admin/content_analysis/device_roll?device_unique_id={$v.device_unique_id}")}" class="label label-info">当前轮播</a>
+                    </td>
+
+                </tr>
+                {foreachelse}
+                <tr><td colspan="{if $member_info.res_name != 'business_hall'}13{else}10{/if}">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}
+
+<script>
+    //添加时间排序start
+    $('#sortUrl').on('click',function(){
+
+        var href = "{$smarty.const.SITE_URL}/screen_device/admin/device";
+        window.location.href = href;
+    })
+
+    //添加时间排序end
+
+    var isVersionEdit = false;
+
+    $(function () {
+        $('.js_delete').click(function(e){
+            e.preventDefault();
+            var thisObj = $(this);
+            var dataId  = thisObj.data("id");
+            var url     = siteUrl+"/screen_device/admin/device/delete";
+
+            showConfirm('确定要下架此设备吗？', 0, function(){
+                $.post(url, { 'id':dataId }, function(json){
+                    if (json.info != 'ok') {
+                        showMsg(json.info);
+                        return false;
+                    }
+
+                    thisObj.parent(".js_Status").text("已下架");
+
+                },'json').error(function(){
+                    showMsg("请求出错");
+                    return;
+                });
+            });
+
+        });
+
+        $('#title').autocomplete({
+            source: "/business_hall/admin/ajax/get_title_field",
+        });
+
+        $('#searchData').on('click',function() {
+            $('#subForm').submit();
+            //refershUrl();
+        });
+    });
+
+    function refershUrl(){
+        var $params           = { };
+        $params.start_date    = $('#start_time').val();
+        $params.end_date      = $('#end_time').val();
+
+        $a = 1;
+        var urlParam = '';
+        for (var i in $params) {
+            if ($params[i]) {
+                if ($a == 1) {
+                    urlParam += '?';
+                } else {
+                    urlParam += '&';
+                }
+
+                urlParam += 'search_filter['+ i + ']=' + $params[i];
+            }
+
+            $a += 1;
+        }
+
+        var url = siteUrl+'/screen_device/admin/device'+urlParam;
+        window.location.href = url;
+
+    }
+</script>

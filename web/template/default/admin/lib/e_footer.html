@@ -1,0 +1,16 @@
+<footer class="footer">
+    <ul class="footer-nav clearfix">
+      <li {if $curr_page == 'probe'}class="curr"{/if} style="width:100%;"><a href="{AnUrl('e/admin/probe')}"><em class="icon-tanzhen"></em><span>探针</span></a></li>
+    </ul>
+</footer>
+</div>
+<script>
+$(function(){
+$('.js_btnHeader').on('click', function(){
+    $('.js_headerNav').toggle();
+});
+
+});
+</script>
+</body>
+</html>

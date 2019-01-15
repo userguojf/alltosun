@@ -1,0 +1,347 @@
+{include_www file="admin/lib/header_new.html" title="亮屏管理"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('screen_device/admin/phone_model')}"><i class="iconfont iconfont-logo2"></i>机型管理</a>
+      &gt;
+      {if $business_hall_title}<span>{$business_hall_title}</span>&gt;{/if}
+      
+      <span>机型昵称（合计：{if $count}{$count}{else}0{/if}/个）</span>
+    </div>
+    <div class="form-search row clearfix">
+      <div class="tabs2">
+        <ul class=" col-sm-4">
+          {foreach screen_device_config::$is_status as $k => $v}
+              <li {if $search_filter['status'] == $k}class="curr"{/if}>
+                  <a  href='{AnUrl("screen_device/admin/phone_model?search_filter[phone_name]={$search_filter.phone_name}&search_filter[phone_version]={$search_filter.phone_version}&search_filter[status]={$k}")}'>{$v}</a>
+              </li>
+          {/foreach}
+        </ul>
+        <div class="col-sm-8">
+          <form action="{AnUrl('screen_device/admin/phone_model')}" id="subForm" method='get' class="pull-right">
+            <input type="text" style="width: 130px;" name="search_filter[phone_name]" value="{$search_filter.phone_name}"  class="form-control input-sm pull-left " placeholder="按设备品牌搜索">
+            &nbsp;&nbsp;
+            <input type="hidden" style="width: 130px;" name="search_filter[status]" value="{$search_filter.status}" >
+            <input type="text" style="width: 130px;" name="search_filter[phone_version]" value="{$search_filter.phone_version}"  class="form-control input-sm pull-left " placeholder="按设备型号搜索">
+            <button type="button" class="btn-search pull-left" id="searchData" data-url="{AnUrl('screen_device/admin/device')}" >搜索</button>
+            <a href="javascript:;"><buttton tyoe ="button" class="btn btn-success btn-sm right clearValue"><i class="icon-add"></i>重置</buttton></a>
+          </form>
+        </div>
+      </div>
+    </div>
+    <br />
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th width="10%">品牌</th>
+            <th width="13%">型号</th>
+            <th width="5%">品牌昵称</th>
+            <th width="5%">型号昵称</th>
+            <th width="5%">审核状态</th>
+            <th width="5%">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $device_list as $k=>$v}
+          <tr id="dataList{$k}">
+          <td>
+                <span>{$v.phone_name}</span>
+          </td>
+          <td >
+                <span>{$v.phone_version}</span>
+          </td>
+            {if $v.name_nickname }
+                {if $v.status == 0}
+                    <td class="js_nickname" data-type="name" data-name="{$v.phone_name}">
+                    <div class="hidden">
+                    <input type="text" class="edit_blur" value="{$v.name_nickname}"  name ="name_nickname" style="width:80px;text-align:center;"> 
+                    <button type="button" class="btn btn-success btn-sm update_nickname">确认</button>
+                    </div>
+                        <span>{$v.name_nickname}</span>
+                    </td>
+                 {else}
+                 
+                <td><span>{$v.name_nickname}</span></td>
+                {/if}
+            {else}
+             <td>
+                <span>
+                <input type="hidden" value="{$v.phone_name}|@|{$v.phone_version}" style="width:80px">
+                <a href="javascript:void(0);" class="btn btn-success btn-sm right add_nickname"><i class="icon-add"></i>添加品牌昵称</a>
+                </span>
+            </td>
+            {/if}
+            {if $v.version_nickname }
+                {if $v.status ==0}
+                    <td class="js_nickname" data-type="version" data-name="{$v.phone_version}">
+                  <div class="hidden">
+                    <input type="text" class="edit_blur" value="{$v.version_nickname}"  name ="version_nickname" style="width:80px;text-align:center;"> 
+                    <button type="button" class="btn btn-success btn-sm update_nickname">确认</button>
+                    </div>
+                        <span>{$v.version_nickname}</span>
+                    </td>
+                 {else}
+                 <td><span>{$v.version_nickname}</span></td>
+                 {/if}
+            {else}
+              <td>
+                <span>
+                 <input type="hidden" value="{$v.phone_name}|@|{$v.phone_version}" style="width:80px">
+                <a href="javascript:void(0);" class="btn btn-warning btn-sm right add_version_nickname"><i class="icon-add"></i>添加型号昵称</a>
+                </span>
+            </td>
+            {/if}
+            
+            {if $v.status}
+            <td>已审核</td>
+            {else}
+            <td>待审核</td>
+            {/if}
+            <td>
+                {if $v.status}
+                <input type="hidden" value="{$v.id}"  name="unique_id" style="width:80px">
+                <input type="hidden" value="{$v.phone_version}"  name="phone_version" style="width:80px">
+                <input type="hidden" value="{$v.phone_name}"  name="phone_name" style="width:80px">
+                <a class="btn btn-xs btn-danger delete_hot" href="javascript:;">取消通过</a>
+                {else}
+                <input type="hidden" value="{$v.id}"  name="unique_id" style="width:80px">
+                <input type="hidden" value="{$v.phone_version}"  name="phone_version" style="width:80px">
+                <input type="hidden" value="{$v.phone_name}"  name="phone_name" style="width:80px">
+                <a class="btn btn-xs btn-success success_status" href="javascript:;">通过审核</a>
+                {/if}
+            </td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="{if $member_info.res_name != 'business_hall'}10{else}7{/if}">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+      
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+  <!--start:弹层-->
+         <div class="pop-bg" style="display:none;" id="message">
+          <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close btn_close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title w_title" >添加品牌昵称</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="media row">
+                      <div class=" col-xs-8">
+                          <div class="media-body">
+                                <input type="text"  name="phone_name_nickname" style="width:180px">
+                                <button type="button" class="btn btn-success btn-sm add_nickname_submit">确认</button>
+                           
+                          </div>
+                      </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+        </div> 
+<!-- 主内容 end -->
+
+<!--start:弹层-->
+         <div class="pop-bg" style="display:none;" id="message2">
+          <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close btn_close2" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title w_title" id="myModalLabel">添加型号昵称</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="media row">
+                      <div class=" col-xs-8">
+                          <div class="media-body">
+                                <input type="text"  name="phone_version_nickname" style="width:180px">
+                                <button type="button" class="btn btn-success btn-sm add_version_submit">确认</button>
+                           
+                          </div>
+                      </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+        </div> 
+<!-- 主内容 end -->
+
+{include_www file="admin/lib/footer_new.html"}
+
+<script>
+var isVersionEdit = false;
+
+
+
+$(function () {
+  
+  
+  //重置
+  $('.clearValue').on('click', function() {
+      $('#subForm input[type=text]').val('');
+  });
+  
+//点击显示
+  $('.add_nickname').click(function(){
+      var phone_info = $(this).prev().val();
+      $('#message').addClass('show');
+       output ='<span style="display:none">' +phone_info+'</span>';
+       $('#message .media-body').append(output);
+  });
+
+  $('.add_version_nickname').click(function(){
+      var phone_info = $(this).prev().val();
+      
+      $('#message2').addClass('show');
+       output ='<span style="display:none">' +phone_info+'</span>';
+       $('#message2 .media-body').append(output);
+  });
+
+  //X点击隐藏
+  $('.btn_close').click(function(){
+      $('#message .media-body').find('span').remove();
+      $('#message').removeClass('show');
+      //隐藏就取消上传
+      //刷新
+  })
+
+
+  $('.btn_close2').click(function(){
+      $('#message2 .media-body').find('span').remove();
+      $('#message2').removeClass('show');
+      //隐藏就取消上传
+      //刷新
+  })
+  
+  $('#searchData').on('click',function() {
+    $('#subForm').submit();
+  });
+  
+  $('.add_nickname_submit').on('click',function(){
+    var newNickname = $(this).prev().val();
+    var phone_info = $('#message .media-body').find('span').html();
+     $.post(siteUrl+'/screen_device/admin/ajax/add_nickname',{ phone_name_nickname:newNickname,phone_info:phone_info },function(data){
+        if(data.info != 'ok'){
+            alert(res.msg);
+        }else{
+            location.replace(location);
+        }
+    },'json'); 
+  });
+  
+  $('.add_version_submit').on('click',function(){
+    var newNickname = $(this).prev().val();
+    var phone_info = $('#message2 .media-body').find('span').html();
+     $.post(siteUrl+'/screen_device/admin/ajax/add_version_nickname',{ phone_version_nickname:newNickname, phone_info: phone_info },function(data){
+        if(data.info != 'ok'){
+            alert(res.msg);
+        }else{
+            location.replace(location);
+        }
+    },'json'); 
+  });
+  
+  $('.delete_hot').on('click',function(){
+    
+    var status=0;
+    var id = $(this).prev().prev().prev().val();
+    var data = {
+            "id":id,
+            "status":status
+    };
+    $.post(siteUrl+'/screen_device/admin/ajax/update_ststus', data, function (res) {
+          if (res.info != 'ok') {
+              alert(res.msg);
+          }else{
+              location.replace(location);
+          }
+        }, 'json');  
+  });
+  
+  $('.success_status').on('click',function(){
+    var status=1;
+    var id = $(this).prev().prev().prev().val();
+    var data = {
+            "id":id,
+            "status":status
+    };
+    $.post(siteUrl+'/screen_device/admin/ajax/update_ststus',data , function (res) {
+          if (res.info != 'ok') {
+            alert(res.msg);
+          }else{
+            
+              location.replace(location);
+          }
+    }, 'json');  
+});
+  
+  
+});
+  
+
+  $('.js_nickname span').on('click',function(){
+	 /*  $(this).remove();
+	  $('#update_name').addClass('show');
+	  isVersionEdit = true; */
+	    $(this).closest('td').find('div').toggleClass('hidden');
+	    $(this).toggleClass('hidden');
+	    return false;
+
+  });
+  
+  
+  $('.update_nickname').on('click', function () {
+	    var el = $(this).closest('.js_nickname');
+	    var newValue = el.find('div input').val();
+	    if (!newValue) {
+	      alert('值不能为空');return false;
+	    }
+	    
+	    el.find('span').text(newValue);
+	    el.find('div').toggleClass('hidden');
+	    el.find('span').toggleClass('hidden');
+	    
+	    var type = el.data('type');
+	    var phone_name = el.attr('data-name');
+	      $.post(siteUrl+'/screen_device/admin/ajax/update_nickname', { new_nickname:newValue, type:type, phone_name:phone_name }, function (res) {
+	      if (res.info != 'ok') {
+	        alert(res.msg);
+	      }else{
+	          location.replace(location);
+	      }
+	    }, 'json');   
+	  });
+function refershUrl(){
+  var $params           = { };
+  $params.start_date    = $('#start_time').val();
+  $params.end_date      = $('#end_time').val();
+
+  $a = 1;
+  var urlParam = '';
+  for (var i in $params) {
+    if ($params[i]) {
+      if ($a == 1) {
+        urlParam += '?';
+      } else {
+        urlParam += '&';
+      }
+      
+      urlParam += 'search_filter['+ i + ']=' + $params[i];
+    }
+    
+    $a += 1;
+  }
+
+  var url = siteUrl+'/screen_device/admin/device'+urlParam;
+  window.location.href = url;
+
+}
+</script>

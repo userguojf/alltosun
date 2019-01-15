@@ -1,0 +1,28 @@
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th style="text-align:center">周</th>
+      <th style="text-align:center">设备累计安装量</th>
+      <th style="text-align:center">周活跃设备量</th>
+      <th style="text-align:center">设备周活跃率</th>
+      <th style="text-align:center">周平均活跃天数</th>
+      
+     
+    </tr>
+  </thead>
+  <tbody>
+    {foreach $list.data_list as $k => $v}
+      <tr>
+          <td style="text-align:center">第{$list['weeks'][$k] + 1}周（{$list['days'][$k]['start']}-{$list['days'][$k]['end']}）</td>
+          <td style="text-align:center">{$v.install_num}</td>
+          <td style="text-align:center">{$v.active_num}</td>
+          <td style="text-align:center">{$v.active_rate}</td>
+          <td style="text-align:center">{$v.average_active}（共活跃{$v.active_days}天）</td>
+      </tr>
+   {foreachelse}
+    <tr><td colspan="2">暂无相关数据</td></tr>
+   {/foreach}
+  </tbody>
+</table>
+

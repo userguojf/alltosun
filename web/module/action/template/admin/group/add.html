@@ -1,0 +1,140 @@
+{include_www file="admin/lib/header_new.html" title="添加编辑角色信息"}
+<style>
+
+</style>
+<!--start:右侧-->
+<div class="main mian2 ">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('action/admin/group')}"><i class="iconfont iconfont-logo2"></i>角色管理</a>
+            &gt;
+            <span>角色组添加/修改</span>
+            <a href="{AnUrl('action/admin/group')}" class="btn btn-primary btn-sm pull-right">返回角色管理</a>
+        </div>
+
+        <div class="clearfix">
+            <div class="form-add pull-left" style="width:80%;">
+                {AnForm class='form-horizontal' action="{AnUrl('action/admin/group/save')}" method="post" enctype="multipart/form-data"}
+                {AnForm type="hidden" name="id" value="{$info.id}"}
+                {AnForm type="hidden" name="group_id" value="{$id}"}
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">角色名：</label>
+                    <div class="col-sm-6">
+
+                            {AnForm type="text" name="info[name]" value="{$info['name']}" class="form-control" validate="required" filter="filter_string"}
+
+                    </div>
+                </div>
+                <div class="form-group ">
+                    <label class="col-sm-2 control-label">描述信息：</label>
+
+                    <div class="col-sm-6">
+                        {AnForm type="textarea" name="info[desc]" value="{$info['desc']}" class="form-control" rows="4" validate="required" filter="filter_string"}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">角色标示:</label>
+                    <div class="col-sm-6" >
+                        {AnForm type="text" name="info[ranks]" value="{$info['ranks']}" class="form-control" validate="required" filter="filter_string"}
+                        <p class="tips">站内唯一标示,请不要任意更改</p>
+                    </div>
+                </div>
+
+
+                    {if $info.is_root == 1}
+                        <div class="form-group">
+
+                            <label class="col-sm-4 control-label">超级管理员拥有所有权限</label>
+                        </div>
+
+                    {else}
+
+                        {foreach $action_list as $val}
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">{$val.name}
+                                    {if $info.group_action && in_array($val.id, $info.group_action)}
+                                    <input type="checkbox" name="info[category][]" class="category categoryInput"   value="{$val.id}" checked="checked" />:</br>
+                                    {else}
+                                    <input type="checkbox" name="info[category][]" class="category categoryInput"   value="{$val.id}"   />:</br>
+                                    {/if}
+                                 </label>
+
+                                <div class="col-sm-8" style="margin-top: 20px;" >
+                                        {foreach $val['sub_action_list'] as $v}
+                                            {if $info.group_action && in_array($v.id, $info['group_action'])}
+                                                <input type="checkbox" name="info[sub_category][]" value="{$v.id}" checked="checked" class="sub_category categoryInput" style="margin-top: 10px;"/>
+                                            {else}
+                                                <input type="checkbox" name="info[sub_category][]" value="{$v.id}"  class="sub_category categoryInput"  style="margin-top: 10px;"/>
+                                            {/if}
+                                            {$v.name}
+                                        {/foreach}
+
+                                    </div>
+
+                            </div>
+                        {/foreach}
+
+                 {/if}
+
+
+
+
+
+                <br>
+
+
+
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-10">
+                        <button type="submit" class="btn btn-sm btn-success"><span style='display: inline-block;width: 95px;' class='Sub'>保存</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a type="button" class="btn btn-sm btn-warning" href="javascript:history.back();">&nbsp;&nbsp;返回上一页&nbsp;&nbsp;</a>
+                    </div>
+                </div>
+                {AnForm}
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    /**
+     * 全选 执行
+     */
+    $('.control-label input[type="checkbox"]').click(function(){
+
+        if($(this).attr('checked')){
+
+            $(this).parent().next("div").children().attr('checked', true);
+        } else {
+            //console.log($(this).next("div").children());
+            $(this).parent().next("div").children().attr('checked', false);
+        }
+    });
+
+    /**
+     * 取消全选
+     */
+    $('.col-sm-8 input[type="checkbox"]').click(function() {
+        // 获取父亲元素
+        var parentObj = $(this).parent().prev().children();
+
+        // 获取所有兄弟元素所有选中的元素
+        var subObjs = $(this).parent().children('input:checked');
+        // 如果获取到
+        if (subObjs) {
+            // 判断长度
+            var count = subObjs.length;
+            if (0 == count) {
+                // 取消父亲元素的选中
+                parentObj.attr('checked', false);
+            } else {
+                // 选中父亲元素
+                parentObj.attr('checked', true);
+            }
+        }
+    });
+</script>
+{include_www file="admin/lib/footer_new.html"}

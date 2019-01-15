@@ -1,0 +1,998 @@
+{include file="admin/lib/header.html"}
+        <!--start:主内容-->
+        <div class="inner main">
+            <div class="bread"><a href='{AnUrl("file_apply/admin/apply")}'>改造申请&gt;</a>
+                {if $res_name == 'province'}  
+                    <span class="curr">{_uri('province', $res_id, 'name')}</span>
+                {/if}
+                
+                {if $res_name == 'city'}  
+                    <span class="curr">{_uri('city', $res_id, 'name')}</span>
+                {/if}
+            </div>
+            <div class="apply-tabs clearfix hidden">
+                 
+            </div>
+            <div class="tabs-content">
+                <form class="ss1" id="szy_form" action='{AnUrl("file_apply/admin/apply/save")}' method="post"  enctype="multipart/form-data">
+                    <input type='hidden' name='info[province_id]' value="{$p_id}" class="province_id_flag">
+                     {if $c_id}
+                        <input type='hidden' name='info[city_id]' value="{$c_id}">
+                     {else}
+                        <input type='hidden' name='info[city_id]' value="{$info.city_id}">
+                    {/if}
+                    <input type='hidden' name='info[area_id]' value="">
+                    <input type='hidden' name='info[store_type]' value="">
+                    <input type='hidden' name='id' value="{$info.cid}" class="convert_id">
+                    <input type='hidden' name='flag' value="0" class="flag_id">
+                    <div class="apply-form">
+                        <div class="item clearfix">
+                            <label class="label left">*渠道编码</label>
+                            <div class="con left">
+                                <div class="text"><input type="text" name="info[user_number]" value="{$info.user_number}" class="required autocomplete change_number" placeholder="请输入渠道编码"></div>
+                            </div>
+                        </div>
+                        <div class="item-tips">渠道编码为13位数字</div>
+                        <div class="item clearfix">
+                            <label class="label left">*门店名称</label>
+                            <div class="con left">
+                                <div class="text">
+                                     <input type="text" name="info[business_title]" value="{business_hall_helper::get_business_hall_info($info.business_id, 'title')}" class="form-control required selectBusiness" placeholder="请输入营业厅名称">
+                                    <input type="hidden" name="info[business_id]" value="{$info.business_id}" class="selectBusinessId">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="item item-select clearfix" >
+                            <label class="label left">*所属市区</label>
+                            <div class="con left">
+                                <div class="select left {if $c_id } {else}city_select{/if}">
+                                    <span class="default sub_area_name" id="">{if $c_id }{_uri('city', $c_id, 'name')}{else}请选择{/if}</span>
+                                    <div class="list js_city hidden" >
+                                    </div>
+                                </div>
+                                <div class="select left  area_select">
+                                   <span class="default sub_area_name" id = ''>请选择</span>
+                                    <div class="list js_area hidden" id="area">
+                                            <p class=""></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                         <div class="item  clearfix">
+                            <label class="label left">*厅级</label>
+                            <div class="con left">
+                                <div class="select left ting_select">
+                                    <span class="default sub_ting" id="">请选择</span>
+                                    <div class="list js_ting hidden" >
+                                        {foreach file_apply_config::$store_type as $k => $v}
+                                             <p class="change_active select_ting" res="{$k}" {if $k == $info.store_type}store_type == {$k} {/if}>{$v}</p>
+                                        {/foreach}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="item clearfix">
+                            <label class="label left">*门店面积</label>
+                            <div class="con left">
+                                <div class="text"> 
+                                    <input type="number" name="info[business_area]" value="{$info.business_area}" class="required men" placeholder="请输入厅店面积">㎡</span>
+                                 </div>
+                            </div>
+                        </div>
+                        <div class="item clearfix">
+                            <label class="label left">*改造预算</label>
+                            <div class="con left">
+                                <div class="text">
+                                    <input type="number" name="info[budget]" value="{$info.budget}" class="required js_budget" placeholder="请输入改造预算">
+                                 </div>
+                            </div>
+                        </div>
+                        <div class="item clearfix">
+                            <label class="label left">*上次改造时间</label>
+                            <div class="con left">
+                                <div class="text">
+                                    <input type="text" class="form-control last"  validate="required" name="info[last_time]" id="start_time" value="{$info['last_time']}" placeholder="请选择上次改造时间"><em class="icon-date"></em>
+                                 </div>
+                            </div>
+                        </div>
+                        <div class="item clearfix">
+                            <label class="label left">*改造开始时间</label>
+                             <div class="con left">
+                                <div class="text">
+                                    <input type="text" name="info[change_begin]"  value="{$info['change_begin']}" class="form-control" id="from_time"  validate="required" placeholder="请选择开始时间"  style="z-index:2;"><em class="icon-date"></em>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="item clearfix">
+                            <label class="label left">*改造结束时间</label>
+                            <div class="con left">
+                                <div class="text">
+                                    <input type="text" name="info[change_end]"  value="{$info['change_end']}"  class="form-control" id="end_time" validate="required"   placeholder="请选择结束时间" style="z-index:2;"><em class="icon-date"></em>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item clearfix">
+                            <label class="label left">*分区布局方案<span class="desc">请勾选改造门店所包含的区域</span></label>
+                            <div class="con left">
+                                <div class="item-checkbox">
+                                {foreach file_apply_config::$plan_type as $k=>$v}
+                                    {if $plan_info}
+                                    <label><input type="checkbox" name="info[plan_type][]" value="{$k}" checked="checked" class="JS_planType" ><span>{$v}</span></label>
+                                    {else}
+                                    <label><input type="checkbox" name="info[plan_type][]" value="{$k}" class="JS_planType"><span>{$v}</span></label>
+                                    {/if}
+                              {/foreach}
+                                </div>
+                                {*整体平面图开始*}
+                                <div class="upload-btn js_perUpArea  js_perUpWrap">
+                                     <div class="default js_perUpOuter js_perUpAdd " data-show-id="content_img">
+                                        <em class="icon-add"></em>
+                                        <p>上传整体平面图</p>
+                                    </div>
+                                    {if !$info}
+                                        <input type="file" name="link[]" class='js_perUpFile sheji hidden'/>
+                                    {else}
+                                        <input type="file" name="link[]" class='js_perUpFile sheji hidden'/>
+                                    {/if}
+                                </div>
+                                
+                                
+                              {*整体平面图结束*}
+                              
+                              {*门头平面图开始*}
+                                <div class="upload-btn js_perUpArea js_perUpWrap mentou_img hidden">
+                                     <div class="default js_perUpOuter js_perUpAdd {if $plan_info.link} hidden{/if}" data-show-id="content_img">
+                                        <em class="icon-add"></em>
+                                        <p>上传门头平面图</p>
+                                    </div>
+                                    {if !$plan_info}
+                                        <input type="file" name="plan_mentou[]" class='js_perUpFile mentou hidden'/>
+                                    {else}
+                                        <input type="file" name="plan_mentou[]" class='js_perUpFile mentou hidden'/>
+                                    {/if}
+                                </div>
+                              {*门头平面图结束*}
+                              
+                              {*入门平面图开始*}
+                                <div class="upload-btn js_perUpArea js_perUpWrap rumenqu_img hidden">
+                                     <div class="default js_perUpOuter js_perUpAdd {if $plan_info.link} hidden{/if}" data-show-id="content_img">
+                                        <em class="icon-add"></em>
+                                        <p>上传入门平面图</p>
+                                    </div>
+                                    {if !$plan_info}
+                                        <input type="file" name="plan_rumen[]" class='js_perUpFile rumen hidden'/>
+                                    {else}
+                                        <input type="file" name="plan_rumen[]" class='js_perUpFile rumen hidden'/>
+                                    {/if}
+                                </div>
+                              {*入门平面图结束*}
+                              
+                              {*业务办理平面图开始*}
+                                <div class="upload-btn js_perUpArea js_perUpWrap yewu_img hidden">
+                                     <div class="default js_perUpOuter js_perUpAdd {if $plan_info.link} hidden{/if}" data-show-id="content_img">
+                                        <em class="icon-add"></em>
+                                        <p>上传业务办理平面图</p>
+                                    </div>
+                                    {if !$plan_info}
+                                        <input type="file" name="plan_yewu[]" class='js_perUpFile yewu hidden'/>
+                                    {else}
+                                        <input type="file" name="plan_yewu[]" class='js_perUpFile yewu hidden'/>
+                                    {/if}
+                                </div>
+                              {*业务办理平面图结束*}
+                              
+                              {*终端区平面图开始*}
+                                <div class="upload-btn js_perUpArea js_perUpWrap zhongduan_img hidden">
+                                     <div class="default js_perUpOuter js_perUpAdd {if $plan_info.link} hidden{/if}" data-show-id="content_img">
+                                        <em class="icon-add"></em>
+                                        <p>上传终端区平面图</p>
+                                    </div>
+                                    {if !$plan_info}
+                                        <input type="file" name="plan_zhongduan[]" class='js_perUpFile zhongduan hidden'/>
+                                    {else}
+                                        <input type="file" name="plan_zhongduan[]" class='js_perUpFile zhongduan hidden'/>
+                                    {/if}
+                                </div>
+                              {*终端区平面图结束*}
+                              
+                              {*交付区平面图开始*}
+                                <div class="upload-btn js_perUpArea js_perUpWrap jiaofuqu_img hidden">
+                                     <div class="default js_perUpOuter js_perUpAdd {if $plan_info.link} hidden{/if}" data-show-id="content_img">
+                                        <em class="icon-add"></em>
+                                        <p>上传交付区平面图</p>
+                                    </div>
+                                    {if !$plan_info}
+                                        <input type="file" name="plan_jiaofu[]" class='js_perUpFile jiaofu hidden' />
+                                    {else}
+                                        <input type="file" name="plan_jiaofu[]" class='js_perUpFile jiaofu hidden' />
+                                    {/if}
+                                </div>
+                              {*交付区平面图结束*}
+                            </div>
+                        </div>
+                        <div class="item clearfix">
+                            <label class="label left">*设计公司名称</label>
+                            <div class="con left">
+                                <div class="text">
+                                    <input type="text" name="info[design_company]" value="{$info.design_company}" class="required " placeholder="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item clearfix">
+                            <label class="label left">*设计师姓名</label>
+                            <div class="con left">
+                                <div class="text">
+                                    <input type="text" name="info[designer]" value="{$info.designer}" class=" required " placeholder="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item clearfix">
+                            <label class="label left">*设计师联系电话</label>
+                            <div class="con left">
+                                <div class="text"><input type="text" name="info[design_phone]" value="{$info.design_phone}" class=" required phone_check" placeholder=""></div>
+                            </div>
+                        </div>
+                        <div class="item clearfix">
+                            <label class="label left">*电信方设计对接人姓名</label>
+                            <div class="con left">
+                                <div class="text"><input type="text" name="info[take]" value="{$info.take}" class=" required " placeholder=""></div>
+                            </div>
+                        </div>
+                        <div class="item clearfix">
+                            <label class="label left">*电信方设计对接人联系电话</label>
+                            <div class="con left">
+                                <div class="text"><input type="text" name="info[take_phone]" value="{$info.take_phone}" class=" required" placeholder=""></div>
+                            </div>
+                        </div>
+                        <div class="item clearfix">
+                            <label class="label left">*近6个月平均销售额</label>
+                            <div class="con left">
+                                <div class="sub-item clearfix">
+                                    <label>移动月均新增</label>
+                                    <span class="text"><input type="number" name="info[mobile_add]" value="{$info.mobile_add}" class=" required " placeholder=""></span>
+                                    <span class="unit">户</span>
+                                </div>
+                                <div class="sub-item clearfix">
+                                    <label>宽带月均新增</label>
+                                    <span class="text"><input type="number" name="info[wide_add]" value="{$info.wide_add}" class=" required " placeholder=""></span>
+                                    <span class="unit">户</span>
+                                </div>
+                                <div class="sub-item clearfix">
+                                    <label>终端月均销售</label>
+                                    <span class="text"><input type="number" name="info[pc_add]" value="{$info.pc_add}" class=" required " placeholder=""></span>
+                                    <span class="unit">台</span>
+                                </div>
+                                <div class="sub-item clearfix">
+                                    <label>月均业务新增收入</label>
+                                    <span class="text"><input type="text" name="info[work_add]" value="{$info.work_add}" class=" required " placeholder=""></span>
+                                    <span class="unit">万</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item clearfix">
+                            <label class="label left">备注</label>
+                            <div class="con left">
+                                <textarea class="form-control" name="info[remark]"  placeholder="请在这里输入备注" rows="5"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="apply-btn-area clearfix">
+                        <div class="left">
+                            <button type="button" class="btn-default-primary add_apply " add_flag="0">+添加申请门店</button>
+                        </div>
+                        <div class="right">
+                            <button type="button" class="btn-primary selectSub">立即提交</button>
+                            <button type="button" class="btn-default-primary  btn_cao">保存草稿</button>
+                            <button type="button" class="btn-default canel_but">取消</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!--end:主内容-->
+    </div>
+    
+
+<!--弹层-->
+    <div class="pop-bg prompt hidden" id="prompt">
+        <div class="pop-publish">
+            <div class="pop-close"><i class="icon-close"></i></div>
+            <div class="title">
+                <br><br><br>
+                <span class="info">别着急，先将前面的门店信息填写完整吧</span>
+            </div>
+            <div class="btn-area">
+                <button type="button" class="btn-primary" id="prompt_success">知道了</button>
+            </div>
+            <br><br>
+        </div>
+    </div>
+    <!--end:弹层-->
+    
+
+<!--star:删除弹层-->
+<div class="pop-bg delete_pop hidden">
+    <div class="pop-publish">
+        <div class="pop-close" id="upload-success-x"><i class="icon-close"></i></div>
+        <div class="title">消息提示</div>
+        <div class="title-info"></div>
+        <div class="btn-area">
+            <button type="button" class="btn-primary delete_succ">确认</button>
+            <button type="button" class="btn-default delete_but">取消</button>
+        </div>
+    </div>
+</div>
+<!--end:删除弹层-->
+<script src="{$smarty.const.SITE_URL}/js/region_for_apply.js?id={time()}"></script>
+<script src="{$smarty.const.SITE_URL}/js/admin.js?id={time()}"></script>
+        {load_js lib='jquery-ui'}
+        {* 加载bootstrapjs *}
+        {load_js file='bootstrap-2.3.1/js/bootstrap.min.js'}
+        {* 插件区 *}
+        {load_js file="validate/jquery.validate.js"}
+        {load_js file="jquery.cookie.js"}
+        {load_js file="validate/messages_cn.js"}
+        {load_js file="validate/additional-methods.js"}
+        {load_js file="jqueryui/1.8.11/i18n/jquery.ui.datepicker-zh-CN.js"}
+
+<script>
+var k = 1;
+var j = 2;
+var siteUrl = "{$smarty.const.SITE_URL}";
+var member_id = "{$member_id}";
+var res_id = "{$res_id}";
+var res_name = "{$res_name}";
+
+
+//点击市列表显示
+$('.city_select').live('click',function(){
+    var city_id     = $("input[name='info[city_id]'").val();
+    if(city_id){
+        $(".js_city p").each(function(){
+            var c_id =$(this).attr('res');  
+              if(city_id == c_id){
+                  $(this).addClass('active');
+              }
+        });  
+    }
+    
+    $('.js_city').removeClass('hidden');
+});
+//点击区列表显示
+$('.area_select').on('click',function(){
+    var res = $('.js_area').html();
+    var area_id = $("input[name='info[area_id]'").val();
+    if(res){
+        var id = $('.js_area').find('p:eq(0)').attr('res');
+        var name = $('.js_area').find('p:eq(0)').html();
+        $(this).find('p').removeClass("change_sure");
+        $(this).find('p').addClass("change_area");
+        if(area_id){
+            $(".js_area p").each(function(){
+                var a_id =$(this).attr('res');  
+                  if(area_id == a_id){
+                      $(this).addClass('active');
+                  }
+            });  
+        }
+        $('.js_area').removeClass('hidden');
+    }
+});
+
+//点击显示厅级并赋值//////////////////
+$('.ting_select').on('click',function(){
+    var store_type = $("input[name='info[store_type]'").val();
+    if(store_type){
+        $(".js_ting p").each(function(){
+            var type_id =$(this).attr('res');  
+              if(store_type == type_id){
+                  $(this).addClass('active');
+              }
+        });  
+    }
+     $('.js_ting').removeClass('hidden');
+});
+
+$('.select_ting').live('click',function(){
+    var ting = $(this).attr('res');
+    var tingname = $(this).html();
+    $("input[name='info[store_type]'").val(ting);
+    $(".sub_ting").html(tingname);
+    $('.js_ting').addClass('hidden');
+    
+})
+/////点击显示厅级并赋值/////////////
+//市改变地区列表改变 并隐藏市列表
+$('.change_sure').live('click',function(){
+    var area_name = $(this).html();
+    var city_id = $(this).attr('res');
+     $(this).addClass('active');
+    $(this).closest('.city_select').find('.sub_area_name').attr('id',city_id);
+    $(this).closest('.city_select').find('.sub_area_name').html(area_name);
+    //赋值
+     $("input[name='info[city_id]'").val(city_id);
+    $.post("{AnUrl('business_hall/admin/ajax/get_area_name')}" , { city_id:city_id } ,function(json){
+        if (json.msg=='ok') {
+            var html = "";
+            var jsonnum = eval(json.area_info);
+         for(var i=0; i< jsonnum.length; i++){
+                html += "<p class='change_area change_active' res= '"+jsonnum[i].id+"'>"+jsonnum[i].name+"</p>";
+               }
+               $('#area').html('').append(html);
+               $('.js_city').addClass('hidden');
+              }else {
+                  $('#area').html('').append(html);
+                  $('.js_city').addClass('hidden');
+              }
+    },'json')
+});
+
+
+//鼠标移入下拉框改变样式
+$('.change_active').live('mouseover',function(){
+    $(this).addClass('active');
+}).live('mouseout',function(){
+    $(this).removeClass('active');
+    
+});
+
+//下拉框移除
+$(".select.left .list").mouseover(function (){  
+    $(this).removeClass('hidden');  
+}).mouseout(function (){  
+    $(this).addClass('hidden');  
+});  
+
+//区改变将所选区id保存
+$('.change_area').live('click',function(){
+    var area_name = $(this).html();
+    var area_id = $(this).attr('res');
+    //赋值
+    $("input[name='info[area_id]'").val(area_id);
+    $(this).closest('.area_select').find('.sub_area_name').attr('id',area_id);
+    $(this).closest('.area_select').find('.sub_area_name').html(area_name);
+    //隐藏区列表块
+    $('.js_area').addClass('hidden');
+});
+
+
+//获取市名称
+function get_city_name(cid){
+    $.post("{AnUrl('file_apply/admin/ajax/get_city_name')}" , { cid:cid } ,function(json){
+        if (json.msg=='ok') {
+            var jsonnum = eval(json.city_info);
+            var name = jsonnum.name;
+            $('.city_select').find('.sub_area_name').html(name);
+        }else{
+            var res = '请选择';
+            $('.city_select').find('.sub_area_name').html(res);
+        }
+    },'json');
+    
+}
+
+//获取市名称
+function get_area_name(area_id){
+    $.post("{AnUrl('file_apply/admin/ajax/get_area_name')}" , { area_id:area_id } ,function(json){
+        if (json.msg=='ok') {
+            var jsonnum = eval(json.area_info);
+            var name = jsonnum.name;
+            $('.area_select').find('.sub_area_name').html(name);
+        }else{
+            var res = '请选择';
+            $('.area_select').find('.sub_area_name').html(res);
+        }
+    },'json');
+    
+}
+
+
+
+
+
+$(function(){
+    {if $info}
+        region({$info.province_id}, {$info.city_id}, {$info.area_id}, {$info.business_id});
+    {else}
+        {if $c_id}
+          region({$p_id}, {$c_id}, 0, 0);
+          get_city_name({$c_id});
+        {else}
+          region({$p_id},0, 0, 0);
+        {/if}
+    {/if}
+
+    
+     $('.JS_planType').on('click',function(){
+         
+         $(".JS_planType:checked").each(function() {
+                 if($(this).val() == 0){
+                     $('.mentou_img').removeClass('hidden');
+                 }else if($(this).val() == 1){
+                     $('.rumenqu_img').removeClass('hidden');
+                 }else if($(this).val() == 2){
+                     $('.yewu_img').removeClass('hidden');
+                 }else if($(this).val() == 3){
+                     $('.zhongduan_img').removeClass('hidden');
+                 }else if($(this).val() == 4){
+                     $('.jiaofuqu_img').removeClass('hidden');
+                 }
+            });   
+         $(".JS_planType:not(:checked)").each(function() {
+                if($(this).val() == 0){
+                    $('.mentou_img').addClass('hidden');
+                    $("input[name='plan_mentou[]'").val('');
+                }else if($(this).val() == 1){
+                    $('.rumenqu_img').addClass('hidden');
+                    $("input[name='plan_rumen[]'").val('');
+                }else if($(this).val() == 2){
+                    $('.yewu_img').addClass('hidden');
+                    $("input[name='plan_yewu[]'").val('');
+                }else if($(this).val() == 3){
+                    $('.zhongduan_img').addClass('hidden');
+                    $("input[name='plan_zhongduan[]'").val('');
+                }else if($(this).val() == 4){
+                    $('.jiaofuqu_img').addClass('hidden');
+                    $("input[name='plan_jiaofu[]'").val('');
+                }
+            });   
+     })
+
+//将表单数据整理到表单列表
+$('.add_apply').on('click',function(){
+    var flag =  check_form();
+    if(!flag){
+        return false;
+    }
+     $('#addLoading').removeClass('hidden');
+    var formobj =  document.getElementById("szy_form");
+    var formdata = new FormData(formobj);
+    formdata.append('res_id',res_id);
+    formdata.append('res_name',res_name);
+    formdata.append('member_id',member_id);
+       $.ajax({
+        url: siteUrl+'/file_apply/admin/ajax/add_apply',
+        type: "POST",
+        data: formdata,
+        processData: false,  // 不去处理发送的数据
+        contentType: false,   //不设置Content-Type请求头
+        success: function(response){
+          $('#addLoading').addClass('hidden');
+           var json=$.parseJSON(response);
+            $('.convert_id').val(json.cid);
+         //清除表单信息
+         reset_form();
+         $('.apply-tabs').removeClass('hidden');
+         var html = '';
+         if(k==1){
+        	 html +='<div class="item status-end check_active" flag="'+(k+1)+'">';
+             html +='<a href="'+siteUrl+'/file_apply/admin/apply/load_apply?id='+json.id+'&cid='+json.cid+'" class="status-ing">申请 1</a>';
+             html +='<em class="btn-close" id="'+json.id+'" cid="'+json.cid+'"></em>';
+             html +='</div>';
+         }
+          html +='<div class="item status-end check_active" flag="'+(j+1)+'">'; 
+          html +='<a href="'+siteUrl+'/file_apply/admin/apply/load_apply?id='+json.id+'&cid='+json.cid+'" class="status-ing">申请 '+j+'</a>';
+          html +='<em class="btn-close" id="'+json.id+'" cid="'+json.cid+'"></em>';
+          html +='</div>';
+          
+         $('.apply-tabs').append(html);
+           k++;
+           j++;
+           change_active();
+        }
+   });
+});
+     
+     
+     
+     //取消删除所有
+     $('.canel_but').on('click',function(){
+         var id = $('.convert_id').val();
+         if(!id){
+             window.location.href = siteUrl+'/file_apply/admin/apply';
+             return false;
+         }
+             $.post(siteUrl+'/file_apply/admin/ajax/delete_apply',{ 'id':id },function(json){
+                 if(json.info == 'ok'){
+                        window.location.href = siteUrl+'/file_apply/admin/apply';
+                }
+             },'json');
+     });
+         
+
+
+     //改变顶部样式
+     function change_active(){
+         $('.check_active').removeClass('active');
+         $('.check_active').addClass('status-end');
+         $(".check_active").each(function(){
+                var flag = $(this).attr('flag');
+                if(flag == j){
+                    $(this).addClass('active');
+                    var href_link = $(this).find('a').attr('href');
+                    var em_id = $(this).find('.btn-close').attr('id');
+                    var em_cid = $(this).find('.btn-close').attr('cid');
+                    $(this).find('a').attr('href','javascript:;');
+                    //删除当前的 和前一个的 x
+                    $(this).find('.btn-close').remove();
+                    $(this).prev('.item.status-end.check_active').find('.btn-close').remove();
+
+                    //再给前一个拼接上
+                    html = '';
+                    html += '<em class="btn-close"'; 
+                    html +=' id="'+em_id+'" cid="'+em_cid+'"></em>';
+                    $(this).prev('.item.status-end.check_active').find('a').after(html);
+                    $(this).prev('.item.status-end.check_active').find('a').attr('href',href_link);
+                }
+              });
+     }
+
+     ///////////////////////////////////////点击x只有一个头部标签时ajax删除/////////////////////////
+     $('.btn-close').live('click',function(){
+         var id = $(this).attr('id');
+         var cid = $(this).attr('cid');
+         //获取元素个数
+         var len = $('.apply-tabs').children('.check_active').length;
+         $('.delete_pop').attr('id',id);
+         $('.delete_pop').attr('cid',cid);
+         $('.delete_pop').attr('len',len);
+         $('.title-info').html('删除后该信息不可恢复');
+         $('.delete_pop').removeClass('hidden');
+     });
+
+     
+     $('.delete_succ').on('click',function(){
+         var id = $('.delete_pop').attr('id');
+         var cid = $('.delete_pop').attr('cid');
+         var len = $('.delete_pop').attr('len');
+         if(len == 1){
+             $.post(siteUrl+'/file_apply/admin/apply/delete_apply',{ 'id':id,'cid':cid },function(json){
+                 if(json.info == 'clear'){
+                    $('.apply-tabs').empty();
+                    $('.apply-tabs').addClass('hidden');
+                    //保证再次添加时无cid
+                    $('.convert_id').val(0);
+                    k = 1;
+                }
+             },'json');
+             $(this).closest('.pop-bg').addClass('hidden');
+         }else{
+             window.location.href = siteUrl+'/file_apply/admin/apply/apply_delete?id='+id+'&cid='+cid;
+         }  
+     });
+    ///////////////////////////顶部删除////////////////////////////////
+     //消息提示关闭
+     $('#prompt_success').on('click',function(){
+         $(this).closest('.pop-bg').addClass('hidden');
+     });
+    
+     $('.icon-close').on('click',function(){
+         $(this).closest('.pop-bg').addClass('hidden');
+     });
+     
+     $('.delete_but').on('click',function(){
+            $(this).closest('.pop-bg').addClass('hidden');
+        });
+//清除表单
+ function reset_form(){
+     var id = $('.convert_id').val();
+     var c_id = {$c_id};
+     var city_id = $("input[name='info[city_id]'").val();
+     var province_id = $('.province_id_flag').val();
+     $('.area_select').find('.sub_area_name').html('请选择');
+     $('.sub_ting').html('请选择');
+     $(':input','.ss1').not(':button,:submit,:reset,:checkbox').val('');
+     $('.clearfix option').removeAttr("selected");
+     //图片区域清空
+     $('.do_img').remove();
+     $('.img').remove();
+     $('.js_perUpOuter').removeClass('default-white');
+     ////
+     $('.default.js_perUpOuter.js_perUpAdd').css('display','block');
+     $(":checkbox").removeAttr('checked');
+     //隐藏图片区域
+     $('.mentou_img').addClass('hidden');
+     $('.rumenqu_img').addClass('hidden');
+     $('.yewu_img').addClass('hidden');
+     $('.zhongduan_img').addClass('hidden');
+     $('.jiaofuqu_img').addClass('hidden');
+     $('.convert_id').val(id);
+     $('.province_id_flag').val(province_id);
+     if(c_id){
+      $("input[name='info[city_id]'").val(c_id); 
+     }else{
+       $('.city_select').find('.sub_area_name').html('请选择');
+     }
+ }
+    
+//上传文件的预览
+$(".js_perUpAdd").live('click',function(){
+    $(this).closest('.js_perUpWrap').find('.js_perUpFile').trigger('click');
+}); 
+
+
+
+
+ $('.js_perUpFile').change(function(e){
+     handleFileSelect($(this), function (data) {
+       }); 
+  }); 
+  
+ 
+ 
+//点击样式文本框获取焦点
+ $('.icon-date').on('click',function(){
+     $(this).prev("input").focus();
+ });
+ 
+ 
+function error( msg )
+{
+    alert(msg);
+    return false;
+}
+
+
+$('.selectSub').click(function(e) {
+    e.preventDefault();
+   var flag =  check_form();
+   if(!flag){
+       return false;
+   }
+    //1为提交 0为草稿
+    $('.flag_id').val('1');
+    $('#addLoading').removeClass('hidden');
+    $('#szy_form').submit();
+});
+
+//保存草稿
+$('.btn_cao').click(function(e) {
+    e.preventDefault();
+   /* var flag =  check_form();
+   if(!flag){
+       return false;
+   } */
+   $('#addLoading').removeClass('hidden');
+    $('#szy_form').submit();
+});
+});
+
+//渠道码自动补全
+$('.autocomplete').autocomplete({
+source: 'file_apply/admin/ajax/get_user_number_list?province_id='+{$p_id}+'&c_id='+{$c_id},
+    //选择
+    select: function(event, ui){
+      
+      $(this).val(ui.item.label);
+      //隐藏域
+      $('.selectBusinessId').val(ui.item.id);
+      // 必须阻止事件的默认行为，否则autocomplete默认会把ui.item.value设为输入框的value值
+      event.preventDefault();
+      
+    }
+    
+});
+
+//根据试图编码自动填充市区
+$('.change_number').on('blur',function(){
+var user_number = $(this).val();
+var province_id = {$p_id};
+
+var url ="{AnUrl('file_apply/admin/ajax/getInfoByNumber')}";
+$.post(url,{ 'user_number':user_number,'province_id':province_id},function(json){
+        if(json){
+             var title = json.title;
+             $('.selectBusiness').val(title);
+             region(json.province_id,json.city_id,json.area_id, 0);
+             //改变市区显示
+             $('.city_select').find('.sub_area_name').attr('id',json.city_id);
+             get_city_name(json.city_id);
+             get_area_name(json.area_id);
+             //赋值
+             $("input[name='info[area_id]'").val(json.area_id);
+             $("input[name='info[city_id]'").val(json.city_id);
+             $('.js_store').val(json.store_type);
+             $('.selectBusinessId').val(json.id);
+        }
+       
+
+},'json');
+});
+
+
+function handleFileSelect(obj, callback)
+{
+  //alert(FileReader)
+  if (typeof FileReader == "undefined") {
+    return false;
+  }
+  var thisClosest = obj.closest('.js_perUpWrap');
+  var thisOuter = thisClosest.find('.js_perUpOuter');
+  
+  if (typeof thisClosest.length == "undefined" || typeof thisOuter.length == "undefined") {
+    return;
+  }
+  
+  var files = obj[0].files;
+  var f = files[0]; 
+  if (!isAllowFile(f.name)) {
+    showMsg("请上传常规格式的图片,如：jpg, png等");
+    return false;
+  }
+  
+  // 如果浏览器支持html5 FileReader
+  if (typeof FileReader != 'undefined') {
+    var reader = new FileReader();
+    reader.onload = (function(theFile){
+        return function (e) {
+          var tmpSrc = e.target.result;
+          if (tmpSrc.lastIndexOf('data:base64') != -1) {
+            tmpSrc = tmpSrc.replace('data:base64', 'data:image/jpeg;base64');
+          } else if (tmpSrc.lastIndexOf('data:,') != -1) {
+            tmpSrc = tmpSrc.replace('data:,', 'data:image/jpeg;base64,');
+          }
+          
+          doFileSelected(tmpSrc, thisOuter,callback);
+        };
+    })(f)
+    reader.readAsDataURL(f);
+    //alert('可以的')
+  } else {
+    //alert('不可以');
+    var tmpSrc = siteUrl+"/images/admin2/pic_select_defalut.png";
+    doFileSelected(tmpSrc, thisOuter,callback);
+  }
+}
+
+// 选择图片后的操作
+function doFileSelected(tmpSrc, thisOuter,callback)
+{
+  var img = '<div class="img"><img src="'+tmpSrc+'" style="width:100%; height:100%;" class="do_img js_perUpAdd"/></div>';
+  var title = thisOuter.find('p').html();
+   thisOuter.find('p').html('');
+  //thisOuter.hide();
+  thisOuter.closest('.js_perUpWrap').find('.img').remove();
+  thisOuter.attr('.default-white');
+ // thisOuter.empty(); 
+//  thisOuter.parent().prepend(img);
+
+  var pattern = /重新/;
+  if( pattern.test(title) ){
+      title = title.replace("重新", "");
+  } 
+  thisOuter.find('p').html('重新'+title);
+  thisOuter.parent().prepend(img);
+  var showId = thisOuter.attr('data-show-id');
+  if (showId) {
+    if ($("#"+showId).length >= 1) {
+      $("#"+showId).find('img').attr('src', tmpSrc);
+      
+    } else if ($("."+showId).length >= 1) {
+      $("."+showId).each(function(i){
+        $(this).html(img);
+      });
+    }
+  }
+  if (typeof(callback) != 'undefined') {
+    callback(tmpSrc);
+  }
+ 
+}
+
+//取得文件名的后缀
+function getFileExt(fileName)
+{
+  if (!fileName) {
+    return '';
+  }
+  
+  var _index = fileName.lastIndexOf('.');
+  if (_index < 1) {
+    return '';
+  }
+  
+  return fileName.substr(_index+1);
+}
+
+//是合格的文件名
+function isAllowFile(fileName, allowType)
+{
+  var fileExt = getFileExt(fileName).toLowerCase();
+  if (!allowType) {
+    allowType = ['jpg', 'jpeg', 'png', 'gif'];
+  }
+  
+  if ($.inArray(fileExt, allowType) != -1) {
+    return true;
+  }
+  
+  return false;
+}
+
+autoHeight();
+
+$(window).resize(function(){
+  autoHeight();
+})
+//左右等高
+function autoHeight(){
+      var leftH= $('.form-add').height();
+      var rightH = $('.form-add-view').height();
+      if (leftH > rightH){
+        $('.form-add-view').css({ height:(leftH+100) });
+      } else {
+        $('.form-add-view').css({ height:'auto' });
+      }
+}
+
+
+function check_form(){
+   var result=true;
+   var city_id     = $("input[name='info[city_id]'").val();
+   var area_id     = $("input[name='info[area_id]'").val();
+   var js_budget   = $('.js_budget').val();
+   //var BusinessId  = $('.selectBusinessId').val();
+   var tingdian    = $("input[name='info[store_type]'").val();
+   var mianji      = $('.men').val();
+   var last_time      = $('#start_time').val();
+   var begin_time      = $('#from_time').val();
+   var end_time      = $('#end_time').val();
+   var box = $("input[type='checkbox']").is(':checked');
+   var design_company = $("input[name='info[design_company]'").val();
+   var user_number = $("input[name='info[user_number]'").val();
+   var mobile_add = $("input[name='info[mobile_add]'").val();
+   var designer = $("input[name='info[designer]'").val();
+   var design_phone = $("input[name='info[design_phone]'").val();
+   var take = $("input[name='info[take]'").val();
+   var take_phone = $("input[name='info[take_phone]'").val();
+   var wide_add = $("input[name='info[wide_add]'").val();
+   var pc_add = $("input[name='info[pc_add]'").val();
+   var work_add = $("input[name='info[work_add]'").val();
+   console.log(tingdian,mianji,last_time,begin_time,end_time,js_budget,design_company,design_phone,take,take_phone,wide_add,user_number,pc_add,work_add,box,city_id,area_id);
+   if(!tingdian || !mianji || !last_time || !begin_time || !end_time || !js_budget || !design_company || !design_phone || !take || !take_phone || !wide_add || !user_number || !pc_add || !work_add || !box || city_id == 0 || area_id == 0){
+       $('#prompt').removeClass('hidden');
+       result=false;
+       return result;
+   }
+
+   if(user_number.length!= 13 || isNaN(user_number)){
+       $('.info').html('渠道编码为13位数字');
+       $('#prompt').removeClass('hidden');
+       result=false;
+       return result;
+   }
+   
+  
+   
+   return result;
+}
+
+
+/* $('.phone_check').blur(function(){
+    var phone = $(this).val();
+
+    console.log(phone);
+    
+    if(phone === '' || !(/1[3|4|5|7|8][0-9]{9}/).test(phone)){
+        alert('请输入正确的手机号码');
+        return false;
+    }
+   
+}); */
+
+</script>
+
+
+ 
+<!-- 上传加载div -->
+
+<div class="inner main hidden" style="z-index: 1002;position:fixed;left:0;top:0; width: 100%;height: 100%;" id="addLoading">
+      <div class="loading-box modal-dialog"><img src="{$smarty.const.STATIC_URL}/html-jituan/img-jituan/loading.gif"></div>
+</div>
+    
+</body>
+</html>

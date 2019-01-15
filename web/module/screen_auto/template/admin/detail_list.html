@@ -1,0 +1,134 @@
+{include_www file="admin/lib/header_new.html" title="消息记录"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen_auto/admin/stat')}"><i class="iconfont iconfont-logo2"></i>{$module}管理</a>
+            &gt;
+            <span>{$action}列表（设备数：{count($list)}）</span>
+                <a href="Javascript:history.go(-1)" class="btn btn-primary btn-sm pull-right">返回</a>
+          </div>
+          <br>
+          {if !$new_device_filter}
+          <div class="form-search clearfix">
+              <a href="javascript:;" class="btn btn-info btn-sm pull-right btn_msg">状态解释</a>
+              <div class="pull-left">
+                <form action="{AnUrl('screen_auto/admin/stat/detail')}" method='get'>
+                <input type="hidden"  name="type" value="2">
+                  <label class="pull-left" for="exampleInputName2">&nbsp;&nbsp;&nbsp;营业厅&nbsp;&nbsp;</label>
+                  <input type="text" id="title" style="width: 200px;" name="search_filter[business_hall_title]" value="{$search_filter.business_hall_title}" class="form-control input-sm pull-left js_search ui-autocomplete-input" placeholder="按营业厅名称搜索" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
+
+                  <label class="pull-left" for="exampleInputName2">&nbsp;&nbsp;&nbsp;设备ID&nbsp;&nbsp;</label>
+                  <input type="text" id="title" style="width: 200px;" name="search_filter[device_unique_id]" value="{$search_filter.device_unique_id}" class="form-control input-sm pull-left js_search ui-autocomplete-input" placeholder="按设备ID搜索" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
+
+                  <button type="submit" class="btn-search pull-left">搜索</button>
+                </form>
+              </div>
+         </div> 
+        {/if}
+         <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th width="10%">品牌型号</th>
+                  <th width="20%">设备信息</th>
+                  {if $type == 2}
+                  <th width="8%">失败次数</th>
+                  {/if}
+                  <th width="8%">第一天</th>
+                  <th width="8%">第二天</th>
+                  <th width="8%">第三天</th>
+                  <th width="8%">第四天</th>
+                  <th width="8%">第五天</th>
+                  <th width="8%">第六天</th>
+                  <th width="8%">第七天</th>
+                  <th width="8%">详情</th>
+                </tr>
+              </thead>
+              <tbody>
+                {foreach $list as $k=>$v}
+                <tr>
+                    {$device_info = screen_device_helper::get_device_info_by_device($v.device_unique_id)}
+                    {$name_info = screen_auto_helper::get_device_nikename($device_info.phone_name, $device_info.phone_version)}
+
+                    <td>{$name_info.name_nickname}<br>{$name_info.version_nickname}</td>
+                    <td>
+                          <b>设备ID：</b>{$v.device_unique_id}</br>
+                          <b>安装时间：</b>{date('Y-m-d', strtotime($device_info.day))}</br>
+                      {if $v.reset_day}
+                          <b> 升级时间：</b>{date('Y-m-d', strtotime($v.reset_day))}</br>
+                      {/if}
+                        </td>
+                    {if $type == 2}
+                        <td>{7 - $v.success_num}</td>
+                    {/if}
+                    <td>{screen_auto_config::$detail[$v.first]}</td>
+                    <td>{screen_auto_config::$detail[$v.second]}</td>
+                    <td>{screen_auto_config::$detail[$v.third]}</td>
+                    <td>{screen_auto_config::$detail[$v.fourth]}</td>
+                    <td>{screen_auto_config::$detail[$v.fifth]}</td>
+                    <td>{screen_auto_config::$detail[$v.sixth]}</td>
+                    <td>{screen_auto_config::$detail[$v.seventh]}</td>
+                    <td>
+                    {if $v.no_report}
+                        <a href="{AnUrl("screen_auto/admin?type=1&search_filter[device_unique_id]={$v['device_unique_id']}&business_hall_id={$v['business_hall_id']}")}">
+                         查看
+                        </a>
+                     {else}
+                     暂无
+                     {/if}
+
+                     </td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="12">暂无相关信息</td></tr>
+                {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        </div>
+<!-- 弹层start -->
+<div class="modal" id="message">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close btn_close" data-dismiss="modal" aria-hidden="true">×</button>
+                  <h4 class="modal-title w_title" id="myModalLabel">自启动状态解释</h4>
+              </div>
+              <div class="modal-body">
+                  <div class="media row">
+                        <div class=" col-xs-20">
+                        <div class="media-body">
+                            <p><b>成功</b><br>代表手机是通过手机发送的自启动广播启动了手机，这种是有自启动权限的。</u></p>
+                            <p><b>失败</b><br>代表未自启动启动，但是应用启动了，但是不是通过获取了自启动权限和启动了，可能是手动点击了启动，可能是守护让进程启动了，还有可能是华为设备通过推送唤醒了应用。</p>
+                            <p><b>关机</b><br>代表手机处于关机或者是应用被杀死了，应用那天真关机没有启动。</p>
+                            <p><b>未上报</b><br>后端没有收到信息。</p>
+                         </div>
+                    </div>
+                </div>
+              </div>
+          </div>
+      </div>
+    </div>
+<!-- 弹层 -->
+<script>
+
+$('.btn_msg').click(function(){
+	// 获取
+	//点击显示
+	$('#message').addClass('show');
+})
+//X点击隐藏
+$('.btn_close').click(function(){
+	$('#message').removeClass('show');
+})
+
+$('#title').autocomplete({
+    source: "/business_hall/admin/ajax/get_title_field",
+});
+</script>
+{include_www file="admin/lib/footer_new.html"}

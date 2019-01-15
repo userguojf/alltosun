@@ -1,0 +1,165 @@
+{include_www file="admin/lib/header_new.html" title="角色成员列表"}
+{include_www file="admin/lib/sidebar_new.html"}
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('action/admin/group')}"><i class="iconfont iconfont-logo2"></i>角色成员列表</a>
+            &gt;
+            <span>角色成员列表</span>
+            <a href="{AnUrl('action/admin/group')}" class="btn btn-primary btn-sm pull-right">返回角色管理</a>
+        </div>
+
+        <div class="form-search clearfix">
+            <div class="pull-left">
+                {if $group_info['ranks'] <= 100}
+                    <form action="{AnUrl('action/admin/group_user')}" method="get">
+                        <input type="hidden" value="{$gid}" name="gid" />
+                        <input type="text" name="search_filter[member_user]" id="admin_name" placeholder="请输入管理员名称" value="{if $search_filter['member_user']}{$search_filter['member_user']}{/if}" class="form-control input-sm pull-left" style="width: 140px;">
+                        {if $res_name == 'business_hall'}
+                            <input type="text" name="search_filter[title]" placeholder="请输入管理员营业厅" value="{if $search_filter['title']}{$search_filter['title']}{/if}" class="form-control input-sm pull-left" style="width: 140px;">
+                        {/if}
+                        {if $gid !=8}
+                            <select name="search_filter[province_id]" style="width: 100px;" id="province_id">
+                                <option value="">请选择</option>
+                                {html_options options="{$options}" selected=$search_filter['province_id']}
+                            </select>
+                            <!-- 全部城市(省份下所有城市) -->
+                            {if $city_options}
+                                <select name="search_filter[city_id]" style="width: 100px;" id="city_id">
+                                    <option value="">全部城市(省份下所有城市)</option>
+                                    {html_options options="{$city_options}" selected=$search_filter['city_id']}
+                                </select>
+                            {/if}
+                        {/if}
+                        <button type="submit" class="btn-search pull-right searchBtn">搜索</button>
+                    </form>
+                {/if}
+            </div>
+            <div class="pull-right">
+                {if $gid==26}
+                    <a href="javascript:;" class="btn btn-sm btn-success btn_load">导出数据</a>
+                {/if}
+                <a href='{AnUrl("action/admin/group_user/add&gid={$gid}")}' class="btn btn-sm btn-success">添加用户</a>
+            </div>
+        </div>
+
+<script>
+var load_url = '';
+$('.btn_load').on('click', function(){
+    load_url =  window.location.href + '&load=1';
+    window.location.href = load_url;
+    var load_url = '';
+})
+    $(function(){
+    	var search_filter = new Array();
+    	$('.btn_load').on('click',function(){
+    		search_filter['member_user'] = $('#admin_name').val();
+    		search_filter['province_id'] = $('#province_id').val();
+    		search_filter['city_id']     = $('#city_id').val();
+    		console.log(search_filter);
+    		
+    		//window.location.href = "{AnUrl("action/admin/group_user/export")}"+"?search_filter=";
+    	})
+    })
+      $(function() {
+        $('select[name="search_filter[province_id]"]').on('change', function() {
+          var provinceId = Number($(this).find('option:selected').val());
+          
+          $(this).nextAll('select').remove();
+          var thisObj = $(this);
+          if (provinceId) {
+            // 请求该省下的城市列表
+            $.post(siteUrl + '/action/admin/ajax/get_city_list?province_id=' + provinceId, function(json) {
+  
+              var citySelectHtml = '<select name="search_filter[city_id]"><option value="">全部城市(省份下所有城市)</option>';
+              $.each(json.list, function(k, v) {
+                citySelectHtml += '<option value="' + v.id + '">' + v.name + '</option>';
+              });
+              citySelectHtml += '</select>';
+              
+              thisObj.after(citySelectHtml);
+              
+            }, 'json')
+             .fail(function(json) {
+               console.log(json);
+             });
+            
+          }
+          
+        });
+        
+/*         // 搜索按钮
+        $('.searchBtn').on('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          // 拼装搜索条件并跳转
+          var provinceId = Number($('select[name="search_filter[province_id]"] option:selected').val());
+          var cityId     = Number($('select[name="search_filter[city_id]"] option:selected').val());
+          
+          var params = resetSearchParams(['search_filter[province_id]', 'search_filter[city_id]']);
+          location.href = siteUrl + location.pathname + '?' + params + (params ? '&' : '') + 'search_filter[province_id]=' + provinceId + '&search_filter[city_id]=' + cityId;
+        }); */
+        
+      });
+      
+      // 重置地址栏的相关参数
+      function resetSearchParams(fields)
+      {
+        if (!fields) {
+          return location.search.substring(1);
+        }
+        
+        var params = [];
+        $.each(location.search.substring(1).split('&'), function(k, v) {
+          if ($.inArray(v.split('=')[0], fields) == -1) {
+            params.push(v);
+          }
+        });
+        
+        return params.join('&');
+      }      
+</script>
+
+    <div class="list">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>管理员名称</th>
+                    <th>归属</th>
+                    <th>Rank</th>
+                    <th>添加时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {foreach $user_list as $k=>$v}
+                    <tr id="dataList{$v.id}">
+                        <td>{$v.id}</td>
+                        <td>{$v.member_user}</td>
+                        <td>{$v.auther}</td>
+                        <td>{$v.ranks}</td>
+                        <td>{$v.add_time}</td>
+                        <td>
+                            <a title="编辑" class="btn btn-xs btn-success" href='{AnUrl("action/admin/group_user/add&gid={$gid}&uid={$v.id}&action=edit")}'>编辑</a>
+                            <a title="删除" class="deleteOne btn btn-xs btn-danger" href='{AnUrl("action/admin/group_user/delete&uid={$v.id}")}'>删除</a>
+                        </td>
+                    </tr>
+                {foreachelse}
+                    <tr><td colspan="9">暂无相关信息</td></tr>
+                {/foreach}
+            </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+<!-- 分页 start -->
+
+<!-- 分页 end -->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

@@ -1,0 +1,623 @@
+{include_www file="admin/lib/header_new.html" title="门店改造申请"}
+<style>
+    .pic-upload { width:250px;height:133px; }
+    .btn-upload{ width:106px; height: 33px; }
+    .btn-upload a{ display: block;position:relative;width: 104px;height: 33px;line-height: 18px;padding: 6px 0;text-align: center;color: #4c4c4c;background: #fff;border: 1px solid #eee;}
+    .btn-upload input{ width:106px; height:33px; position:relative; left:0px; top:-32px; z-index:1;filter:alpha(opacity=0);-moz-opacity:0;opacity:0; cursor:pointer;}
+    .js_upFileBox{ margin-left:0px;margin-top:30px;}
+</style>
+<!--start:右侧-->
+<div class="main mian2 ">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('file_apply/admin/apply?search_type=apply')}"><i class="iconfont iconfont-logo2"></i>门店管理</a>
+            &gt;
+            <span>添加设备</span>
+            <a href="{AnUrl('file_apply/admin/apply?search_type=apply')}" class="btn btn-primary btn-sm pull-right">返回门店列表</a>
+        </div>
+        <div class="final_div hidden">
+            <form  id ="sub" action='{AnUrl("file_apply/admin/apply/save")}' method="post" enctype="multipart/form-data">
+                <div id="app">
+                     
+               </div>
+            </form>
+        </div>
+        <div class="clearfix">
+            <div class="form-add pull-left">
+                <form class="form-horizontal ss1" id="szy_form" action='{AnUrl("file_apply/admin/apply/save")}' method="post"  enctype="multipart/form-data">
+                    {if $res_name == 'province'}
+                    <input type='hidden' name='info[province_id]' value="{$p_id}">
+                    {else if $res_name == 'city'}
+                    <input type='hidden' name='info[province_id]' value="{$p_id}">
+                    <input type='hidden' name='info[city_id]' value="{$c_id}">
+                    {/if}
+                    <input type='hidden' name='id' value="{$info.id}" class="convert_id">
+                    <input type='hidden' name='flag' value="0" class="flag_id">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">渠道编码</label>
+                        <div class="col-sm-7">
+                            <a class="less-box">
+                                <span>
+                                    <input type="text" name="info[user_number]" value="{$info.user_number}" class="form-control required autocomplete change_number" placeholder="请输入渠道编码">
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">厅店名称</label>
+                        <div class="col-sm-7">
+                            <a class="less-box">
+                                <span>
+                                    <input type="text" name="info[business_title]" value="{business_hall_helper::get_business_hall_info($info.business_id, 'title')}" class="form-control required selectBusiness" placeholder="请输入营业厅名称">
+                                    <input type="hidden" name="info[business_id]" value="{$info.business_id}" class="selectBusinessId">
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">市</label>
+                        <div class="col-sm-7">
+                            <select name="info[city_id]" class="form-control js_city required" default_text="全国(所有省份)" default_value="0">
+                                <option value="0">请选择</option>
+                                    <option {if $k == $info.city_id}selected{/if} value="{$k}">{$v}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">区</label>
+                        <div class="col-sm-7">
+                            <select name="info[area_id]" class="form-control js_area required" default_text="全国(所有省份)" default_value="0">
+                                <option value="0">请选择</option>
+                                {*{foreach $a_list as $k => $v}
+                                    <option {if $v.id == $info.area_id}selected{/if} value="{$v.id}">{$v.name}</option>
+                                {/foreach}*}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">厅级</label>
+                        <div class="col-sm-7">
+                            <select name="info[store_type]" class="form-control js_store required" default_text="厅级" default_value="0">
+                               <option value="0">请选择</option>
+                                {foreach file_apply_config::$store_type as $k => $v}
+                                    <option {if $v == $info.store_type}selected{/if} value="{$k}">{$v}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+            
+                   <div class="form-group">
+                        <label class="col-sm-3 control-label">面积</label>
+                        <div class="col-sm-7">
+                            <a class="less-box">
+                                <span>
+                                    <input type="text" name="info[business_area]" value="{$info.business_area}" class="form-control required" placeholder="请输入厅店面积">
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">改造预算</label>
+                        <div class="col-sm-7">
+                            <a class="less-box">
+                                <span><input type="text" name="info[budget]" value="{$info.budget}" class="form-control required js_budget" placeholder="请输入改造预算"></span>
+                            </a>
+                        </div>
+                    </div>
+
+                {*上次改造时间 START*}
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">上次改造时间</label>
+                  <div class="col-sm-7">
+                    {AnForm type="text" name="info[last_time]"  value="{$info['last_time']}" class=" form-control" validate="required" id="start_time" filter="filter_string" placeholder="请选择上次改造时间"}
+                  </div>
+                </div>
+               
+                             <div class="form-group">
+                <input type="text" class="form-control" style="width:100px; text-align:center;" name="search_filter[start_date]" id="start_time" value="{$search_filter.start_date}" />
+              </div>
+              <div class="form-group">
+                <label for="exampleInputName2">至</label>
+                <input type="text" class="form-control" style="width:100px; text-align:center;" name="search_filter[end_date]" id="end_time" value="{$search_filter.end_date}" />
+              </div>
+              <button type="button" class="btn btn-success btn-sm" id="searchData">搜索</button>
+                {*上次改造时间 END*}
+                
+                
+                 {*改造开始时间 START*}
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">改造开始时间</label>
+                  <div class="col-sm-7">
+                    {AnForm type="text" name="info[change_begin]"  value="{$info['change_begin']}" class="begin_time form-control" validate="required"  filter="filter_string" placeholder="请选择开始时间"}
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">改造结束时间</label>
+                  <div class="col-sm-7">
+                    {AnForm type="text" name="info[change_end]"  value="{$info['change_end']}" class="begin_time form-control" validate="required"  filter="filter_string" placeholder="请选择结束时间"}
+                  </div>
+                </div>
+                {*改造结束时间 END*}
+                
+                
+                 <div class="form-group form-inline">
+                    <label class="col-sm-3 control-label">分区布局方案 </label> 
+                    <div class="col-sm-9">
+                        {foreach file_apply_config::$plan_type as $k=>$v}
+                            <div class="checkbox col-sm-3">
+                                <label>
+                                    {if $plan_info}
+                                    <input type="checkbox" name="info[plan_type][]" value="{$k}" checked="checked" class="JS_planType" style="margin-top: 10px;"/>
+                                    {else}
+                                    <input type="checkbox" name="info[plan_type][]" value="{$k}"  class="JS_planType"  style="margin-top: 10px;"/>
+                                    {/if}
+                                     {$v}
+                                </label>
+                            </div>
+                        {/foreach}
+                    </div>
+                </div>
+                
+                <div class="form-group uploadImg" id = 'meal_img' >
+                  <label class="col-sm-3 control-label contentTitle">门店设计图</label>
+                  <div class="col-sm-9 js_perUpWrap">
+                    <div class="pic-upload js_perUpOuter js_upload_image " data-show-id="content_img">
+                      {if $info.plan_img}
+                        <img src="{_image($info.plan_img)}" class="js_upload_image" style="width:250px;"/>
+                      {/if}
+                      <div class="txt js_perUpAdd js_perUpArea {if $info.plan_img } hidden{/if}">
+                        <em>+</em>
+                        整体平面图
+                      </div>
+                      <div class="btn-control js_perUpChange js_perUpArea">重新设置</div>
+                    </div>
+                    <p class="tips">提示：保持图片宽高一致，图片格式jpg／png&nbsp;&nbsp;</p>
+                    {if !$info}
+                        {AnForm type="file" name="plan_link[]" class='js_perUpFile sheji hidden' }
+                    {else}
+                        {AnForm type="file" name="plan_link[]" class='js_perUpFile sheji hidden' }
+                    {/if}
+                  </div>
+                </div>
+                
+                <div class="form-group uploadImg mentou_img hidden"  >
+                  <label class="col-sm-3 control-label contentTitle">门头设计图</label>
+                  <div class="col-sm-9 js_perUpWrap">
+                    <div class="pic-upload js_perUpOuter js_upload_image " data-show-id="content_img">
+                      {if $plan_info.link}
+                        <img src="{_image($plan_info.link)}" class="js_upload_image" style="width:250px;"/>
+                      {/if}
+                      <div class="txt js_perUpAdd js_perUpArea {if $plan_info.link } hidden{/if}">
+                        <em>+</em>
+                        上传门头设计图
+                      </div>
+                      <div class="btn-control js_perUpChange js_perUpArea">重新设置</div>
+                    </div>
+                    <p class="tips">提示：保持图片宽高一致，图片格式jpg／png&nbsp;&nbsp;</p>
+                    {if !$info}
+                        {AnForm type="file" name="plan_mentou[]" class='js_perUpFile mentou hidden' }
+                    {else}
+                        {AnForm type="file" name="plan_mentou[]" class='js_perUpFile mentou hidden' }
+                    {/if}
+                  </div>
+                </div>
+                
+                 <div class="form-group uploadImg rumenqu_img hidden" >
+                  <label class="col-sm-3 control-label contentTitle">入门区</label>
+                  <div class="col-sm-9 js_perUpWrap">
+                    <div class="pic-upload js_perUpOuter js_upload_image " data-show-id="content_img">
+                      {if $plan_info.link}
+                        <img src="{_image($plan_info.link)}" class="js_upload_image" style="width:250px;"/>
+                      {/if}
+                      <div class="txt js_perUpAdd js_perUpArea {if $plan_info.link } hidden{/if}">
+                        <em>+</em>
+                        上传入门区设计图
+                      </div>
+                      <div class="btn-control js_perUpChange js_perUpArea">重新设置</div>
+                    </div>
+                    <p class="tips">提示：保持图片宽高一致，图片格式jpg／png&nbsp;&nbsp;</p>
+                    {if !$info}
+                        {AnForm type="file" name="plan_rumen[]" class='js_perUpFile rumen hidden' }
+                    {else}
+                        {AnForm type="file" name="plan_rumen[]" class='js_perUpFile rumen hidden' }
+                    {/if}
+                  </div>
+                </div>
+                
+                
+                 <div class="form-group uploadImg yewu_img hidden"  >
+                  <label class="col-sm-3 control-label contentTitle">业务代办理区</label>
+                  <div class="col-sm-9 js_perUpWrap">
+                    <div class="pic-upload js_perUpOuter js_upload_image " data-show-id="content_img">
+                      {if $plan_info.link}
+                        <img src="{_image($plan_info.link)}" class="js_upload_image" style="width:250px;"/>
+                      {/if}
+                      <div class="txt js_perUpAdd js_perUpArea {if $plan_info.link } hidden{/if}">
+                        <em>+</em>
+                        上传业务代办理区设计图
+                      </div>
+                      <div class="btn-control js_perUpChange js_perUpArea">重新设置</div>
+                    </div>
+                    <p class="tips">提示：保持图片宽高一致，图片格式jpg／png&nbsp;&nbsp;</p>
+                    {if !$info}
+                        {AnForm type="file" name="plan_yewu[]" class='js_perUpFile yewu hidden' }
+                    {else}
+                        {AnForm type="file" name="plan_yewu[]" class='js_perUpFile yewu hidden' }
+                    {/if}
+                  </div>
+                </div>
+                
+                <div class="form-group uploadImg zhongduan_img hidden"  >
+                  <label class="col-sm-3 control-label contentTitle">终端体验区</label>
+                  <div class="col-sm-9 js_perUpWrap">
+                    <div class="pic-upload js_perUpOuter js_upload_image " data-show-id="content_img">
+                      {if $plan_info.link}
+                        <img src="{_image($plan_info.link)}" class="js_upload_image" style="width:250px;"/>
+                      {/if}
+                      <div class="txt js_perUpAdd js_perUpArea {if $plan_info.link } hidden{/if}">
+                        <em>+</em>
+                        上传终端体验区设计图
+                      </div>
+                      <div class="btn-control js_perUpChange js_perUpArea">重新设置</div>
+                    </div>
+                    <p class="tips">提示：保持图片宽高一致，图片格式jpg／png&nbsp;&nbsp;</p>
+                    {if !$info}
+                        {AnForm type="file" name="plan_zhongduan[]" class='js_perUpFile zhongduan hidden' }
+                    {else}
+                        {AnForm type="file" name="plan_zhongduan[]" class='js_perUpFile zhongduan hidden' }
+                    {/if}
+                  </div>
+                </div>
+                
+                 <div class="form-group uploadImg jiaofuqu_img hidden" >
+                  <label class="col-sm-3 control-label contentTitle">交付区</label>
+                  <div class="col-sm-9 js_perUpWrap">
+                    <div class="pic-upload js_perUpOuter js_upload_image " data-show-id="content_img">
+                      {if $plan_info.link}
+                        <img src="{_image($plan_info.link)}" class="js_upload_image" style="width:250px;"/>
+                      {/if}
+                      <div class="txt js_perUpAdd js_perUpArea {if $plan_info.link } hidden{/if}">
+                        <em>+</em>
+                        上传交付区设计图
+                      </div>
+                      <div class="btn-control js_perUpChange js_perUpArea">重新设置</div>
+                    </div>
+                    <p class="tips">提示：保持图片宽高一致，图片格式jpg／png&nbsp;&nbsp;</p>
+                    {if !$info}
+                        {AnForm type="file" name="plan_jiaofu[]" class='js_perUpFile jiaofu hidden' }
+                    {else}
+                        {AnForm type="file" name="plan_jiaofu[]" class='js_perUpFile jiaofu hidden' }
+                    {/if}
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">设计公司名称</label>
+                    <div class="col-sm-7">
+                        <a class="less-box">
+                            <span><input type="text" name="info[design_company]" value="{$info.design_company}" class="form-control required " placeholder=""></span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">设计师姓名</label>
+                    <div class="col-sm-7">
+                        <a class="less-box">
+                            <span><input type="text" name="info[designer]" value="{$info.designer}" class="form-control required " placeholder=""></span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">设计师联系电话</label>
+                    <div class="col-sm-7">
+                        <a class="less-box">
+                            <span><input type="text" name="info[design_phone]" value="{$info.design_phone}" class="form-control required " placeholder=""></span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">电信方设计对接人姓名</label>
+                    <div class="col-sm-7">
+                        <a class="less-box">
+                            <span><input type="text" name="info[take]" value="{$info.take}" class="form-control required " placeholder=""></span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">电信方设计对接人联系电话</label>
+                    <div class="col-sm-7">
+                        <a class="less-box">
+                            <span><input type="text" name="info[take_phone]" value="{$info.take_phone}" class="form-control required " placeholder=""></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">移动月均新增</label>
+                    <div class="col-sm-7">
+                        <a class="less-box">
+                            <span><input type="text" name="info[mobile_add]" value="{$info.mobile_add}" class="form-control required " placeholder=""></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">终端月均销售</label>
+                    <div class="col-sm-7">
+                        <a class="less-box">
+                            <span><input type="text" name="info[pc_add]" value="{$info.pc_add}" class="form-control required " placeholder=""></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">宽带月均新增</label>
+                    <div class="col-sm-7">
+                        <a class="less-box">
+                            <span><input type="text" name="info[wide_add]" value="{$info.wide_add}" class="form-control required " placeholder=""></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">月均业务新增收入</label>
+                    <div class="col-sm-7">
+                        <a class="less-box">
+                            <span><input type="text" name="info[work_add]" value="{$info.work_add}" class="form-control required " placeholder=""></span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="form-group" >
+                  <label class="col-sm-3 control-label">活动说明</label>
+                  <div class="col-sm-7">
+                    <textarea class="form-control" name="info[remark]"  placeholder="请在这里输入备注" rows="5"></textarea>
+                  </div>
+                </div>
+                    
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-10">
+                            <button type="button" class="btn btn-sm btn-success add_title">添加申请门店</button>
+                            <button type="button" class="btn btn-sm btn-success selectSub">立即提交</button>
+                            <a type="submit" class="btn btn-sm btn-info js_saveAndPutArea" href="javascript:void(0);">&nbsp;&nbsp;仅保存&nbsp;&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a type="button" class="btn btn-sm btn-warning" href="{AnUrl('file_apply/admin/apply')}">&nbsp;&nbsp;取消&nbsp;&nbsp;</a>
+                            <button type="reset" style="display:none;"></button> 
+                            
+                  </div>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <script src="{$smarty.const.SITE_URL}/js/business_hall/admin/region_select.js?v=11221"></script>
+ --><script src="{$smarty.const.SITE_URL}/js/region_func.js?id={time()}"></script>
+
+<script>
+var k = 0;
+var siteUrl = "{$smarty.const.SITE_URL}";
+var member_id = "{$member_id}";
+var res_id = "{$res_id}";
+var res_name = "{$res_name}";
+$(function(){
+    {if $info}
+        region({$info.province_id}, {$info.city_id}, {$info.area_id}, {$info.business_id});
+    {else}
+        {if $c_id}
+          region({$p_id}, {$c_id}, 0, 0);
+        {else}
+          region({$p_id},0, 0, 0);
+        {/if}
+    {/if}
+
+    
+	 $('.JS_planType').on('click',function(){
+		 
+         $(".JS_planType:checked").each(function() {
+            	 if($(this).val() == 0){
+                     $('.mentou_img').removeClass('hidden');
+                 }else if($(this).val() == 1){
+                     $('.rumenqu_img').removeClass('hidden');
+                 }else if($(this).val() == 2){
+                     $('.yewu_img').removeClass('hidden');
+                 }else if($(this).val() == 3){
+                     $('.zhongduan_img').removeClass('hidden');
+                 }else if($(this).val() == 4){
+                     $('.jiaofuqu_img').removeClass('hidden');
+                 }
+        	});   
+         $(".JS_planType:not(:checked)").each(function() {
+        	    if($(this).val() == 0){
+                    $('.mentou_img').addClass('hidden');
+                }else if($(this).val() == 1){
+                    $('.rumenqu_img').addClass('hidden');
+                }else if($(this).val() == 2){
+                    $('.yewu_img').addClass('hidden');
+                }else if($(this).val() == 3){
+                    $('.zhongduan_img').addClass('hidden');
+                }else if($(this).val() == 4){
+                    $('.jiaofuqu_img').addClass('hidden');
+                }
+        	});   
+     })
+
+//将表单数据整理到表单列表
+$('.add_title').on('click',function(){
+	
+	var formobj =  document.getElementById("szy_form");
+	var formdata = new FormData(formobj);
+	formdata.append('res_id',res_id);
+	formdata.append('res_name',res_name);
+	formdata.append('member_id',member_id);
+	console.log(res_id);
+	console.log(res_name);
+	console.log(formdata);
+	   $.ajax({
+        url: siteUrl+'/file_apply/admin/ajax/add_apply',
+        type: "POST",
+        data: formdata,
+        processData: false,  // 不去处理发送的数据
+        contentType: false,   //不设置Content-Type请求头
+        success: function(response){
+          //  console.log(response);
+           var json=$.parseJSON(response);
+            $('.convert_id').val(json.cid);
+         console.log(json);
+         console.log(json.cid);
+         reset_form();
+         $('.final_div').removeClass('hidden');
+         var html = '';
+          html +='<div class="show_id_'+k+1+' szy">'+(k+1)+'<input type="text" name="id" value="'+json.id+'" class="form-control" >';
+          html +='<input type="text" name="cid" value="'+json.cid+'" class="form-control" ></div>';
+         $('#app').append(html);
+         console.log(html);
+           k++;
+        }
+   });
+});
+
+
+	 $("#app").on('click','.szy', function(){
+		 var id = $(this).find('input[name="id"]').val();
+		 var cid = $(this).find('input[name="cid"]').val();
+		 $(this).load(siteUrl+'/file_apply/admin/apply/load_apply?id='+id+'&cid='+cid);
+		 
+		 /* $.ajax( {
+			    url: siteUrl+'/file_apply/admin/apply/edit.html', 
+			    type: "GET", //静态页用get方法，否则服务器会抛出405错误
+			    success: function(data){
+			    	 var result = $(data).find(".test_list");
+			      $(this).html(result);
+			 
+			 
+			    }
+			}); */
+		 
+		  bodyContent = $.ajax({
+
+		        url: siteUrl+'/file_apply/admin/apply/edit.html', 
+		        global: false,
+		        type: "POST",
+		       /*  data: ({
+		            id: this.getAttribute('test_list')
+		        }), */
+		        dataType: "html",
+		        async: false,
+		        success: function(data) {
+		        	var result = $(data).find(".test_list");
+		        	$(this).append(result);
+		        }
+		    })
+	 });
+
+
+	 $('.edit_div').on('click','.test_list',function(){
+		    alert(1);
+		});
+
+
+//清除表单
+ function reset_form(){
+	 var id = $('.convert_id').val();
+     //jquery 要加0不知道为什么
+     $('.ss1')[0].reset();
+     $('.form-control option').removeAttr("selected");
+     $('.do_img').remove();
+     $('.txt.js_perUpAdd.js_perUpArea').css('display','block');
+     $('.convert_id').val(id);
+ }
+	
+//上传文件的预览
+$(".js_perUpArea").click(function(){
+	$(this).closest('.js_perUpWrap').find('.js_perUpFile').trigger('click');
+});
+
+$('.js_perUpFile').change(function(e){
+	//var files = $(this)[0].files;
+	//var f = files[0];
+    handleFileSelect($(this), function (data) {
+    	//console.log(f);
+       });
+  });
+  
+
+function error( msg )
+{
+    alert(msg);
+    return false;
+}
+
+
+$('.selectSub').click(function(e) {
+    e.preventDefault();
+    var city_id     = $('.js_city').val();
+    var area_id     = $('.js_area').val();
+    var js_budget        = $('.js_budget').val();
+    if ( city_id == 0 ) {
+        return error('请选择市'); 
+    }
+    if ( area_id == 0) {
+        return error('请选择区');
+    }
+    if ( isNaN(js_budget) ) {
+        return error('预算只能是数字');
+    } 
+    
+    //1为提交 0为草稿
+    $('.flag_id').val('1');
+    $('#szy_form').submit();
+});
+});
+
+//渠道码自动补全
+$('.autocomplete').autocomplete({
+source: 'file_apply/admin/ajax/get_user_number_list?province_id='+{$p_id},
+    //选择
+    select: function(event, ui){
+      
+      $(this).val(ui.item.label);
+      //隐藏域
+      $('.selectBusinessId').val(ui.item.id);
+      // 必须阻止事件的默认行为，否则autocomplete默认会把ui.item.value设为输入框的value值
+      event.preventDefault();
+      
+    }
+    
+});
+
+//根据试图编码自动填充市区
+$('.change_number').on('blur',function(){
+var user_number = $(this).val();
+var province_id = {$p_id};
+var url ="{AnUrl('file_apply/admin/ajax/getInfoByNumber')}";
+$.post(url,{ 'user_number':user_number,'province_id':province_id},function(json){
+    if (json.info == 'fail') {
+       
+    }else {
+        var title = json.title;
+        $('.selectBusiness').val(title);
+        region(json.province_id,json.city_id,json.area_id, 0);
+        $('.js_store').val(json.store_type);
+        $('.selectBusinessId').val(json.id);
+    }
+
+},'json');
+});
+
+</script>
+
+<!-- 上传加载div -->
+<div class="pop-bg hidden" id="addLoading">
+  <div class="modal-dialog" style=" width:300px; margin:0 auto;top: 25%;">
+    <div style="margin:0 auto;width:100px;"><img style="width:100px;" src="{$smarty.const.STATIC_URL}/images/loading.gif"></div>
+    <div style="margin:0 auto;width:250px;font-size:25px; color:#fee" class="pop-msg">数据上传中...</div>
+  </div>
+</div>
+{include_www file="admin/lib/footer_new.html"}

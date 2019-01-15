@@ -1,0 +1,400 @@
+{include file='header2.html' title='亮屏--内容投放'}
+  <style>
+  .chec{
+    color: #4880ff;
+    background: url(http://201711awifiprobe.alltosun.net/images/m-zhongduan/icon-checked.png) right center no-repeat;
+    background-size: .36rem auto;
+   }
+   
+.none-tips {
+      padding: 10% 0 0;
+      text-align: center;
+      color: #9d9d9d;
+      font-size: 14px;
+  }
+  
+
+  </style>
+    
+  <div class="tabs2">
+      <a href="{AnUrl('screen_dm/device')}" ><span>亮屏状态</span></a>
+      <a href="{AnUrl('screen_dm/screen_price')}" class="active"><span>内容投放</span></a>
+      <a href="{AnUrl('screen_dm/')}"><span>统计分析</span></a>
+  </div>            
+  <div class="tabs1-con">
+      <div class="sub-tabs2">
+          <div class="con">
+              <a href="{AnUrl('screen_dm/screen_price')}">价格管理</a>
+              <a href="javascript:void(0);" class="active">投放内容</a>
+          </div>
+      </div>
+      <div class="status-reorder">
+          <div class="title">
+              {if $search_filter['put_type'] == 1}
+                  {if $member_info.res_name == 'group'}
+                      <span>集团级</span>
+                   {elseif $member_info.res_name == 'business_hall'}
+                      <span>厅店级</span>
+                   {elseif $member_info.res_name == 'province'}
+                      <span>省级</span>
+                   {elseif $member_info.res_name == 'city'}
+                      <span>市级</span>
+                   {else}
+                      <span>区级</span>
+                    {/if}
+              {/if}
+              
+              {if $member_info.res_name != 'group'}
+                  {if $search_filter['put_type'] == 2}
+                  <span>上级</span>
+                  {/if}
+              {/if}
+              
+              {if $member_info.res_name != 'business_hall'}
+                  {if $search_filter['put_type'] == 3}
+                      {if $member_info.ranks == 1}
+                          <span>各省投放列表</span>
+                      {else}
+                          <span>下级投放列表</span>
+                      {/if}
+                  {/if}
+              {/if}
+              <i class="icon-arrow-down put_type"></i>
+          </div>
+          <div class="count"></div>
+         {if $phone_version_list} <a href="{AnUrl('screen_dm/add')}" class="btn-ask ">添加投放内容</a> {/if}
+      </div>
+      <div class="content-list">
+          <ul class="content_list_ul">
+          {foreach $content_list as $k=>$v}
+              <li>
+                  <div class="title">
+                      <h3>{$v.title}</h3>
+                      {if $v.res_name == 'group' }
+                      <p>集团级</p>
+                      {elseif $v.res_name == 'province'}
+                      <p>省级</p>
+                      {elseif $v.res_name == 'city'}
+                      <p>市级</p>
+                      {elseif $v.res_name == 'area'}
+                      <p>区级</p>
+                      {else}
+                      <p>厅店级</p>
+                      {/if}
+                  </div>
+                  <div class="con">
+                      <div class="pic">
+                      
+                       {if $v.type == 1 || $v.type == 4}
+                        <a href="{_image($v.link, 'middle')}" target='_blank'><img width="100%" height = "100%" src="{_image($v.link,'middle')}"></a>
+                      {else if $v.type == 2}
+                          <video style="width:100%;height:100%; ">
+                              <source src='/upload/video/{$v.link}' type="video/mp4"></source>
+                          <video>
+                       {else if $v.type == 3}
+                          <a href="{$v.link}">链接(点击跳转)</a>
+                       {else if $v.type == 5}
+                          <a href="{$v.link}" target='_blank'><img width="100%" height = "100%" src="{$v.link}"></a>
+                         {/if}
+                      
+                      </div>
+                      <div class="desc">
+                          <p>上线时间<span>{substr($v.start_time, 0, 10)}</span></p>
+                          <p>下线时间<span>{substr($v.end_time, 0, 10)}</span></p>
+                          {$phone_version = screen_dm_helper::get_content_phone_version($v.id)}
+                          {$phone_version_num = screen_dm_helper::get_content_phone_version_num($v.id)}
+                          <p class="toufang">投放机型
+                          {if $phone_version_num == 1}
+                             {if $phone_version == 'all' || $phone_version == ''}
+                                  <span>全部机型</span>
+                             {else}
+                                  <span>{$phone_version}</span>
+                             {/if}
+                           {elseif $phone_version_num == 0}
+                                      <span>暂未投放</span>
+                           {else}
+                                  <span>{$phone_version_num}种机型</span>
+                          {/if}
+                          </p>
+                          <p>轮播数<span>{screen_stat_helper::get_content_stat_num($v.id, $member_info.res_name, $member_info.res_id)}</span></p>
+                          <p>点击数<span>{screen_stat_helper::get_content_res_click_total($v.id)}</span></p>
+                      </div>
+                  </div>
+                  <div class="options" res_id={$v.id}>
+                     {if $put_type != 2}
+                            <!--<a class="btn btn-xs btn-danger delete_hot" href="javascript:;">删除</a>-->
+                        {if !$v.status}
+                            <a class="btn btn-xs btn-info up_del" href="javascript:;">上线</a>
+                        {else}
+                            <a class="btn btn-xs btn-danger down_del" href="javascript:;">下线</a>
+                        {/if}
+                    {/if}
+                    {if $put_type == 1}
+                      <a href="{AnUrl("screen_dm/edit?id={$v.id}&search_type={$search_filter.search_type}")}">编辑</a>
+                    {/if}
+                  </div>
+              </li>
+              {foreachelse}
+               <div class="none-tips">暂无数据</div>
+              {/foreach}
+          </ul>
+          
+           <!-- 上拉加载更多 -->
+            <div class="loading" style="display:none"><img src="{$smarty.const.STATIC_URL}/images/m-hall/loading.gif"></div>
+          
+      </div>
+  </div>
+  <div class="pop-reorder hidden">
+    <ul>
+      <li>
+        <label>
+          <input type="radio"  {if $search_filter['put_type'] == 1} checked {/if} >
+          <a href="{compile_url($search_filter,'put_type',1,'screen_dm/screen_content')}">
+            {if $member_info.ranks == 1}
+              <span type ="集团级" class="chec">集团级</span>
+            {else}
+              {if $member_info.res_name == 'business_hall'}
+                <span type ="厅店级" class="chec">厅店级</span>
+              {elseif $member_info.res_name == 'province'}
+                <span type ="省级" class="chec">省级</span>
+              {elseif $member_info.res_name == 'city'}
+                <span type ="市级" class="chec">市级</span>
+              {else}
+                 <span type ="区级" class="chec">区级</span>
+              {/if}
+            {/if}
+          </a>
+        </label>
+      </li>
+      {if $member_info.res_name != 'group'}
+        <li>
+          <label><input type="radio" {if $search_filter['put_type'] == 2}checked{/if}>
+                 <a href="{compile_url($search_filter,'put_type',2,'screen_dm/screen_content')}">
+                      <span type ="上级投放列表" class="chec">上级投放列表</span>
+                </a>
+          </label>
+        </li>
+      {/if}
+      {if $member_info.res_name != 'business_hall'}
+        <li>
+         <label><input type="radio"  {if $search_filter['put_type'] == 3}checked{/if} >
+                <a href="{compile_url($search_filter,'put_type',3,'screen_dm/screen_content')}">
+                    {if $member_info.ranks == 1}
+                        <span type ="各省投放列表" class="chec">各省投放列表</span>
+                    {else}
+                        <span type ="下级投放列表" class="chec">下级投放列表</span>
+                    {/if}
+              </a> 
+            </label>
+        </li>
+      {/if}
+    </ul>
+  </div>
+  <div class="pop-bg  up_status hidden">
+      <div class="pop-firm">
+          <div class="con">
+              <div class="text">请先选择投放范围</div>
+              <div class="options">
+                  <input type= "hidden" class="res_id">
+                  <input type= "hidden" class="flag">
+                  <a href="javascript:void(0);" class="btn_close">取消</a>
+                  <a href="javascript:void(0);" class='btn_sure' ><strong>确认</strong></a>
+              </div>
+          </div>
+      </div>
+  </div>
+  
+  <div class="pop-bg  down_status hidden">
+      <div class="pop-firm">
+          <div class="con">
+              <div class="text">下线后的内容将不会展示， 确认下线？</div>
+              <div class="options">
+                  <input type= "hidden" class="res_id">
+                  <a href="javascript:void(0);" class="btn_close">取消</a>
+                  <a href="javascript:void(0);" class='btn_down_sure' ><strong>确认</strong></a>
+              </div>
+          </div>
+      </div>
+  </div>
+  
+  
+<script>
+  var search_filter     = '{json_encode($filter)}';
+  var put_type     = '{$put_type}';
+  var page = 1;
+  var is_change = 0;
+  
+  var updateStatus = {
+		     _msg :'操作失败',
+		     _url:"{AnUrl('screen_dm/admin/ajax/update_res_status')}",
+		     update:function(obj,status,id){
+		         $.post(this._url,{ id:id, status:status },function(json){
+		             if (json.info == 'ok') {
+		                 if (status == 0) {
+		                     updateStatus.updateHtmlDown(obj);
+		                 } else if (status == 1) {
+		                     updateStatus.updateHtmlUp(obj);
+		                 } else if (status == 2) {
+		                     updateStatus.deleteHtml(obj);
+		                 }
+		             } else {
+		                 alert(json.info);
+		             }
+		         },'json')
+		     },
+		     deleteHtml:function(obj){
+		         $(obj).closest("tr").fadeOut(function(){
+		            $(this).remove();
+		            interLineColor();
+		        });
+		        return false;
+		     },
+		     updateHtmlDown:function(obj){
+		    	 location.reload();
+		     },
+		     updateHtmlUp:function(obj){
+		    	 location.reload();
+		     }
+		 };
+  $(function() {
+	 $(document).on('click', '.up_del', function(){
+    	var id = $(this).parent().attr('res_id');
+    	var toufang = $(this).parent().prev().find('.toufang span').text();
+        $('.up_status').find('.res_id').val(id);
+    	if(toufang == '暂未投放'){
+    		 $('.up_status').find('.flag').val(1);
+    		 $('.up_status').show();
+    	     return false;
+    	}
+    	     updateStatus.update(this,1,id);
+    	 
+       //加锁
+      }); 
+    
+    	  
+	 $(document).on('click', '.down_del', function(){
+    //$('.down_del').on('click',function(event){
+        event.preventDefault();
+        var id = $(this).parent().attr('res_id');
+            $('.down_status').find('.res_id').val(id);
+            $('.down_status').show();
+            return false;
+    })
+    
+    $('.btn_down_sure').on('click',function(){
+          event.preventDefault();
+          event.stopPropagation();
+          var id = $(this).prev().prev().val();
+          updateStatus.update(this,0,id);
+          //window.location.href = siteUrl+'/screen_dm/edit?id='+id+'&search_type=0';
+    });
+    
+    $('.btn_sure').on('click',function(){
+          event.preventDefault();
+          event.stopPropagation();
+          var id = $(this).prev().prev().prev().val();
+          var flag = $(this).prev().prev().val();
+          if(flag){
+        	  $(this).prev().prev().val('');
+        	  window.location.href = siteUrl+'/screen_dm/edit?id='+id+'&search_type=0';
+        	  return false;
+          }
+          updateStatus.update(this,1,id);
+    });
+     
+     $('.btn_close').on('click',function(){
+         $('.pop-bg').hide();
+         window.location.href = siteUrl+'/screen_dm/screen_content';
+     });
+ 
+    //滑动触发函数
+      $('.tabs1-con').scroll(function () {
+    	  loadEndDate();
+       /*  var titleH2 = $('.status-reorder').height(); 
+        var height = $('.tabs1-con').height();
+        var height2 = $('.sub-tabs2').height();
+        var liHeight = $('.content-list li').height() * 2;
+
+        
+        var scrollH = $(this).scrollTop()
+        
+        var box = height - height2 - titleH2;
+        var chufa = box - liHeight + 10;
+        console.log(scrollH);
+           if (!is_change ) { 
+                 if (parseInt(scrollH) >= parseInt(chufa) ){
+                   loadEndDate();
+                }
+           } */
+      });
+  
+      loadEndDate = function () {
+        ++page;
+        //var filter = JSON.stringify(search_filter)
+        var requestData    = {
+                'filter' : search_filter,
+                'page'   : page,
+                'put_type' : put_type
+        }
+
+        $.post(siteUrl+'/screen_dm/ajax/load_data', requestData, function (data) {
+          //var html = joinData(data.content_list);
+          if (data.info == 'ok' && data.errno == 0) {
+              //追加
+             // $('.loading').show();
+              console.log(data.list);
+              $('.content_list_ul').append(data.list);
+             // $('.loading').hidden();
+          } else if (data.info == 'no' && data.errno == 10000) {
+              --page;
+              $('.loading').text('暂无更新');
+          }
+        }, 'json');
+      }
+  ///////////////////////////////////////////////////////////////    
+      $('.put_type').click(function(){
+      	var flag= $(this).prev('span').html();
+          $('.pop-reorder').find('span').removeClass('chec');
+      	if(flag == '集团级'){
+      		$('.pop-reorder').find('span[type="集团级"]').addClass('chec');
+      	}else if(flag == '厅店级'){
+      		$('.pop-reorder').find('span[type="厅店级"]').addClass('chec');
+      	}else if(flag == '省级'){
+              $('.pop-reorder').find('span[type="省级"]').addClass('chec');
+      	}else if(flag =='市级'){
+              $('.pop-reorder').find('span[type="市级"]').addClass('chec');
+      	}else if(flag == '各省投放列表'){
+      		$('.pop-reorder').find('span[type="各省投放列表"]').addClass('chec');
+      	}else if(flag == '下级投放列表'){
+      		$('.pop-reorder').find('span[type="下级投放列表"]').addClass('chec');
+      	}else{
+      		$('.pop-reorder').find('span[type="上级投放列表"]').addClass('chec');
+      	}
+      	$('.pop-reorder').removeClass('hidden');
+      });
+
+      //时间范围
+      var startTime, endTime;
+      $('#js_timeStart input').change(function(e) {
+          startTime = e.target.value
+          $(this).siblings('span').css({ opacity: 0 })
+          $(this).css({ opacity: 1 })
+          //alert(startTime)
+      })
+
+      $('#js_timeEnd input').change(function(e) {
+          endTime = e.target.value
+          console.log(e)
+          $(this).siblings('span').css({ opacity: 0 })
+          $(this).css({ opacity: 1 })
+          setTimeout(function() {
+              if (startTime > endTime) alert("结束时间必须大于开始时间")
+          }, 300)
+      })
+      
+      $('.szy').on('click',function(){
+    	  alert(1);
+      });
+  })
+</script>
+{include_www file="admin/lib/s_footer.html"}

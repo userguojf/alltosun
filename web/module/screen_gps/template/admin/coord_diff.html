@@ -1,0 +1,147 @@
+{include_www file="admin/lib/header_new.html" title="亮屏管理"}
+<script type="text/javascript" src="http://api.map.baidu.com/api?ak=188b7db0b3c2f79359e05e64d87b222e&v=2.0"></script>
+<style type="text/css">
+  .map { 
+    width: 500px;
+    height: 200px;
+    overflow: hidden;
+    margin:0;
+    font-family:"微软雅黑"; 
+  }
+</style>
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('screen_gps/admin/analysis')}"><i class="iconfont iconfont-logo2"></i>营业厅坐标分析</a>
+      &gt;
+      <span>各平台坐标对比({$count})</span>
+    </div>
+    <br />
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th width="5%">ID</th>
+            <th width="5%">省</th>
+            <th width="5%">市</th>
+            <th width="5%">区</th>
+            <th width="10%">营业厅</th>
+            <th width="15%">位置对比</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $coords as $k=>$v}
+          <tr id="dataList{$k}">
+            <td>{$k+1}</td>
+            <td>{_uri('province', $v.province_id, 'name')}</td>
+            <td>{_uri('city', $v.city_id, 'name')}</td>
+            <td>{_uri('area', $v.area_id, 'name')}</td>
+            <td title="{$v.business_id}">{_uri('business_hall', $v.business_id, 'title')}</td>
+            <td><div class="map" id="map{$k}" dataId="{$k}" lng="{$v.lng}" lat="{$v.lat}" lng_jc="{$v.lng_jc}" lat_jc="{$v.lat_jc}" lng_szdt="{$v.lng_szdt}" lat_szdt="{$v.lat_szdt}"></div></td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="6">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+<script type="text/javascript">
+var l = 17;
+$('.map').each(function () {
+  var lng = $(this).attr('lng');
+  var lat = $(this).attr('lat');
+  var map = new BMap.Map("map" + $(this).attr('dataId'));
+  
+  //定义一个控件类,即function
+  function ZoomControl(){
+    // 默认停靠位置和偏移量
+    this.defaultAnchor = BMAP_ANCHOR_TOP_LEFT;
+    this.defaultOffset = new BMap.Size(10, 10);
+  }
+
+  // 通过JavaScript的prototype属性继承于BMap.Control
+  ZoomControl.prototype = new BMap.Control();
+
+  // 自定义控件必须实现自己的initialize方法,并且将控件的DOM元素返回
+  // 在本方法中创建个div元素作为控件的容器,并将其添加到地图容器中
+  ZoomControl.prototype.initialize = function(){
+    // 创建一个DOM元素
+    var div = document.createElement("div");
+    // 添加文字说明
+    div.appendChild(document.createTextNode("缩小1级"));
+    // 设置样式
+    div.style.cursor = "pointer";
+    div.style.border = "1px solid gray";
+    div.style.backgroundColor = "white";
+    // 绑定事件,点击一次放大两级
+    div.onclick = function(e){
+      map.setZoom(map.getZoom() - 1);
+    }
+    // 添加DOM元素到地图中
+    map.getContainer().appendChild(div);
+    // 将DOM元素返回
+    return div;
+  }
+  // 创建控件
+  var myZoomCtrl = new ZoomControl();
+  // 添加到地图当中
+  map.addControl(myZoomCtrl);
+
+  var point = new BMap.Point(lng, lat);
+  map.centerAndZoom(point, l);
+  var marker = new BMap.Marker(point);  // 创建标注
+  map.addOverlay(marker);               // 将标注添加到地图中
+  //marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+  addClickHandler('亮屏',marker, map);
+  
+    
+  
+  var lng = $(this).attr('lng_szdt');
+  var lat = $(this).attr('lat_szdt');
+  if (lng && lat) {
+    var point = new BMap.Point(lng, lat);
+    map.centerAndZoom(point, l);
+    var marker = new BMap.Marker(point);  // 创建标注
+    map.addOverlay(marker);               // 将标注添加到地图中
+    
+    addClickHandler('数字地图',marker, map);
+  }
+  
+  var lng = $(this).attr('lng_jc');
+  var lat = $(this).attr('lat_jc');
+  if (lng && lat) {
+    var point = new BMap.Point(lng, lat);
+    map.centerAndZoom(point, l);
+    var marker = new BMap.Marker(point);  // 创建标注
+    map.addOverlay(marker);               // 将标注添加到地图中
+    
+    addClickHandler('纠错',marker, map);
+  }
+});
+
+var opts = {
+    width : 100,     // 信息窗口宽度
+    height: 50,     // 信息窗口高度
+}
+
+function addClickHandler(content,marker, map){
+  marker.addEventListener("click",function(e){
+      openInfo(content,e, map)}
+  );
+}
+function openInfo(content,e, map){
+  var p = e.target;
+  var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+  var infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象 
+  map.openInfoWindow(infoWindow,point); //开启信息窗口
+}
+</script>
+{include_www file="admin/lib/footer_new.html"}

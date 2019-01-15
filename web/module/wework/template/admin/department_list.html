@@ -1,0 +1,94 @@
+{include_www file="admin/lib/header_new.html" title="企业微信通讯录请管理"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    .btn-top{
+        margin-top:5px;
+    }
+    </style>
+<!-- 主内容 start -->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('wework/admin/department')}"><i class="iconfont iconfont-logo2"></i>{$wework}</a>
+             &gt;
+            <span>部门管理（总数：{$count}）</span>
+            <a href="{AnUrl("wework/admin/user")}" class="btn btn-primary btn-sm pull-right">成员管理</a>
+        </div>
+        <div class="form-search clearfix">
+             <div class="pull-left">
+                 <form action="{AnUrl('wework/admin/department')}" method='get'>
+                   <input type="text"  style="width:250px;"  name="search_filter[depart_id]" value="{$search_filter.depart_id}" class="form-control input-sm pull-left js_search"  placeholder="部门ID搜索">
+                   <input type="text"  style="width:250px;"  name="search_filter[name]" value="{$search_filter.name}" class="form-control input-sm pull-left js_search"  placeholder="部门名称搜索">
+                   <button type="submit" class="btn-search pull-left">搜索</button>
+                 </form>
+            </div>
+            <div class="pull-right">
+            <!-- <a href="{AnUrl('wework/admin/department/add')}" class="btn btn-sm btn-success">添加</a> -->
+            </div>
+        </div>
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th width="30%">部门ID</th>
+                    <th width="40%">部门名称</th>
+                    <th width="30%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $k=>$v}
+                    <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                    <td>{$v.depart_id}</td>
+                    <td>{$v.name}</td>
+                    <td class="txtleft " resId={$v.id}">
+                      <a class="btn btn-xs btn-success" href="{AnUrl("wework/admin/department/add?id={$v.id}")}">编辑部门</a>
+<!--                       <a class="btn btn-xs btn-danger delete_hot" user_id={$v.id} href="javascript:;">删除部门</a> -->
+                    </td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="3">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+</div>
+<script>
+var updateStatus = {
+    _msg :'操作失败',
+    _url:"{AnUrl('wework/admin/ajax/delete_department')}",
+    update:function(obj,id){
+        $.post(this._url,{ id:id },function(json){
+            if (json.info == 'ok') {
+                updateStatus.deleteHtml(obj);
+            } else {
+                alert(json.info);
+            }
+        },'json')
+    },
+    deleteHtml:function(obj){
+   	 $(obj).closest("tr").fadeOut(function(){
+           $(this).remove();
+           interLineColor();
+       });
+       return false;
+    },
+};
+
+
+$('.delete_hot').live('click',function(event){
+    event.preventDefault();
+    event.stopPropagation();
+    var id = $(this).attr('user_id');
+    if (!confirm("确定要删除该条记录吗？")) {
+      return false;
+    }
+    updateStatus.update(this,id);
+})
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

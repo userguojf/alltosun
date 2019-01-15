@@ -1,0 +1,95 @@
+{include_www file="admin/lib/header_new.html" title="探针管理"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('probe_stat/admin/coverage_stat')}"><i class="iconfont iconfont-logo2"></i>覆盖统计</a>
+      &gt;
+      <span>{if $type == 1}已{else}未{/if}覆盖厅店统计（{business_hall_config::$res_name_type[$res_name]}）总计：{$count}</span>
+    </div>
+    <div class="form-search clearfix">
+      <div class="pull-left">
+        <form action="{AnUrl("probe_stat/admin/coverage_stat/business_hall_list")}" class="formBox" methhod='get'>
+          <!-- <input type="hidden" name="order_field" value="{$order_field}">
+          <input type="hidden" name="order_dir" value="{$order_dir}">
+          <input type="text" name="search_filter[business]" style="width:150px" value="{$search_filter.business}" class="form-control input-sm pull-left" placeholder="按营业厅搜索" id="autocomplete"/>
+          <button type="submit" class="btn-search pull-left formSubmit">搜索</button> -->
+          <input type="hidden" name="res_name" value="{$res_name}">
+          <input type="hidden" name="res_id" value="{$res_id}">
+          <input type="hidden" name="type" value="{$type}">
+        </form>
+      </div>
+      <div class="pull-right">
+        <a href="javascript:void(0);" class="btn btn-sm btn-success btnExport">导出</a>
+      </div>
+    </div>
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>归属地</th>
+            
+            {if $type != 1}
+              <th>未覆盖门店</th>
+            {else}
+              <th>已覆盖量</th>
+            {/if}
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $stat_list as $k=>$v}
+            <tr id="dataList{$v.id}" class="view_id">
+              <td>{$v.region_name}</td>
+              <td>
+                {if $res_name == 'business_hall'}
+                  {$v.value}
+                {else}
+                  <a class="text-success" href="{AnUrl("probe_stat/admin/coverage_stat/business_hall_list?res_name={$subordinate}&res_id={$v.res_id}&type={$type}")}">
+                    {$v.value}
+                  </a>
+                {/if}
+              </td>
+              {*
+              <td>{$v.normal_device_count}</td>
+              <td>{$v.abnormal_device_count}</td>
+              <td>{$v.to_be_installed_device_count}</td>
+               *}
+            </tr>
+          {foreachelse}
+            <tr><td colspan='2'>暂无数据</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+</div>
+<script>
+//排序
+$(function() {
+  //排序
+  $('.order_type').on('click', function () {
+    if ($(this).hasClass('glyphicon-arrow-up')) {
+      var order_dir = 'asc';
+    } else {
+      var order_dir = 'desc';
+    }
+    $('.formBox input[name="order_dir"]').val(order_dir);
+    $('.formBox input[name="order_field"]').val($(this).attr('order_field'));
+    //window.location.href = window.location.href + '&order_dir=' + order_dir + '&order_field=' + $(this).attr('order_field');
+    $('.formBox').submit();
+  });
+  
+  //导出
+  $('.btnExport').on('click', function () {
+    $('.formBox').append('<input type ="hidden" name="if_export" value="1">');
+    $('.formBox').submit();
+    $('.formBox input[name="if_export"]').remove();
+  });
+});
+
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

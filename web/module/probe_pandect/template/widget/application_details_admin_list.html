@@ -1,0 +1,150 @@
+<div class="pop-bg" id="details_show" style="display:none;">
+  <div class="pop-bg-box" style="width:100%;padding:100px;" >
+    <div class="modal-content" style="width:1050px; margin:0 auto;">
+      <div class="modal-body">
+        <div class="list clearfix">
+          <table class="table table-bordered ">
+            <thead>
+              <tr>
+                <th style="text-align:center" width="8%">设备类型</th>
+                <th style="text-align:center" width="5%">省份</th>
+                <th style="text-align:center" width="5%">地市</th>
+                <th style="text-align:center" width="8%">地区</th>
+                <th style="text-align:center" width="15%">渠道视图编码</th>
+                <th style="text-align:center" width="15%">厅店名称</th>
+                <th style="text-align:center" width="20%">详细地址</th>
+                <th style="text-align:center" width="7%">联系人</th>
+                <th style="text-align:center" width="15%">电话</th>
+                <th style="text-align:center" width="8%">设备数量</th>
+                <th style="text-align:center" width="8%">厅店等级</th>
+                <th style="text-align:center" width="10%">备注</th>
+              </tr>
+            </thead>
+            <tbody class="jsPageData">
+              {foreach $list as $k=>$v}
+              <tr> 
+                   <td style="text-align:center">{$v.device_type}</td>
+                   <td style="text-align:center" >{business_hall_helper::get_info_name('province', $v.province_id, 'name')}</td>
+                   <td style="text-align:center" >{business_hall_helper::get_info_name('city', $v.city_id, 'name')}</td>
+                   <td style="text-align:center">{business_hall_helper::get_info_name('area', $v.area_id, 'name')}</td>
+                   <td style="text-align:center">{$v.user_number}</td>
+                   <td style="text-align:center">{business_hall_helper::get_info_name('business_hall', $v.business_id, 'title')}</td>
+                   <td style="text-align:center">{$v.address}</td>
+                   <td style="text-align:center">{$v.linkman}</td>
+                   <td style="text-align:center">{$v.phone}</td>
+                   <td style="text-align:center">{$v.device_num}</td>
+                     <td>{probe_pandect_config::$business_level[$v.business_level]}</td>
+                     <td>{$v.remark}</td>
+                </tr>
+              {foreachelse}
+                <tr><td class="txtleft" colspan="13">暂无数据</td></tr>
+              {/foreach} 
+            </tbody>
+          </table>
+          <div class="pop_pager">
+                {include_www file="admin/lib/pager_new.html"}
+          </div>
+           <div style="text-align:center">
+            {$num = probe_pandect_helper::get_device_num($v.device_type,$v.province_id,$v.city_id,$v.create_time)}
+                <a href="javascript:void(0);" flag='0' factory_account={$v.factory_account} num ={$num} province_id ={$v.province_id} city_id = {$v.city_id} device_type={$v.device_type} class="btn btn-danger btn-lg btn_status" style="width:100px;height:40px;">审核拒绝</a>
+                <a href="javascript:void(0);" flag='1' factory_account={$v.factory_account} num={$num} province_id ={$v.province_id} city_id = {$v.city_id} device_type={$v.device_type} class="btn btn-success btn-lg btn_status" style="width:100px;height:40px;margin-left:50px;">审核通过</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="{$smarty.const.SITE_URL}/js/region_func.js"></script>
+<script>
+var list     = '{json_encode($list)}';
+var filter     = '{json_encode($filter)}';
+var siteUrl = "{$smarty.const.SITE_URL}";
+function Pager (pop_page_no) {
+    var url = siteUrl+'/probe_pandect/admin/ajax/pop_page';
+  $.post(url, { pop_page_no: pop_page_no ,filter:filter}, function (res) {
+    if (res.info == 'ok') {
+    	var html = joinPageData(res.data);
+        $('.jsPageData').html(html);
+    }
+  }, 'json');
+}
+
+function joinPageData(data)
+{
+  var html = '';
+  $.each(data, function (i, o) {
+    var tmp = '<tr>\
+      <td style="text-align:center" width="8%" >'+o.device_type+'</td>\
+      <td style="text-align:center" width="5%" >'+o.provice+'</td>\
+      <td style="text-align:center" width="5%" >'+o.city+'</td>\
+      <td style="text-align:center" width="8%">'+o.area+'</td>\
+      <td style="text-align:center" width="15%">'+o.user_number+'</td>\
+      <td style="text-align:center" width="15%">'+o.business_hall+'</td>\
+      <td style="text-align:center" width="20%" >'+o.address+'</td>\
+      <td style="text-align:center" width="7%">'+o.linkman+'</td>\
+      <td style="text-align:center" width="15%" >'+o.phone+'</td>\
+      <td style="text-align:center" width="8%" >'+o.device_num+'</td>\
+      <td style="text-align:center" width="8%">'+o.business_level+'</td>\
+      <td style="text-align:center" width="10%">'+o.remark+'</td>\
+   </tr>'
+   html += tmp;
+  });
+  return html;
+}
+$(function(){
+  //弹层分页
+  $('.pop_pager a').on('click', function (e) {
+   e.preventDefault();
+   var pop_page_no = parseInt($(this).text());
+   if (!parseInt(pop_page_no)) {
+     var url = $(this).attr('href');
+     var startlen = url.indexOf('page_no=');
+     pop_page_no = url.substr(startlen+8, url.length);
+   }
+   
+   $('.pop_pager a').removeClass('curr');
+   $(this).addClass('curr');
+   Pager(pop_page_no);
+
+  });
+  
+  
+  
+  
+  $('.pop_pager js_pagego').on('click', function (e) {
+	e.preventDefault();
+    var pop_page_no = $(this).prev().val();
+    Pager(pop_page_no);
+    return false;
+  });
+  
+  
+{if $search_filter.province}
+     var p_id = {$search_filter.province};
+ {else}
+     var p_id = 0;
+ {/if}
+
+ {if $search_filter.city}
+     var c_id = {$search_filter.city};
+ {else}
+     var c_id = 0;
+ {/if}
+
+ {if $search_filter.area}
+     var a_id = {$search_filter.area};
+ {else}
+     var a_id = 0;
+ {/if}
+
+ /**
+  * 省市区多级联动
+  *
+  * @author  wangl
+  */
+ region(p_id, c_id, a_id);
+});
+
+
+
+</script>

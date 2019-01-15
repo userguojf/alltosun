@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+      <meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+      <meta name="format-detection" content="telephone=no">
+      <meta name="keywords" content="">
+      <meta name="description" content="">
+      <title>   亮屏统计</title>
+      {if $smarty.const.ONDEV}
+      <script src="http://market-mng-fe-test.obaymax.com:10000/js/common_header.js"></script>
+      {else}
+      <script src="http://dm.pzclub.cn/js/common_header.js"></script>
+      {/if}
+      <script>
+      var htmlElm = document.getElementsByTagName('html')[0];
+      htmlElm.style.opacity = '0';
+      ! function(a, b) {
+          function c() {
+              var c, b = f.getBoundingClientRect().width;
+              b / i > 540 && (b = 540 * i), c = b / 10, f.style.fontSize = c + "px", k.rem = a.rem = c
+          }
+          var d, l, m, n, o, p, q, r, s, t, e = a.document,
+              f = e.documentElement,
+              g = e.querySelector('meta[name="viewport"]'),
+              h = e.querySelector('meta[name="flexible"]'),
+              i = 0,
+              j = 0,
+              k = b.flexible || (b.flexible = {});
+          g ? (l = g.getAttribute("content").match(/initial\-scale=([\d\.]+)/), l && (j = parseFloat(l[1]), i = parseInt(1 / j))) : h && (m = h.getAttribute("content"), m && (n = m.match(/initial\-dpr=([\d\.]+)/), o = m.match(/maximum\-dpr=([\d\.]+)/), n && (i = parseFloat(n[1]), j = parseFloat((1 / i).toFixed(2))), o && (i = parseFloat(o[1]), j = parseFloat((1 / i).toFixed(2))))), i || j || (p = a.navigator.userAgent, !!p.match(/android/gi), q = !!p.match(/iphone/gi), r = q && !!p.match(/OS 9_3/), s = a.devicePixelRatio, i = q && !r ? s >= 3 && (!i || i >= 3) ? 3 : s >= 2 && (!i || i >= 2) ? 2 : 1 : 1, j = 1 / i), f.setAttribute("data-dpr", i), g || (g = e.createElement("meta"), g.setAttribute("name", "viewport"), g.setAttribute("content", "initial-scale=" + j + ", maximum-scale=" + j + ", minimum-scale=" + j + ", user-scalable=no"), f.firstElementChild ? f.firstElementChild.appendChild(g) : (t = e.createElement("div"), t.appendChild(g), e.write(t.innerHTML))), a.addEventListener("resize", function() {
+              clearTimeout(d), d = setTimeout(c, 300)
+          }, !1), a.addEventListener("pageshow", function(a) {
+              a.persisted && (clearTimeout(d), d = setTimeout(c, 300))
+          }, !1), "complete" === e.readyState ? e.body.style.fontSize = 12 * i + "px" : e.addEventListener("DOMContentLoaded", function() {
+              e.body.style.fontSize = 12 * i + "px"
+          }, !1), c(), k.dpr = a.dpr = i, k.refreshRem = c, k.rem2px = function(a) {
+              var b = parseFloat(a) * this.rem;
+              return "string" == typeof a && a.match(/rem$/) && (b += "px"), b
+          }, k.px2rem = function(a) {
+              var b = parseFloat(a) / this.rem;
+              return "string" == typeof a && a.match(/px$/) && (b += "rem"), b
+          }
+      }(window, window.lib || (window.lib = {}));
+      window.onload = function() {
+          htmlElm.style.opacity = '1';
+      }
+      var siteUrl = "{$smarty.const.SITE_URL}";
+      </script>
+      <script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/jquery-2.1.1.min.js"></script>
+      <link rel="stylesheet" type="text/css" href="{$smarty.const.STATIC_URL}/css/m-zhongduan.css">
+  </head>
+  <body>
+       <div class="wrap">
+        <!-- <header class="header">
+              <a href="{AnUrl('screen_dm/')}" class="btn-back"><i class="icon-arrow-left"></i>首页</a>
+              <h1>终端</h1>
+          </header> -->
+          <section class="container">
+<style>
+.none-tips {
+    padding: 10% 0 0;
+    text-align: center;
+    color: #9d9d9d;
+    font-size: 14px;
+}
+
+.manage-options .left {
+    position: absolute;
+    left: 0;
+    top: 0;
+    line-height: 1.07rem;
+    padding-left: 0.27rem;
+    font-size: 12px;
+    color: #949494;
+}
+
+
+</style>
+<div class="tabs2">
+    <a href="{AnUrl('screen_dm/device')}" class="active"><span>亮屏状态</span></a>
+    <a href="{AnUrl('screen_dm/screen_price')}"><span>内容投放</span></a>
+    <a href="{AnUrl('screen_dm/')}"><span>统计分析</span></a>
+</div>
+<div class="pop-reorder hidden">
+    <ul class="js_manageCount">
+        <li>
+            <label><input type="radio" {if $status == 1}checked{/if}  class = 'select_day_on_num online'><span>今日在线量</span></label>
+        </li>
+        <li>
+            <label><input type="radio" {if $status == 0}checked{/if} class = 'select_day_off_num offline'><span>今日离线量</span></label>
+        </li>
+        <li>
+            <label><input type="radio" {if $status == 2}checked{/if} class = 'select_all_num all'><span>累计安装量</span></label>
+        </li>
+    </ul>
+</div>
+<!--end:排行筛选弹层-->
+<div class="tabs1-con">
+    <div class="status-reorder">
+        <div class="title">
+           <span class="device-type">{if $status == 2}累计安装量{else if $status == 1}今日在线量{else}今日离线量{/if}</span><i class="icon-arrow-down"></i>
+            <em></em>
+        </div>
+        <div class="count">
+         <span class="red num redtitle">{if $status == 2}{$all_num}{else if $status == 1}{$online_num}{else}{$offline_num}{/if}</span><span class="tai">台 / </span><span>{$all_num}台</span></div>
+        <a href="{AnUrl('faq')}" class="btn-ask"><img src="{$smarty.const.STATIC_URL}/images/m-zhongduan/icon-ask.png" />离线怎么办</a>
+    </div>
+    <div class="line"></div>
+    {if $list}
+      <div class="rank-list">
+        <ul>
+        {foreach $list as $k => $v}
+            <li class="status-all {if $v.is_online == '在线'}curr status-online {else}status-offline{/if}">
+                <div class="infos">
+                    <p>机型
+                        <span>
+                        {if $v.phone_name_nickname} {$v.phone_name_nickname} {else} {$v.phone_name} {/if}
+                        {if $v.phone_version_nickname} {$v.phone_version_nickname} {else} {$v.phone_version}{/if}
+                         </span>
+                     </p>
+                    <p>IMEI<span>{if $v.imei}{$v.imei}{else}手机无IMEI{/if}</span></p>
+                    <p>安装时间<span>{date('Y-m-d',strtotime($v.day))}</span></p>
+                </div>
+                <div class="status">
+                    {if !$v.is_online}
+                       {if $v.offline_days}
+                            <!-- <p class="red">连续离线{$v.offline_days}天</p> -->
+                            <!--added by g -->
+                             <div class="status">
+                                    <p class="gray">连续离线{$v.offline_days}天</p>
+                                    {if $v.status}
+                                        <a href="javascript:void(0);" resid="{$v.id}" class="btn-down btn_xiajia">下柜</a>
+                                    {else}
+                                        <a href="javascript:void(0);" resid="{$v.id}" class="btn-down">已下柜</a>
+                                    {/if}
+                            </div>
+                             <!--added by g  -->
+                        {else}
+                            <p class="red">离线</p>
+                            <p class="time">{$v.online_time}</p>
+                         {/if}
+
+                         {$new = screen_dm_helper::get_new_device($v.id)}
+                            {if $new}
+                                <span class="status-new">new</span>
+                            {/if}
+                    {else}
+                            <p>{$v.is_online}</p>
+                            <p class="time">{$v.online_time}</p>
+                            {$new = screen_dm_helper::get_new_device($v.id)}
+                            {if $new}
+                                <span class="status-new">new</span>
+                            {/if}
+                    {/if}
+                </div>
+                <!-- <span class="status-new">new</span> -->
+            </li>
+            {/foreach}
+        </ul>
+    </div>
+  {else}
+    <div class="none-tips">暂无数据</div>
+  {/if}
+</div>
+<script>
+/* 下架按钮 */
+
+ var bar_lock = true;
+
+$(".btn_xiajia").on('click', function(){
+	if ( !bar_lock ) {
+		return '';
+	} 
+	
+	var obj = $(this);
+	var res_id = obj.attr('resid');
+
+    $.post(siteUrl+'/screen_dm/ajax/bar_off',{ 'res_id':res_id },function(json){
+          if ( !parseInt(json.errcode) ) {
+    		 obj.removeClass('btn_xiajia');
+    		 obj.html('已下架');
+    		 bar_lock = false;
+          } else {
+        	  alert('请刷新重试');
+          }
+      	},'json');
+    });
+      
+/* 下架按钮 */
+
+
+  var member_id = "{$member_info.id}";
+  var sub_sure  = true;
+  var res_id    = price = '';
+  
+  
+  var deviceTime         = "{$date}";
+  var deviceOnlineStatus = "{$status}";
+  var allNum     = "{$all_num}";
+  var onlineNum  = "{$online_num}";
+  var offlineNum = "{$offline_num}";
+
+  var year  = "{$year}";
+  var month = "{$month}";
+  var day   = "{$day}";
+  
+//页面加载判断是否有离线设备无离线设备显示在线
+$(document).ready(function() { 
+    //如果离线量为0显示在线
+    if(offlineNum == 0){
+    	$('.device-type').text('今日在线量');
+    	$('.redtitle').text(onlineNum);
+        $('.redtitle').removeClass('red');
+        $('.tai').text('台/');
+        $('.select_day_on_num').attr('checked','checked');
+        $('.select_all_num').removeAttr('checked','checked');
+        $('.select_day_off_num').removeAttr('checked','checked');
+        //设备状态赋值
+        deviceOnlineStatus = '1';
+
+        if (parseInt(onlineNum) < 6) {
+            $('.load-more').hide();
+        }
+        onlineShow();
+    }
+}); 
+  
+  function onlineShow()
+  {
+      //隐藏
+      $('.status-offline').hide();
+      //展示
+      $('.status-online').show();
+  }
+
+  function offlineShow()
+  {
+      //隐藏
+      $('.status-online').hide();
+      //展示
+      $('.status-offline').show();
+
+  }
+  if ( parseInt(deviceOnlineStatus) ) {
+      onlineShow();
+      console.log(deviceOnlineStatus);
+  } else {
+      offlineShow();
+      console.log(deviceOnlineStatus);
+  }
+  
+ $(function () {
+  //设备统计
+  $('.js_manageCount li').click(function(e){
+      
+      var flag= $(this).find('span').html();
+      $('.device-type').text(flag);
+      
+      //加载数据
+     if (flag== '累计安装量') {
+         //设备状态赋值
+         $('.redtitle').text('');
+         $('.tai').text('');
+         $('.redtitle').removeClass('red');
+         $('.select_all_num').attr('checked','checked');
+         $('.select_day_on_num').removeAttr('checked','checked');
+         $('.select_day_off_num').removeAttr('checked','checked');
+         deviceOnlineStatus = '2';
+         $('.status-all').show();
+     } else if (flag == '今日在线量') {
+         $('.redtitle').text(onlineNum);
+         $('.redtitle').removeClass('red');
+         $('.tai').text('台/');
+         $('.select_day_on_num').attr('checked','checked');
+         $('.select_all_num').removeAttr('checked','checked');
+         $('.select_day_off_num').removeAttr('checked','checked');
+         //设备状态赋值
+         deviceOnlineStatus = '1';
+
+         if (parseInt(onlineNum) < 6) {
+             $('.load-more').hide();
+         }
+         onlineShow();
+     } else if (flag == '今日离线量') {
+  	   $('.redtitle').text(offlineNum);
+  	   $('.redtitle').addClass('red');
+  	   $('.tai').text('台/');
+  	   $('.select_day_off_num').attr('checked','checked');
+  	   $('.select_all_num').removeAttr('checked','checked');
+         $('.select_day_on_num').removeAttr('checked','checked');
+         //设备状态赋值
+         deviceOnlineStatus = '0';
+
+         if (parseInt(offlineNum) < 6) {
+             $('.load-more').hide();
+         }
+         offlineShow();
+     }
+  })
+  
+  //亮屏状态 弹出
+  $('.title').on('click',function(){
+  	var type = $(this).find('.device-type').html();
+  	if(type == '今日离线量'){
+         $('.redtitle').addClass('red');
+      }else if(type != '今日离线量'){
+      	 $('.redtitle').removeClass('red');
+      }
+  	$('.pop-reorder').removeClass('hidden');
+  	
+  });
+  //状态选择
+  $('.select_day_on_num').click(function(){
+       $('.status_type').val(1);
+       $('.state_type').val('install');
+       $('.pop-reorder').addClass('hidden');
+       $('.statusSubmit').submit();
+  });
+  
+  $('.select_day_off_num').click(function(){
+      $('.status_type').val(0);
+      $('.state_type').val('offline_days');
+      $('.pop-reorder').addClass('hidden');
+      $('.statusSubmit').submit();
+ });
+  
+  $('.select_all_num').click(function(){
+  	$('.status_type').val(2);
+      $('.state_type').val('all');
+      $('.pop-reorder').addClass('hidden');
+ });
+  
+  //时间范围
+  var startTime, endTime;
+  $('#js_timeStart input').change(function(e) {
+      startTime = e.target.value
+      $(this).siblings('span').css({ opacity: 0 })
+      $(this).css({ opacity: 1 })
+      //alert(startTime)
+  })
+
+  $('#js_timeEnd input').change(function(e) {
+      endTime = e.target.value
+      console.log(e)
+      $(this).siblings('span').css({ opacity: 0 })
+      $(this).css({ opacity: 1 })
+      setTimeout(function() {
+          if (startTime > endTime) alert("结束时间必须大于开始时间")
+      }, 300)
+  });
+})
+</script>
+{include_www file="admin/lib/s_footer.html"}

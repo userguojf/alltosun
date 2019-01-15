@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <title>终端-体验排行</title>
+    <link rel="stylesheet" type="text/css" href="{$smarty.const.SITE_URL}/css/m-zhongduan.css">
+    <script type="text/javascript" src="{$smarty.const.SITE_URL}/js/jquery-2.1.1.min.js"></script>
+     {if $smarty.const.ONDEV}
+      <script src="http://market-mng-fe-test.obaymax.com:10000/js/common_header.js"></script>
+      {else}
+      <script src="http://dm.pzclub.cn/js/common_header.js"></script>
+      {/if}
+    <script>
+    var htmlElm = document.getElementsByTagName('html')[0];
+    htmlElm.style.opacity = '0';
+    ! function(a, b) {
+        function c() {
+            var c, b = f.getBoundingClientRect().width;
+            b / i > 540 && (b = 540 * i), c = b / 10, f.style.fontSize = c + "px", k.rem = a.rem = c
+        }
+        var d, l, m, n, o, p, q, r, s, t, e = a.document,
+            f = e.documentElement,
+            g = e.querySelector('meta[name="viewport"]'),
+            h = e.querySelector('meta[name="flexible"]'),
+            i = 0,
+            j = 0,
+            k = b.flexible || (b.flexible = {});
+        g ? (l = g.getAttribute("content").match(/initial\-scale=([\d\.]+)/), l && (j = parseFloat(l[1]), i = parseInt(1 / j))) : h && (m = h.getAttribute("content"), m && (n = m.match(/initial\-dpr=([\d\.]+)/), o = m.match(/maximum\-dpr=([\d\.]+)/), n && (i = parseFloat(n[1]), j = parseFloat((1 / i).toFixed(2))), o && (i = parseFloat(o[1]), j = parseFloat((1 / i).toFixed(2))))), i || j || (p = a.navigator.userAgent, !!p.match(/android/gi), q = !!p.match(/iphone/gi), r = q && !!p.match(/OS 9_3/), s = a.devicePixelRatio, i = q && !r ? s >= 3 && (!i || i >= 3) ? 3 : s >= 2 && (!i || i >= 2) ? 2 : 1 : 1, j = 1 / i), f.setAttribute("data-dpr", i), g || (g = e.createElement("meta"), g.setAttribute("name", "viewport"), g.setAttribute("content", "initial-scale=" + j + ", maximum-scale=" + j + ", minimum-scale=" + j + ", user-scalable=no"), f.firstElementChild ? f.firstElementChild.appendChild(g) : (t = e.createElement("div"), t.appendChild(g), e.write(t.innerHTML))), a.addEventListener("resize", function() {
+            clearTimeout(d), d = setTimeout(c, 300)
+        }, !1), a.addEventListener("pageshow", function(a) {
+            a.persisted && (clearTimeout(d), d = setTimeout(c, 300))
+        }, !1), "complete" === e.readyState ? e.body.style.fontSize = 12 * i + "px" : e.addEventListener("DOMContentLoaded", function() {
+            e.body.style.fontSize = 12 * i + "px"
+        }, !1), c(), k.dpr = a.dpr = i, k.refreshRem = c, k.rem2px = function(a) {
+            var b = parseFloat(a) * this.rem;
+            return "string" == typeof a && a.match(/rem$/) && (b += "px"), b
+        }, k.px2rem = function(a) {
+            var b = parseFloat(a) / this.rem;
+            return "string" == typeof a && a.match(/px$/) && (b += "rem"), b
+        }
+    }(window, window.lib || (window.lib = {}));
+    window.onload = function() {
+        htmlElm.style.opacity = '1';
+    }
+    </script>
+</head>
+
+<body>
+    <div class="wrap">
+       <!-- <header class="header">
+            <a href="{AnUrl('e/admin/rfid/stat')}" class="btn-back"><i class="icon-arrow-left"></i>首页</a>
+            <h1>终端</h1>
+        </header> -->
+        <section class="container">
+<style>
+  .none-tips {
+      padding: 10% 0 0;
+      text-align: center;
+      color: #9d9d9d;
+      font-size: 14px;
+  }
+  .manage-options .left {
+      position: absolute;
+      left: 0;
+      top: 0;
+      line-height: 1.07rem;
+      padding-left: 0.27rem;
+      font-size: 12px;
+      color: #949494;
+  }
+.wrap {
+    position: relative;
+ }
+ .footer{
+    position: fixed;
+    bottom: 0;
+ }
+ body{
+    min-height: 100vh;
+    background-color: #f5f6fb;
+ }
+</style>
+<div class="tabs1">
+  <a href="javascript:void(0);" class="js_times">
+    <span>
+      {if $search_filter.date_type == 1}
+        今日
+      {else if $search_filter.date_type == 2}
+        近七天
+      {else}
+        任意一段时间
+      {/if}
+    </span>
+    <i class="icon-arrow-down"></i>
+  </a>
+  <a href="javascript:void(0);" class="js_data_type"><span>按体验时长</span><i class="icon-arrow-down"></i></a>
+  <a href="{AnUrl('e/admin/rfid/device')}" class="active"><span>标签管理</span></a>
+</div>
+<!--start:日期选择弹层-->
+<div class="js_pop pop-bg hidden selectDate">
+  <div class="pop-date">
+    <div class="title">
+      <a href="javascript:void(0);" class="concel closeSelectDate">取消</a>
+      <span>选择日期</span>
+      <a href="javascript:void(0);" class="sure closeSelectDate">确定</a>
+    </div>
+    <form class="js_searchForm" action="{AnUrl("e/admin/rfid/stat")}" method="get">
+      <input type="hidden" class="js_search_filter_data_type" name="search_filter[data_type]" value="{$search_filter.data_type}">
+      <input type="hidden" class="js_timeStart" name="search_filter[start_date]" value="{$search_filter.start_date}">
+      <input type="hidden" class="js_endStart" name="search_filter[end_date]" value="{$search_filter.end_date}">
+      <div class="btns">
+        <label>
+          <input type="radio" {if $search_filter.date_type == 1}checked="checked"{/if} name="search_filter[date_type]" value="1"><span>今天</span></label>
+        <label>
+          <input type="radio" {if $search_filter.date_type == 2}checked="checked"{/if} name="search_filter[date_type]" value="2"><span>近7日</span></label>
+        <label>
+          <input type="radio"  {if $search_filter.date_type == 3}checked="checked"{/if} name="search_filter[date_type]" value="3"><span>任一段时间</span></label>
+      </div>
+      <div class="date">
+        <div id="js_timeStart" class="item "><span>选择时间</span>
+          <input type="date">
+          <span class="js_timeStartSpan"></span>
+        </div>
+        <span class="txt">至</span>
+        <div id="js_timeEnd" class="item "><span>选择时间</span>
+          <input type="date">
+          <span class="js_timeEndSpan"></span>
+        </div>
+        <span class="btn-concel"></span>
+      </div>
+    </form>
+  </div>
+</div>
+<!--end:日期选择弹层-->
+<!--start:排行筛选弹层-->
+<div class="js_pop pop-reorder hidden js_data_type_pop">
+  <ul>
+    <li>
+      <label>
+        <input type="radio" class="js_data_type_redio" {if $search_filter.data_type == 1}checked="checked"{/if}  name="reorder" value="1"><span>按体验时长</span></label>
+    </li>
+    <li>
+      <label>
+        <input type="radio" class="js_data_type_redio" {if $search_filter.data_type == 2}checked="checked"{/if} name="reorder" value="2"><span>按体验次数</span></label>
+    </li>
+  </ul>
+</div>
+<!--end:排行筛选弹层-->
+
+<div class="tabs1-con">
+  <div class="line"></div>
+  {if $device_list}
+  <div class="count-map">
+    <div class="count1-pic">
+      <div class="con" id="echartPie"></div>
+      <ul class="list">
+        {foreach $echarts_data as $k => $v}
+          <li>
+            <em style="background-color: {$echarts_pie_colors[$k]}"></em>
+            <span class="name">{$v.name}</span>
+            <span class="time">
+              {if $field == 'experience_time'}
+                {rfid_helper::format_timestamp_text($v.value)}
+              {else}
+                {$v.value} 次
+              {/if}
+            </span>
+         </li>
+        {/foreach}
+        </ul>
+    </div>
+  </div>
+    <div class="count-rank">
+        <div class="title">终端体验排行</div>
+        <table cellspacing="0" cellpadding="0">
+        {foreach $device_list as $k => $v}
+            <tr class="details_rfid" search_str='{$search_str}' phone_name='{$v.phone_name}' phone_version ='{rfid_helper::url_params_encode($v.phone_version)}' phone_color = '{$v.phone_color}' label_id ='{$v.label_id}'>
+               <td><div {if $k == 0} class="num num01" {/if}>{$k+1}</div></td>
+               <td>
+                  <div class="time">
+                    {if $field == 'experience_time'}
+                        <h3>{rfid_helper::format_timestamp_text($v[$field])}</h3>
+                        <p>体验时长</p>
+                    {else}
+                        <h3>{$v[$field]} 次</h3>
+                        <p>体验次数</p>
+                    {/if}
+                    </div>
+               </td>
+                 <td>
+                     <div class="infos">
+                        <p>机型<span>{$v.phone_name} {$v.phone_version}</span></p>
+                        <p>IMEI<span>{rfid_helper::get_imei_by_label($v.label_id)}</span></p>
+                    </div>
+                 </td>
+           </tr>
+        {/foreach}
+        </table>
+    </div>
+  {else}
+    <div class="none-tips">暂无数据</div>
+  {/if}
+</div>
+  
+<script src="{$smarty.const.STATIC_URL}/js/echarts/3/echarts.3.8.4.min.js"></script>
+<script>
+var echarts_data_json = {$echarts_data_json};
+var defaultStartDate  = '{$search_filter.start_date}';
+var defaultEndDate    = '{$search_filter.end_date}';
+var dateType          = '{$search_filter.date_type}';
+var dataType          = '{$search_filter.data_type}';
+var value2            = [];
+var colors            = [];
+var siteUrl    = '{$smarty.const.STATIC_URL}'; 
+{literal}
+$.each(echarts_data_json, function (i, o) {
+  value2[i] = { 
+      value: o.value, 
+      label:{ 
+        normal:{ 
+          show:true,
+          position: 'inner',
+          formatter:'{d}%',  
+          color:o.itemStyle.normal.color,
+        } 
+      } 
+  };
+  //value2[i] = o.value;
+  //colors[i] = o.itemStyle.normal.color;
+});
+{/literal}
+console.log(echarts_data_json);
+//设置默认值
+setDateValue();
+function setDateValue() {
+  if (defaultStartDate) {
+    $('#js_timeStart span').text(defaultStartDate);
+  }
+  
+  if (defaultEndDate) {
+    $('#js_timeEnd span').text(defaultEndDate);
+  }
+  
+}
+
+
+$(function(){
+  
+  //点击按次数按体验时长弹层
+  $('.js_data_type_pop').on('click', function (e) {
+    $('.js_pop').addClass('hidden');
+    $(this).removeClass('hidden');
+  });
+  
+  //选择按次数按体验时长弹层
+  $('.js_data_type').on('click', function (e) {
+    $('.js_data_type_pop').removeClass('hidden');
+  });
+  
+  //按次数按体验时长点击事件
+  $('.js_data_type_redio').on('click', function (e) {
+    $('.js_search_filter_data_type').val($(this).val());
+    $('.js_searchForm').submit();
+  });
+
+  //开启日期插件
+  $('.js_times').on('click', function () {
+    $('.js_pop').addClass('hidden');
+    $('.selectDate').removeClass('hidden');
+  });
+  
+  //时间范围
+  var startTime, endTime;
+  $('#js_timeStart input').change(function(e){
+
+    startTime = e.target.value;
+    $('.js_timeStart').val(startTime);
+    $(this).siblings('span').css({ opacity: 0 })
+    $(this).css({ opacity:1 })
+  })
+
+  $('#js_timeEnd input').change(function(e){
+
+    endTime = e.target.value
+    console.log(e)
+    $('.js_endStart').val(endTime);
+    $(this).siblings('span').css({ opacity: 0 })
+    $(this).css({ opacity:1 })
+    setTimeout(function(){
+        if(startTime>endTime) alert("结束时间必须大于开始时间")
+    },300)  
+  })
+
+  //关闭日期插件
+  $('.closeSelectDate').on('click', function () {
+    $('.selectDate').addClass('hidden');
+    if ($(this).hasClass('sure')) {
+      $('.js_searchForm').submit();
+    }
+  });
+  
+  //清除日期
+  $('.js_clearDate').on('click', function () {
+    $('#js_timeStart .js_timeStart').css({ opacity: 0 });
+    $('#js_timeStart input').css({ opacity:1 });
+    $('#js_timeEnd .js_timeEnd').css({ opacity: 0 });
+    $('#js_timeEnd input').css({ opacity:1 });
+  });
+  
+  $('.details_rfid').click(function(){
+       var search_str = $(this).attr('search_str');
+      var phone_name = $(this).attr('phone_name');
+      var phone_version = $(this).attr('phone_version');
+      var phone_color = $(this).attr('phone_color');
+      var label_id = $(this).attr('label_id');
+      window.location.href = siteUrl + '/e/admin/rfid/stat/stat_detail'+ search_str+ '&phone_name='+phone_name+ '&phone_version='+phone_version+'&phone_color='+phone_color+'&label_id='+label_id;
+ 
+
+  });
+  
+})
+{literal}
+option = {
+  series : [
+    {
+      type: 'pie',
+      radius : '65%',
+      data:value2,
+      legendHoverLink:false,
+      hoverAnimation:false,
+      label:{
+        normal: {
+          show: true,
+          fontSize:8,
+        },
+        
+      },
+      itemStyle: {
+        normal: {
+          color: 'rgb(244,247,255)',
+        }
+      }
+    },
+    {
+      type: 'pie',
+      radius : ['70%','90%'],
+      center: ['50%', '50%'],
+      data:echarts_data_json,
+      label: {
+        normal: {
+          show: false,
+        },
+      },
+      itemStyle: {
+        normal: {
+          borderColor: '#fff',
+          borderWidth: 2,
+        },
+      }
+    }
+  ]
+};
+{/literal}
+console.log(echarts_data_json);
+if (echarts_data_json.length > 0) {
+  var myChartPie = echarts.init(document.getElementById('echartPie'));
+  myChartPie.setOption(option);
+}
+
+</script>
+{include_www file="admin/lib/s_footer.html"}

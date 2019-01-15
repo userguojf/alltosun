@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{include_www file="admin/lib/header_new.html" title="常见问题管理"}
+        <style>
+            .edui-popup-content.edui-default{
+                height: auto !important;
+                width:460px;
+            }
+        </style>
+        <!--start:右侧-->
+        <div class="main mian2 ">
+            <div class="column">
+                <div class="position">
+                    <a href="{AnUrl('comment/admin')}"><i class="iconfont iconfont-logo2"></i>评论管理</a>
+                    &gt;
+                    <span>评论回复</span>
+                    <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回列表</a>
+                </div>
+
+                <div class="clearfix">
+                    <div class="form-add pull-left" style="width:80%;">
+                        {AnForm class='form-horizontal' action="{AnUrl('like/admin/comment_reply_save')}" method="post"}
+                        <input type='hidden' name='id' value="{$info.id}">
+                        <input type="hidden" name="module" value="{$search_filter.module}"/>
+                        <input type="hidden" name="typeid" value="{$search_filter.id}"/>
+                        {*创建者的隐藏*}
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label coupon-num">标题</label>
+                            <div class="col-sm-6">
+                                {AnForm type="textarea" disabled="disabled" name="info[title]" style='resize:none;' rows="4" cols="60" value="{like_helper::get_res_title_by_res_id($info.res_name ,$info.res_id)}" class="answer"}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">评论内容</label>
+                            <div class="col-sm-6">
+                                {AnForm type="textarea" name="reply_content" disabled="disabled" style='resize:none;' rows="4" cols="60" value="{$info.content}" id="answer" class="answer" placeholder="请输入内容描述"}
+                            </div>
+                        </div>
+                        <!-- 评论者-->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label coupon-start">评论者</label>
+                            <div class="col-sm-7">
+                                <input type="text" name="info[use_address]" disabled="disabled" value="{$info.name}" style="width:150px;" filter="filter_string" class="form-control js_use_address use_address_btn">
+                            </div>
+                        </div>
+
+                        <!-- 评论时间-->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label coupon-start">评论时间</label>
+                            <div class="col-sm-7">
+                                <input type="text" name="info[add_time]" disabled="disabled" value="{$info.add_time}" style="width:150px;" filter="filter_string" class="form-control js_use_address use_address_btn">
+                            </div>
+                        </div>
+
+
+                        <!-- 回复内容 start -->
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">回复内容</label>
+                            <div class="col-sm-6">
+                                {AnForm type="textarea" required="required" name="reply_content" style='resize:none;' rows="4" cols="60" value="{like_helper::get_content_by_pid($info['id'])}" id="reply_content" class="answer" placeholder="请输入回复内容"}
+                            </div>
+                        </div>
+
+
+                        {*发布按钮区*}
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-10">
+                                <button type="submit" class="btn btn-sm btn-success js_saveBtn"><span style='display: inline-block;width: 95px;' class='Sub js_subBtn'>保存</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <a type="button" class="btn btn-sm btn-warning" href="javascript:history.go(-1);">&nbsp;&nbsp;取消&nbsp;&nbsp;</a>
+                            </div>
+                        </div>
+                        <!-- 投放 end -->
+                        {AnForm}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容 end -->
+        {include_www file="admin/lib/footer_new.html"}
+    </title>
+</head>
+<body>
+
+</body>
+</html>

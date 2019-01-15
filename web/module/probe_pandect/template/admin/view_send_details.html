@@ -1,0 +1,175 @@
+{include_www file="admin/lib/header_new.html" title="已发货设备详情"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<style>
+    .pop-bg p .w_url{
+	   word-wrap: break-word;
+    }
+    .btn_msg{
+       cursor:pointer;
+    }
+    .btn_msg:hover{
+        color:#23527c;
+    }
+</style>
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('probe_pandect/admin/device_group')}"><i class="iconfont iconfont-logo2"></i>设备总览</a>
+            &gt;
+            <span>订单详情</span>
+          <a href="javascript:;" onclick="javascript:history.back(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+          </div>
+          
+          <div class="tabs2 clearfix">
+            <div class="pull-right">
+              <a href='{AnUrl("probe_pandect/admin/device_group/view_send_details?is_error_export=1&id={$id}&device_type={$device_type}")}' class="btn btn-sm btn-success btnExport">导出</a>
+            </div>
+          </div>
+          <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th width='15%'>联系人{if count($linkman_list)>1}(点击查看更多){/if}</th>
+                  <th width='15%'>联系电话{if count($phone_list)>1}(点击查看更多){/if}</th>
+                  <th width='15%'>邮箱{if count($email_list)>1}(点击查看更多){/if}</th>
+                  <th width='10%'>设备编码</th>
+                  <th width='10%'>发货时间</th>
+                </tr>
+              </thead>
+              <tbody>
+                {foreach $list as $k=>$v}
+                <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                  {$linkman = probe_pandect_helper::get_information($linkman_list)}
+                  <td><a href='javascript:;' class="look_linkman" >{$linkman}</a></td>
+                  {$phone = probe_pandect_helper::get_information($phone_list)}
+                  {$email = probe_pandect_helper::get_information($email_list)}
+                  <td><a href='javascript:;' class="look_phone" >{$phone}</a></td>
+                  <td><a href='javascript:;' class="look_email" >{$email}</a></td>
+                  <td>{$v.device_mac_label_id}</td>
+                  <td class='btn_start'>{substr($v.add_time, 0, 10)}</td>
+                </tr>
+                {foreachelse}
+                  <tr><td callspan='5'>暂无数据</td></tr>
+                {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        <!--end:列表-->
+<!-- 主内容 end -->
+      </div>
+<!-- 电话弹层开始 -->
+ <div class="pop-bg" id="phone_show" style="display:none;">
+  <div class="pop-bg-box" style="width:100%;padding:100px;" >
+    <div class="modal-content" style="width:300px; margin:0 auto;">
+      <div class="modal-body">
+        <div class="list clearfix">
+          <table class="table table-bordered ">
+            <thead>
+              <tr>
+                <th style="text-align:center" width="8%">联系电话</th>
+              </tr>
+            </thead>
+            <tbody class="jsPageData">
+              {foreach $phone_list as $k=>$v}
+              <tr> <td style="text-align:center">{$v}</td></tr>
+              {/foreach} 
+            </tbody>
+          </table>
+          <div style="text-align:center">
+                <button type="button" class="btn btn-info btn-lg btn_close_phone"  aria-hidden="true">关闭</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 电话弹层结束 -->
+<!-- 邮箱弹层开始 -->
+ <div class="pop-bg" id="email_show" style="display:none;">
+  <div class="pop-bg-box" style="width:100%;padding:100px;" >
+    <div class="modal-content" style="width:300px; margin:0 auto;">
+      <div class="modal-body">
+        <div class="list clearfix">
+          <table class="table table-bordered ">
+            <thead>
+              <tr>
+                <th style="text-align:center" width="8%">联系人邮箱</th>
+              </tr>
+            </thead>
+            <tbody class="jsPageData">
+              {foreach $email_list as $k=>$v}
+              <tr> <td style="text-align:center">{$v}</td></tr>
+              {/foreach} 
+            </tbody>
+          </table>
+          <div style="text-align:center">
+                <button type="button" class="btn btn-info btn-lg btn_close_email"  aria-hidden="true">关闭</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 电话弹层开始 -->
+ <div class="pop-bg" id="linkman_show" style="display:none;">
+  <div class="pop-bg-box" style="width:100%;padding:100px;" >
+    <div class="modal-content" style="width:300px; margin:0 auto;">
+      <div class="modal-body">
+        <div class="list clearfix">
+          <table class="table table-bordered ">
+            <thead>
+              <tr>
+                <th style="text-align:center" width="8%">联系人</th>
+              </tr>
+            </thead>
+            <tbody class="jsPageData">
+              {foreach $linkman_list as $k=>$v}
+              <tr> <td style="text-align:center">{$v}</td></tr>
+              {/foreach} 
+            </tbody>
+          </table>
+          <div style="text-align:center">
+                <button type="button" class="btn btn-info btn-lg btn_close_linkman"  aria-hidden="true">关闭</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 电话弹层结束 -->
+<!-- 邮箱弹层结束 -->
+<script>
+var id = "{$id}";
+var siteUrl = "{$smarty.const.SITE_URL}";
+$(function(){
+      $('.look_phone').click(function(){
+    	      $('#phone_show').addClass('show');
+      });
+      $('.btn_close_phone').click(function(){
+          $('#phone_show').removeClass('show');
+      });
+      
+      $('.look_email').click(function(){
+          $('#email_show').addClass('show');
+        });
+      $('.btn_close_email').click(function(){
+    	  $('#email_show').removeClass('show');
+      });
+      $('.look_linkman').click(function(){
+        $('#linkman_show').addClass('show');
+      });
+      
+      $('.btn_close_linkman').click(function(){
+    	    $('#linkman_show').removeClass('show');
+      });
+      
+    	
+});
+
+</script>
+{include_www file="admin/lib/pop.html"}
+{include_www file="admin/lib/footer_new.html"}

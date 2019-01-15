@@ -1,0 +1,150 @@
+{include_www file="admin/lib/header_new.html" title="RFID管理"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+  <!--start:右侧-->
+  <div class="main pull-right">
+    <div class="column">
+      <div class="position">
+        <a href="{AnUrl('rfid/admin/rwtool')}"><i class="iconfont iconfont-logo2"></i>读写器管理</a>
+        &gt;
+        <span>读写器列表（{$count}）</span>
+        <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+      </div>
+
+      <br />
+      <div class="form-search clearfix">
+         <div class="pull-left">
+             <form action="{AnUrl('rfid/admin/rwtool')}" method='get'>
+               <input type="hidden" name="order_dir" value="{$order_dir}">
+               <input type="hidden" name="order_field" value="{$order_field}">
+               <input type="hidden" name="search_filter[start_date]" value="{$search_filter.start_date}">
+               <input type="hidden" name="search_filter[end_date]" value="{$search_filter.end_date}">
+               {if $member_res_name != 'business_hall'}
+                 {* 公共分权限搜索模块 *}
+                 {widget model='rfid' func='get_search_by_member' file='get_search_by_member.html' member_info="{$member_info}"}
+               {/if}
+                <select class="form-control input-sm pull-left onlineStatus"  style="width:100px" name="search_filter[rwtool_status]">
+                  <option value="0" {if $search_filter.dev_status == 0}selected{/if}>读写器状态(全部)</option>
+                  {foreach rfid_config::$rwtool_status as $k => $v}
+                    <option value="{$k}" {if $search_filter.rwtool_status == $k}selected{/if}>{$v.status}</option>
+                  {/foreach }
+                </select>
+             </form>
+        </div>
+        <div class="pull-right">
+          <div class="form-inline" id="dateSelectBox" >
+            <div class="form-group">
+              <label for="exampleInputName2">搜索日期：</label>
+              <input type="text" class="form-control" style="width:85px; text-align:center;" name="search_filter[start_date]" id="start_time" value="{$search_filter.start_date}" />
+            </div>
+            
+            <div class="form-group">
+              <label for="exampleInputName2">-</label>
+              <input type="text" class="form-control" style="width:85px; text-align:center;" name="search_filter[end_date]" id="end_time" value="{$search_filter.end_date}" />
+            </div>
+            
+            <button type="button" class="btn btn-success btn-sm" id="searchData" data-url="{AnUrl('rfid/admin/terminal_stat')}" >搜索</button>
+            <a href="javascript:void(0);" class="btn btn-sm btn-success btnExport">导出</a>
+            <a href="{AnUrl('rfid/admin/rwtool/add')}" class="btn btn-sm btn-info">添加读写器</a>
+          </div>
+            
+        </div>
+        <br />
+    </div>
+    
+    <br />
+    <div class="list" style="overflow:scroll;">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <!-- <th style="width:10%;">读写器编号</th> -->
+            <th style="width:5%;">省</th>
+            <th style="width:5%;">市</th>
+            <!-- <th style="width:10%;">区</th> -->
+            <th style="width:10%;">营业厅</th>
+            {if $rwtool_list}
+              {foreach $days as $v}
+                <th style="width:20%;">日期（{$v}）</th>
+              {foreachelse}
+                <th style="width:20%;">暂无数据</th>
+              {/foreach}
+            {/if}
+            
+            <th style="width:15%;">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $rwtool_list as $k=>$v}
+          <tr id="dataList{$k}" >
+            <!-- <td>{$v.id}</td> -->
+            <td>{business_hall_helper::get_info_name('province', $v.region.province_id, 'name')}</td>
+            <td>{business_hall_helper::get_info_name('city', $v.region.city_id, 'name')}</td>
+            <td>{business_hall_helper::get_info_name('business_hall', $v.region.business_id, 'title')}</td>
+            {foreach $v.data_list as $kk => $vv}
+              <td>
+                  <div style="margin-top:5px;"><!-- <span style="display:inline-block;width:50px;">状态：</span> -->
+                    <span>{$rwtool_status = rfid_config::$rwtool_status[$vv.status]}
+                        <a class="btn btn-xs btn-info" style="background-color:{$rwtool_status.color}; border-color:{$rwtool_status.color}" href="javascript:;">{$rwtool_status.status}</a>
+                    </span>
+                  </div>
+                  <div style="margin-top:5px;"><span style="display:inline-block;width:100px;">总标签数：</span><span>{$vv.label_num}</span> </div>
+                  <div style="margin-top:5px;"><span style="display:inline-block;width:100px;">在线标签数：</span><span>{$vv.online_label_num}</span></div>
+              </td>
+            {/foreach}
+            <td class="txtleft " resId={$v.region.business_id}>
+              <a class="btn btn-xs  btn-top btn-success" href="{AnUrl("rfid/admin/rwtool/edit?id={$v.region.business_id}")}">编辑</a>
+              <a class="deleteOne btn btn-xs btn-top btn-danger" href="{AnUrl("rfid/admin/rwtool/delete?id={$v.region.business_id}")}">删除</a>
+            </td>
+          </tr>
+          {foreachelse}
+            <tr><td colspan="9">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+<script>
+$(function () {
+  
+  
+//排序
+  $('.order_type').on('click', function () {
+    var order_dir = 'desc';
+    var order_field = $(this).attr('order_field');
+    
+    if ($(this).hasClass('glyphicon-arrow-up')) {
+      order_dir = 'asc';
+    } else {
+     order_dir= 'desc';
+    }
+    $('form input[name="order_field"]').val(order_field);
+    $('form input[name="order_dir"]').val(order_dir);
+    submitData();
+  });
+  
+  $('.btnExport').on('click', function () {
+    $('form').prepend('<input type="hidden" name="is_export" value="1" >');
+    submitData();
+    $('form input[name="is_export"]').remove();
+  });
+  
+  function submitData () {
+    var start_date = $('#start_time').val();
+    var end_date   = $('#end_time').val();
+    $('input[name="search_filter[start_date]"]').val(start_date);
+    $('input[name="search_filter[end_date]"]').val(end_date);
+    $('form').submit();
+  }
+  
+  $('#searchData').on('click', function () {
+    submitData();
+  });
+  
+});
+
+</script>
+{include_www file="admin/lib/footer_new.html"}

@@ -1,0 +1,128 @@
+{include_www file="admin/lib/header_new.html" title="企业微信通讯录请管理"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    .btn-top{
+        margin-top:5px;
+    }
+    </style>
+<!-- 主内容 start -->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('wework/admin/user')}"><i class="iconfont iconfont-logo2"></i>{$wework}</a>
+             &gt;
+            <span>成员管理（总数：{$count}）</span>
+             <a href="{AnUrl("wework/admin/department")}" class="btn btn-primary btn-sm pull-right">部门管理</a>
+        </div>
+        <div class="form-search clearfix">
+             <div class="pull-left">
+                 <form action="{AnUrl('wework/admin/user')}" method='get'>
+                   <input type="text"  style="width:150px;"  name="search_filter[name]" value="{$search_filter.name}" class="form-control input-sm pull-left js_search"  placeholder="成员名称搜索">
+                   <input type="text"  style="width:150px;"  name="search_filter[mobile]" value="{$search_filter.mobile}" class="form-control input-sm pull-left js_search"  placeholder="手机号码搜索">
+                   <input type="text"  style="width:150px;"  name="search_filter[user_id]" value="{$search_filter.user_id}" class="form-control input-sm pull-left js_search"  placeholder="成员UserID搜索">
+                   <button type="submit" class="btn-search pull-left">搜索</button>
+                 </form>
+            </div>
+            <div class="pull-right">
+<!--             <a href="{AnUrl('wework/admin/user/add')}" class="btn btn-sm btn-success">添加</a> -->
+            </div>
+        </div>
+
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th style="width:22.5%">基本信息1</th>
+                    <th style="width:22.5%">基本信息2</th>
+                    <th style="width:22.5%">基本信息3</th>
+                    <th style="width:22.5%">基本信息4</th>
+                    <th style="width:10%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $k=>$v}
+                    <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                    <td>
+                        <b>成员名称</b>：{$v.name}<br><br>
+                        <b>成员UserID：</b><br>
+                        &nbsp;&nbsp;{$v.user_id}<br><br>
+                        <b>性别</b>：{if !$v.gender}未定义{else if $v.gender==1}男{else if  $v.gender==2}女{else}未设置{/if}<br><br>
+                        <b>职位信息</b>：{if $v.position}{$v.position}{else}未设置{/if}<br><br>
+                        <b>是否为上级</b>：{if $v.isleader}是{else}否{/if}<br><br>
+                    </td>
+                    <td>
+                        <b>微信头像</b>：{if $v.avatar}<a href="{$v.avatar}" target="blank"><img src="{$v.avatar}"   width="60px" height="60px" alt="头像" /></a>{else}暂无{/if}<br><br>
+                        <b>个人二维码</b>：{if $v.qr_code}<a href="{$v.qr_code}" target="blank"><img src="{$v.qr_code}"  width="60px" height="60px" alt="员工个人二维码" /></a>{else}暂无{/if}<br><br>
+                        <b>激活状态</b>：{if $v.status== 1}已激活{else if $v.status==2}已禁用{else if $v.status==4}未激活{else}--{/if} <br><br>
+                    </td>
+                    <td>
+                        <b>手机号码</b>：<br>
+                        &nbsp;&nbsp;{$v.mobile}<br><br>
+                        <b>邮箱</b>：<br>
+                        &nbsp;&nbsp;{if $v.email}{$v.email}{else}未设置{/if}<br><br>
+                        <b>座机</b>：{if $v.telephone}{$v.telephone}{else}未设置{/if}<br><br>
+                        <b>英文名</b>：{if $v.english_name}{$v.english_name}{else}未设置{/if}<br><br>
+                    </td>
+                    <td>
+                        <b>所属业务部门</b>：<br>
+                         {wework_department_helper::get_business_line($v.department)}<br>
+                        <b>扩展属性</b>：<br>
+                        &nbsp;&nbsp;<b>an_id</b>：{$v.an_id}<br>
+                        &nbsp;&nbsp;<b>analog_i</b>：{$v.analog_i}<br><br>
+                    </td>
+                <td>
+                <br>
+                <br>
+                  <!-- <a class="btn btn-xs btn-success" href="{AnUrl("wework/admin/user/add?id={$v.id}")}">编辑</a><br><br>
+                  <a class="btn btn-xs btn-success" href="{AnUrl("wework/admin/user/add?id={$v.id}")}">禁用</a><br><br> 
+                  -->
+                  <a class="btn btn-xs btn-danger delete_hot" user_id={$v.id} href="javascript:;">删除</a> 
+                </td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="13">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+</div>
+<script>
+var updateStatus = {
+    _msg :'操作失败',
+    _url:"{AnUrl('wework/admin/ajax/delete_user')}",
+    update:function(obj,id){
+        $.post(this._url,{ id:id },function(json){
+            if (json.info == 'ok') {
+                    updateStatus.deleteHtml(obj);
+            } else {
+                alert(json.info);
+            }
+        },'json')
+    },
+    deleteHtml:function(obj){
+   	 $(obj).closest("tr").fadeOut(function(){
+           $(this).remove();
+           interLineColor();
+       });
+       return false;
+    },
+};
+
+
+$('.delete_hot').live('click',function(event){
+    event.preventDefault();
+    event.stopPropagation();
+    var id = $(this).attr('user_id');
+    if (!confirm("确定要删除该条记录吗？")) {
+      return false;
+    }
+    updateStatus.update(this,id);
+})
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

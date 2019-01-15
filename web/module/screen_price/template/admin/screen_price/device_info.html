@@ -1,0 +1,49 @@
+{include_www file="admin/lib/header_new.html" title="设备列表"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen_stat/admin/device_stat')}"><i class="iconfont iconfont-logo2"></i>亮屏管理</a>
+            &gt;
+            <span>修改价格统计</span>
+            <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+          </div>
+          <br>
+         
+         <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="text-align:center">省</th>
+                  <th style="text-align:center">市</th>
+                  <th style="text-align:center">地区</th>
+                  <th style="text-align:center">营业厅</th>
+                  <th style="text-align:center">imei</th>
+                  <th style="text-align:center">品牌</th>
+                  <th style="text-align:center">型号</th>
+                </tr>
+              </thead>
+              <tbody>
+                {if $device_info}
+                <tr>
+                    <td style="text-align:center">{business_hall_helper::get_info_name('province', $device_info.province_id, 'name')}</td>
+                    <td style="text-align:center">{business_hall_helper::get_info_name('city', $device_info.city_id, 'name')}</td>
+                    <td style="text-align:center">{business_hall_helper::get_info_name('area', $device_info.area_id, 'name')}</td>
+                    <td style="text-align:center">{business_hall_helper::get_info_name('business_hall', $device_info.business_id, 'title')}</td>
+                    <td style="text-align:center">{$device_info.imei}</td> 
+                    <td style="text-align:center">{$device_info.phone_name}</td> 
+                    <td style="text-align:center">{$device_info.phone_version}</td> 
+                  
+                </tr>
+                {else}
+                <tr><td colspan="5">暂无相关信息</td></tr>
+                {/if}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        </div>
+{include_www file="admin/lib/footer_new.html"}

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>出错了-中国电信</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <link rel="stylesheet" href="{$smarty.const.STATIC_URL}/css/base.css">
+    <link rel="stylesheet" href="{$smarty.const.STATIC_URL}/css/act-main.css">
+</head>
+<body>
+<div class="warp pro_warp">
+    <div class="nav clearfix">
+        <div class="return_btn">
+            <a href="javascript:history.go(-1);">返回</a></div>
+        小提示
+        <div class="act_cose"></div>
+        <ul class="cose hide">
+            <li>
+                <a href="{AnUrl('')}">首页</a>
+            </li>
+            <li>
+                <a href="{AnUrl('home')}">个人中心</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="prompt">
+        <div class="prompt_img"></div>
+        <div class="prompt_txt">{$msg}</div>
+    </div>
+</div>
+<script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/activity.js"></script>
+</body>
+</html>

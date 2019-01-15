@@ -1,0 +1,117 @@
+{include_www file="admin/lib/header_new.html" title="探针管理"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('probe_stat/admin/coverage_stat')}"><i class="iconfont iconfont-logo2"></i>覆盖统计</a>
+      &gt;
+      <span>设备状态归属地分布
+        （{business_hall_config::$res_name_type[$res_name]}）
+        总计：{if $res_name == 'business_hall' || $res_name == 'area'}{count($stat_list)}{else}{if $count}{$count}{else}0{/if}{/if} &nbsp;&nbsp;&nbsp;
+        日期：{if $search_filter.date_type == 1}{$search_filter.date}{else}{substr($search_filter.date, 0, strlen($search_filter.date) -3)}{/if}
+      </span>
+    </div>
+    <div class="form-search clearfix">
+      <div class="pull-left">
+        <form action="{AnUrl("probe_stat/admin/coverage_stat/device_status_list")}" class="formBox" methhod='get'>
+          <input type="hidden" name="res_name" value="{$res_name}">
+          <input type="hidden" name="res_id" value="{$res_id}">
+          <input type="hidden" name="type" value="{$type}">
+          <input type="hidden" name="search_filter[date_type]" value="{$search_filter.date_type}">
+          <input type="hidden" name="search_filter[date]" value="{$search_filter.date}">
+          <!-- <input type="text" name="search_filter[business]" style="width:150px" value="{$search_filter.business}" class="form-control input-sm pull-left" placeholder="按营业厅搜索" id="autocomplete"/>
+          <button type="submit" class="btn-search pull-left formSubmit">搜索</button> -->
+        </form>
+      </div>
+      <div class="pull-right">
+        <a href="javascript:void(0);" class="btn btn-sm btn-success btnExport">导出</a>
+      </div>
+    </div>
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>归属地</th>
+            
+            {if $res_name == 'business_hall' || $res_name == 'area'}
+              <th>设备</th>
+              <th>设备状态</th>
+            {else}
+              {if $type == 2}
+                {*date_typ == 2 月数据  ==1 日数据*}
+                <th>{if  $search_filter.date_type == 2}设备状态（异常 指定月一天或以上不活跃的设备）{else}设备状态（异常 指定日不活跃的设备）{/if}</th>
+              {else if $type == 1}
+                <th>设备状态（正常）</th>
+              {else if $type == 7}
+                <th>设备状态{if $search_filter.date_type == 2}（有效月活 每天都活跃的设备）{else}（正常 指定日活跃设备）{/if}</th>
+              {/if}
+            {/if}
+          </tr>
+        </thead>
+        <tbody>
+          {if $subordinate == 'business_hall'}{$field='id'}{else}{$field = $subordinate|cat:"_id"}{/if}
+          {foreach $stat_list as $k=>$v}
+            <tr id="dataList{$v.id}" class="view_id">
+              <td>{$v.region_name}</td>
+              {if $res_name == 'business_hall' || $res_name == 'area'}
+                <td>{$v.value}</td>
+                <td>
+                  {if $type == 1}
+                    {$device_status = probe_dev_config::$dev_status[1]}
+                    <a class="btn btn-xs btn-info" style="background-color:{$dev_status.color}; border-color:{$dev_status.color}" href="javascript:;">设备正常</a>
+                  {else}
+                    {$dev_status = probe_dev_config::$dev_status[{$v.status}]}
+                    {if !$dev_status}
+                        <span style="color:yellow;">未知</span>
+                    {else}
+                        <a class="btn btn-xs btn-info" style="background-color:{$dev_status.color}; border-color:{$dev_status.color}" href="javascript:;">{$dev_status.status}</a>
+                    {/if}
+                  {/if}
+                </td>
+              {else}
+                <td>
+                  <a class="text-success" href="{AnUrl("probe_stat/admin/coverage_stat/device_status_list{$str_search_filter}&res_name={$subordinate}&res_id={$v.res_id}&type={$type}")}">
+                    {$v.value}
+                  </a>
+                </td>
+              {/if}
+            </tr>
+          {foreachelse}
+            <tr><td colspan='{if $res_name == "business_hall"}3{else}2{/if}'>暂无数据</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+    </div>
+    {include_www file="admin/lib/pager_new.html"}
+  </div>
+</div>
+<script>
+//排序
+$(function() {
+  //排序
+  $('.order_type').on('click', function () {
+    if ($(this).hasClass('glyphicon-arrow-up')) {
+      var order_dir = 'asc';
+    } else {
+      var order_dir = 'desc';
+    }
+    $('.formBox input[name="order_dir"]').val(order_dir);
+    $('.formBox input[name="order_field"]').val($(this).attr('order_field'));
+    //window.location.href = window.location.href + '&order_dir=' + order_dir + '&order_field=' + $(this).attr('order_field');
+    $('.formBox').submit();
+  });
+  
+  //导出
+  $('.btnExport').on('click', function () {
+    $('.formBox').append('<input type ="hidden" name="if_export" value="1">');
+    $('.formBox').submit();
+    $('.formBox input[name="if_export"]').remove();
+  });
+  
+});
+
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

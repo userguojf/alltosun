@@ -1,0 +1,237 @@
+{include_www file="admin/lib/header_new.html" title="终端体验统计"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('rfid/admin/terminal_stat')}"><i class="iconfont iconfont-logo2"></i>终端体验统计</a>
+            &gt;
+            <span>体验列表（{$count}）</span>
+          </div>
+
+          <div class="tabs1">
+            <ul class="clearfix">
+              {if $member_res_name != 'business_hall'}
+               {*按营业厅排行*}
+                <li {if $type == 4}class="curr"{/if}>
+                  <a href="{AnUrl('rfid/admin/terminal_stat?type=4')}">按营业厅排行</a>
+                </li>
+                {*按品牌排行*}
+                <li {if $type == 1}class="curr"{/if}>
+                  <a href="{AnUrl('rfid/admin/terminal_stat?type=1')}">按品牌排行</a>
+                </li>
+              {/if}
+              {*按型号排行*}
+              <li {if $type == 2}class="curr"{/if}>
+                <a href="{AnUrl('rfid/admin/terminal_stat?type=2')}">按型号排行</a>
+              </li>
+              {if $member_res_name == 'business_hall'}
+                {*按设备排行*}
+                <li {if $type == 3}class="curr"{/if}>
+                  <a href="{AnUrl('rfid/admin/terminal_stat?type=3')}">按设备排行</a>
+                </li>
+              {/if}
+            </ul>
+          </div>
+
+          <div class="form-search clearfix">
+            <div class="pull-left">
+              <form action="{AnUrl('rfid/admin/terminal_stat')}" id="subForm" methhod='get'>
+                <input type="hidden" name="type" value="{$type}">
+                <input type="hidden" name="order_dir" value="{$order_dir}">
+                <input type="hidden" name="order_field" value="{$order_field}">
+                {if $member_res_name != 'business_hall'}
+                  {* 公共分权限搜索模块 *}
+                  {widget model='rfid' func='get_search_by_member' file='get_search_by_member.html' member_info="{$member_info}"}
+                {/if}
+              </form>
+            </div>
+            <div class="pull-right">
+              <div class="form-inline" id="dateSelectBox" >
+                <div class="form-group">
+                  <label for="exampleInputName2">时间：</label>
+                  <input type="text" class="form-control" style="width:100px; text-align:center;" name="start_date" id="start_time" value="{$search_filter.start_date}" />
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputName2">至</label>
+                  <input type="text" class="form-control" style="width:100px; text-align:center;" name="end_date" id="end_time" value="{$search_filter.end_date}" />
+                </div>
+                <button type="button" class="btn btn-success btn-sm" id="searchData" data-url="{AnUrl('rfid/admin/terminal_stat')}" >搜索</button>
+                <button type="button" class="btn btn-success btn-sm" id="exportData" >导出</button>
+              </div>
+              
+            </div>
+          </div>
+                 
+          <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  {*非营业厅排行*}
+                  {if $type != 4}
+                    <th width='10%'>品牌</th>
+                    
+                    {*非品牌排行*}
+                    {if $type != 1}
+                      <th width='10%'>型号</th>
+                      
+                      {*非设备排行*}
+                      {if $type == 3}
+                        <th width='10%'>颜色</th>
+                        <th width='10%'>标签ID</th>
+                      {/if}
+                    {/if}
+                  {else}
+                    <th width='10%'>省</th>
+                    <th width='10%'>市</th>
+                    <th width='10%'>厅</th>
+                  {/if}
+                  <th width='10%'>设备量</th>
+                  {if $type == 4}
+                    <th width='10%'>设备平均时长
+                        {if $order_dir == 'asc' && $order_field == 'average_time'}
+                            <span class="glyphicon  glyphicon-arrow-down order_type" aria-hidden="true" order_field="average_time" order_dir='asc' "></span>
+                        {else}
+                            <span class="glyphicon glyphicon-arrow-up order_type" aria-hidden="true" order_field="average_time" order_dir='desc' ></span>
+                        {/if}
+                    </th>
+                  {/if}
+                  <th width='10%'>体验总时长
+                    {if $order_dir == 'asc' && $order_field == 'total_time'}
+                        <span class="glyphicon  glyphicon-arrow-down order_type" aria-hidden="true" order_field="total_time" order_dir='asc' "></span>
+                    {else}
+                        <span class="glyphicon glyphicon-arrow-up order_type" aria-hidden="true" order_field="total_time" order_dir='desc' ></span>
+                    {/if}
+                  </th>
+                  <th width='10%'>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+              
+                {foreach $record_list as $k=>$v}
+                
+                  {*营业厅id 就绪 , 用于下级页面继承*}
+                  {if $member_res_name == 'business_hall'}
+                    {$business_id=$member_res_id}
+                  {else if $search_filter.business_id}
+                    {$business_id=$search_filter.business_id}
+                  {else}
+                    {$business_id=$v.business_id}
+                  {/if}
+                  
+                  <tr id="dataList{$k}">
+                    {*非营业厅排行*}
+                    {if $type != 4}
+                      <td>{$v.phone_name}</td>
+                      {*搜索条件 用于下级页面继承*}
+                      {$search_filter_str2 = '&search_filter[phone_name]='|cat:$v.phone_name}
+                      
+                      {*非品牌排行*}
+                      {if $type != 1}
+                        <td>{$v.phone_version}</td>
+                        
+                         {*搜索条件 用于下级页面继承*}
+                         {$search_filter_str2 = $search_filter_str2|cat:'&search_filter[phone_version]='|cat:rfid_helper::url_params_encode($v.phone_version)}
+                       
+                       {*非设备排行*}
+                        {if $type == 3}
+                        
+                          {*搜索条件 用于下级页面继承*}
+                          {$search_filter_str2 = $search_filter_str2|cat:'&search_filter[phone_color]='|cat:$v.phone_color|cat:'&search_filter[label_id]='|cat:$v.label_id}
+                          <td>{$v.phone_color}</td>
+                          <td>{$v.label_id}</td>
+                        {/if}
+                      {/if}
+                      
+                    {*营业厅排行专属*}
+                    {else}
+                      {$business_hall_info = business_hall_helper::get_business_hall_info($v.business_id)}
+                      {$search_filter_str = $search_filter_str|cat:'&search_filter[business_id]='|cat:$v.business_id}
+                      <td>{business_hall_helper::get_info_name('province' , $business_hall_info['province_id'] ,'name')}</td>
+                      <td>{business_hall_helper::get_info_name('city' , $business_hall_info['city_id'] ,'name')}</td>
+                      <td><a href="{AnUrl("rfid/admin/terminal_stat/business_hall_label{$search_filter_str}{$search_filter_str2}")}" style="color:green;">{$business_hall_info.title}</a></td>
+                    {/if}
+                    
+                    <td>{$v.terminal_count}</td>
+                    
+                    {if $type == 4}
+                      <td>{rfid_helper::format_timestamp_text($v.average_time)}</td>
+                    {/if}
+                    
+                    <td>{rfid_helper::format_timestamp_text($v.experience_time_sum)}</td>
+                    <td>
+                      {if $member_res_name == 'business_hall' || $search_filter.business_id || $type == 4}
+                        {if $type == 4}
+                            <a class="btn btn-xs btn-success" href="{AnUrl("rfid/admin/terminal_stat/business_hall_label{$search_filter_str}{$search_filter_str2}")}">详细列表</a>
+                        {else}
+                            <a class="btn btn-xs btn-success" href="{AnUrl("rfid/admin/terminal_stat/detail{$search_filter_str}{$search_filter_str2}")}">详细列表</a>
+                        {/if}
+                      {else}
+                        <a class="btn btn-xs btn-success" href="{AnUrl("rfid/admin/terminal_stat/region{$search_filter_str}{$search_filter_str2}")}">地域排行</a>
+                      {/if}
+                    </td>
+                  </tr>
+                {foreachelse}
+                    <tr><td colspan="{if $type == 3 || $type == 4}7{else if $type ==2}5{else if $type == 1}4{/if}">暂无终端体验</td></tr>
+                {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        <!--end:列表-->
+      </div>
+<script>
+
+
+//排序
+$(function() {
+  
+  $('#searchData').on('click', function () {
+    mySubmit();
+  });
+
+  $('#exportData').on('click', function () {
+    $('#subForm').append('<input type="hidden" name="is_export" value="1">');
+    mySubmit();
+    //wangjf add 需移除
+    $('#subForm input[name="is_export"]').remove();
+  });
+  
+  //排序
+  $('.order_type').on('click', function () {
+
+    if ($(this).hasClass('glyphicon-arrow-up')) {
+      $('#subForm').append('<input type="hidden" name="order_dir" value="asc">');
+    } else {
+      $('#subForm').append('<input type="hidden" name="order_dir" value="desc">');
+    }
+    
+    $('#subForm').append('<input type="hidden" name="order_field" value="' + $(this).attr('order_field')+'">');
+    mySubmit();
+  });
+});
+
+//自定义提交
+function mySubmit()
+{
+  var startDate = $.trim($('#start_time').val());
+  var endDate = $.trim($('#end_time').val());
+  
+  if (startDate && endDate) {
+    if (startDate > endDate){
+      alert('开始时间不能大于结束时间');return false;
+    }
+  }
+  
+  $('#subForm').append('<input type="hidden" name="search_filter[start_date]" value="'+startDate+'">');
+  $('#subForm').append('<input type="hidden" name="search_filter[end_date]" value="'+endDate+'">');
+  $('#subForm').submit();
+}
+
+</script>
+<!-- 主内容 end -->
+<!-- 引入弹层 -->
+{include_www file="admin/lib/pop.html"}
+{include_www file="admin/lib/footer_new.html"}

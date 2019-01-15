@@ -1,0 +1,16 @@
+{include_core file="lib/header.html" title="私信"}
+  <!--start:content-->
+  <div class="content">
+    <div class="content-in clearfix">
+      <!--start:左侧-->
+        {include_home file="home_left.html" select_left="calendar"}
+      <!--end:左侧-->
+      <!--start:中间-->
+        {widget model="message" file="detail.html" func="get_detail" message_id="$message_id"}
+      <!--end:中间-->
+    </div>
+  </div>
+  <!--end:content-->
+  {widget model="message.online_chat" file="online_chat.html" func="show"}
+{load_js file="module/message.js?a={time()}"}
+{include_core file="lib/footer.html"}

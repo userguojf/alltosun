@@ -1,0 +1,90 @@
+{include_www file='lib/other_header.html' title="个人中心" other_title='我的奖品' return_url='home'}
+<!--start:优惠券列表-->
+{if $list}
+<section class="my-gift">
+    <ul>
+    {foreach $list as $v}
+      {if ($v.type eq 7) or ($v.type eq 5) or ($v.type eq 4) or ($v.type eq 2)}
+      <li>
+        <dl class="box1">            
+        <dt>￥<span>{user_helper::get_info_field('prize',$v['prize_id'],'value')}</span>元电信充值卡</dt>
+          <dd>{user_helper::get_info_field('prize',$v['prize_id'],'value')}元</dd>
+        </dl>
+        <div class="box2">
+          {if $v.name}
+          <p>卡号：{$v.name}</p>
+          {/if}
+          <p>密码：{$v.pass}</p>
+          {$add_time = user_helper::get_user_prize_info($v.id,'add_time')}
+          <p>领取时间：{$add_time|date_format:'Y-m-d'}</p>
+          <a href='{AnUrl("coupon/prize_detail/{$v.id}")}' class="btnIntro">查看使用说明</a>
+        </div>
+      </li>
+      
+      {elseif $v.type eq 3}
+      <li>
+        <dl class="box1">
+          <dt>{user_helper::get_info_field('prize',$v['prize_id'],'title')}<span></span></dt>
+          <dd>1张</dd>
+        </dl>
+        <div class="box2">
+          <p>密码：{$v.pass}</p>
+          {$prize_card_info.add_time}
+          {$add_time = user_helper::get_user_prize_info($v.id,'add_time')}
+          <p>领取时间：{$add_time|date_format:'Y-m-d'}</p>
+          <a href='{AnUrl("coupon/prize_detail/{$v.id}")}' class="btnIntro">查看使用说明</a>
+        </div>
+      </li>      
+      {elseif $v.type eq 6}
+      <li>
+        <dl class="box1">            
+        <dt>￥<span>{user_helper::get_info_field('prize',$v['prize_id'],'value')}</span>元不知火柑橘兑换券</dt>
+          <dd>{user_helper::get_info_field('prize',$v['prize_id'],'value')}元</dd>
+        </dl>
+        <div class="box2">
+          {if $v.name}<p>卡号：{$v.name}</p>{/if}
+          {if $v.pass}<p>密码：{$v.pass}</p>{/if}
+          {$add_time = user_helper::get_user_prize_info($v.id,'add_time')}
+          <p>领取时间：{$add_time|date_format:'Y-m-d'}</p>
+          <a href='{AnUrl("coupon/prize_detail/{$v.id}")}' class="btnIntro">查看使用说明</a>
+        </div>
+      </li>    
+       {elseif $v.type == 8 ||  $v.type == 9 ||  $v.type == 10}
+      <li>
+        <dl class="box1">
+          <dt>{user_helper::get_info_field('prize',$v['prize_id'],'title')}<span></span></dt>
+          <dd>1张</dd>
+        </dl>
+        <div class="box2">
+          <p>密码：{$v.pass}</p>
+          {$prize_card_info.add_time}
+          {$add_time = user_helper::get_user_prize_info($v.id,'add_time')}
+          <p>领取时间：{$add_time|date_format:'Y-m-d'}</p>
+          <a href='{AnUrl("coupon/prize_detail/{$v.id}")}' class="btnIntro">查看使用说明</a>
+        </div>
+      </li>  
+      
+            <li>
+        <dl class="box1">
+          <dt>{user_helper::get_info_field('prize',$v['prize_id'],'title')}<span></span></dt>
+          <dd>1张</dd>
+        </dl>
+        <div class="box2">
+          <p>密码：{$v.pass}</p>
+          {$prize_card_info.add_time}
+          {$add_time = user_helper::get_user_prize_info($v.id,'add_time')}
+          <p>领取时间：{$add_time|date_format:'Y-m-d'}</p>
+          <a href='{AnUrl("coupon/prize_detail/{$v.id}")}' class="btnIntro">查看使用说明</a>
+        </div>
+      </li> 
+        
+      {/if}
+      </ul>
+      {/foreach}
+      </section>
+{else}
+<section class="my-gift2">
+    <div class="none-tips">您还没有奖品!</div>
+</section>
+{/if}
+{include_www file='lib/other_footer.html'}

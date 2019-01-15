@@ -1,0 +1,43 @@
+{include file="admin/rfid/header.html" title="上柜统计"}
+      <section class="container">
+        <div class="tabs1">
+          <div class="con">
+            <a href="{AnUrl('e/admin/rfid/device')}" class="curr">上柜统计</a>
+            <em></em>
+            <a href="{AnUrl('e/admin/rfid/stat')}">最受欢迎</a>
+            <em></em>
+            <a href="{AnUrl('e/admin/rfid/shoppe')}">柜台管理</a>
+          </div>
+        </div>
+        <div class="tabs1-con">
+            <div class="manage-options clearfix">
+                <div id="js_manageCount" class="choose left">
+                    <div class="date1">您厅店共有<span class="num">{count($list)}</span>台终端</div>
+                </div>
+                <!-- <a href="{AnUrl('e/admin/rfid/add')}" class="btn-add">+&nbsp;添加设备</a> -->
+            </div>
+            <ul class="manage-list1">
+         ·  {foreach $list as $k => $v}
+             <a href="{AnUrl('e/admin/rfid/add',"?id={$v.id}")}" >
+                <li>
+                    <div class="con">
+                        <p>机型：<span>{$v.name} {$v.version}</span></p>
+                        <p>IMEI：<span>{$v.imei}</span></p>
+                        <p>颜色：<span>{$v.color}</span></p>
+                    </div>
+                    <div class="infos">
+                        <p class="id">ID：<span>{$v.label_id}</span></p>
+                    </div>
+                </li>
+               </a>
+            {/foreach}
+            </ul>
+           <!--  <div class="loading-more">下拉加载更多</div> -->
+           <a href="{AnUrl('e/admin/rfid/add')}" class="rfid-btn-add">+添加RFID终端</a>
+        </div>
+    </section>
+<script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/jquery-2.1.1.min.js"></script>
+<script type="text/javascript">
+
+</script>
+{include file="admin/rfid/footer.html"}

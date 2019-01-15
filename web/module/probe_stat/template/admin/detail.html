@@ -1,0 +1,100 @@
+{include_www file="admin/lib/header_new.html" title="{$b_info.title}"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    #main{
+        height:500px;
+        border:1px solid #ccc;
+        margin: 10px;
+        padding:10px;
+    }
+</style>
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('probe_new/admin/stat')}"><i class="iconfont iconfont-logo2"></i>统计管理</a>
+            &gt;
+            <span>探针统计</span>
+        </div>
+        <div class="form-search clearfix">
+            <div class="pull-left">
+                <form action="{AnUrl('probe_new/admin/stat/list/detail')}" method="get" class="js_searchForm">
+                    <input type="hidden" name="date_type" value="{$date_type}" />
+                    <input type="hidden" name="date" value="{$date}" />
+                    <input type="hidden" name="res_name" value="{$res_name}" />
+                    <input type="hidden" name="res_id" value="{$res_id}" />
+                    <input type="hidden" name="type" value="{$type}" />
+                    <input type="hidden" name="is_export" class="js_isexport" value="0" />
+
+                    <select class="form-control input-sm pull-left" style="width:120px" name="remain_time" >
+                        <option {if $remain_time == 0}selected{/if} value="0">全部时长</option>
+                        <option {if $remain_time == 1}selected{/if} value="1">1分以下</option>
+                        <option {if $remain_time == 2}selected{/if} value="2">1-2分</option>
+                        <option {if $remain_time == 3}selected{/if} value="3">2-3分</option>
+                        <option {if $remain_time == 4}selected{/if} value="4">3-5分</option>
+                        <option {if $remain_time == 5}selected{/if} value="5">3分以上</option>
+                        <option {if $remain_time == 6}selected{/if} value="6">5分以上</option>
+                        <option {if $remain_time == 7}selected{/if} value="7">10分以上</option>
+                        <option {if $remain_time == 8}selected{/if} value="8">5小时以上</option>
+                        <option {if $remain_time == 9}selected{/if} value="9">10小时以上</option>
+                    </select>
+                    <input style="width: 150px;" type="text" name="mac" placeholder="搜索mac地址" value="{$mac}" class="form-control input-sm pull-left" />
+                    <button type="submit" class="btn-search pull-left js_search">搜索</button>
+                    <button style="margin-left: 10px;" type="submit" class="btn btn-primary btn-sm js_export">导出</button>
+                </form>
+            </div>
+            <div class="pull-left"> （共：{$count}）</div>
+        </div>
+        <div class="list">
+            <table class="table table-bordered table-striped center table_co_td">
+                <thead>
+                <tr>
+                    <th>mac地址</th>
+                    <!-- <th>探测设备</th> -->
+                    <th>首次探测信号</th>
+                    <th>上次探测信号</th>
+                    <th>本次探测信号</th>
+                    <th>首次探测时间</th>
+                    <th>本次探测时间</th>
+                    <th>停留时长</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $k => $v}
+                <tr data_id="{$v.id}">
+                    <td>{probe_helper::mac_encode($v.mac)}</td>
+                    <!-- <td>{$v.device_id}</td> -->
+                    <td>{$v.frist_rssi}</td>
+                    <td>{$v.prev_rssi}</td>
+                    <td>{$v.rssi}</td>
+                    <td>{date("Y-m-d H:i:s", $v.frist_time)}</td>
+                    <td>{$v.update_time}</td>
+                    {$ary = probe_helper::get_remain($v.remain_time)}
+                    <td>{if $ary.hour}{$ary.hour}小时{$ary.min}分{$ary.sec}秒{elseif $ary.min}{$ary.min}分{$ary.sec}秒{else}{$ary.sec}秒{/if}</td>
+                </tr>
+                {foreachelse}
+                    <tr><td colspan="9">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+<script>
+$(function(){
+    $('.js_export').click(function( e ){
+        var is_export = 1;
+
+        // alert($('.js_isexport').val());
+        $('.js_isexport').val(is_export);
+
+        setTimeout(function(){
+            $('.js_isexport').val(0);
+        }, 1000);
+        return true;
+    });
+})
+</script>
+{include_www file="admin/lib/footer_new.html"}

@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+     <link rel="stylesheet" type="text/css" href="{$smarty.const.STATIC_URL}/css/m-bang.css">
+</head>
+<head>
+    <title>设备绑定</title>
+   
+    <style type="text/css">
+        #map {
+                width: 100%;height: 100%;
+                overflow: hidden;
+                margin:0;
+                font-family:"微软雅黑"; 
+                display:"none";
+        }
+    </style>
+</head>
+
+<body>
+     <form action="{AnUrl('probe_dev/m/binding/bind_business')}" method='post' id="divbox">
+     <div class="bang-wrap">
+        <div class="title"><span class="num-step">1</span>设备绑定</div>
+        <div class="set-form">
+            <input type="hidden" value="{$flag}" class="flag">
+            <div class="item">
+                <label>MAC地址</label>
+                <span class="text"><input type="text" name="device" value="{$action}" class="js_device"></span>
+            </div>
+            <div class="item" id="rem">
+                <label>营业厅名称</label>
+                <!-- <span class="text"><input type="text" class="input-name" name="" value="北京杏石口营业厅"></span> -->
+                <div class=""><span class="text"><input type="text" name="title" value="{$title}" onclick="return click_title();"  class="js_business_title"></span></div>
+            </div>
+            <div class="item number">
+                <label>渠道视图编码</label>
+                <span class="text"><input type="text" name="user_number" value="{$user_number}" class="js_business_user_number"></span>
+            </div>
+        </div>
+        <div class="btn-login btn_style">
+            <button type="submit" class="btn-bang">立即绑定</button>
+        </div>
+        <p class="tips">客服电话：<a href="tel:010-58507163" class="tel">010-58507163</a></p>
+    </div>
+    </form>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=dpxOOFiP2SSqem9kSBQTImVt6k5GUsbk"></script>
+    <script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/jquery-1.7.1.min.js"></script>
+    <script>
+    var js_device      = $('.js_device');
+    var js_title_value = $('.js_business_title');
+    
+    var js_device2      = $('.js_device').val();
+    var js_user_number2 = $('.js_business_user_number').val();
+    var js_title_value2 = $('.js_business_title').val();
+    
+    if(js_device2 != '' && js_device2 != '' && js_device2 != ''){
+        $('.btn_style').find('button').attr('class','btn-login'); 
+    }
+    /* 声明一个数组用来存input值 */
+    var array = ["", ""];
+    $(function(){
+        var flag = $('.flag').val();
+        if(flag==0){
+            getcoordinate();
+        }
+        
+    });
+    
+    /*方法调用*/
+    inputFn(js_device, 0);
+    inputFn(js_title_value, 1);
+
+    /*键盘弹起时实时生效*/
+    function inputFn(ele, num) {
+        $(ele).keyup(function(){
+            var val = $(this).val().trim();
+            var js_device2 = $('.js_device').val();
+            var js_title_value2 = $('.js_business_title').val();
+            var js_user_number2 = $('.js_business_user_number').val();
+            if(js_device2 != ''){
+            	array[0] = js_device2;
+            }
+            if(js_title_value2 != ''){
+                array[1] = js_title_value2;
+            }
+           
+            array[num] = val;
+            console.log(array);
+            inputArray();
+        });
+    }
+    /*遍历数组，判断input值是否存在于数组中*/
+    function inputArray() {
+        for (var i = 0, arrayLen = array.length; i < arrayLen; i++) {
+            //  如果值不在数组中 就返回 并 去掉颜色
+            if (array[i] == "" ||　array[i] == null) {
+            	$('.btn_style').find('button').attr('class','btn-bang'); 
+                //console.log(array[i] + "无法提交" + i)
+                return;
+            }
+        }
+        //
+       $('.btn_style').find('button').attr('class','btn-login'); 
+    }
+    
+    function getcoordinate(){
+        var geolocation = new BMap.Geolocation();
+        geolocation.getCurrentPosition(function(r){
+            if(this.getStatus() == BMAP_STATUS_SUCCESS){
+                var mk = new BMap.Marker(r.point);
+                var data = {
+                        "lat":'',
+                        "lng":r.point.lng
+                };
+                var url  = '{$smarty.const.STATIC_URL}/probe_dev/m/ajax/get_title';
+                $.post(url, data, function(json){
+                    if (json.info == 'ok') {
+                        title_list = json[0].title;
+                        user_number = json[0].user_number;
+                        var js_device      = $('.js_device').val();
+                        var js_user_number = $('.js_business_user_number').val(user_number[0]);
+                        var js_title_value = $('.js_business_title').val(title_list[0]);
+                        console.log(js_device.length);
+                        if(js_title_value != '' && js_user_number != '' && js_device.length != ''){
+                            $('.btn_style').find('button').attr('class','btn-login'); 
+                        }
+                    } else {
+                    	$('.js_business_title').attr('onclick','');
+                    	$('.number').remove();
+                    }
+                    
+               }, 'json');
+            }
+            else {
+                alert('failed'+this.getStatus());
+            }        
+        },{ enableHighAccuracy: true })
+    }
+    
+    function click_title(){
+        window.location.replace("{$smarty.const.STATIC_URL}/probe_dev/m/binding/search_title?mac={$action}");
+    }
+        
+        
+      
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,271 @@
+{include_www file="admin/lib/header_new.html" title="探针管理"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('probe_dev/admin')}"><i class="iconfont iconfont-logo2"></i>探针管理</a>
+            &gt;
+            <span>设备申请</span>
+        </div>
+         <div class="tabs1">
+            <ul class="clearfix">                    
+                <li {if $search_filter['put_type'] == 1}class="curr" {/if}><a href="{compile_url($search_filter,'put_type',1,'songzytset/admin/index')}">设备申请</a></li>
+                <li {if $search_filter['put_type'] == 2}class="curr"{/if}><a href="{compile_url($search_filter,'put_type',2,'songzytset/admin/index')}">待审批设备</a></li>
+                <li {if $search_filter['put_type'] == 3}class="curr"{/if}><a href="{compile_url($search_filter,'put_type',3,'songzytset/admin/index')}">已审批设备</a></li>
+               
+            </ul>
+        </div>
+        {*待审核页面*}
+        {if $search_filter['put_type'] == 2}
+             {include file="{$smarty.const.MODULE_PATH}/songzytset/template/widget/device_list_for_provnice.html"}
+        {/if}
+        
+        {*待审核详情页面*}
+        {if $details == 'details'}
+             {include file="{$smarty.const.MODULE_PATH}/songzytset/template/widget/application_details_list.html"}
+        {/if}
+         <input type="hidden" value="{$details}" id="details">
+        
+        {*已审核页面*}
+        {if $search_filter['put_type'] == 3}
+             {include file="{$smarty.const.MODULE_PATH}/songzytset/template/widget/approved_devices_of_status_list.html"}
+        {/if}
+        
+        {if $member_info['res_name'] == 'province' && $str}
+         <div class="tabs2">
+         <input type="hidden" value="{$str}" id="str">
+         <input type="hidden" value="{$total}" id="total">
+         <input type="hidden" value="{$error_total}" id="error_total">
+         <input type="hidden" value="{$count}" id="right_total">
+            <ul class="clearfix">
+                {foreach probe_pandect_config::$search_flag as $k => $v}
+                <li {if $search_filter['search_flag'] == $k}class="curr"{/if}><a  href='{AnUrl("songzytset/admin/index?str=$str&search_filter[search_flag]=$k")}'>{$v}</a></li>
+                    <input type="hidden" value="{$search_filter['search_flag']}" id="search_flag">
+                {/foreach}
+            </ul>
+        </div>
+        {/if}
+        {if $search_filter['put_type'] == 1 && $str == ''}
+        <div class="list">
+            <div><a href="javascript:;"><i class="iconfont iconfont-logo2"></i>第一步 选择设备类型</a></div>
+        
+        <div class="tabs2">
+            <ul class="clearfix">
+                {foreach probe_pandect_config::$search_type as $k => $v}
+                <li {if $search_filter['search_type'] == $k}class="curr"{/if}><a  href="{compile_url($search_filter,'search_type',$k,'songzytset/admin/index')}">{$v}</a></li>
+                {/foreach}
+            </ul>
+        </div>
+        
+        <div><a href="javascript:;"><i class="iconfont iconfont-logo2"></i>第二步 下载设备申请模版</a></div>
+           {if $search_filter['search_type'] == 0}
+            <div class="col-sm-3 tabs2">
+                    <a type="button" class="btn btn-sm btn-info" href="{AnUrl('songzytset/admin/load_instruction')}">&nbsp;探针申请模板.xlsx</a>
+            </div>
+           {else}
+            <div class="col-sm-3 tabs2">
+                    <a type="button" class="btn btn-sm btn-success" href="{AnUrl('songzytset/admin/load_instruction')}">&nbsp;rfid申请模板.xlsx</a>
+            </div>
+           {/if}
+           <div class="clearfix" ></div>
+           <div><a href="javascript:;"><i class="iconfont iconfont-logo2"></i>第三步 导入设备申请模版</a></div>
+           {if $search_filter['search_type'] == 0}
+            <div class="tabs2 clearfix ">
+             <a href="javascript:;" class="btn btn-sm btn-info btn_msg">导入探针</a>
+            </div>
+           {else}
+           <div class="tabs2 clearfix  ">
+             <label class="btn btn-sm btn-success">导入rfid</label>
+                    <input type="file" name="rfid_data">
+           </div>
+           {/if}
+        </div>
+        {/if}
+        
+   {if $search_filter['put_type'] == 1 && $str}  
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            {if $search_filter['search_flag'] == 1}
+            <th style="text-align:center" width="5%">错误原因</th>
+            {/if}  
+            <th style="text-align:center" width="5%">设备类型</th>
+            <th style="text-align:center" width="8%">省</th>
+            <th style="text-align:center" width="8%">市</th>
+            <th style="text-align:center" width="10%">地区</th>
+            <th style="text-align:center" width="15%">渠道视图编码</th>
+            <th style="text-align:center" width="18%">营业厅</th>
+            <th style="text-align:center" width="20%">详细地址</th>
+            <th style="text-align:center" width="8%">联系人</th>
+            <th style="text-align:center" width="18%">电话</th>
+            <th style="text-align:center" width="8%">设备数量</th>
+            <th style="text-align:center" width="12%">厅店等级</th>
+            <th style="text-align:center" width="5%">备注</th>
+          </tr>
+        </thead>
+        <tbody>
+      {foreach $list as $k=>$v}
+      
+      <tr> 
+            {if $search_filter['search_flag'] == 1}
+                <td style="text-align:center;color:red;">{$v.error_type}</td>
+            {/if}  
+           <td style="text-align:center">{$v.device_type}</td>
+           <td style="text-align:center">{business_hall_helper::get_info_name('province', $v.province_id, 'name')}</td>
+           <td style="text-align:center">{business_hall_helper::get_info_name('city', $v.city_id, 'name')}</td>
+           <td style="text-align:center">{business_hall_helper::get_info_name('area', $v.area_id, 'name')}</td>
+           <td style="text-align:center">{$v.user_number}</td>
+           <td style="text-align:center">{business_hall_helper::get_info_name('business_hall', $v.business_id, 'title')}</td>
+           <td style="text-align:center">{$v.address}</td>
+           <td style="text-align:center">{$v.linkman}</td>
+           <td style="text-align:center">{$v.phone}</td>
+           <td style="text-align:center">{$v.device_num}</td>
+           <td>{probe_pandect_config::$business_level[$v.business_level]}</td>
+            <td>{$v.remark}</td>
+    
+      </tr>
+      {foreachelse}
+        <tr><td class="txtleft" colspan="13">暂无数据</td></tr>
+   {/foreach} 
+  
+            </tbody>
+          </table>
+           {include_www file="admin/lib/pager_new.html"}
+        </div>
+    {/if}
+    {if $str && $search_filter['search_flag'] == '1'}
+           <div>
+<!--                <a href='{AnUrl("songzytset/admin/index?is_error_export=1&str=$str&search_filter[search_flag]=1")}' class="btn btn-warning btn-lg" style="margin-left:350px;margin-bottom:10px;" >导出错误数据</a> --> 
+                    <a href="javascript:void(0);" class="btn btn-warning btn-lg btnErrorExport" style="margin-left:350px;margin-bottom:10px;">导出错误数据</a>
+         </div>
+           <div></div>
+     {/if}
+    </div>
+    
+</div>
+
+ <!--start:弹层-->
+ <form action="{AnUrl('probe_pandect/admin/add_device')}" method="post" class='js_searchForm' enctype="multipart/form-data">
+         <div class="pop-bg" style="display:none;" id="message">
+          <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close btn_close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title w_title" ></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="media row">
+                      <div class=" col-xs-8">
+                          <div class="media-body">
+                                <input type="file"  name="probe" style="width:180px">
+                                <button type="submit" class="btn btn-success btn-sm add_submit">确认</button>
+                           
+                          </div>
+                      </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+        </div> 
+ </form>
+<!-- 主内容 end -->
+
+<!-- 导入信息弹出层 -->
+
+ <div class="pop-bg" style="display:none;" id="message2">
+          <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                       <p> 本次共导入探针设备申请<span style="color:blue;font-size:25px;" class="total" ></span>条 </p>
+                       <p> 成功数据<span style="color:blue;font-size:25px;" class="right_total"> </span>条，错误数据<span style="color:blue;font-size:25px;" class="error_total"> </span>条</p>
+                    <button type="button" class="btn btn-info btn-lg btn_close_lay" data-dismiss="modal" aria-hidden="true" >确认</button>
+                </div>
+            </div>
+        </div>
+        </div> 
+  <!-- 导入信息弹出层end -->
+  
+  <!-- 导出信息弹出层 -->
+
+ <div class="pop-bg" style="display:none;" id="message3">
+          <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                       <p style="color:rgb(60,60,60);font-size:15px;">&nbsp;&nbsp;&nbsp;&nbsp;请将数据导出后进行修改，</p>
+                       <p style="color:rgb(60,60,60);font-size:15px;">修改完成后需重新导入到后台中！ </p> 
+                       <p><span style="color:rgb(151,149,149);font-size:10px;" class="right_total">数据导出后，后台将自动清空这批错误数据</span></p>
+                    <button type="button" class="btn btn-info btn-lg btn_close_exp" data-dismiss="modal" aria-hidden="true" >暂不导出</button>
+                    <a href='{AnUrl("songzytset/admin/index?is_error_export=1&str=$str&search_filter[search_flag]=1")}' class="btn btn-info btn-lg" >确认导出</a> 
+                    
+                </div>
+            </div>
+        </div>
+        </div> 
+  <!-- 导出信息弹出层end -->
+        
+<script src="{$smarty.const.SITE_URL}/js/region_func.js"></script>
+
+<script>
+
+$(function(){
+	var str = $('#str').val();
+	var total = $('#total').val();
+	var error_total = $('#error_total').val();
+	var right_total = $('#right_total').val();
+	var search_flag = $('#search_flag').val();
+	
+	//详情页标记
+	var details = $('#details').val();
+    if(str && search_flag == '0'){
+    	$('#message2').addClass('show');
+    	$('.total').html(total);
+    	$('.error_total').html(error_total);
+    	$('.right_total').html(right_total);
+    }        
+    
+    if(details){
+    	$('#details_show').addClass('show');
+    }
+});
+$('.btn_msg').click(function(){
+	  $('#message').addClass('show');
+	})
+	
+	  //X点击隐藏
+  $('.btn_close').click(function(){
+      $('#message .media-body').find('input').remove();
+      $('#message').removeClass('show');
+      //隐藏就取消上传
+      //刷新
+  });
+
+$('.btn_close_lay').click(function(){
+    $('#message2').removeClass('show');
+    //隐藏就取消上传
+    //刷新
+});
+
+$('.btn_close_exp').click(function(){
+    $('#message3').removeClass('show');
+    //隐藏就取消上传
+    //刷新
+});
+
+
+$('.btn_close_details').on('click',function(){
+	$('#details_show').removeClass('show');
+	url = siteUrl+'/songzytset/admin/index?&search_filter[put_type]=2';
+    location.replace(url);
+
+});
+
+$('.btnErrorExport').on('click', function () {
+	$('#message3').addClass('show');
+  });
+
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

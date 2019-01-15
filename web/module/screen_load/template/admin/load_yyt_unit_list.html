@@ -1,0 +1,69 @@
+{include_www file="admin/lib/header_new.html" title="列表"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen_load/admin/yyt_unit')}"><i class="iconfont iconfont-logo2"></i>数据下载</a>
+            &gt;
+            <span>数据列表</span>
+            <a href="{AnUrl('screen_load/admin/yyt_unit',"?start_time={$start_time}&end_time={$end_time}&is_export=1")}" class="btn btn-primary btn-sm pull-right">导出</a>
+          </div>
+          </br>
+          <div class="form-search row clearfix">
+            <div class="tabs2">
+
+                <div class="">
+                  <form action="{AnUrl('screen_load/admin/yyt_unit')}" method="get" class="searchForm">
+                    <div class="form-inline" id="dateSelectBox" >
+                        <div class="form-group">
+                            <label for="exampleInputName2">时间：</label>
+                            <input type="text" class="form-control" style="width:100px; text-align:center;" name="start_time" id="start_time" value="{$start_time}" />
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputName2">至</label>
+                            <input type="text" class="form-control" style="width:100px; text-align:center;" name="end_time" id="end_time" value="{$end_time}" />
+                        </div>
+                        <button type="submit" class="btn btn-success btn-sm">搜索</button>
+                    </div>
+                    
+                  </form>
+                </div>
+            </div>
+        </div>
+          <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="text-align:center">渠道视图编码</th>
+                  <th style="text-align:center">省</th>
+                  <th style="text-align:center">市</th>
+                  <th style="text-align:center">地区</th>
+                  <th style="text-align:center">门店</th>
+                  <th style="text-align:center">安装手机数</th>
+                  <th style="text-align:center">设备在线数</th>
+                </tr>
+              </thead>
+              <tbody>
+              {foreach $list as $k => $v} 
+                <tr>
+                      <td style="text-align:center">{$v.user_number}</td>
+                      <td style="text-align:center">{$v.province}</td>
+                      <td style="text-align:center">{$v.city}</td>
+                      <td style="text-align:center">{$v.area}</td>
+                      <td style="text-align:center">{$v.title}</td>
+                       <td style="text-align:center">{$v.device_num}</td>
+                      <td style="text-align:center">{$v.online_num}</td>
+                </tr>
+               {foreachelse}
+                <tr><td colspan="6">暂无相关数据</td></tr>
+               {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        </div>
+
+{include_www file="admin/lib/footer_new.html"}

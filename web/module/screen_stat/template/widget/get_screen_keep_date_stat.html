@@ -1,0 +1,22 @@
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th style="text-align:center">在线时间段</th>
+      <th style="text-align:center">设备量</th>
+      <!-- <th style="text-align:center">操作</th> -->
+    </tr>
+  </thead>
+  <tbody>
+    {foreach $list as $k => $v}
+      <tr>
+          <td style="text-align:center">{$k}</td>
+          <td style="text-align:center">{$v.value}</td>
+           <!-- <td style="text-align:center"><a href="{AnUrl("screen_stat/admin/data_center/table_3_detail?start_time={$start_time}&end_time={$end_time}&date_type={$k}")}" class="btn btn-success btn-sm">查看详情</a></td> -->
+      </tr>
+   {foreachelse}
+    <tr><td colspan="2">暂无相关数据</td></tr>
+   {/foreach}
+  </tbody>
+</table>
+

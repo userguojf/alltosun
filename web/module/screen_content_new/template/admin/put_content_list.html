@@ -1,0 +1,58 @@
+{foreach $content_list as $k=>$v}
+<div class="tr tr_list clearfix put_list" res_id="{$v.id}">
+    <div class="td info left">{screen_content_config::$content_type[$content_info.type]}</div>
+    <div class="td desc left">{city_helper::get_area_path($v.res_name , $v.res_id)}(
+        {if $v.phone_name && $v.phone_version}
+        {if $v.phone_name == 'all' && $v.phone_version == 'all'}
+        全部机型
+        {else}
+        {*获取设备昵称*}
+        {$nickname = screen_device_helper::get_device_nickname($v.phone_name, $v.phone_version)}
+        {if $nickname.name_nickname}{$nickname.name_nickname}{else}{$v.phone_name}{/if}
+        -
+         {if $nickname.version_nickname}{$nickname.version_nickname}{else}{$v.phone_version}{/if}
+        {/if}
+        {else if $v.phone_name}
+        {$v.phone_name}
+        {else}
+        全部机型
+        {/if}
+    )</div>
+</div>
+{foreachelse}
+<div class="tr tr_no clearfix">
+    暂无信息
+</div>
+{/foreach}
+<script>
+    var updateStatus = {
+        _id:'',
+        _msg :'操作失败',
+        _url:"{AnUrl('screen_content_new/admin/ajax/delete_res')}",
+        _table: 'screen_content_res',
+        update:function(obj){
+            this._id = $(obj).attr('res_id');
+            var new_content_id = {$content_info.id};
+            $.post(this._url,{ id:this._id,table:this._table },function(json){
+                if (json.info == 'ok') {
+                    // $(obj).remove();
+                    $('#item-tbody').load(siteUrl+"/screen_content_new/admin/put_content_list?content_id="+new_content_id, function () {
+                    });
+                } else {
+                    alert(json.info);
+                }
+            },'json')
+        }
+    };
+
+    $('.put_list').on('click',function(event){
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (!confirm("确定要删除该条记录吗？")) {
+            return false;
+        }
+
+        updateStatus.update(this);
+    })
+</script>

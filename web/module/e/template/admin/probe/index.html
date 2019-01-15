@@ -1,0 +1,476 @@
+{include_www file="admin/lib/e_header.html" title="探针统计"}
+<section class="container">
+    <div class="column-count4">
+        <div class="choose clearfix">
+            <div class="item left">
+                <em></em>
+                <select class="js_region">
+                    {if $member_info.res_name == 'group'}
+                        <option res_name="" res_id="">全国</option>
+
+                        {* 省列表 *}
+                        {$list  = region_helper::get_province_list()}
+                        {foreach $list as $k => $v}
+                            <option res_name="province" res_id="{$v.id}" {if $res_id == $v.id} selected {/if}>{$v.name}</option>
+                        {/foreach}
+                    {else if $member_info.res_name == 'province'}
+                        {* 省信息 *}
+                        {$info = get_resource_info($member_info.res_name, $member_info.res_id)}
+                        <option res_name="" res_id="">{$info.name}</option>
+
+                        {* 市列表 *}
+                        {$list = region_helper::get_city_list($member_info.res_id)}
+                        {foreach $list as $k => $v}
+                            <option res_name="city" res_id="{$v.id}" {if $res_id == $v.id} selected {/if}>{$v.name}</option>
+                        {/foreach}
+                    {else if $member_info.res_name == 'city'}
+                        {* 市信息 *}
+                        {$info = get_resource_info($member_info.res_name, $member_info.res_id)}
+                        <option res_name="" res_id="">{$info.name}</option>
+
+                        {* 区列表 *}
+                        {$list = region_helper::get_area_list($member_info.res_id)}
+                        {foreach $list as $k => $v}
+                            <option res_name="area" res_id="{$v.id}" {if $res_id == $v.id} selected {/if}>{$v.name}</option>
+                        {/foreach}
+                    {else if $member_info.res_name == 'area'}
+                        {* 区信息 *}
+                        {$info = get_resource_info($member_info.res_name, $member_info.res_id)}
+                        <option res_name="" res_id="">{$info.name}</option>
+
+                        {* 营业厅列表 *}
+                        {$list = region_helper::get_business_hall_list($member_info.res_id)}
+                        {foreach $list as $k => $v}
+                            <option res_name="business" res_id="{$v.id}" {if $res_id == $v.id} selected {/if}>{$v.title}</option>
+                        {/foreach}
+                    {else}
+                        {* 营业厅信息 *}
+                        {$info = get_resource_info($member_info.res_name, $member_info.res_id)}
+                        <option res_name="" res_id="">{$info.title}</option>
+                    {/if}
+                </select>
+            </div>
+            <div class="item right">
+                <em></em>
+                <input type="date" class="js_date" value="{$date}" />
+            </div>
+        </div>
+        <ul class="result clearfix">
+            <li>室外人数<span class="js_datenum" type="1">{$outdoor}</span></li>
+            <li>室内人数<span class="js_datenum" type="2">{$indoor}</span></li>
+            <li>当前在店人数<span>{$curr_num}</span></li>
+            <li>新顾客<span class="js_datenum" type="3">{$new_num}</span></li>
+            <li>老顾客<span class="js_datenum" type="4">{$old_num}</span></li>
+            <li>平均驻店时长<span>{if $indoor}{(int)($remain_time / $indoor / 60)}{else}0{/if}分</span></li>
+        </ul>
+    </div>
+    <div class="column-count5">
+        <div class="title clearfix">
+            <h3 class="left">{$date} 小时室外人数统计</h3>
+            <span class="right"><a class="js_detail" type="1">详情</a></span>
+        </div>
+        <div class="con">
+            <div class="pic" id="outdoor" style="width: 100%; height:300px;"></div>
+        </div>
+    </div>
+    <div class="column-count5">
+        <div class="title clearfix">
+            <h3 class="left">{$date} 小时室内人数统计</h3>
+            <span class="right"><a class="js_detail" type="2">详情</a></span>
+        </div>
+        <div class="con">
+            <!-- <img src="{$smarty.const.STATIC_URL}/images/admin2/m/test-count2.png"> -->
+            <div class="pic" id="indoor" style="width: 100%; height:300px;"></div>
+        </div>
+    </div>
+    <div class="column-count5">
+        <div class="title clearfix">
+            <h3 class="left">{$date} 新老顾客统计</h3>
+            <!-- <span class="right"><i class="arrow-blue"></i>老</span> -->
+            <!-- <span class="right"><i class="arrow-orange"></i>新</span> -->
+        </div>
+        <div class="con">
+            <!-- <img src="{$smarty.const.STATIC_URL}/images/admin2/m/test-count3.png"> -->
+            <div class="pic" id="customer" style="width: 100%; height:300px;"></div>
+        </div>
+    </div>
+    <div class="column-count5">
+        <div class="title clearfix">
+            <h3 class="left">室内人数周趋势图</h3>
+            <span class="right"><a class="js_detail" type="5">详情</a></span>
+        </div>
+        <div class="con">
+            <div class="pic" id="week" style="width: 100%; height:300px;"></div>
+            <!-- <img src="{$smarty.const.STATIC_URL}/images/admin2/m/test-count4.png"> -->
+        </div>
+    </div>
+
+    {if $brands}
+        <div class="column-count5">
+            <div class="title clearfix">
+                <h3 class="left">今日顾客手机品牌分布</h3>
+            </div>
+            <div class="con">
+                <div id="brands" style="width: 100%; height:300px;"></div>
+            </div>
+        </div>
+    {/if}
+</section>
+<script>
+$(function(){
+    var date     = '{$date}';
+    var res_name = "{$member_info.res_name}";
+    var res_id   = {$member_info.res_id};
+    var dates    = [{implode(',', $hours)}];
+    var opt      = false;
+
+    // 人流统计图
+    var outdoor = echarts.init(document.getElementById('outdoor'));
+    opt = get_option();
+    {literal}
+        opt.tooltip.formatter = '<span class="js_hour">{b}</span><br /><span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:#37c0c3"></span>{a}：<span class="js_num" type="1">{c}</span>';
+    {/literal}
+    opt.legend.data = ['室外人数'];
+    opt.xAxis[0].data = dates;
+    opt.series[0].name = '室外人数';
+    opt.series[0].data = [{implode(',', $data['outdoor'])}];
+    outdoor.setOption(opt);
+
+    // 客流统计图
+    var indoor = echarts.init(document.getElementById('indoor'));
+    opt = get_option();
+    {literal}
+        opt.tooltip.formatter = '<span class="js_hour">{b}</span><br /><span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:#37c0c3"></span>{a}：<span class="js_num" type="2">{c}</span>';
+    {/literal}
+    opt.legend.data = ['室内人数'];
+    opt.xAxis[0].data = dates;
+    opt.series[0].name = '室内人数';
+    opt.series[0].data = [{implode(',', $data['indoor'])}];
+    indoor.setOption(opt);
+
+    $('.js_num').live('touchstart',function(e) {
+        var closestObj = $(this).closest('div');
+        var hour       = closestObj.find('.js_hour').html();
+        var num  = $(this).html();
+        var type = $(this).attr('type');
+        var url  = siteUrl + '/e/admin/probe';
+
+        if ( hour < 10 ) {
+            hour = '0'+ hour;
+        }
+
+        if ( res_name == 'business_hall' ) {
+            url += '/mac_list?business_id='+ res_id +'&date='+ date+'&hour='+ hour+ '&type='+ type;
+        } else {
+            url += '/region_list?res_name='+ res_name +'&res_id='+ res_id+'&date='+ date+'&hour='+ hour+ '&type='+ type;
+        }
+
+        window.location.href = url;
+    });
+
+    $('.js_datenum').click(function(e) {
+        var thisObj = $(this);
+        var num     = thisObj.html();
+        var type    = thisObj.attr('type');
+        var url     = siteUrl + '/e/admin/probe';
+
+        if ( res_name == 'business_hall' ) {
+            url += '/mac_list?business_id='+ res_id +'&date='+ date+'&type='+ type;
+        } else {
+            url += '/region_list?res_name='+ res_name +'&res_id='+ res_id+'&date='+ date+'&type='+ type;
+        }
+
+        window.location.href = url;
+    });
+
+    // 新老顾客统计图
+    var myChartLine = echarts.init(document.getElementById("customer"));
+    opt = get_option();
+    opt.legend.data = ['新顾客', '老顾客'];
+    opt.xAxis[0].data = dates;
+    opt.series = [
+        {
+            name:'新顾客',
+            type:'line',
+            itemStyle: {
+                normal: {
+                    color: '#fdc55b',
+                    borderColor: '#fdc55b',
+                }
+            },
+            lineStyle: {
+                normal: {
+                    color: '#fdc55b',
+                    width: 1,
+                    type: 'solid'
+                },
+            },
+            data:  [{implode(',', $data['new_num'])}]
+        },
+        {
+            name:'老顾客',
+            type:'line',
+            itemStyle: {
+                normal: {
+                    color: '#37c0c3',
+                    borderColor: '#37c0c3',
+                }
+            },
+            lineStyle: {
+                normal: {
+                    color: '#37c0c3',
+                    width: 1,
+                    type: 'solid'
+                },
+            },
+            data:  [{implode(',', $data['old_num'])}]
+        }
+    ];
+    myChartLine.setOption(opt);
+
+ // 新老顾客统计图
+    var myChartLine = echarts.init(document.getElementById("customer"));
+    opt = get_option();
+    opt.legend.data = ['新顾客', '老顾客'];
+    opt.xAxis[0].data = dates;
+    opt.series = [
+        {
+            name:'新顾客',
+            type:'line',
+            itemStyle: {
+                normal: {
+                    color: '#fdc55b',
+                    borderColor: '#fdc55b',
+                }
+            },
+            lineStyle: {
+                normal: {
+                    color: '#fdc55b',
+                    width: 1,
+                    type: 'solid'
+                },
+            },
+            data:  [{implode(',', $data['new_num'])}]
+        },
+        {
+            name:'老顾客',
+            type:'line',
+            itemStyle: {
+                normal: {
+                    color: '#37c0c3',
+                    borderColor: '#37c0c3',
+                }
+            },
+            lineStyle: {
+                normal: {
+                    color: '#37c0c3',
+                    width: 1,
+                    type: 'solid'
+                },
+            },
+            data:  [{implode(',', $data['old_num'])}]
+        }
+    ];
+    myChartLine.setOption(opt);// 新老顾客统计图
+
+    var myChartLine = echarts.init(document.getElementById("week"));
+    opt = get_option();
+    opt.legend.data = ['本周', '上周'];
+    opt.xAxis[0].data = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+    opt.series = [
+        {
+            name:'本周',
+            type:'line',
+            itemStyle: {
+                normal: {
+                    color: '#fdc55b',
+                    borderColor: '#fdc55b',
+                }
+            },
+            lineStyle: {
+                normal: {
+                    color: '#fdc55b',
+                    width: 1,
+                    type: 'solid'
+                },
+            },
+            data:  [{implode(',', $now_week_data)}]
+        },
+        {
+            name:'上周',
+            type:'line',
+            itemStyle: {
+                normal: {
+                    color: '#37c0c3',
+                    borderColor: '#37c0c3',
+                }
+            },
+            lineStyle: {
+                normal: {
+                    color: '#37c0c3',
+                    width: 1,
+                    type: 'solid'
+                },
+            },
+            data:  [{implode(',', $prev_week_data)}]
+        }
+    ];
+    myChartLine.setOption(opt);
+
+   $('.js_region, .js_date').change(function(){
+       search();
+   });
+
+    {if $brands}
+        // 手机品牌分布
+        var myChart  = echarts.init(document.getElementById('brands'));
+        myChart.setOption({
+            tooltip : { 
+                trigger: 'item',
+                {literal}
+                    formatter: "{b} : {c} ({d}%)"
+                {/literal}
+            },
+            legend : {
+                data: [
+                    {foreach $brands as $k => $v}
+                        { name : "{$k}" },
+                    {/foreach}
+                ]
+            },
+            series : [
+                {
+                    name: '手机品牌分布',
+                    type: 'pie',
+                    radius : '55%',
+                    center: ['50%', '50%'],
+                    data:[
+                        {foreach $brands as $k => $v}
+                            { value : {$v}, name : "{$k}" },
+                        {/foreach}
+                    ]
+                }
+            ]
+        });
+    {/if}
+
+    $('.js_detail').click(function(){
+        var type = $(this).attr('type');
+        var url  = siteUrl + '/e/admin/probe/hour_list';
+
+        url += '?date='+ date + '&type='+ type;
+
+        window.location.href = url;
+    });
+});
+</script>
+<script>
+function search()
+{
+    var selectObj  = $('.js_region').find("option:selected");
+    var date       = $('.js_date').val();
+    var res_name   = selectObj.attr('res_name');
+    var res_id     = selectObj.attr('res_id');
+
+    if ( typeof(res_name) == 'undefined' ) {
+        res_name = '';
+        res_id   = 0;
+    }
+
+    window.location.href = siteUrl + '/e/admin/probe?res_name='+ res_name +'&res_id=' + res_id +'&date='+ date;
+}
+
+function get_option()
+{
+    return {
+        tooltip : {
+             trigger: 'axis',
+        },
+        legend: {
+            data:['标题']
+        },
+        grid: {
+            left: '15%',
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                magicType : { show: true, type: ['line', 'bar'] }
+            }
+        },
+        xAxis : [
+            {
+                type : 'category',
+                boundaryGap : false,
+                axisLine: {
+                    lineStyle: {
+                        color: '#ccc',
+                        width: 1,
+                        type: 'solid',
+                    },
+                },
+                axisTick: {
+                    show: false,
+                },
+                splitLine: {
+                    show: true,
+                    interval: 1,
+                    show: true,
+                    lineStyle: {
+                        color: '#efefef',
+                        width: 1,
+                        type: 'solid',
+                    }
+                },
+                data : []
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value',
+                axisLine: {
+                    lineStyle: {
+                       color: '#ccc',
+                       width: 1,
+                       type: 'solid',
+                    },
+                },
+                axisTick: {
+                    show: false,
+                },
+                splitLine: {
+                    show: true,
+                    interval: 1,
+                    show: true,
+                    lineStyle: {
+                       color: '#efefef',
+                       width: 1,
+                       type: 'solid',
+                    }
+                },
+            }
+        ],
+        series : [
+            {
+                name:'标题',
+                type:'line',
+                itemStyle: {
+                    normal: {
+                        color: '#37c0c3',
+                        borderColor: '#37c0c3',
+                    }
+                },
+                lineStyle: {
+                    normal: {
+                        color: '#37c0c3',
+                        width: 1,
+                        type: 'solid'
+                    },
+                },
+                data:  []
+            }
+        ]
+    }
+}
+</script>
+{include_www file="admin/lib/e_footer.html"}

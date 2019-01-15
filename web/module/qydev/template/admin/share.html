@@ -1,0 +1,199 @@
+{include_www file="admin/lib/header_new.html" title="添加案例"}
+<style>
+    .pic-upload { width:250px;height:133px; }
+    .btn-upload{ width:106px; height: 33px; }
+    .btn-upload a{ display: block;position:relative;width: 104px;height: 33px;line-height: 18px;padding: 6px 0;text-align: center;color: #4c4c4c;background: #fff;border: 1px solid #eee;}
+    .btn-upload input{ width:106px; height:33px; position:relative; left:0px; top:-32px; z-index:1;filter:alpha(opacity=0);-moz-opacity:0;opacity:0; cursor:pointer;}
+    .js_upFileBox{ margin-left:0px;margin-top:30px;}
+    .edui-popup-content.edui-default{
+        height: auto !important;
+         width:460px;
+    }
+    .form-add-view .box-youhui-activity—1 {
+    /* background: url(../../images/admin2/test07.png) no-repeat; */
+    height: 464px;
+    text-align: left;
+}
+.form-add-view .box-1 {
+    width: 292px;
+    height: 465px;
+    /* background: url(../../images/admin2/test03.png) no-repeat; */
+    border: 1px solid #eee;
+    position: relative;
+    margin: 0 auto;
+}
+</style>
+<!--start:右侧-->
+<div class="main mian2 ">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('qydev/admin/news')}"><i class="iconfont iconfont-logo2"></i>图文消息管理</a>
+            &gt;
+            <span>编辑</span>
+            <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回列表</a>
+        </div>
+
+        <div class="clearfix">
+            <div class="form-add pull-left" style="width:80%">
+                <form class="form-horizontal" action='{AnUrl("qydev/admin/news/share_save")}' method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="id" value="{$info.id}" />
+                    <input type="hidden" name="info[news_id]" value="{$news_id}" />
+
+                  <div class="form-group">
+                     <label class="col-sm-3 control-label">分享标题</label>
+                      <div class="col-sm-7">
+                    <span><input type="text" name="info[title]" value="{$info.title}"  class="form-control required js_rssi preview_title" style="width:640px" placeholder="输入分享标题"></span>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="col-sm-3 control-label">分享摘要</label>
+                      <div class="col-sm-7">
+                    <span><input type="text" name="info[summary]" value="{$info.summary}"  class="form-control required js_rssi preview_title" style="width:640px" placeholder="选填，输入分享摘要"></span>
+                      </div>
+                    </div>
+
+                 <div class="form-group uploadImg">
+                  <label class="col-sm-3 control-label contentTitle">封面图片</label>
+                  <div class="col-sm-9 js_perUpWrap">
+                    <div class="pic-upload js_perUpOuter js_upload_image" data-show-id="content_img" style="width:340px;height:190px">
+                      {if $info.img_link}
+                        <img src="{_image($info.img_link)}" class="js_upload_image" style='width:340px;height:190px;'/>
+                      {/if}
+                      <div class="txt js_perUpAdd js_perUpArea {if $info.img_link}hidden{/if}">
+                        <em>+</em>
+                        从本地选择
+                      </div>
+                      <div class="btn-control js_perUpChange js_perUpArea">重新设置</div>
+                    </div>
+                    <p class="tips">推荐尺寸：900像素x500像素 &nbsp;&nbsp;</p>
+                    {if !$info}
+                        {AnForm type="file" name="img_link" class='js_perUpFile hidden'}
+                    {else}
+                        {AnForm type="file" name="img_link" class='js_perUpFile hidden'}
+                    {/if}
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="col-sm-offset-3 col-sm-10">
+                  <br>
+                      <button type="submit" class="btn btn-sm btn-success js_saveBtn"><span style='display: inline-block;width: 95px;' class='Sub js_subBtn'>保存</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a type="button" class="btn btn-sm btn-warning"  style='width: 95px;' href="javascript:history.go(-1);">&nbsp;&nbsp;取消&nbsp;&nbsp;</a>
+                  </div>
+                </div>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+///////////上传文件的预览
+$(".js_perUpArea").click(function(){
+  $(this).closest('.js_perUpWrap').find('.js_perUpFile').trigger('click');
+});
+
+$(".js_perUpFile").each(function(i){
+  $(this).css({ 'position':'absolute', 'left':'-2000px' })
+  $(this).change(function(e){
+      handleFileSelect($(this), function (data) {
+
+      });
+  });
+});
+
+
+/////////////////////////////////////
+$(function(){
+/////////////////// 表单提交按钮  修改投放范围   传递put_type值 后台表单接收_type  /////////////////////
+
+	$(".js_saveAndPutArea").click(function(e){
+      e.preventDefault();
+
+      $(":input[name='put_type']").val(2);
+      $(".js_saveBtn").trigger('click');
+    });
+
+        //图片上传预览    IE是用了滤镜。
+
+        function previewImage(file,obj,pic,width,height)
+        {
+            var MAXWIDTH  = width;
+            var MAXHEIGHT = height;
+
+            //var div = document.getElementById('preview');
+            var div = obj;
+
+            if (file.files && file.files[0])
+            {
+                div.innerHTML ='<img id='+pic+' width="375px;">';
+                var img = document.getElementById(pic);
+                //console.log(img);
+                img.onload = function(){
+                    var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
+                    img.width  =  rect.width;
+                    img.height =  rect.height;
+
+                };
+
+                var reader = new FileReader();
+                reader.onload = function(evt){ img.src = evt.target.result; };
+                //console.log(file.files[0]);
+                reader.readAsDataURL(file.files[0]);
+            }
+            else //兼容IE
+            {
+                var sFilter='filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale,src="';
+                file.select();
+                var src = document.selection.createRange().text;
+                div.innerHTML = '<img id=imghead>';
+                var img = document.getElementById('imghead');
+                img.filters.item('DXImageTransform.Microsoft.AlphaImageLoader').src = src;
+                var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
+                status =('rect:'+rect.top+','+rect.left+','+rect.width+','+rect.height);                        //"+rect.top+"
+                div.innerHTML = "<div id=divhead style='width:"+rect.width+"px;height:"+rect.height+"px;margin-top:0px;"+sFilter+src+"\"'></div>";
+
+            }
+        }
+
+        function clacImgZoomParam( maxWidth, maxHeight, width, height ){
+            var param = { top:0, left:0, width:width, height:height };
+            if( width>maxWidth || height>maxHeight )
+            {
+                rateWidth = width / maxWidth;
+                rateHeight = height / maxHeight;
+                 
+                if( rateWidth > rateHeight )
+                {
+                    param.width =  maxWidth;
+                    param.height = Math.round(height / rateWidth);
+                }else
+                {
+                    param.width = Math.round(width / rateHeight);
+                    param.height = maxHeight;
+                }
+            }
+
+            param.left = Math.round((maxWidth - param.width) / 2);
+            param.top = Math.round((maxHeight - param.height) / 2);
+            return param;
+        }
+
+        $('.inputImgBtn').live('change',function() {
+            //previewImage(this);
+            var content_img = document.getElementById('content_img');
+            previewImage(this,content_img,'content','250','133');
+        });
+/////////////////////////////////end////////////////////////// 
+});
+
+
+function error( msg )
+{
+    alert(msg);
+    return false;
+}
+
+</script>
+{include_www file="admin/lib/footer_new.html"}

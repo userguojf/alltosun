@@ -1,0 +1,47 @@
+{if $module =='e'}
+{include_www file="admin/lib/e_header.html" title="提示信息"}
+<section class="container">
+      <div class="fankui-list"></div>
+      <div class="none-tips" style="padding: 50% 0 0;">{$msg}</div>
+        
+  </section>
+{include_www file="admin/lib/e_footer.html"}
+{else}
+{include_www file="admin/lib/header_new.html" title="提示信息"}
+{include_www file="admin/lib/sidebar_new.html"}
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+
+      <div class="alert alert-info alert2">
+        <div class="alert2-{$type}">
+          <h4><strong>{$msg}</strong></h4>
+          {if $redirect_url}
+            <p><a href="{$redirect_url}">点击此处跳转</a>（<em id="jumpTime">5</em>秒后自动跳转）</p>
+          {else}
+            <p><a href="javascript:history.back();">返回上一页</a></p>
+          {/if}
+        </div>
+      </div>
+
+
+  <!--end:列表-->
+</div>
+{if $redirect_url}
+<script type="text/javascript">
+  var time = 5;
+  var jumpInterval = setInterval(function(){
+    time--;
+    if (time < 0) time = 0;
+    $("#jumpTime").text(time);
+    if (time == 0) {
+      //location.href='{$redirect_url}';
+      clearInterval(jumpInterval);
+    }
+  }, 1000);
+</script>
+{/if}
+
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}
+{/if}

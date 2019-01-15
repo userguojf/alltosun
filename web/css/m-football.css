@@ -1,0 +1,40 @@
+@charset "UTF-8";
+/* CSS Document */
+
+body{ color:#fff; font-size:62.5%; font-family:'Microsoft Yahei', Arial, Helvetica, sans-serif; background:#000;}
+a{ color:#fff;}
+.wrap{ position:fixed; left:0; top:0; width:100%; height:100%; overflow:auto; background:url(../images/football/bg1.jpg) center center no-repeat; background-size:cover;}
+.btn-rules{ display:inline-block; font-size:1.4em; line-height:30px; background:url(../images/football/icon1.png) left center no-repeat; background-size:16px auto; padding:0 0 0 22px; margin-right:20px;}
+.banner{ margin:0 20px 0;}
+.banner img{ width:100%; height:auto;}
+.rates-list{ height:auto;}
+.rates-list li{ height:auto; list-style:none; padding:0 20px 20px; text-align:center; border-bottom:1px dashed #13253b; margin:0 0 20px;}
+.rates-list li:last-child{ border:none;}
+.rates-list li .country{ display:inline-block; width:64px; height:auto; vertical-align:top;}
+.rates-list li .country img{ width:60px; height:60px; border:2px solid #fff; border-radius:60px; margin:0 auto;}
+.rates-list li .country p{ font-size:1.4em; line-height:27px; margin:0 -20px;}
+.rates-list li .vs{ display:inline-block; width:115px; height:70px; line-height:70px; font-size:3.6em; vertical-align:top;}
+.rates-list li .count{ width:61.33vw; height:auto; position:relative; margin:10px auto;}
+.rates-list li .count .num1{ display:inline-block; line-height:20px; font-size:1.2em; position:absolute; right:102%; top:-8px;}
+.rates-list li .count .num2{ display:inline-block; line-height:20px; font-size:1.2em; position:absolute; left:102%; top:-8px;}
+.rates-list li .percent{ height:6px; border-radius:6px; background:#2c85ff;}
+.rates-list li .percent .bar{ display:block; width:0%; height:6px; background:#ff4d4d; border-radius:6px 0 0 6px; position:relative;}
+.rates-list li .percent .bar:before{ content:''; display:block; width:0; height:0; border:5px solid rgba(255,255,255,0); border-bottom-color:#fff; position:absolute; right:-4px; top:2px;}
+.rates-list li .percent .bar:after{ content:''; display:block; width:0; height:0; border:5px solid rgba(255,255,255,0); border-top-color:#fff; position:absolute; right:-4px; top:-5px;}
+.btn-zan-red{ display:block; width:40px; height:40px; text-indent:-999px; overflow:hidden; background:rgba(255,255,255,0.1) url(../images/football/icon-zan1.png) center center no-repeat; background-size:21px auto; border-radius:40px; margin:10px 0 0 5px;}
+.btn-zan-blue{ display:block; width:40px; height:40px; text-indent:-999px; overflow:hidden; background:rgba(255,255,255,0.1) url(../images/football/icon-zan2.png) center center no-repeat; background-size:21px auto; border-radius:40px; margin:10px 5px 0 0;}
+
+.pop-bg{ position:fixed; left:0; top:0; z-index:100; width:100%; height:100%; background:rgba(0,0,0,0.8);}
+.pop-box{ width:64vw; height:auto; background:#fff; border-radius:20px; position:absolute; left:50%; margin-left:-32vw; top:40%;}
+.pop-close{ background:url(../images/football/icon-close.png) no-repeat; background-size:21px auto; width:21px; height:21px; text-indent:-999px; overflow:hidden; position:absolute; right:-18px; top:-18px;}
+.pop-box .pic{ position:absolute; left:-54px; top:-12px;}
+.pop-box .con{ padding:10px 10px 10px 40px; color:#000;}
+.pop-box .con h3{ font-size:1.6em; color:#00a2eb; line-height:30px;}
+.pop-box .con p{ font-size:1.2em; line-height:20px; word-wrap:break-word;}
+
+.pop-zan .pic{ left:-40px;}
+.pop-box .con h3.red{ color:#ff4d4d;}
+.icon-zan-red{ display:inline-block; background:url(../images/football/icon-zan1.png) no-repeat; background-size:100% auto; width:16px; height:22px; vertical-align:middle; margin-right:4px; position:relative; top:-2px; -webkit-transform:rotate(-20deg);}
+.icon-zan-blue{ display:inline-block; background:url(../images/football/icon-zan2-2.png) no-repeat; background-size:100% auto; width:16px; height:22px; vertical-align:middle; margin-right:4px; position:relative; top:-2px;}
+.btn-go-index{ display:block; width:90px; height:28px; text-align:center; font-size:1.2em; line-height:28px; padding:0 12px; background:#00a2eb; border-radius:28px; position:absolute; left:10px; top:110%;}
+.btn-go-index img{ margin-left:5px;}

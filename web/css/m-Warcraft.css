@@ -1,0 +1,25 @@
+@charset "UTF-8";
+/* CSS Document */
+
+body{ background:#000;}
+.wrap{ position:absolute; width:100%; height:100%; overflow:hidden;}
+.bg{ position:absolute; left:0; top:50%; -webkit-transform:translateY(-50%);transform:translateY(-50%); width:100%; height:auto;}
+.bg img{ width:100%; height:auto;}
+.btn-close{ display:block; background:url(../images/m-Warcraft/btn-close.png) no-repeat; background-size:100% 100%; width:8vw; height:8vw; text-indent:-999px; overflow:hidden; position:absolute; right:8vw; top:17vw; }
+.light{ position:absolute; left:0; top:0; width:100%; height:100%; background:url(../images/m-Warcraft/light.png) center center no-repeat; background-size:100% auto;}
+.prize1{ width:70.93vw; height:38.1vw; position:absolute; left:50%; margin-left:-35.5vw; top:50%; margin-top:-19.05vw;}
+.prize2{ width:82.4vw; height:38.1vw; position:absolute; left:50%; margin-left:-41.2vw; top:50%; margin-top:-19.05vw;}
+.prize3{ width:53.3vw; height:38.1vw; position:absolute; left:50%; margin-left:-26.7vw; top:50%; margin-top:-19.05vw;}
+.prize1 img,
+.prize2 img,
+.prize3 img{ width:100%; height:auto;}
+.tips{ width:65.5vw; height:29vw; background:url(../images/m-Warcraft/btn1.png) no-repeat; background-size:100% 100%; position:absolute; left:50%; margin-left:-32.8vw; top:50%; margin-top:20vw;}
+.tips .btn{ display:block; width:96%; height:50%; text-indent:-999px; overflow:hidden; position:absolute; left:2%; bottom:9%;}
+.cover{ position:absolute; left:0; top:0; z-index:100; width:100%; height:100%;}
+.cover img{ width:100%; height:100%; position:absolute; left:0px; top:0px;}
+.cover-title{ display:block; width:100%; height:43.3vw; text-indent:-999px; overflow:hidden; background:url(../images/m-Warcraft/title.png) center center no-repeat; background-size:100% auto; position:absolute; left:0; top:50%; margin-top:-21.6vw; z-index:101;}
+
+
+@media screen and (max-height:480px){
+  .btn-close{ top:30vw;}
+}

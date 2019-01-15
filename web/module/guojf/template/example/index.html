@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=0,minimal-ui">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MCanvas</title>
+    <link rel="stylesheet" href="{$smarty.const.STATIC_URL}/css/mcanvas/main.css">
+    <script>
+        (function(m, n) {
+            var o = navigator.userAgent,
+                p = /android|adr/gi.test(o),
+                j = /iphone|ipod|ipad/gi.test(o) && !p;
+            var k = n.documentElement;
+            var l = function() {
+                    var a = k.getBoundingClientRect().width || 320;
+                    var b = a / 320 * 20;
+                    b = b > 40 ? 40 : b;
+                    k.style.fontSize = b + "px";
+                    window.fontSize = b
+                },
+                i;
+            m.addEventListener("resize", function() {
+                clearTimeout(i);
+                i = setTimeout(l, 100)
+            }, false);
+            m.addEventListener("pageshow", function(a) {
+                if (a.persisted) {
+                    clearTimeout(i);
+                    i = setTimeout(l, 100)
+                }
+            }, false);
+            l()
+        })(window, document);
+    </script>
+</head>
+<body>
+    <h1 class="title">MCanvas.js</h1>
+    <h2 class="sub-title">There just be a composite image! You can longTap to save it!</h2>
+    <div class="top">
+        <img class="origin js-result" src="http://mtapplet.meitudata.com/596c72073971d86b5128.jpg" alt="">
+    </div>
+    <div class="addBtn">
+        <span class="Button js-addImage">Add image</span>
+        <span class="Button js-addWm">Watermark</span>
+        <span class="Button js-addText">Add text</span>
+        <span class="Button js-addRect">Add rect</span>
+        <span class="Button js-addCircle">Add circle</span>
+        <span class="Button clear js-clear">Reset</span>
+    </div>
+    <!-- <div class="bottom">
+        <img class="result js-result" src="" alt="" >
+    </div> -->
+    <div class="dialog js-dialog">
+        <div class="window">
+            <h3>params:</h3>
+            <ul class="params js-params"></ul>
+            <span class="Button js-cancel">Cancel</span>
+            <span class="Button js-sure">OK</span>
+        </div>
+    </div>
+    <script src="{$smarty.const.SITE_URL}/js/mcanvas/zepto.min.js?id={time()}"></script>
+    <script src="{$smarty.const.SITE_URL}/js/mcanvas/example.js?id={time()}"></script>
+    <!-- <script src="http://h5.meitu.com/js/console.min.js"></script> -->
+</body>
+</html>

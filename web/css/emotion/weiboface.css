@@ -1,0 +1,64 @@
+@charset "utf-8";
+/* CSS Document */
+#weiboface div, #weiboface ul, #weiboface li, #weiboface p, #weiboface img{ margin:0px; padding:0px;}
+#weiboface ul li{ list-style:none;}
+#weiboface .weiboface-left{ float:left; display:inline-block;}
+#weiboface .weiboface-right{ float:right; display:inline-block;}
+#weiboface img{ border:0px;}
+#weiboface .weiboface-hidden{ display:none; visibility:hidden;}
+
+
+#weiboface{ position:absolute; width:482px; height:auto; background:url(./images/weiboface-layer-bg.png) repeat; /*margin-top:10px;*/ padding:3px; font-size:12px; border-radius:4px;}
+#weiboface .weiboface-face-bg{ width:478px; height:auto; border:1px solid #ccc; background:#fff;}
+#weiboface #weiboface-face-arrow{ background:url(./images/weiboface-title-icon.gif) left top no-repeat; width:17px; height:12px; position:absolute; left:5px; top:-8px;}
+#weiboface #weiboface-face-close{ display:none; background:url(./images/weiboface-delete-items.gif) no-repeat; width:19px; height:19px; position:absolute; right:14px; top:14px; cursor:pointer;}
+#weiboface .weiboface-face-title{ display:none; width:397px; height:31px; background:#FAFAFA; padding:11px 0 0 20px; border-bottom:1px solid #ccc;}
+#weiboface .weiboface-face-title a{ display:inline-block; width:78px; height:28px; text-align:center; line-height:30px; border:1px solid #ccc; margin-bottom:-1px; cursor:pointer; padding:1px;}
+#weiboface .weiboface-face-title a span{ display:block; width:100%; height:100%; background:#F3F3F3;}
+#weiboface a.weiboface-face-active{ border-bottom:1px solid #fff; font-weight:bold;}
+#weiboface a.weiboface-face-active span{ background:#fff;}
+
+#weiboface .weiboface-facebox-btn{ width:52px; height:22px; margin:7px 22px 0 0;}
+#weiboface a.weiboface-facebox-btn-page{ display:inline-block; float:left; width:19px; height:19px; border:1px solid #ccc; border-radius:3px; padding:1px; text-align:center; margin-left:3px;}
+#weiboface a.weiboface-facebox-btn-page span{ display:block; width:100%; height:16px; padding-top:3px; background:#F3F3F3;}
+#weiboface a.weiboface-facebox-btn-page:hover span{ background:#fff;}
+#weiboface a.weiboface-facebox-btn-page em{ display:block; margin:0 auto 0; background-image:url(./images/weiboface-btn-page.gif); background-repeat:no-repeat; width:8px; height:12px; overflow:hidden;}
+#weiboface em.weiboface-btn-prev{ background-position:left top;}
+#weiboface em.weiboface-btn-next{ background-position:right top;}
+#weiboface em.weiboface-btn-prev-none{ background-position:left  -12px;}
+#weiboface em.weiboface-btn-next-none{ background-position:right -12px;}
+#weiboface .weiboface-facebox-tab{ width:320px; height:25px; line-height:24px; padding:7px 0 7px 20px;}
+#weiboface .weiboface-facebox-tab li{ display:inline-block; float:left; padding:0 10px; cursor:pointer;}
+#weiboface .weiboface-facebox-tab li.weiboface-current{ background:#E6E6E6; border-radius:3px;}
+#weiboface .weiboface-facebox-detail{ width:465px; height:auto; margin:0 auto;}
+/*表情列表*/
+#weiboface .weiboface-faces-list{ width:100%; height:auto; padding:1px 0 5px;}
+#weiboface .weiboface-faces-list li{ float:left; width:30px; height:35px; border:1px solid #E8E8E8; margin:-1px 0 0 -1px; overflow:hidden; padding:4px 2px; text-align:center; cursor:pointer;}
+#weiboface .weiboface-faces-list-hot{ margin-bottom:10px;}
+#weiboface .weiboface-faces-list-hot li{ border-color:#FCE089; background:#FEF9E7;}
+#weiboface .weiboface-faces-list li:hover{ border-color:#0095CD; position:relative; z-index:2;}
+
+/*魔法表情*/
+#weiboface .weiboface-faces-magic-list{ width:384px; height:auto; margin:0 0 0 5px; overflow:hidden; zoom:1; position:relative;}
+#weiboface .weiboface-faces-magic-list li{ position:relative; float:left; width:54px; height:74px; overflow:hidden; margin:0 10px 0 0;}
+#weiboface .weiboface-faces-magic-list li a.weiboface-img{ display:block; border:1px solid white;}
+#weiboface .weiboface-faces-magic-list li img{ display:block; width:50px; height:50px; border:1px solid #D4D3D3;}
+#weiboface .weiboface-faces-magic-list li a.weiboface-img:hover{ border:1px solid #0095CD;}
+#weiboface .weiboface-faces-magic-list li a.weiboface-img:hover img{ border:1px solid #0095CD;}
+#weiboface .weiboface-magic-icon{ background:url(./images/weiboface-magic-icon.gif) no-repeat; display:block; position:absolute; width:16px; height:16px; top:34px; right:2px;}
+#weiboface .weiboface-faces-magic-list li span{ display:block; text-align:center; padding-top:2px; cursor:pointer; color:gray; height:13px; overflow:hidden;}
+
+
+#weiboface .weiboface-facebox-page{ display:none; width:378px; height:auto; margin:10px auto; text-align:right;}
+#weiboface .weiboface-facebox-page a{ display:inline-block; width:22px; height:22px; line-height:22px; text-align:center; border-radius:1px; vertical-align:middle; margin:0 5px; padding:0; text-decoration:none; background:#F3F3F3; color:#0A8CD2;}
+#weiboface .weiboface-facebox-page a:hover, .weiboface-facebox-page a.weiboface-current{ color:#000; background:none;}
+
+
+
+
+#weiboface a{ color:#000; text-decoration:none;}
+
+/*clearfix*/
+.weiboface-clearfix{ clear:both;}
+.weiboface-clearfix:after{ content:''; display:block; clear:both; height:0;}
+.weiboface-clearfix{ zoom:1;}

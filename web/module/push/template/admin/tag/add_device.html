@@ -1,0 +1,71 @@
+{include_www file="admin/lib/header_new.html" title="绑定设备"}
+{strip}
+<!--start:右侧-->
+<div class="main mian2 ">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('eszy/admin')}"><i class="iconfont iconfont-logo2"></i>标签管理</a>
+      &gt;
+      <span>绑定设备</span>
+      <a href="{AnUrl('push/admin/device_view')}" class="btn btn-primary btn-sm pull-right">返回设备列表</a>
+    </div>
+    <div class="clearfix">
+      <div class="form-add pull-left" style="width:80%;">
+        {AnForm class='form-horizontal' action="{AnUrl('push/admin/binding_device?tag_id={$tag_id}')}" method="post" }
+        {AnForm type="hidden" name="tag_id" value="{$tag_id}"}
+        <div class="form-group">
+          <label class="col-sm-3 control-label">所属标签：</label>
+          <div class="col-sm-6">
+               {AnForm type="text" value="{$tag_title}"  readonly="readonly" class="form-control"  filter="filter_string" }
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="col-sm-3 control-label">设备IMEI：</label>
+          <div class="col-sm-6">
+               {AnForm type="text"  id='e_imei' name="imei" value=""   class="form-control"  filter="filter_string"  placeholder="请输入设备IMEI"}
+                <p class="tips" style="display:none;" id='cat'>友情提示：请输入正确IMEI</p>
+            </div>
+        </div>
+        
+    
+         
+       
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-10">
+            <button type="submit" class="btn btn-sm btn-success" id="btn"><span style='display: inline-block;width: 95px;' class='Sub'>保存</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a type="button" class="btn btn-sm btn-warning" href="{AnUrl("push/admin/device_view?id={$tag_id}")}">&nbsp;&nbsp;返回上一页&nbsp;&nbsp;</a>
+          </div> 
+        </div> 
+   {AnForm}
+      </div>
+
+    </div>
+  </div>
+</div>
+{/strip}
+<script>
+$(function(){
+	   //imei提示
+    $('#e_imei').focus(function(){
+   	 $('#cat').show();
+   	 sysSecond = 5 ;
+		var djs = setInterval(function(){
+			sysSecond = sysSecond - 1 ;
+			if (sysSecond <  1) {
+				clearInterval(djs);
+				$('#cat').hide();
+			}
+		 },1000);
+    })
+    
+    $('#e_imei').autocomplete({
+	    source: "/push/admin/ajax/get_imei_field",
+	});
+	 
+
+});
+
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

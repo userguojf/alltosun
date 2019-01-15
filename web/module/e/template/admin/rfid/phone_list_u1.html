@@ -1,0 +1,37 @@
+    {include_www file="admin/lib/e_header.html" title="设备信息"}
+    <link href="{$smarty.const.STATIC_URL}/css/phone-table.css" rel="stylesheet" type="text/css">
+    <section class="container">
+    <div class="phone-table">
+      <div class="table">
+        <div class="header flex">
+          <div class="cell flex-1">标签ID</div>
+          <div class="cell flex-1">手机品牌</div>
+          <div class="cell flex-1">型号</div>
+          <div class="cell flex-1">颜色</div>
+          <div class="cell flex-1">IMEI</div>
+        </div>
+        <div class="body">
+{foreach $list as $k => $v}
+          <div class="row">
+            <div class="inner flex row{$v.id}">
+              <div class="cell flex-1">{$v.label_id}</div>
+              <div class="cell flex-1">{$v.name}</div>
+              <div class="cell flex-1">{$v.version}</div>
+              <div class="cell flex-1">{$v.color}</div>
+              <div class="cell flex-1">{$v.imei}</div>
+            </div>
+            <div class="btn-container" resId="{$v.id}">
+              <a href="{AnUrl('e/admin/rfid/phone/add' ,"?id={$v.id}")}" class="btn btn-grey">编辑</a> 
+              <a href="JavaScript:;" class="btn btn-red delete_hot">删除</a>
+            </div>
+          </div>
+{/foreach}
+        </div>
+      </div>
+
+    </div>
+  </section>
+{if $member_info.member_user != 'admin'}
+ <script src="{$smarty.const.STATIC_URL}/js/rfid/phone_list.js"></script>
+{/if}
+{include_www file="admin/lib/e_footer.html"}

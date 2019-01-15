@@ -1,0 +1,63 @@
+{include_www file="admin/lib/header_new.html" title="统计列表"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen_stat/admin/valid')}"><i class="iconfont iconfont-logo2"></i>数据总计</a>
+            &gt;
+            <span>数据列表</span>
+            <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+          </div>
+          </br>
+          <div class="form-search row clearfix">
+            <div class="tabs2">
+
+                <div class="">
+                  <form action="{AnUrl('screen_stat/admin/valid')}" method="get" class="searchForm">
+                    <div class="form-inline" id="dateSelectBox" >
+                        <div class="form-group">
+                            <label for="exampleInputName2">时间：</label>
+                            <input type="text" class="form-control" style="width:100px; text-align:center;" name="start_time" id="start_time" value="{$start_time}" />
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputName2">至</label>
+                            <input type="text" class="form-control" style="width:100px; text-align:center;" name="end_time" id="end_time" value="{$end_time}" />
+                        </div>
+                        <button type="submit" class="btn btn-success btn-sm">搜索</button>
+                    </div>
+                    
+                  </form>
+                </div>
+            </div>
+        </div>
+          <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="text-align:center">活跃门店数</th>
+                  <th style="text-align:center">活跃终端数</th>
+                  <th style="text-align:center">有效终端数</th>
+                  <th style="text-align:center">终端活跃率</th>
+                </tr>
+              </thead>
+              <tbody>
+              {if $list}
+                <tr>
+                      <td style="text-align:center">{$list.active_yyt}</td>
+                      <td style="text-align:center">{$list.active_device_total}</td>
+                      <td style="text-align:center">{$list.device_total}</td>
+                      <td style="text-align:center">{$list.percent}</td>
+                </tr>
+               {else}
+                <tr><td colspan="4">暂无相关数据</td></tr>
+               {/if}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        </div>
+
+{include_www file="admin/lib/footer_new.html"}

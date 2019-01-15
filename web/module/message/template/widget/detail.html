@@ -1,0 +1,106 @@
+<div class="main2 right">
+    <div class="main2-top clearfix">
+      <div class="main2-tab1 left">
+        <a href="{AnUrl("message")}"><em class="icon-msg2"></em>我的私信</a>-<a>我与<span class="name">
+        {if $message_type == 'private_msg'}
+            {user_helper::display_name($with_user_id, 'real_name')}
+        {else}
+            {foreach $to_user_ids as $k => $v}
+                {if $v == user_helper::get_user_id()}
+                    {continue}
+                {/if}
+                {user_helper::display_name($v, 'real_name')}、
+            {/foreach}
+        {/if}
+        </span>的对话</a><span class="gray">（共{$message_count}条私信）</span>
+      </div>
+      <div class="header-search right" style="display:none;">
+        <input type="text" value="搜索关键词" class="left">
+        <button type="submit" class="left"><span></span></button>
+      </div>
+    </div>
+    <div class="private-detail">
+      <!--start:发私信-->
+  <div class="private-publish">
+    <div class="title"><em class="icon-msg4"></em>发私信给：<span>
+    {if $message_type == 'private_msg'}
+            {user_helper::display_name($with_user_id, 'real_name')}
+        {else}
+            {foreach $to_user_ids as $k => $v}
+                {if $v == user_helper::get_user_id()}
+                    {continue}
+                {/if}
+                {user_helper::display_name($v, 'real_name')}、
+            {/foreach}
+        {/if}
+    </span></div>
+    <div class="publish-box">
+      <div class="publish-txtarea"><textarea class="js_content" data-message-id="{$message_id}">说点工作、生活的事吧~</textarea></div>
+      <div class="publish-options clearfix">
+        <div class="publish-icons left">
+          <a href="javascript:void(0);" class="icon-face" title="表情"></a>
+          <!--start:添加表情弹层-->
+          <div class="options-box faces-box hidden">
+            <em class="arrow"></em>
+            <div class="options-in">
+              <div class="options-top pop-top">
+                <h3><em></em>常用表情</h3>
+                <a href="javascript:void(0);" class="btn-close" title="关闭"></a>
+              </div>
+              <div class="options-middle">
+                <div class="options-faces-list">
+                  <ul class="clearfix">
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                    <li><a href="javascript:void(0);"><img src="{$smarty.const.SITE_URL}/images/test/6.gif"></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--end:添加表情弹层-->
+        </div>
+        <button class="publish-btn right js_privateMsgSubmit">发表</button>
+      </div>
+    </div>
+  </div>
+  <!--end:发私信-->
+  <!--start:聊天详情-->
+  <div class="private-list2">
+    <ul>
+    {foreach $message_list as $k => $v}
+      <li class="{if $v.user_id == user_helper::get_user_id()}mine{/if} clearfix">
+        <div class="avatar"><img src="{user_helper::avatar($v.user_id)}"></div>
+        <div class="private-list2-con">
+          <em class="arrow"></em>
+          <div class="txt">
+          {$v.content}
+          </div>
+          <p class="date">{time_format($v.add_time, 'm-d H:i')}</p>
+        </div>
+      </li>
+     {/foreach}
+    </ul>
+  </div>
+  {include_core file="lib/page.html"}
+  <!--end:聊天详情-->
+</div>
+
+</div>

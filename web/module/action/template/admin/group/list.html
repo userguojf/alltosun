@@ -1,0 +1,84 @@
+{include_www file="admin/lib/header_new.html" title="角色列表"}
+{include_www file="admin/lib/sidebar_new.html"}
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('action/admin/group')}"><i class="iconfont iconfont-logo2"></i>角色列表</a>
+      &gt;
+      <span>角色列表</span>
+    </div>
+    <!--
+    <div class="tabs1">
+      <ul class="clearfix">
+        <li class="curr"><a href="###">全国投放列表</a></li>
+        <li class=""><a href="###">各省投放列表</a></li>
+      </ul>
+    </div>
+    -->
+    <div class="form-search clearfix">
+
+      {*<div class="pull-left">
+        <form action="{AnUrl('remakes/admin')}" method="get">
+
+          <input type="text" name="search_filter[mobile]" placeholder="按手机号搜索" value="{if $search_filter['mobile']}{$search_filter['mobile']}{/if}" class="form-control input-sm pull-left">
+
+          <input type="text" id="start_time" name="search_filter[start_add_time]" placeholder="开始时间" value="{if $search_filter['start_add_time']}{$search_filter['start_add_time']}{/if}" class="form-control input-sm pull-left">
+
+          <input type="text" id="end_time" name="search_filter[end_add_time]" placeholder="结束时间" value="{if $search_filter['end_add_time']}{$search_filter['end_add_time']}{/if}" class="form-control input-sm pull-left">
+
+          <button type="submit" class="btn-search pull-left">搜索</button>
+
+        </form>
+      </div>
+      *}
+      <div class="pull-right">
+
+        <a href="{AnUrl('action/admin/group/add')}" class="btn btn-sm btn-success">添加用户组</a>
+      </div>
+    </div>
+
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>角色名</th>
+          <th>描述信息</th>
+          <th>等级标识</th>
+          {*<th>成员数量</th>*}
+          <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+          {foreach $list as $k=>$v}
+          <tr id="dataList{$v.id}">
+            <td>{$v.id}</td>
+            <td>{$v.name}</td>
+            <td>{$v.desc}</td>
+            <td>{$v.ranks}</td>
+            {*<td>{action_helper::get_member_nums($v.id)}</td>*}
+            <td>
+              <a title="用户列表" class=" btn btn-xs btn-info" href='{AnUrl("action/admin/group_user&gid={$v.id}")}'>用户列表</a>
+              <a title="编辑" class=" btn btn-xs btn-info" href='{AnUrl("action/admin/group/add&gid={$v.id}")}'>编辑</a>
+              {if $v.is_root !=1}
+              <a title="删除" class=" deleteOne btn btn-xs btn-danger" href='{AnUrl("action/admin/group/delete&gid={$v.id}")}'>删除</a>
+              {/if}
+            </td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="9">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+<!-- 分页 start -->
+
+<!-- 分页 end -->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

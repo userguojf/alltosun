@@ -1,0 +1,141 @@
+1、企业微信
+	wework_access_token		// token
+	wework_user		        // 成员信息表 字段和企业文档一致
+	wework_department	    // 部门表 字段都是文档里的
+	wework_api_log	        // 数字地图调用接口的记录日志
+	wework_zj_record	    // 临时导数据用的
+
+数字地图的接口
+	api模块
+		dm
+		person_num.php // 探针的时间段取数据 两个接口（需求都在文件里注释）
+		user.php 	   // 企业微信第一版接口 可以使用的 
+		user_edit.php  // 目前改造的接口
+ 
+wework模块 （qydev  是企业号的代码 现在应该是不用了  主要看数字地方面）
+	controller
+		admin
+			后台列表文件
+		test
+			测试文件
+		weixin
+			php需要引入的文件
+		user_callback.php
+			已设置接收事件服务器
+		其他文件是获取数据和跑数据的文件
+	helper
+		成员、部门、数字地图、消息、制定的规则、xml都有各自的helper
+	widget
+		每个方法里都注释的非常明白
+
+screen_photo 模块
+	功能：主要是合成套餐图的功能  helper里的screen_ps方法
+
+screen_msg 模块
+	模块功能：下发企业微信的消息和手机短信消息的展示
+	screen_qydev_msg_record  这是下发消息的记录表
+	push.php 是亮屏临时推广的短信下发功能
+
+faq常见问题模块
+	faq_record
+	// 以下是统计表  现在亮屏项目都没用到
+	faq_stat_record
+	faq_stat_province
+	faq_stat_city
+	faq_stat_area
+	faq_stat_business_hall
+
+计划任务
+	helper/script/sync_screen_check_send_msg.php  // 检查设备十分离线
+	helper/script/sync_screen_install_send_msg.php // 安装设备消息
+	helper/script/sync_screen_offline_stat.php // 离线统计
+
+自启动
+creen_auto_start //表名
+screen_auto_start_business_stat//表名
+对应模块 
+screen_auto   // 记录和统计的后台展示的控制器
+
+后台地址
+http://mac.pzclub.cn/screen_auto/admin/stat 自启动统计
+http://mac.pzclub.cn/screen_auto/admin 记录
+
+设备行为接口
+接口文件  module/screen/controller/api/4/stat/daily_behave.php
+
+控制器文件   module/screen_stat/controller/admin/behave
+
+7天异常
+	必要条件是每天第一次进入主界面
+	不是是自启动，不是就今天异常，不用判断心跳了
+	第一条是自启动，在判断每小时心跳次数
+计划任务
+helper/script/sync_screen_daily_behave.php
+计划任务方法
+_widget('screen_stat.daily_behave')->stat();
+
+数据导出
+module/screen_load/controller/admin
+	valid.php
+	yyt_device.php
+	yyt_unit_off.php
+	yyt_unit.php
+
+module/screen/controller/api/4/phone/auto_start.php
+数据表
+	消息的点赞和分享功能   一直没有用
+		qydev_news
+		qydev_news_content
+		qydev_news_content_answer
+		qydev_news_content_zan_record
+		qydev_news_operate_record
+		qydev_news_share
+		qydev_share_record
+	企业微信调用微信消息接口记录表
+		qydev_msg_log
+	设备行为接口
+		screen_daily_behave_happening_record
+		screen_daily_hebave_device_record
+		screen_daily_hebave_record
+		screen_daily_hebave_report_date_record
+		screen_daily_behave_happening_record
+	生成短链接的表
+		screen_redirect_url_cache
+	设备轮播统计
+		screen_roll_business_stat
+		screen_roll_city_stat
+		screen_roll_count_stat
+		screen_roll_device_stat
+		screen_roll_province_stat
+	合成机型宣传图的表
+		screen_show_pic
+		screen_show_pic_cache
+	临时推送导入的记录
+		screen_tui_yyt_record
+	企业微信处理数据的临时表
+		use_test_record
+		
+		
+		
+		score_answer	// 答案记录表
+		score_question	// 问题记录表
+		score_record	// 答题记录  添加字段  积分  
+		score_user      // 导入恒天然成员的个人信息
+
+		高级签到流程：导入不代表头的手机号列；然后个人详细信息（images/hengtr下）导入方法score/controller/import/file.php
+
+		html-hengTianRan 目录  有meeting的前缀的文件为静态文件
+
+
+		score模块  就是这次的定制的积分问题和答案   //复制vote模块
+			公共的方法和js都没有改过，都在各个页面内
+
+		h5模块     配置文件   定制版 建的大屏幕ID写到配置文件里		=>  对应的文件目录
+
+		h5/sanya 的目录新建的
+		
+
+		
+		
+		
+		

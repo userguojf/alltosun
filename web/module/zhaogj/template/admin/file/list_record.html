@@ -1,0 +1,182 @@
+{include file="admin/lib/header.html"}
+    <!--start:主内容-->
+    <div class="inner main">
+        <div class="bread"><a href="{AnUrl("file_apply/admin/file?search_filter[search_type]=file")}">集团文件</a> &gt; <span class="curr">查看记录</span></div>
+        <div class="file-detail clearfix">
+            <div class="con left">
+                <p>{$file_info['file_number']}</p>
+                <p class="title">{file_apply_helper::file_suffix($file_info['content'], $file_info['suffix'])}</p>
+                <p>平台发布时间：{file_apply_helper::mi_date($file_info['add_time'])} 共{$file_info['view_count']}次查看 {$file_info['dl_count']}次下载</p>
+            </div>
+            <div class="infos right">
+                <p>文件印发时间</p>
+                <p class="date">{date('Y-m-d',strtotime($file_info['print_time']))}</p>
+            </div>
+        </div>
+    </div>
+    <div class="inner main">
+        <div class="top-options clearfix">
+            <div class="tabs left">
+                <a href="{AnUrl("file_apply/admin/file/record_list?id={$id}&search_filter[pc]=province")}" {if $search_filter['pc'] == 'province'} class="active"{/if}>省管理员</a>
+                <a href="{AnUrl("file_apply/admin/file/record_list?id={$id}&search_filter[pc]=city")}" {if $search_filter['pc'] == 'city'} class="active"{/if}>市管理员</a>
+            </div>
+            <a href="{AnUrl("file_apply/admin/file/record_list?id={$id}&search_filter[pc]={$search_filter['pc']}&search_filter[province]={$search_filter['province']}&search_filter[city]={$search_filter['city']}&search_filter[status]={$search_filter['status']}&is_export=1")}" class="btn-add right"><i class="icon-download-white"></i>下载列表</a>
+        </div>
+        <div class="content-list">
+            <table>
+                <thead>
+                <tr>
+                    <th width="16%">
+                        <select name="search_filter[province]" id="province" style="width:140px;" class="form-control input-sm pull-left ">
+                            <option value="">省份</option>
+                            {foreach $province_list as $v}
+                            <option {if $search_filter['province'] == $v.res_id } selected {/if} value="{$v.res_id}">{_uri('province',$v.res_id,'name')}</option>
+                            {/foreach}
+                        </select>
+                    </th>
+                    {if $search_filter['pc'] == city}
+                    <th width="16%">
+                        <select name="search_filter[city]" id="city"  class="form-control input-sm pull-left ">
+                            <option value="">城市</option>
+                            {foreach $city_list as $v}
+                            <option {if $search_filter['city'] == $v.id } selected {/if} value="{$v.id}">{$v.name}</option>
+                            {/foreach}
+                        </select>
+                    </th>
+                    {/if}
+                    <th>管理员名称</th>
+                    <th>管理员电话</th>
+                    <th>
+                        <select name="search_filter[status]" id="status">
+                            <option value="">查看/下载</option>
+                            <option {if $search_filter['status'] == 1 } selected {/if} value="1">是</option>
+                            <option {if $search_filter['status'] == 2 } selected {/if} value="2">否</option>
+                        </select>
+                    </th>
+                    <th>最后一次操作时间</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $member_list as $v}
+                <tr>
+                    <td>
+                        {if $search_filter['pc'] == province}
+                            {_uri('province', $v.res_id, 'name')}
+                        {else}
+                            {$provinceid = _uri('city',$v.res_id,'province_id')}
+                            {_uri('province', $provinceid, 'name')}
+                        {/if}
+                    </td>
+                    {if $search_filter['pc'] == city}
+                    <td>{_uri('city', $v.res_id, 'name')}</td>
+                    {/if}
+                    <td>{file_apply_helper::get_member_name_phone($v.id, 'user_name')}</td>
+                    <td>{file_apply_helper::get_member_name_phone($v.id, 'phone')}</td>
+                        {$info = file_apply_helper::check_member_record($v.id, $id)}
+                    <td>{$info['res']}</td>
+                    <td>{$info['update_time']}</td>
+                </tr>
+                {foreachelse}
+                <tr>
+                    <td colspan="5">暂无相关信息</td>
+                </tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:主内容-->
+</div>
+<!--end:发布结果弹层-->
+<script src="{$smarty.const.SITE_URL}/js/jquery-2.1.1.min.js"></script>
+
+<script>
+
+    // 省份下拉框事件
+    $('#province').change(function () {
+        var province_id = $('#province').val();
+        var id = '{$id}';
+        var pc = '{$search_filter["pc"]}';
+        var status = $('#status').val();
+
+        var search_filter = new Array();
+        search_filter['pc'] = pc;
+        search_filter['province'] = province_id;
+        search_filter['status'] = status;
+
+        var wh = towhere(search_filter);
+        var url = '{AnUrl("file_apply/admin/file/record_list?id='+id+wh+'")}';
+        if (pc == 'province') {
+            $.get(url, function (evt) {
+                window.location.href = url;
+            });
+        } else {
+            var purl = "{AnUrl('business_hall/admin/ajax/get_city_name')}";
+
+            $.post(purl, { province_id:province_id }, function (json) {
+                if (json.msg=='ok') {
+                    var html = "<option selected='selected' value=''>城市</option>";
+                    var jsonnum = eval(json.city_info);
+                    for(var i=0; i< jsonnum.length; i++){
+                        html += "<option value= '"+jsonnum[i].id+"'>"+jsonnum[i].name+"</option>";
+                    }
+                    $('#city').html('').append(html);
+                }
+            },'json');
+        }
+    });
+
+    // 市下拉框触发事件
+    $('#city').change(function () {
+        var province_id = $('#province').val();
+        var city_id = $('#city').val();
+        var status = $('#status').val();
+        var id = '{$id}';
+        var pc = '{$search_filter["pc"]}';
+
+        var search_filter = new Array();
+        search_filter['pc'] = pc;
+        search_filter['province'] = province_id;
+        search_filter['city'] = city_id;
+        search_filter['status'] = status;
+
+        var wh = towhere(search_filter);
+        var url = '{AnUrl("file_apply/admin/file/record_list?id='+id+wh+'")}';
+        $.get(url, function (evt) {
+            window.location.href = url;
+        });
+    });
+
+    // 查看/下载下拉框触发事件
+    $('#status').change(function () {
+        var province_id = $('#province').val();
+        var city_id = $('#city').val();
+        var status = $('#status').val();
+        var id = '{$id}';
+        var pc = '{$search_filter["pc"]}';
+        var search_filter = new Array();
+        search_filter['pc'] = pc;
+        search_filter['province'] = province_id;
+        if (pc == 'city') {
+            search_filter['city'] = city_id;
+        }
+        search_filter['status'] = status;
+        var wh = towhere(search_filter);
+        var url = '{AnUrl("file_apply/admin/file/record_list?id='+id+wh+'")}';
+        $.get(url, function (evt) {
+            window.location.href = url;
+        });
+    });
+
+    function towhere(where)
+    {
+        var h = '';
+        for (var a in where) {
+            h += '&search_filter['+a+']='+where[a];
+        }
+        return h;
+    }
+</script>
+</body>
+</html>

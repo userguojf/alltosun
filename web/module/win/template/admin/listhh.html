@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <title>后台</title>
+    <link rel='Shortcut Icon' type='image/x-icon' href='{$smarty.const.SITE_URL}/images/win10/windows.ico'>
+    <script type="text/javascript" src="{$smarty.const.SITE_URL}/js/win/jquery-2.2.4.min.js"></script>
+    <link href="{$smarty.const.SITE_URL}/css/win/animate.css" rel="stylesheet">
+    <script type="text/javascript" src="{$smarty.const.SITE_URL}/component/layer-v3.0.3/layer/layer.js"></script>
+    <link rel="stylesheet" href="{$smarty.const.SITE_URL}/component/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link href="{$smarty.const.SITE_URL}/css/win/default.css" rel="stylesheet">
+    <link rel="stylesheet" href="//res.layui.com/layui/dist/css/layui.css?t=1522709297490"  media="all">
+    <link rel="stylesheet" href="//res.layui.com/css/global.css?t=1522709297490-3" media="all">
+  <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+    <script type="text/javascript" src="{$smarty.const.SITE_URL}/js/win/win10.js"></script>
+    <style>
+        * {
+            font-family: "Microsoft YaHei", 微软雅黑, "MicrosoftJhengHei", 华文细黑, STHeiti, MingLiu
+        }
+
+        /*磁贴自定义样式*/
+         .win10-block-content-text {
+             line-height: 44px;
+             text-align: center;
+             font-size: 16px;
+         }
+    </style>
+    <script>
+        Win10.onReady(function () {
+
+            //设置壁纸
+            Win10.setBgUrl({
+                main: '{$smarty.const.SITE_URL}/images/win10/wallpapers/main.jpg',
+                mobile: '{$smarty.const.SITE_URL}/images/win10/wallpapers/mobile.jpg',
+            });
+
+            Win10.setAnimated([
+                'animated flip',
+                'animated bounceIn',
+            ], 0.01);
+        });
+    </script>
+</head>
+<body>
+    <table class="layui-table" lay-even="" lay-skin="row">
+  <colgroup>
+    <col width="150">
+    <col width="150">
+    <col width="200">
+    <col>
+  </colgroup>
+  <thead>
+    <tr>
+      <th >消息类型</th>
+      <th >发送者</th>
+      <th >消息来源</th>
+      <th >信息</th>
+      <th >时间</th>
+      <th >操作</th>
+    </tr> 
+  </thead>
+  <tbody>
+  {foreach $list as $k => $v}
+                <tr>
+                    <td >{$v.type}</td>
+                    <td >{$v.username}</td>
+                    <td >{$v.message_from}</td>
+                    <td >{$v.message}</td>
+                    <td >{$v.time}</td> 
+                   <td data-field="10" align="center" data-off="true">
+                         <div class="layui-table-cell laytable-cell-1-10">
+                            <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a> 
+                            <a class="layui-btn layui-btn-xs" lay-event="edit" id="{$v.id}"  onclick='Win10_child.openUrl("{AnUrl("win/admin/edit/?id={$v.id}")}")' >编辑</a> 
+                            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                         </div>
+                    </td>
+                </tr>
+    {foreachelse}
+    <tr><td colspan="5">暂无相关信息</td></tr>
+    {/foreach}
+  </tbody>
+</table>
+</body>
+</html>

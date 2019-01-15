@@ -1,0 +1,129 @@
+    <div class="form-search clearfix">
+            <div class="pull-left">
+                <form action="{AnUrl('probe_pandect/admin/approval_pending')}" methhod='get'>
+                    <select class="form-control input-sm pull-left onlineStatus"  style="width:120px" name="search_filter[search_type]">
+                        {foreach probe_pandect_config::$search_type as $k => $v}
+                            <option value="{$k}" {if $search_filter.search_type == $k}selected{/if}>{$v}</option>
+                        {/foreach }
+                        
+                    </select>
+                    <select class="form-control input-sm pull-left js_province" id='province' style="width:120px" name="search_filter[province]" >
+                        <option value="">请选择省</option>
+                    </select>
+                    <select class="form-control input-sm pull-left js_city" id="city" style="width:120px" name="search_filter[city]">
+                        <option value="">请选择市</option>
+                    </select>
+            
+                    <select class="form-control input-sm pull-left onlineStatus"  style="width:120px" name="search_filter[probe_status]">
+                        <option value="0" {if $search_filter.probe_status == 0}selected{/if}>审批状态</option>
+                        {foreach probe_pandect_config::$probe_status as $k => $v}
+                            <option value="{$k}" {if $search_filter.probe_status == $k}selected{/if}>{$v}</option>
+                        {/foreach }
+                        
+                    </select>
+                    <button type="submit" class="btn-search pull-left">搜索</button>
+                </form>
+            </div>
+        </div>
+        
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+
+            <th style="text-align:center" width="15%">设备类型</th>
+            <th style="text-align:center" width="20%">设备申请时间</th>
+            <th style="text-align:center" width="10%">省份</th>
+            <th style="text-align:center" width="10%">地市</th>
+            <th style="text-align:center" width="15%">设备总数</th>
+            <th style="text-align:center" width="15%">申请状态</th>
+            <th style="text-align:center" width="30%">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+       {foreach $list as $k=>$v}
+      
+      <tr> 
+
+           <td style="text-align:center">{$v.device_type}</td>
+           {$create_time = probe_pandect_helper::get_device_time($v.device_type,$v.province_id,$v.city_id,$v.create_time)}
+           <td style="text-align:center">{$v.create_time}</td>
+           <td style="text-align:center">{business_hall_helper::get_info_name('province', $v.province_id, 'name')}</td>
+           <td style="text-align:center">{business_hall_helper::get_info_name('city', $v.city_id, 'name')}</td>
+           {$num = probe_pandect_helper::get_device_num($v.device_type,$v.province_id,$v.city_id,$v.create_time)}
+           <td style="text-align:center">{$num}</td>
+           {if $v.status == 0}<td style="text-align:center">待审批</td>{/if}
+           {if $v.status == 2}<td style="text-align:center">已取消</td>{/if}
+           <td>
+           
+                <a class="btn btn-xs btn-info" href='{AnUrl("probe_pandect/admin/application_details?province_id={$v.province_id}&city_id={$v.city_id}&create_time={$v.create_time}&device_type={$v.device_type}")}'>查看详情</a>
+                <input type="hidden" value="{$v.create_time}">
+                <input type="hidden" value="{$v.status}">
+                <input type="hidden" value="{$v.province_id}">
+                <input type="hidden" value="{$v.city_id}">
+                {if $v.status == 0}<a class="btn btn-xs btn-danger change_status" href="javascript:;">取消申请</a>{/if}
+                {if $v.status == 2}<a class="btn btn-xs btn-success change_status" href="javascript:;">重新申请</a>{/if}
+                
+           </td>
+    
+      </tr>
+      {foreachelse}
+        <tr><td class="txtleft" colspan="13">暂无数据</td></tr>
+   {/foreach} 
+  
+            </tbody>
+          </table>
+           {include_www file="admin/lib/pager_new.html"}
+        </div>
+ <script src="{$smarty.const.SITE_URL}/js/region_func.js"></script>
+<script>
+$(function(){
+{if $search_filter.province}
+     var p_id = {$search_filter.province};
+ {else}
+     var p_id = 0;
+ {/if}
+
+ {if $search_filter.city}
+     var c_id = {$search_filter.city};
+ {else}
+     var c_id = 0;
+ {/if}
+
+ {if $search_filter.area}
+     var a_id = {$search_filter.area};
+ {else}
+     var a_id = 0;
+ {/if}
+
+ /**
+  * 省市区多级联动
+  *
+  * @author  wangl
+  */
+ region(p_id, c_id, a_id);
+});
+
+
+$('.change_status').on('click',function(){
+    var city_id     = $(this).prev().val();
+    var province_id = $(this).prev().prev().val();
+    var status      = $(this).prev().prev().prev().val();
+    var create_time = $(this).prev().prev().prev().prev().val();
+    var data = {
+            "city_id":city_id,
+            "status" :status,
+            "province_id" :province_id,
+            "create_time" :create_time
+    }; 
+    console.log(data);
+     $.post(siteUrl+'/probe_pandect/admin/ajax/update_ststus',data , function (res) {
+          if (res.info != 'ok') {
+            alert(res.msg);
+          }else{
+            
+              location.replace(location);
+          }
+    }, 'json');
+});
+</script>

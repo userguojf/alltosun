@@ -1,0 +1,92 @@
+body { background:#fff; -webkit-text-size-adjust:100%;-ms-text-size-adjust:100%; }
+/*css resert*/
+html, body, div, p, span, label, img, a, ol, ul, dl, dt, dd, li, table, tr, td, th, tbody, thead, tfoot, form, fieldset, legent, h1, h2, h3, h4, h5, h6, strong, b, em, blockquote, cite, pre, code, hr, br, input, button, textarea,article, aside, details, figcaption, figure, footer, header, group, menu, nav, section { padding:0px; margin:0px; }
+
+/* 要注意表单元素并不继承父级 font 的问题 */
+button, input, select, textarea { font: 100% serif; }
+img, input, select { vertical-align: middle; }
+h1, h2, h3, h4, h5, h6 { font-weight:normal; font-size:1em; }
+ol, ul { list-style-type:none; }
+table { border-collapse:collapse; border-spacing:0; }
+th,caption { text-align:left; }
+a img { border:0 none; cursor:pointer; } 
+fieldset,img { border:0 none; }
+a, input { outline:0 none; }
+abbr, acronym { border:0; }
+button { outline:0 none; cursor:pointer; }
+button::-moz-focus-inner { border:0; }
+input::-moz-focus-inner { border:0; }
+:focus { outline:0 none; }
+caption, cite, code, em, th, var,i { font-weight:normal; font-style:normal; }
+a:link, a:visited { text-decoration:none; }
+textarea { overflow: auto; vertical-align: top; }
+/******常用****/
+.clearfix:before,.clearfix:after { content:""; display:table; }
+.clearfix:after { clear:both; }
+.clearfix { zoom:1; }
+.clear { clear:both; height:0; width:0; display:block; visibility:hidden; overflow:hidden; }
+.clearit { clear:both; zoom:1; }
+.hidden { display:none; }
+.vhidden { visibility:hidden; }
+.hide-txt { overflow: hidden; text-indent: 100%; white-space: nowrap; }
+.left { float:left; display:inline; }
+.right { float:right; display:inline; }
+.fnone { float:none; }
+.txtleft{ text-align:left; }
+.txtright{ text-align:right; }
+.txtcenter{ text-align:center; }
+.middle { vertical-align:middle; }
+.noborder{ border:0 none !important; }
+.nobg{ background:none !important; }
+.sub{ vertical-align:sub; }
+.sup{ vertical-align:sup; }
+.cursor { cursor:pointer; }
+.zoom { zoom:1; }
+.vtop { vertical-align:top; }
+/******常用颜色*****/
+.red { color:#f00; }
+.orange { color:#ffa500; }
+.yellow { color:#ff0; }
+.green { color:#080; }
+.blue { color:#00f; }
+.dark-gray { color:#333; }
+.gray { color:#666; }
+.light-gray { color:#999; }
+.an-ccc { color:#ccc; }
+/*字体设置*/
+.fs14 { font-size:14px; }
+.fs16 { font-size:16px; }
+.fs18 { font-size:18px; }
+/*==========以下部分是Validform必须的===========*/
+.Validform_checktip{
+    margin-left:8px;
+    line-height:20px;
+    height:20px;
+    overflow:hidden;
+    color:#999;
+    font-size:12px;
+}
+.Validform_right{
+    color:#71b83d;
+    padding-left:20px;
+    background:url(../images/right.png) no-repeat left center;
+}
+.Validform_wrong{
+    color:red;
+    padding-left:0px;
+    white-space:nowrap;
+    background:url(../images/error.png) no-repeat left center;
+}
+.Validform_loading{
+    padding-left:20px;
+    background:url(../images/onLoad.gif) no-repeat left center;
+}
+.Validform_error{
+    background-color:#ffe7e7;
+}
+#Validform_msg{color:#7d8289; font: 12px/1.5 tahoma, arial, \5b8b\4f53, sans-serif; width:280px; -webkit-box-shadow:2px 2px 3px #aaa; -moz-box-shadow:2px 2px 3px #aaa; background:#fff; position:absolute; top:0px; right:50px; z-index:99999; display:none;filter: progid:DXImageTransform.Microsoft.Shadow(Strength=3, Direction=135, Color='#999999');}
+#Validform_msg .iframe{position:absolute; left:0px; top:-1px; z-index:-1;}
+#Validform_msg .Validform_title{line-height:25px; height:25px; text-align:left; font-weight:bold; padding:0 8px; color:#fff; position:relative; background-color:#000;}
+#Validform_msg a.Validform_close:link,#Validform_msg a.Validform_close:visited{line-height:22px; position:absolute; right:8px; top:0px; color:#fff; text-decoration:none;}
+#Validform_msg a.Validform_close:hover{color:#cc0;}
+#Validform_msg .Validform_info{padding:8px;border:1px solid #000; border-top:none; text-align:left;}

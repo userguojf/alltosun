@@ -1,0 +1,245 @@
+{include_www file="admin/lib/header_new.html" title="探针管理"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('probe_dev/admin')}"><i class="iconfont iconfont-logo2"></i>探针管理</a>
+            &gt;
+            <span>设备管理</span>
+        </div>
+         <div class="tabs1">
+            <ul class="clearfix">
+                <li {if $search_filter['put_type'] == 1}class="curr" {/if}><a href="{compile_url($search_filter,'put_type',1,'probe_pandect/admin/device_group')}">设备一览</a></li>
+                <li {if $search_filter['put_type'] == 2}class="curr"{/if}><a href="{compile_url($search_filter,'put_type',2,'probe_pandect/admin/device_group/approve_list')}">待审批设备</a></li>
+                <li {if $search_filter['put_type'] == 3}class="curr"{/if}><a href="{compile_url($search_filter,'put_type',3,'probe_pandect/admin/device_group/approve_list')}">已审批设备</a></li>
+               
+            </ul>
+       </div>
+       {if $search_filter.put_type == 3}
+       <div class="tabs2">
+            <ul class="clearfix">
+                {foreach probe_pandect_config::$order_type as $k => $v}
+                <li {if $search_filter['order_type'] == $k}class="curr"{/if}><a  href="{compile_url($search_filter,'order_type',$k,'probe_pandect/admin/device_group/approve_list')}">{$v}</a></li>
+                {/foreach}
+            </ul>
+        </div>
+      {/if}
+        <div class="form-search clearfix">
+            <div class="pull-left">
+                <form action="{AnUrl('probe_pandect/admin/device_group/approve_list')}" methhod='get'>
+                <input type="hidden"  name="search_filter[put_type]" value="{$search_filter.put_type}">
+                      <select class="form-control input-sm pull-left "  style="width:120px" name="search_filter[search_type]" >
+                        {foreach probe_pandect_config::$searchs_type as $k => $v}
+                            <option value="{$k}" {if $search_filter.search_type == $k} selected {/if} >{$v}</option>
+                        {/foreach}
+                    </select>
+                    <select class="form-control input-sm pull-left js_province" id='province' style="width:120px" name="search_filter[province]" >
+                        <option value="">请选择省</option>
+                    </select>
+                    <select class="form-control input-sm pull-left js_city" id="city" style="width:120px" name="search_filter[city]">
+                        <option value="">请选择市</option>
+                    </select>
+                  <!--   <select class="form-control input-sm pull-left js_area" id="area" style="width:120px" name="search_filter[area]">
+                        <option value="">请选择区</option>
+                    </select> -->
+                    {if $search_filter.put_type == 2}
+                    <select class="form-control input-sm pull-left onlineStatus"  style="width:120px" name="search_filter[status]">
+                        {foreach probe_pandect_config::$search_status as $k => $v}
+                            <option value="{$k}" {if $search_filter.status == $k}selected{/if}>{$v}</option>
+                        {/foreach }
+                    </select>
+                    {/if}
+<!--                     <input type="text" name="search_filter[business]" style="width:150px" value="{$search_filter.business}" class="form-control input-sm pull-left" placeholder="按营业厅搜索" id="autocomplete"/>
+ -->                    <button type="submit" class="btn-search pull-left">搜索</button>
+                </form>
+            </div>
+        </div>
+        
+        {*待审核详情页面*}
+        {if $details == 'details'}
+             {include file="{$smarty.const.MODULE_PATH}/probe_pandect/template/widget/application_details_admin_list.html"}
+        {/if}
+         <input type="hidden" value="{$details}" id="details">
+         
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th width="18%">设备申请时间</th>
+                        <th width="15%">省份</th>
+                        <th width="15%">地市</th>
+                        <th>设备总数</th>
+                        <th>审批状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {foreach $list as $k=>$v}
+                        <tr id="dataList{$v.id}" class="view_id">
+                            <td>{$v.create_time}</td>
+                            <td>{business_hall_helper::get_info_name('province' , $v.province_id ,'name')}</td>
+                            <td>{business_hall_helper::get_info_name('city' , $v.city_id ,'name')}</td>
+                            {$num = probe_pandect_helper::get_device_num($v.device_type,$v.province_id,$v.city_id,$v.create_time)}
+                             <td>{$num}</td>
+                            <td>
+                                {if $v.status == 1}
+                                    已审批
+                                {elseif $v.status == 2}
+                                    已取消
+                                 {else}
+                                    待审批
+                                {/if}
+                            </td>
+                            {if $v.status != 2}
+                            <td resId={$v.id}>
+                                    <a class="btn btn-xs btn-info" href='{AnUrl("probe_pandect/admin/device_group/application_details?province_id={$v.province_id}&city_id={$v.city_id}&create_time={$v.create_time}&device_type={$v.device_type}")}'>查看详情</a>
+                            </td>
+                            {else}
+                            <td>--</td>
+                            {/if}
+                        </tr>
+                        {foreachelse}
+                        <tr><td class="txtleft" colspan="11">暂无数据</td></tr>
+                    {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+</div>
+<script src="{$smarty.const.SITE_URL}/js/region_func.js"></script>
+<script>
+$('#autocomplete').autocomplete({
+    source: 'probe_rule/admin/ajax/get_business_hall_list',
+});
+</script>
+<script>
+//排序
+$(function() {
+	//var list     = '{json_encode($list)}';
+	//console.log(list);
+	//详情页标记
+    var details = $('#details').val();
+    var siteUrl = "{$smarty.const.SITE_URL}";
+    if(details){
+        $('#details_show').addClass('show');
+    }
+    
+    $('.update_hot').live('click',function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        if (!confirm("确定要通过该条申请吗？")) {
+          return false;
+        }
+        updateStatus.update(this,1);
+    });
+    
+    $('.update_succ').live('click',function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        if (!confirm("确定取消通过该条申请吗？")) {
+          return false;
+        }
+        updateStatus.update(this,0);
+    });
+    
+    
+
+    {if $search_filter.province}
+        var p_id = {$search_filter.province};
+    {else}
+        var p_id = 0;
+    {/if}
+
+    {if $search_filter.city}
+        var c_id = {$search_filter.city};
+    {else}
+        var c_id = 0;
+    {/if}
+
+    {if $search_filter.area}
+        var a_id = {$search_filter.area};
+    {else}
+        var a_id = 0;
+    {/if}
+
+    /**
+     * 省市区多级联动
+     *
+     * @author  wangl
+     */
+    region(p_id, c_id, a_id);
+});
+
+var updateStatus = {
+   _id:'',
+   _msg :'操作失败',
+   _url:"{AnUrl('probe_pandect/admin/device_group/change_approve')}",
+   update:function(obj,status){
+       this._id = $(obj).parent().attr('resId');
+
+       $.post(this._url,{ id:this._id, status:status },function(json){
+           if (json.info == 'ok') {
+                updateStatus.deleteHtml(obj);
+           } else {
+               alert(json.info);
+           }
+       },'json')
+   },
+   deleteHtml:function(obj){
+       $(obj).closest("tr").fadeOut(function(){
+          $(this).remove();
+          interLineColor();
+      });
+      return false;
+   },
+   updateHtmlDown:function(obj){
+       $(obj).html('立即发布');
+       $(obj).removeClass('btn-danger');
+       $(obj).removeClass('down_del');
+
+       $(obj).addClass('btn-info');
+       $(obj).addClass('up_del');
+      
+   },
+   updateHtmlUp:function(obj){
+       $(obj).html('手动下线');
+       $(obj).addClass('btn-danger');
+       $(obj).addClass('down_del');
+
+       $(obj).removeClass('btn-info');
+       $(obj).removeClass('up_del');
+   }
+};
+
+$('.btn_status').on('click',function(){
+     var flag = $(this).attr('flag');
+     var factory_account = $(this).attr('factory_account');
+     var num = $(this).attr('num');
+     var province_id = $(this).attr('province_id');
+     var city_id = $(this).attr('city_id');
+     var device_type = $(this).attr('device_type');
+     var url = siteUrl+'/probe_pandect/admin/ajax/change_approve';
+    $.post(url,{ list:list,flag:flag,factory_account:factory_account,num:num,province_id:province_id,city_id:city_id,device_type:device_type},function(json){
+    	if (json.info == 'ok') {
+    		$('#details_show').removeClass('show');
+    		url = siteUrl+'/probe_pandect/admin/device_group/approve_list?search_filter[put_type]=2';
+    	    location.replace(url); 
+       } else {
+           alert(json.info);
+       }
+   },'json'); 
+});
+
+
+$('.btnExport').on('click', function () {
+
+  $('form').prepend('<input type="hidden" name=is_export value="1" >');
+  $('form').submit();
+  $('form input[name="is_export"]').remove();
+});
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

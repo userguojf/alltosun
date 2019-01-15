@@ -1,0 +1,133 @@
+{include_www file="admin/lib/header_new.html" title="亮屏wifi管理"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('screen_wifi/admin')}"><i class="iconfont iconfont-logo2"></i>亮屏wifi管理</a>
+      &gt;
+      <span>wifi列表({if $count}{$count}{else}0{/if})</span>
+      <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+    </div>
+    <br />
+    
+    <div class="form-search clearfix">
+      <div class="pull-left">
+        <form action="{AnUrl('screen_wifi/admin')}" id="subForm" methhod='get'>
+          <input type="hidden" name="type" value="{$type}">
+          {if $member_res_name != 'business_hall'}
+            {* 公共分权限搜索模块 *}
+            {widget model='screen' func='get_search_by_member' file='get_search_by_member.html' member_info="{$member_info}"}
+          {/if}
+           {if $member_res_name != 'business'}
+              <input type="text" id="title" style="width: 120px;" name="hall_title" value="{$hall_title}" class="form-control input-sm pull-left js_search ui-autocomplete-input" placeholder="按营业厅名称搜索" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
+           {/if}
+           <button type="button" class="btn-search pull-left" id="searchData" data-url="{AnUrl('screen_wifi/admin')}" >搜索</button>
+        </form>
+      </div>
+      <!-- <div class="pull-right">
+          <button type="button" class="btn btn-success btn-sm" id="searchData" data-url="{AnUrl('screen/admin/wifi')}" >搜索</button>
+      </div> -->
+    </div>
+
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            {if $member_info.res_name != 'business_hall'}
+              <th width="5%">省</th>
+              <th width="5%">市</th>
+              <!-- <th width="5%">区</th> -->
+              <th width="10%">厅</th>
+            {/if}
+            <th width="15%">设备imei</th>
+            <th width="15%">账号</th>
+            <th width="15%">密码</th>
+            <th width="10%">添加时间</th>
+            <th width="10%">更新时间</th>
+            <th width="10%">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $wifi_list as $k=>$v}
+          <tr id="dataList{$k}" >
+            {if $member_info.res_name != 'business_hall'}
+              <td>{_uri('province', $v.province_id, 'name')}</td>
+              <td>{_uri('city', $v.city_id, 'name')}</td>
+              <!-- <td>{_uri('area', $v.area_id, 'name')}</td> -->
+              <td>{_uri('business_hall', $v.business_id, 'title')}</td>
+            {/if}
+            <td>{screen_helper::by_unique_id_get_field('screen_device', $v.device_unique_id, 'imei')}</td>
+            <td>{$v.user_name}</td>
+            <td>{$v.password}</td>
+            <td>{$v.add_time|date_format:"Y-m-d H:i"}</td>
+            <td>{$v.update_time|date_format:"Y-m-d H:i"}</td>
+            <td resId="{$v.id}">
+                <a class="btn btn-xs btn-danger delete_hot" href="javascript:void(0);">删除</a>
+            </td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="{if $member_info.res_name != 'business_hall'}9{else}5{/if}">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}
+
+<script>
+var isVersionEdit = false;
+
+$(function () {
+  $('#title').autocomplete({
+    source: "/business_hall/admin/ajax/get_title_field",
+  });
+  
+  $('#searchData').on('click',function() {
+    $('#subForm').submit();
+    //refershUrl();
+  });
+
+  var updateStatus = {
+      _id:'',
+      _msg :'操作失败',
+      _url:"{AnUrl('screen_wifi/admin/ajax/update_wifi_status')}",
+      update:function(obj,status){
+          this._id = $(obj).parent().attr('resId');
+          $.post(this._url,{ id:this._id, status:status },function(json){
+              if (json.info == 'ok') {
+                  if (status == 0) {
+                      updateStatus.deleteHtml(obj);
+                  }
+              } else {
+                  alert(json.info);
+              }
+          },'json')
+      },
+      deleteHtml:function(obj){
+          $(obj).closest("tr").fadeOut(function(){
+             $(this).remove();
+             interLineColor();
+         });
+         return false;
+      },
+  };
+
+
+  $('.delete_hot').live('click',function(event){
+      event.preventDefault();
+      event.stopPropagation();
+      if (!confirm("确定要删除该条记录吗？")) {
+        return false;
+      }
+      updateStatus.update(this,0);
+  })
+
+
+});
+</script>

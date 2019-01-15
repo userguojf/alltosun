@@ -1,0 +1,248 @@
+<!--start:在线聊天-->
+  <div class="online-im">
+    <div class="online-im-top clearfix js_imListBoxBtn" style="z-index:10000;background:#fff;cursor:pointer;">
+      <em class="icon-online left"></em>
+      <span class="left">聊天(0)</span>
+      <em class="icon-open right"></em>
+    </div>
+    <div class="online-box hidden js_onlineBox">
+      <div class="online-search">
+        <div class="header-search clearfix">
+          <input type="text" value="搜索关键词" class="left js_imSearch">
+          <button type="submit" class="left"><span class="js_imSearchBtn"></span></button>
+        </div>
+      </div>
+      <div class="online-tab1 clearfix">
+        <div class="clearfix js_onlineTabBtn">
+          <a href="javascript:void(0);" class="curr"><span>同事</span></a>
+          <a href="javascript:void(0);"><span>客户</span></a>
+          <a href="javascript:void(0);"><span>好友</span></a>
+        </div>
+      </div>
+      
+      
+      <div class="online-list">
+        <div id="jsOnlineList">
+        <!-- 同事  start-->
+          <ul class="level1 js_listBox">
+            <li class="curr">
+              <div class="online-group js_groupBtn">
+                <em class="arrow"></em>
+                在线(0)
+              </div>
+              <ul class="level2">
+              
+                <li class="curr">
+                  <a href="javascript:void(0);" class="clearfix">
+                    <div class="avatar left"><img src="{$smarty.const.SITE_URL}/images/test/1.jpg"><em class="icon-online"></em></div>
+                    <div class="name left">李炎序</div>
+                  </a>
+                </li>
+               
+              </ul>
+            </li>
+            <li>
+              <div class="online-group js_groupBtn">
+                <em class="arrow"></em>
+                默认分组({count($colleague_list)})
+              </div>
+              <ul class="level2">
+              
+              {foreach $colleague_list as $v}
+                <li class="curr" data-id="{$v.id}">
+                  <a href="javascript:void(0);" class="clearfix">
+                    <div class="avatar left"><img src="{user_helper::avatar($v.id)}"><em class="icon-online"></em></div>
+                    <div class="name left">{$v.real_name}</div>
+                  </a>
+                </li>
+               {/foreach}
+              </ul>
+            </li>
+          </ul>
+          <!-- 同事  end-->
+          
+          <!-- 客户 start -->
+          <ul class="level1 hidden js_listBox">
+            <li class="curr">
+              <div class="online-group js_groupBtn">
+                <em class="arrow"></em>
+                在线(0)
+              </div>
+              <ul class="level2">
+                <li>
+                  <a href="javascript:void(0);" class="clearfix">
+                    <div class="avatar left"><img src="{$smarty.const.SITE_URL}/images/test/1.jpg"><em class="icon-online"></em></div>
+                    <div class="name left">李炎序</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            
+            {if $customer_list}
+            {foreach $customer_list as $k => $v}
+            <li>
+              <div class="online-group js_groupBtn">
+                <em class="arrow"></em>
+                {$k}({count($v)})
+              </div>
+              {if $v}
+              <ul class="level2">
+                {foreach $v as $k2 => $v2}
+                <li data-id="{$v2.id}">
+                  <a href="javascript:void(0);" class="clearfix">
+                    <div class="avatar left"><img src="{user_helper::avatar($v2.id)}"><em class="icon-online"></em></div>
+                    <div class="name left">{$v2.real_name}</div>
+                  </a>
+                </li>
+                {/foreach}
+              </ul>
+              {/if}
+            </li>
+            {/foreach}
+            {else}
+            <div class="none-tips">
+              <em class="icon-tips"></em>
+                        还没有客户~
+            </div>
+           {/if}
+          </ul>
+          <!-- 客户 end -->
+          
+          <!-- 好友 start -->
+          <ul class="level1 hidden js_listBox">
+            <li class="curr">
+              <div class="online-group js_groupBtn">
+                <em class="arrow"></em>
+                在线(0)
+              </div>
+              <ul class="level2">
+                <li>
+                  <a href="javascript:void(0);" class="clearfix">
+                    <div class="avatar left"><img src="{$smarty.const.SITE_URL}/images/test/1.jpg"><em class="icon-online"></em></div>
+                    <div class="name left">李炎序</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            
+            {if $friends_list}
+            {foreach $friends_list as $k => $v}
+            <li>
+              <div class="online-group js_groupBtn">
+                <em class="arrow"></em>
+                {$k}({count($v)})
+              </div>
+              {if $v}
+              <ul class="level2">
+                {foreach $v as $k2 => $v2}
+                <li data-id="{$v2.id}">
+                  <a href="javascript:void(0);" class="clearfix">
+                    <div class="avatar left"><img src="{user_helper::avatar($v2.id)}"><em class="icon-online"></em></div>
+                    <div class="name left">{$v2.real_name}</div>
+                  </a>
+                </li>
+                {/foreach}
+              </ul>
+              {/if}
+            </li>
+            {/foreach}
+            {else}
+            <div class="none-tips">
+              <em class="icon-tips"></em>
+                        还没有好友~
+            </div>
+           {/if}
+          </ul>
+          <!-- 好友 end -->
+        </div>
+      </div>
+
+      
+    </div>
+  </div>
+  <!--end:在线聊天-->
+  <!--start:在线聊天窗口-->
+  <div class="chat-window" style="max-width:495px;width:auto;">
+    <div class="chat-tips new hidden js_detailMinBox">
+      <div class="clearfix">
+        <div class="title left">张强</div>
+        <a href="javascript:void(0);" class="icon-del3 right" title="关闭"></a>
+        <em class="icon-open right"></em>
+      </div>
+    </div>
+    <div class="chat-detail hidden js_detailBox">
+      <div class="chat-top clearfix">
+        <div class="chat-curr left">
+          <div class="avatar left"><img src="{$smarty.const.SITE_URL}/images/test/1.jpg"><em class="icon-online"></em></div>
+          <div class="name left">张强</div>
+        </div>
+        <a href="javascript:void(0);" class="icon-del3 right js_detailBoxCloseBtn" title="关闭"></a>
+        <a href="javascript:void(0);" class="icon-del3 right js_detailBoxMinBtn" title="最小化"></a>
+        <em class="icon-close2"></em>
+      </div>
+      <div class="clearfix">
+        <!--start:左侧-->
+        <div class="chat-l left hidden js_leftUserListBox">
+          <div class="chat-list">
+            <div id="jsChatList" style="height:390px;overflow:hidden;">
+              <ul>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+        <!--end:左侧-->
+        <!--start:右侧-->
+        <div class="chat-r right">
+          <div class="chat-box js_ImContentBox">
+
+          </div>
+          <div class="chat-options1 clearfix">
+            <div class="publish-icons left">
+              <a href="javascript:void(0);" class="icon-face" title="表情"></a>
+              <a href="javascript:void(0);" class="icon-pic" title="图片"></a>
+              <a href="javascript:void(0);" class="icon-file" title="附件"></a>
+            </div>
+            <a href="javascript:void(0);" class="icon-history right" title="聊天记录"></a>
+          </div>
+          <div class="chat-publish">
+            <textarea></textarea>
+          </div>
+          <div class="chat-options2 clearfix">
+            <button type="submit" class="btn-add1 right">发布</button>
+          </div>
+        </div>
+        <!--end:右侧-->
+      </div>
+    </div>
+  </div>
+  <!--end:在线聊天窗口-->
+</div>
+
+<script src="{$smarty.const.SITE_URL}/js/mCustomScrollbar/jquery.mCustomScrollbar.min.js"></script>
+<script src="{$smarty.const.SITE_URL}/js/mCustomScrollbar/jquery.mousewheel.min.js"></script>
+{load_js file="module/onlineChat.js?a={time()}"}
+<script>
+$(function(){
+  //在线好友列表
+  $("#jsOnlineList").mCustomScrollbar({
+    scrollButtons:{
+      enable:true
+    }
+  });
+  
+  //正在聊天列表
+  $("#jsChatList").mCustomScrollbar({
+    scrollButtons:{
+      enable:true
+    }
+  });
+  
+  //聊天记录
+  $("#jsChatBox").mCustomScrollbar({
+    scrollButtons:{
+      enable:true
+    }
+  });
+});
+</script>

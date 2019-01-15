@@ -1,0 +1,151 @@
+{include_www file="admin/lib/header_new.html" title="企业号部门管理"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    .btn-top{
+        margin-top:5px;
+    }
+    </style>
+<!-- 主内容 start -->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('qydev/admin/department')}"><i class="iconfont iconfont-logo2"></i>企业号部门管理</a>
+             &gt;
+            <span>二级部门列表（总计：{$count}）</span>
+            <div class="pull-right">
+                <a href="{AnUrl('qydev/admin')}" class="btn btn-primary btn-sm pull-right">企业号通讯录列表</a>
+            </div>
+        </div>
+        <div class="form-search clearfix">
+             <div class="pull-left">
+                 <form action="{AnUrl('qydev/admin/department')}" method='get'>
+                   <input type="text"  style="width:200px;"  name="search_filter[department_id]" value="{$search_filter.department_id}" class="form-control input-sm pull-left js_search"  placeholder="按渠部门ID搜索">
+                   <input type="text"  style="width:200px;"  name="search_filter[name]" value="{$search_filter.name}" class="form-control input-sm pull-left js_search"  placeholder="按手部门名称搜索">
+                   <button type="submit" class="btn-search pull-left">搜索</button>
+                 </form>
+            </div>
+            <div class="pull-right">
+                 <a href="{AnUrl('qydev/admin/department/add')}" class="btn btn-sm btn-success">添加</a>
+                {*<a href="{AnUrl('qydev/admin/department',"?user_number={$search_filter.user_number}&user_name={$search_filter.user_name}&user_phone={$search_filter.user_phone}")}" class="btn btn-sm btn-success">导出</a>*}
+            </div>
+        </div>
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th width="33%">部门ID</th>
+                    <th width="33%">部门名称</th>
+                    <th width="33%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $k=>$v}
+                    <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                    <td>{$v.department_id}</td>
+                    <td>{$v.name}</td>
+                    <td class="txtleft " resId={$v.id}" res_name="{$v.name}">
+                      <a class="btn btn-xs btn-success" href="{AnUrl("qydev/admin/department/add?id={$v.id}")}">编辑</a>
+                      {if $v.parent_id}
+                      {if !$v.status}
+                            <a class="btn btn-xs btn-info up_del"  href="javascript:">获取通讯录信息</a>
+                        {else}
+                            <a class="btn btn-xs  btn-danger " href="javascript:">已获取通讯录信息</a>
+                        {/if}
+                      {/if}
+
+                      {if $v.parent_id}
+                      <a class="btn btn-xs btn-danger delete_hot" href="javascript:;">删除</a>
+                      {/if}
+                    </td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="13">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+</div>
+<script>
+var updateStatus = {
+    _id:'',
+    _msg :'操作失败',
+    _url:"{AnUrl('qydev/admin/ajax/update_department_status')}",
+    update:function(obj,status,update){
+        this._id   = $(obj).parent().attr('resId');
+        this._name = $(obj).parent().attr('res_name');
+        
+        $.post(this._url,{ id : this._id, status:status , res_name:this._name  },function(json){
+            if (json.info == 'ok') {
+                if (status == 3) {
+                    updateStatus.updateHtmlDown(obj);
+                } else if (status == 1) {
+                    updateStatus.updateHtmlUp(obj);
+                } else if (status == 2) {
+                    updateStatus.deleteHtml(obj);
+                }
+            } else {
+                alert(json.info);
+            }
+        },'json')
+    },
+    deleteHtml:function(obj){
+   	 $(obj).closest("tr").fadeOut(function(){
+           $(this).remove();
+           interLineColor();
+       });
+       return false;
+    },
+    updateHtmlDown:function(obj){
+         $(obj).addClass('btn-danger');
+         $(obj).addClass('down_del');
+
+         $(obj).removeClass('btn-info');
+         $(obj).removeClass('up_del');
+        //$(obj).removeClass('btn-danger');
+        //$(obj).removeClass('down_del');
+
+        //$(obj).addClass('btn-info');
+        //$(obj).addClass('up_del');
+       
+    },
+    updateHtmlUp:function(obj){
+        $(obj).html('更新通讯录信息');
+        $(obj).addClass('btn-danger');
+        $(obj).addClass('down_del');
+
+        $(obj).removeClass('btn-info');
+        $(obj).removeClass('up_del');
+    }
+};
+
+$('.update').live('click',function(event){
+    event.preventDefault();
+    var result = confirm( '确认更新通讯录信息？');
+    if (result) {
+      updateStatus.update(this,3);
+    }
+    
+    return false;
+    
+})
+$('.up_del').live('click',function(event){
+    event.preventDefault();
+    updateStatus.update(this,1);
+})
+
+$('.delete_hot').live('click',function(event){
+    event.preventDefault();
+    event.stopPropagation();
+    if (!confirm("确定要删除该条记录吗？")) {
+      return false;
+    }
+    updateStatus.update(this,2);
+})
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

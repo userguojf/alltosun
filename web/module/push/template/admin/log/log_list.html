@@ -1,0 +1,64 @@
+{include_www file="admin/lib/header_new.html" title="推送管理"}
+{include_www file="admin/lib/sidebar_new.html"}
+<!-- 主内容 start -->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('push/admin/log')}"><i class="iconfont iconfont-logo2"></i>推送日志</a>
+            &gt;日志列表
+            <span>（共{$count}条）</span>
+        </div>
+        <br />
+        <div class="form-search clearfix">
+          <div class="pull-left">
+            <form action="{AnUrl('push/admin/log')}" methhod='get' id="searchFrom">
+              
+              <select name="response_code" style="width:300px" class="form-control input-sm pull-left ">
+                <option value='' {if !$response_code}selected{/if}>请选择响应码</option>
+                <option value='200' {if $response_code == 200}selected{/if}>200</option>
+                <option value='-1' {if $response_code == -1}selected{/if}>其他</option>
+              </select>
+              
+              <button type="button" class="btn-search pull-left" id="searchData" >搜索</button>
+            </form>
+          </div>
+        </div>
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th width="5%">响应码</th>
+                    <th width="20%">地址</th>
+                    <th width="30%">请求数据</th>
+                    <th width="30%">响应数据</th>
+                    <th width="15%">添加时间</th>
+                </tr>
+                </thead>
+                <tbody>
+                  {foreach $log_list as $k=>$v}
+                    <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                      <td>{$v.response_code}</td>
+                      <td>{if $v.api_path}{$v.api_path}{else}--{/if}</td>
+                      <td>{$v.request_body}</td>
+                      <td>{$v.response_body}</td>
+                      <td>{$v.add_time}</td>
+                    </tr>
+                  {foreachelse}
+                  <tr><td colspan="5">暂无相关信息</td></tr>
+                  {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+<script>
+  $(function () {
+    $('#searchData').on('click', function () {
+      $('#searchFrom').submit();
+    });
+  })
+</script>
+{include_www file="admin/lib/footer_new.html"}

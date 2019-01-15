@@ -1,0 +1,192 @@
+{include_www file="admin/lib/header_new.html" title="常见问题列表"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    .btn-top{
+        margin-top:5px;
+    }
+    </style>
+<!-- 主内容 start -->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('faq/admin')}"><i class="iconfont iconfont-logo2"></i>常见问题管理</a>
+            <span> > 常见列表</span>
+        </div>
+        <div class="form-search clearfix">
+             <div class="pull-left">
+                 <form action="{AnUrl('faq/admin')}" method='get'>
+                   <input type="text" id="title" style="width:250px;"  name="search_filter[title]" value="{$search_filter.title}" class="form-control input-sm pull-left js_search"  placeholder="按问题标题搜索">
+                   <button type="submit" class="btn-search pull-left">搜索</button>
+                 </form>
+            </div>
+            <div class="pull-right">
+                <a href="{AnUrl('faq/admin/add')}" class="btn btn-sm btn-success">添加问题</a>
+            </div>
+        </div>
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th width="23%">问题标题</th>
+                    <th width="12%">链接状态</th>
+                    <th width="12%">分类</th>
+                    <th width="10%">排序<span class="edit_order label" style="color: #C11919;cursor:pointer;">(编辑)</span></th>
+                    <th width="10%">创建者</th>
+                    <th width="18%">创建时间</th>
+                    <th width="20%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {foreach $list as $k=>$v}
+
+                <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+ 
+                    <td>{$v.question}</td>
+                    <td>{if $v.site_type==1}新建详情页{else}外部链接{/if}</td>
+                    <td>
+                        {if $v.diff_question ==1}
+                                                                          安装APP
+                        {elseif $v.diff_question == 2}
+                                                                         开机不启动
+                        {elseif $v.diff_question == 3}
+                                                                           亮屏消失了
+                        {elseif $v.diff_question == 4}
+                                                                        发布价格
+                        {/if}
+                    </td>
+                    <td class="edit_view">{$v.view_order}</td>
+                    <td>{member_helper::get_member_info($v.res_id,'member_user')}</td>
+                    <td>{$v.add_time}</td>
+                    <td class="txtleft " resId={$v.id}>
+                        <a class="btn btn-xs  btn-top btn-info" href="{AnUrl("faq/admin/add?id={$v.id}")}">编辑</a>
+                        {if !$v.status}
+                            <a class="btn btn-xs btn-top btn-info up_del" data="{$v.id}" href="javascript:">发布</a>
+                        {else}
+                            <a class="btn btn-xs btn-top btn-danger down_del" data="{$v.id}" href="javascript:">下线</a>
+                        {/if}
+                        <a class="deleteOne btn btn-xs btn-top btn-danger" href="{AnUrl("faq/admin/delete?id={$v.id}")}">删除</a>
+                    </td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="13">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+</div>
+<script>
+    $(function() {
+        //优先级
+      var isCli = false;
+      
+      $('.edit_order').on('click',function(){
+        $(this).removeClass('edit_order').addClass('save_order');
+        $('.save_order').html('(保存)');
+        $('.save_order').on('click',function(){
+          window.location.reload();
+        });
+        
+        $.each($('.edit_view'),function(i,n) {
+          var value=$('.edit_view').eq(i).text();
+          if(!isCli) {
+            $('.edit_view').eq(i).html('');
+            var con='<input type="text" class="edit_blur" value="'+value+'" style="width:50px;text-align:center;">';
+            $('.edit_view').eq(i).append(con);
+          }
+        });
+         
+         isCli =true;
+      });
+    });
+    /**
+     * 编辑的框写入数据并且释放鼠标后执行
+     */
+    $(document).on('blur','.edit_blur',function(){
+      var value =$(this).val();
+      var str =$(this).closest('tr').attr('id');
+      var id =str.substring(8);
+      var url = "{AnUrl('faq/admin/ajax/ajax_update')}";
+      
+      $.post(url,{ id:id,value:value },function(json){},'json');
+  
+      $(document).on('click','.save_order',function(){
+        window.location.reload();
+      });
+    });
+</script>
+<script>
+       $(function(){
+         //发布状态
+         $('.up_del').toggle(function(){
+             var $this = $(this);
+             var $id = $this.attr('data');
+             console.log($id);
+             $.post("{AnUrl('faq/admin/ajax/up_line')}",{ id:$id,status:1 },function(json){
+                  if (json.info=='ok') {
+                      $this.html('下线');
+                      $this.addClass('btn-danger');
+                      $this.addClass('down_del');
+                      
+                      $this.removeClass('btn-info');
+                      $this.removeClass('up_del');
+                  }
+         },'json')
+        },
+        function(){
+         var $this = $(this);
+            var $id = $this.attr('data');
+            console.log($id);
+            $.post("{AnUrl('faq/admin/ajax/up_line')}",{ id:$id,status:0 },function(json){
+               if (json.info == 'ok'){
+                   $this.html('发布')
+                   $this.addClass('btn-info');
+                   $this.addClass('up_del');
+                   
+                   $this.removeClass('btn-danger');
+                   $this.removeClass('down_del');
+               }
+            
+            },'json')
+           });
+         
+         $('.down_del').toggle(function(){
+             var $this = $(this);
+             var $id = $this.attr('data');
+             console.log($id);
+             $.post("{AnUrl('faq/admin/ajax/up_line')}",{ id:$id,status:0 },function(json){
+                  if (json.info=='ok') {
+                      $this.html('发布')
+                      $this.removeClass('btn-danger');
+                      $this.removeClass('down_del');
+                      
+                      $this.addClass('btn-info');
+                      $this.addClass('up_del');
+                  }
+         },'json')
+        },
+        function(){
+         var $this = $(this);
+            var $id = $this.attr('data');
+            console.log($id);
+            $.post("{AnUrl('faq/admin/ajax/up_line')}",{ id:$id,status:1 },function(json){
+               if (json.info == 'ok'){
+                   $this.html('下线')
+                   $this.removeClass('btn-info');
+                   $this.removeClass('up_del');
+                   
+                   $this.addClass('btn-danger');
+                   $this.addClass('down_del');
+               }
+            
+            },'json')
+           });
+         })
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

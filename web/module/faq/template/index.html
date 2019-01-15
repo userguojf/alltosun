@@ -1,0 +1,73 @@
+{include file="share_header.html" title="常见问题管理"}
+</style>
+  <section class="container">
+    <div class="search">
+      {*<form action ="{AnUrl('share/awifi')}">*}
+          <i class="icon-search"></i>
+          <div class="js_btnSearch">输入您要搜索的内容</div>
+      {*</form>*}
+    </div>
+    <ul class="nav-question clearfix">
+      <li>
+        <a href="{AnUrl('faq/diff_type','?diff_question=1')}"><img src="{$smarty.const.STATIC_URL}/images/m-question/icon1.png">安装APP</a>
+      </li>
+      <li>
+        <a href="{AnUrl('faq/diff_type','?diff_question=2')}"><img src="{$smarty.const.STATIC_URL}/images/m-question/icon2.png">开机不启动</a>
+      </li>
+      <li>
+        <a href="{AnUrl('faq/diff_type','?diff_question=3')}"><img src="{$smarty.const.STATIC_URL}/images/m-question/icon3.png">亮屏消失了</a>
+      </li>
+      <li>
+        <a href="{AnUrl('faq/diff_type','?diff_question=4')}"><img src="{$smarty.const.STATIC_URL}/images/m-question/icon4.png">发布价格</a>
+      </li>
+    </ul>
+    <div class="question-list">
+      <h3 class="title"><img src="{$smarty.const.STATIC_URL}/images/m-question/icon5.png" width="20">常见问题</h3>
+      <ul>
+        {foreach $faq_info as $k => $v}
+          <li><a {if $v.site_type==1}href="{Anurl('faq/detail',"?id={$v.id}")}"{else}href="{$v.link}"{/if}>{$v.question}<em></em></a></li>
+        {foreachelse}
+          <li><a>暂无问题</a></li>
+        {/foreach}
+      </ul>
+    </div>
+    <!--start:搜索弹层-->
+    <div class="pop-search js_popSearch" {if $is_search} style="left: 0%;"{/if}>
+        <header class="header">
+            <div class="search">
+            <form action="{AnUrl('faq')}" method="get">
+                <i class="icon-search"></i>
+                <input type="text" name='question' value="{$question}" placeholder="输入您要搜索的内容">
+                <input type="hidden" name='search' value="is_search">
+             </form>
+            </div>
+            <a href="{AnUrl('faq')}" class="btn-concel js_btnConcel">关闭搜索</a>
+        </header>
+        <div class="question-list">
+           <ul>
+           {if $is_search && $is_having}
+             {foreach $faq_info as $k => $v}
+               <li><a {if $v.site_type==1}href="{AnUrl('faq/detail',"?id={$v.id}")}"{else}href="{$v.link}"{/if}>{$v.question}<em></em></a></li>
+             {foreachelse}
+               <li><a>暂无搜索问题</a></li>
+             {/foreach}
+           {/if}
+           </ul>
+       </div>
+    </div>
+    <!--end:搜索弹层-->
+    {*<a href="{AnUrl('e/admin/feedback')}" class="btn-go-fankui"><em></em>我要反馈</a>*}
+  </section>
+<script>
+     $('.btn-back').on('click', function (e) {
+       e.stopPropagation();
+         try {
+             window.clickback.onClickBack();
+         } catch(e) {
+             window.history.back(-1);
+             //console.log(e);
+         }
+        
+    }); 
+    </script>
+{include file="share_footer.html"}

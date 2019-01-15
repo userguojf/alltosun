@@ -1,0 +1,92 @@
+{include_www file="admin/lib/header_new.html" title="RFID管理"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('rfid/admin')}"><i class="iconfont iconfont-logo2"></i>RFID管理</a>
+            &gt;
+            <span>RFID列表（{$count}）</span>
+            <span>{if $member_info.res_name == 'group'}全国已覆盖营业厅{rfid_helper::get_business_bestrow($member_info)}个<br />{/if}</span>
+            {*<a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>*}
+          </div>
+
+          <br />
+          <div class="form-search clearfix">
+             <div class="pull-left">
+                 <form action="{AnUrl('rfid/admin')}" method='get' class="searchForm">
+                   {if $member_res_name != 'business_hall'}
+                     {* 公共分权限搜索模块 *}
+                     {widget model='rfid' func='get_search_by_member' file='get_search_by_member.html' member_info="{$member_info}"}
+                     <input type="text" style="width:120px;"  name="search_filter[label_id]" value="{$search_filter.label_id}" class="form-control input-sm pull-left js_search"  placeholder="请按标签ID搜索">
+                     <button type="submit" class="btn-search pull-left">搜索</button>
+                   {/if}
+                 </form>
+            </div>
+            <div class="pull-right">
+                <a href="javascript:void(0);" class="btn btn-sm btn-success btnExport">导出</a>
+                <a href="{AnUrl('rfid/admin/add')}" class="btn btn-sm btn-info">添加</a>
+            </div>
+        </div>
+          
+          <div class="list">
+            
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="width:%;">营业厅</th>
+                  <th style="width:%;">标签ID</th>
+                  <th style="width:%;">柜台</th>
+                  <th style="width:%;">手机品牌</th>
+                  <th style="width:%;">型号</th>
+                  <th style="width:%;">颜色</th>
+                  <th style="width:%;">IMEI</th>
+                  <th style="width:%;">设备状态</th>
+                  <th style="width:%;">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {foreach $rfid_list as $k=>$v}
+                <tr id="dataList{$v.id}" >
+                  <td>{business_hall_helper::get_info_name('business_hall', $v.business_hall_id, 'title')}</td>
+                  <td>{$v.label_id}</td>
+                  <td>{shoppe_helper::get_shoppe_info($v.shoppe_id, 'shoppe_name')}</td>
+                  <td>{$v.name}</td>
+                  <td>{$v.version}</td>
+                  <td>{$v.color}</td>
+                  <td>{$v.imei}</td>
+                  <td>{$online_status = rfid_helper::get_label_status($v.label_id)}
+                    {if $online_status}
+                      <a class="btn btn-xs btn-info" style="background-color:green; border-color:green" href="javascript:;">在线</a>
+                    {else}
+                      <a class="btn btn-xs btn-info" style="background-color:rgb(230, 179, 61); border-color:rgb(230, 179, 61)" href="javascript:;">离线</a>
+                    {/if}
+                  </td>
+                  <td class="txtleft " resId={$v.id}>
+                        <a class="btn btn-xs  btn-top btn-success" href="{AnUrl("rfid/admin/add?id={$v.id}")}">编辑</a>
+                        <a class="deleteOne btn btn-xs btn-top btn-danger" href="{AnUrl("rfid/admin/delete?id={$v.id}")}">删除</a>
+                    </td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="9">暂无相关信息</td></tr>
+                {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        <!--end:列表-->
+      </div>
+<!-- 主内容 end -->
+<script>
+$(function () {
+  $('.btnExport').on('click', function () {
+    $('.searchForm').prepend('<input type="hidden" name="if_export" value="1" >');
+    $('.searchForm').submit();
+    $('.searchForm input[name="if_export"]').remove();
+  });
+});
+
+</script>
+{include_www file="admin/lib/footer_new.html"}

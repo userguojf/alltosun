@@ -1,0 +1,23 @@
+{include_www file="admin/lib/e_header.html" title="探针统计"}
+    <section class="container">
+        <div class="column-count6 clearfix">
+            <div class="con left">
+                <p><span class="name">MAC</span><em></em>{$mac}</p>
+                <p><span class="name">{probe_helper::get_brand($int_mac)}</span></p>
+            </div>
+            <div class="num right">记录停留{count($list)}次</div>
+        </div>
+        <div class="column-list1 column-list2">
+            <table>
+                {foreach $list as $k => $v}
+                    <tr>
+                        <td>{$v.date}</td>
+                        {$ary = probe_helper::get_remain($v.remain_time)}
+                        <td>{date('H:i', $v.frist_time)}进店，停留{if $ary.hour}{$ary.hour}小时{$ary.min}分{$ary.sec}秒{elseif $ary.min}{$ary.min}分{$ary.sec}秒{else}{$ary.sec}秒{/if}</td>
+                        <td>参考距离{if abs($v.up_rssi) < 60}2米{else if abs($v.up_rssi) < 70}3米{else}4米{/if}</td>
+                    </tr>
+                {/foreach}
+            </table>
+        </div>
+    </section>
+{include_www file="admin/lib/e_footer.html"}

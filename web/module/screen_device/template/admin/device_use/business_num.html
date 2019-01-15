@@ -1,0 +1,50 @@
+{include_www file="admin/lib/header_new.html" title="亮屏新增"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('screen_device/admin/device_use')}"><i class="iconfont iconfont-logo2"></i>品牌统计</a>
+      &gt;<span>{if $type === 2}新增营业厅数{else}营业厅总数{/if}（合计：{$count}）</span>
+      <span>{$search_filter.start_date} 至 {$search_filter.end_date}</span>
+      <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+    </div>
+    <br />
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            {if $member_info.res_name != 'business_hall'}
+              <th width="10%">省</th>
+              <th width="10%">市</th>
+              <th width="10%">营业厅名称厅</th>
+            {/if}
+            <th width="8%">设备量</th>
+            <th width="6%">活跃量</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $device_list as $k=>$v}
+
+          <tr id="dataList{$k}">
+            {if $member_info.res_name != 'business_hall'}
+              <td>{_uri('province', $v.province_id, 'name')}</td>
+              <td>{_uri('city', $v.city_id, 'name')}</td>
+              <td>{_uri('business_hall', $v.business_id, 'title')}</td>
+            {/if}
+            <td>{$v.device_num}</td>
+            <td>{$v.active_num}</td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="{if $member_info.res_name != 'business_hall'}5{else}2{/if}">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

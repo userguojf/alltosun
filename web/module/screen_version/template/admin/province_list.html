@@ -1,0 +1,55 @@
+{include_www file="admin/lib/header_new.html" title="版本管理"}
+{include_www file="admin/lib/sidebar_new.html"}
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('screen_version/admin')}"><i class="iconfont iconfont-logo2"></i>版本列表</a>
+            &gt;
+            {if $business_hall_title}<span>{$business_hall_title}</span>&gt;{/if}
+            <span>{$search_filter['version_no']}</span>
+            >
+            <span>省份列表（合计：{if $pro_version_list_count}{$pro_version_list_count}{else}0{/if}/个）</span>
+        </div>
+        <br/>
+
+        <div class="form-search clearfix">
+            <div class="pull-left">
+
+
+            </div>
+        </div>
+
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th width="30%">省</th>
+                    <th width="30%">当前有设备的营业厅数</th>
+                    <th>当前设备数</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $pro_version_list as $k=>$v}
+                <tr id="dataList{$k}">
+                    <td>{_uri('province', $v, 'name')}</td>
+                    <td>{screen_version_helper::get_business_count_by_provinceid($v, {$search_filter['version_no']})}</td>
+                    <td><a href="{AnUrl("screen_version/admin/business_list?search_filter[province_id]={$v}&search_filter[version_no]={$search_filter['version_no']}")}"
+                        class="btn btn-success btn-sm right add_nickname"><i class="icon-add"></i>{screen_version_helper::get_screen_count_by_provinceid({$search_filter['version_no']} ,$v)}</a>
+                    </td>
+                </tr>
+                {foreachelse}
+                <tr>
+                    <td colspan="{if $member_info.res_name != 'business_hall'}13{else}10{/if}">暂无相关信息</td>
+                </tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

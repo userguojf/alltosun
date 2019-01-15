@@ -1,0 +1,116 @@
+{include_www file="admin/lib/header_new.html" title="登录信息列表"}
+{include_www file="admin/lib/sidebar_new.html"}
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('user/admin')}"><i class="iconfont iconfont-logo2"></i>用户列表</a>
+      &gt;
+      <span>登录信息</span>
+      <a class="btn btn-primary btn-sm pull-right" href='{AnUrl("user/admin")}'>返回用户列表</a> 
+    </div>
+    <!--
+    <div class="tabs1">
+      <ul class="clearfix">
+        <li class="curr"><a href="###">全国投放列表</a></li>
+        <li class=""><a href="###">各省投放列表</a></li>
+      </ul>
+    </div>
+    -->
+    <div class="form-search clearfix">
+      {*<div class="pull-left">
+        <form action="{AnUrl('action/admin/action')}" method="get">
+          <input type="text" name="search_filter[id]"placeholder="请输入ID" value="{if $search_filter.id}{$search_filter.id}{/if}" class="form-control input-sm pull-left">
+
+          <input type="text" name="search_filter[name]"placeholder="请输入控制器名称" value="{if $search_filter.name}{$search_filter.name}{/if}" class="form-control input-sm pull-left">
+
+
+          <button type="submit" class="btn-search pull-left">搜索</button>
+
+        </form>
+      </div>
+      
+      <div class="pull-right">
+        <!-- <span class="tips">*还可添加8个用户 </span> -->
+        <a href="{AnUrl('action/admin/action/add', "&pid={$pid}")}" class="btn btn-sm btn-success">添加权限</a>
+
+      </div>
+      
+    </div>*}
+
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>登录营业厅</th>
+          <th>登录ip</th>
+          <th>登录设备</th>
+          <th>登录时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        {foreach $login_list as $k=>$v}
+        <tr id="dataList{$v.id}">
+          <td>{$v.id}</td>
+          <td>{business_hall_helper::get_business_hall_info($v.business_hall_id, 'title')}</td>
+          <td>{$v.ip}</td>
+          <td>{$v.terminal_type}</td>
+          <td>{$v.add_time}</td>
+        </tr>
+        {foreachelse}
+        <tr><td colspan="9">暂无相关信息</td></tr>
+        {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+<!-- 分页 start -->
+<script>
+  $(function() {
+
+    var isCli = false;
+
+    $('.edit_order').on('click',function(){
+      $(this).removeClass('edit_order').addClass('save_order');
+      $('.save_order').html('(保存)');
+      $('.save_order').on('click',function(){
+        window.location.reload();
+      });
+
+      $.each($('.edit_view'),function(i,n) {
+        var value=$('.edit_view').eq(i).text();
+        if(!isCli) {
+          $('.edit_view').eq(i).html('');
+          var con='<input type="text" class="edit_blur" value="'+value+'" style="width:50px;text-align:center;">';
+          $('.edit_view').eq(i).append(con);
+        }
+      });
+
+      isCli =true;
+    });
+  });
+  /**
+   * 编辑的框写入数据并且释放鼠标后执行
+   */
+  $(document).on('blur','.edit_blur',function(){
+    var value =$(this).val();
+    var str =$(this).closest('tr').attr('id');
+    var id =str.substring(8);
+    var url = "{AnUrl('action/admin/action/ajax_update')}";
+
+    $.post(url,{ id:id,value:value },function(json){},'json');
+
+    $(document).on('click','.save_order',function(){
+      window.location.reload();
+    });
+  });
+
+</script>
+<!-- 分页 end -->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

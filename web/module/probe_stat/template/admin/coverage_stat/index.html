@@ -1,0 +1,175 @@
+{include_www file="admin/lib/header_new.html" title="探针管理"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('probe_stat/admin/coverage_stat')}"><i class="iconfont iconfont-logo2"></i>覆盖统计</a>
+      &gt;
+      <span>设备管理</span>
+    </div>
+    <div class="form-search row clearfix">
+      <div class="tabs2">
+        <ul class="col-sm-4" style="width:200px;">
+          <li class="dateType {if $search_filter.date_type == 1}curr{/if}"><a href="javascript:void(0);" value="1">日</a></li>
+          <li class="dateType {if $search_filter.date_type == 2}curr{/if}"><a href="javascript:void(0);" value="2">月</a></li>
+        </ul>
+        <div class="col-sm-8">
+          <div class="form-inline" id="dateSelectBox" >
+            <form action="{AnUrl("probe_stat/admin/coverage_stat?res_name={$res_name}&res_id={$res_id}")}" class="formBox" methhod='get'>
+              <input type="hidden" name="order_field" value="{$order_field}">
+              <input type="hidden" name="order_dir" value="{$order_dir}">
+              <input type="hidden" name="search_filter[date_type]" value="{$search_filter.date_type}">
+              <div class="form-group">
+                  <label for="exampleInputName2">时间：</label>
+                  <input type="text" class="form-control" style="width:100px; text-align:center;" name="search_filter[date]" id="start_time" value="{$search_filter.date}" />
+              </div>
+              <button type="submit" class="btn btn-success btn-sm" id="searchData">搜索</button>
+            </form>
+          </div>
+        </div>
+        <div class="pull-right">
+          <a href="javascript:void(0);" class="btn btn-sm btn-success btnExport">导出</a>
+        </div>
+      </div>
+    </div>
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>归属地</th>
+            <th>总门店量</th>
+            <th>已覆盖量
+              {if $order_dir == 'asc' && $order_field == 'coverage_business_hall_count'}
+                <span class="glyphicon  glyphicon-arrow-down order_type" aria-hidden="true" order_field="coverage_business_hall_count" order_dir='asc' "></span>
+              {else}
+                <span class="glyphicon glyphicon-arrow-up order_type" aria-hidden="true" order_field="coverage_business_hall_count" order_dir='desc' ></span>
+              {/if}
+            </th>
+            {*月*}
+            {if $search_filter.date_type == 2}
+              <th>有效活跃设备</th>
+            {*日*}
+            {else}
+               <th>设备状态（正常）
+                {if $order_dir == 'asc' && $order_field == 'normal_device_count'}
+                  <span class="glyphicon  glyphicon-arrow-down order_type" aria-hidden="true" order_field="normal_device_count" order_dir='asc' "></span>
+                {else}
+                  <span class="glyphicon glyphicon-arrow-up order_type" aria-hidden="true" order_field="normal_device_count" order_dir='desc' ></span>
+                {/if}
+              </th>
+            {/if}
+            <th>设备状态（异常）
+              {if $order_dir == 'asc' && $order_field == 'abnormal_device_count'}
+                <span class="glyphicon  glyphicon-arrow-down order_type" aria-hidden="true" order_field="abnormal_device_count" order_dir='asc' "></span>
+              {else}
+                <span class="glyphicon glyphicon-arrow-up order_type" aria-hidden="true" order_field="abnormal_device_count" order_dir='desc' ></span>
+              {/if}
+            </th>
+            <th>设备状态（待安装）</th>
+            <th>未覆盖门店
+              {if $order_dir == 'asc' && $order_field == 'not_covered_business_hall_count'}
+                <span class="glyphicon  glyphicon-arrow-down order_type" aria-hidden="true" order_field="not_covered_business_hall_count" order_dir='asc' "></span>
+              {else}
+                <span class="glyphicon glyphicon-arrow-up order_type" aria-hidden="true" order_field="not_covered_business_hall_count" order_dir='desc' ></span>
+              {/if}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {if $subordinate == 'business_hall'}{$field='id'}{else}{$field = $subordinate|cat:"_id"}{/if}
+          {foreach $stat_list as $k=>$v}
+            <tr id="dataList{$v.id}" class="view_id">
+              <td>{$v.region_name}</td>
+              <td>{$v.business_hall_count}</td>
+              <td>
+                {if $res_name == 'business_hall'}
+                  {$v.coverage_business_hall_count}
+                {else}
+                  <a class="text-success" href="{AnUrl("probe_stat/admin/coverage_stat/business_hall_list?res_name={$subordinate}&res_id={$v[$field]}&type=1")}">
+                    {$v.coverage_business_hall_count}
+                  </a>
+                {/if}
+              </td>
+              {* 月 *}
+              {if $search_filter.date_type == 2}
+                <td>
+                  <a class="text-success" href="{AnUrl("probe_stat/admin/coverage_stat/device_status_list{$str_search_filter}&res_name={$subordinate}&res_id={$v[$field]}&type=7")}">
+                    {$v.normal_device_count}
+                  </a>
+                </td>
+<!--            <td>
+                  <a class="text-success" href="{AnUrl("probe_stat/admin/coverage_stat/device_status_list{$str_search_filter}&res_name={$subordinate}&res_id={$v[$field]}&type=8")}">
+                    {$v.not_active}
+                  </a>
+                </td> -->
+              {else}
+                <td>
+                  <a class="text-success" href="{AnUrl("probe_stat/admin/coverage_stat/device_status_list{$str_search_filter}&res_name={$subordinate}&res_id={$v[$field]}&type=1")}">
+                    {$v.normal_device_count}
+                  </a>
+                </td>
+              {/if}
+              <td>
+                <a class="text-success" href="{AnUrl("probe_stat/admin/coverage_stat/device_status_list{$str_search_filter}&res_name={$subordinate}&res_id={$v[$field]}&type=2")}">
+                  {$v.abnormal_device_count}
+                </a>
+              </td>
+              <td>
+                  <a class="text-success" href="{AnUrl("probe_stat/admin/coverage_stat/device_status_list{$str_search_filter}&res_name={$subordinate}&res_id={$v[$field]}&type=3")}">
+                    {$v.to_be_installed_device_count}
+                  </a>
+              </td>
+              <td >
+                {if $res_name == 'business_hall'}
+                  {$v.not_covered_business_hall_count}
+                {else}
+                  <a class="text-success" href="{AnUrl("probe_stat/admin/coverage_stat/business_hall_list?res_name={$subordinate}&res_id={$v[$field]}&type=2")}">
+                    {$v.not_covered_business_hall_count}
+                  </a>
+                {/if}
+              </td>
+            </tr>
+          {/foreach}
+        </tbody>
+      </table>
+    </div>
+    {include_www file="admin/lib/pager_new.html"}
+  </div>
+</div>
+<script>
+//排序
+$(function() {
+  //排序
+  $('.order_type').on('click', function () {
+    if ($(this).hasClass('glyphicon-arrow-up')) {
+      var order_dir = 'asc';
+    } else {
+      var order_dir = 'desc';
+    }
+    $('.formBox input[name="order_dir"]').val(order_dir);
+    $('.formBox input[name="order_field"]').val($(this).attr('order_field'));
+    //window.location.href = window.location.href + '&order_dir=' + order_dir + '&order_field=' + $(this).attr('order_field');
+    $('.formBox').submit();
+  });
+  
+  //导出
+  $('.btnExport').on('click', function () {
+    $('.formBox').append('<input type ="hidden" name="if_export" value="1">');
+    $('.formBox').submit();
+    $('.formBox input[name="if_export"]').remove();
+  });
+  
+  //日期类型选择
+  $('.dateType').on('click', function () {
+    var dateType = $(this).find('a').attr('value');
+    $('.formBox input[name="search_filter[date_type]"]').val(dateType);
+    $('.dateType').removeClass('curr');
+    $(this).addClass('curr');
+  });
+});
+
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

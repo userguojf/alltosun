@@ -1,0 +1,265 @@
+{include_www file="admin/lib/header_new.html" title="添加编辑管理员信息"}
+
+<!--start:右侧-->
+<div class="main mian2 ">
+  <div class="column">
+    <div class="position">
+      <a href='{AnUrl("action/admin/group_user", "?gid={$gid}")}'><i class="iconfont iconfont-logo2"></i>返回权限列表</a>
+      &gt;
+      <span>角色成员列表</span>
+      <a href="{AnUrl('action/admin/group')}" class="btn btn-primary btn-sm pull-right">返回角色管理</a>
+    </div>
+
+    <div class="clearfix">
+      <div class="form-add pull-left">
+        {AnForm class='form-horizontal' action="{AnUrl('action/admin/group_user/save')}" method="post"}
+
+        <input type="hidden" name="uid" value="{$info.id}">{*编辑用户id*}
+
+        <input type="hidden" name="gid" value="{$gid}">{*分组id*}
+
+        <div class="form-group">
+          <label class="col-sm-4 control-label">管理员名称：</label>
+          <div class="col-sm-6">
+            <a class='less-box'>
+              {AnForm type="text" name="info[member_user]" value="{$info['member_user']}" class=""  filter="filter_string"}
+            </a>
+          </div>
+        </div>
+        <div class="form-group ">
+          <label class="col-sm-4 control-label">管理员密码：</label>
+
+          <div class="col-sm-6">
+            <span>{AnForm type="password" name="info[member_pass]" value="" class="form-control"  filter="filter_string"}</span>
+          </div>
+        </div>
+      {if $member_res_name=='group'}
+        <!-- 标题 -->
+        {if $res_name == 'business_hall' || $res_name=='area' || $res_name=='city' || $res_name=='province'}
+        <div class="form-group">
+          <label class="col-sm-4 control-label">角色成员省份：</label>
+          <div class="col-sm-6">
+
+            {AnForm type="select"  name="info[province_id]" options=$province_list  selected=$pro_selectid class="form-control selectProvince" validate="required"}
+          </div>
+        </div>
+        {/if}
+
+        {if  $res_name == 'business_hall' || $res_name=='area' || $res_name=='city'}
+        <div class="form-group">
+          <label class="col-sm-4 control-label">角色成员市区：</label>
+          <div class="col-sm-6">
+            {AnForm type="select" name="info[cit]" options=$city_list  selected=$city_selectid  class="form-control selectCity" validate="required" }
+          </div>
+        </div>
+        {/if}
+        {if $res_name == 'business_hall' || $res_name=='area' }
+        <div class="form-group">
+          <label class="col-sm-4 control-label">角色成员区域：</label>
+          <div class="col-sm-6">
+            {AnForm type="select" name="info[dit]" options=$area_list selected=$area_selectid  class="form-control selectArea" validate="required" }
+          </div>
+        </div>
+        {/if}
+        {if $res_name =='business_hall' }
+        <div class="form-group">
+          <label class="col-sm-4 control-label">角色成员营业厅：</label>
+          <div class="col-sm-6">
+            {AnForm type="select" name="info[business_hall]" options=$business_hall_list selected=$business_selectid  class="form-control selectBusinessHall" validate="required" }
+          </div>
+        </div>
+        {/if}
+        {/if}
+
+
+        <br>
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-10">
+            {AnForm type="submit" class="btn btn-primary Sub" value="保存"}
+          </div>
+        </div>
+        {AnForm}
+      </div>
+      <div class="form-add-view pull-right">
+        <em class="arrow1"></em>
+        <div class="box">
+          <img src="../images/admin2/test04.png">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(function(){
+    var tip = ['温馨提示：此处封面最佳上传尺寸：362＊391px', '温馨提示：此处封面最佳上传尺寸：356＊224', '温馨提示：此处封面最佳上传尺寸：729＊340px',  '温馨提示：此处封面最佳上传尺寸：320＊149px'];
+    $('#selectResName').change(function(){
+      var selectResName = $('#selectResName option:selected').val();
+      var txt = '';
+
+      if (selectResName == 'home') {
+        txt = tip[0];
+      } else if (selectResName == 'dressing') {
+        txt = tip[1];
+      } else if (selectResName == 'mall') {
+        txt = tip[2];
+      } else if (selectResName == 'mobile-index') {
+        txt = tip[3];
+      }
+      $('#selectResName').parent().next().text(txt);
+    });
+
+    $('.putTypeBut').live('click',function() {
+      var putTypeCiock = $(this).val();
+
+      if (putTypeCiock >= 1) {
+        $('.Sub').text('保存并投放');
+      } else {
+        $('.Sub').text('保存');
+      }
+    })
+  });
+</script>
+<script>
+  var reSetProvince = function (type) {
+    if (type == 'province') {
+      $('.selectCity').html('<option value=0>全部城市(省份下所有城市)</option>');
+      $('.selectArea').html('<option value=0>全部区县(城市下所有区县)</option>');
+      $('.selectBusinessHall').html('<option value=0>全部营业厅(区县下所有营业厅)</option>');
+    } else if (type == 'city')  {
+      $('.selectArea').html('<option value=0>全部区县(城市下所有区县)</option>');
+      $('.selectBusinessHall').html('<option value=0>全部营业厅(区县下所有营业厅)</option>');
+    } else if (type == 'area') {
+      $('.selectBusinessHall').html('<option value=0>全部营业厅(区县下所有营业厅)</option>');
+    }
+  }
+
+  $(function(){
+    var focus_id    = "{$focus_id}"
+    var province_id = "{$province_id}";
+    var city_id = "{$city_id}";
+    var area_id = "{$area_id}";
+    var business_hall_id = [];
+    var lock     = false;
+    //省份
+    $('.selectProvince').change(function() {
+      province_id = $(this).val();
+
+      if (province_id == 0) {
+        reSetProvince('province');
+      }
+
+      reSetProvince('city');
+
+      $.post("{AnUrl('city/admin/ajax/get_city_list')}" , { province_id:province_id } , function(json){
+        if (json.info == 'ok') {
+          var html = '<option value="">全部城市(省份下所有城市)</option>';
+          var data = json.data;
+          for(var i=0;i<data.length;i++) {
+            html += '<option value="'+data[i]['id']+'"> '+data[i]['name']+'</option>';
+          }
+        }
+
+        $('.selectCity').html(html);
+      }, 'json');
+    })
+    //城市
+    $('.selectCity').change(function() {
+      city_id = $(this).val();
+
+      if (city_id == 0) {
+        reSetProvince('city');
+      }
+
+      reSetProvince('area');
+
+      $.post("{AnUrl('city/admin/ajax/get_area_list')}" , { city_id:city_id } , function(json){
+        if (json.info == 'ok') {
+          var html = '<option value="">全部区县(城市下所有区县)</option>';
+          var data = json.data;
+          for(var i=0;i<data.length;i++) {
+            html += '<option value="'+data[i]['id']+'"> '+data[i]['name']+'</option>';
+          }
+        }
+
+        $('.selectArea').html(html);
+      }, 'json');
+    })
+    //地区
+    $('.selectArea').change(function(){
+      area_id = $(this).val();
+
+      if (area_id == 0) {
+        reSetProvince('area');
+      }
+
+      $.post("{AnUrl('city/admin/ajax/get_business_hall_list')}" , { area_id:area_id } , function(json){
+        if (json.info == 'ok') {
+          var html = '<option value="">全部营业厅(区县下所有营业厅)</option>';
+          var data = json.data;
+          for(var i=0;i<data.length;i++) {
+            html += '<option value="'+data[i]['id']+'"> '+data[i]['title']+'</option>';
+          }
+        }
+
+        $('.selectBusinessHall').html(html);
+      }, 'json');
+    })
+
+    $('.selectSub').click(function(e) {
+      e.preventDefault();
+
+      //营业厅id列表
+      var business_hall_list = $('.selectInputBusinessHall:checked');
+
+      if (business_hall_list.length == 0) {
+        alert('请选择营业厅！');
+        return false;
+      }
+
+      if (area_id == 0) {
+        area_id          = $('.selectArea').val();
+      }
+
+      if (city_id == 0) {
+        city_id          = $('.selectCity').val();
+      }
+
+      if (province_id == 0) {
+        province_id      = $('.selectProvince').val();
+      }
+
+      $.each( business_hall_list, function(i, n){
+        business_hall_id[i] = $(n).val();
+      });
+
+      if (lock) {
+        return false;
+      }
+
+      lock = true;
+
+      $.post("{AnUrl('focus/admin/ajax/add_res')}", { focus_id:focus_id,business_hall_id:business_hall_id,province_id:province_id,city_id:city_id,area_id:area_id } ,function(json) {
+        if (json.info == 'ok') {
+          alert('发布成功');
+          window.location.reload();
+        } else {
+          alert(json.info);
+        }
+
+        lock = false;
+      },'json')
+
+    })
+
+    $('.selectInputBusinessHallAll').live('click',function(){
+      var isChecked = $(this).attr('checked');
+
+      if (isChecked == 'checked') {
+        $('.selectInputBusinessHall').attr('checked','checked');
+      } else {
+        $('.selectInputBusinessHall').removeAttr('checked');
+      }
+    })
+  });
+</script>
+{include_www file="admin/lib/footer_new.html"}

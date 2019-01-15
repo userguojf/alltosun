@@ -1,0 +1,34 @@
+{include_www file='lib/other_header.html' title="个人中心" other_title='我的优惠券' return_url='home'}
+{load_css file='css/uc.css'}
+{if $coupon_list}
+<section class="my-coupon">
+  <ul class="list">
+    {foreach $coupon_list as $v}
+    <li>
+      <dl>
+        <dt>
+          <h4>{$v.title}</h4><span></span>
+        </dt>
+        <dd>
+          <div class="{if $v.is_use}info{else}unable{/if}">
+            <p>优惠码：{$v.code}</p>
+            <p>有效期至：{$v.end_time}</p>
+          </div>
+          <div class="link">
+               {if $v.use_address}
+               <a href="{$v.use_address}">立即使用<i class="icon zqico-angle-right"></i></a>
+               {/if}
+               <a href="{AnUrl("coupon/detail/{$v.coupon_relation_id}")}">详细说明<i class="icon zqico-angle-right"></i></a>
+          </div>
+        </dd>
+      </dl>
+    </li>
+    {/foreach}
+  </ul>
+</section>
+{else}
+<section class="my-gift2">
+    <div class="none-tips">您还没有优惠券!</div>
+</section>
+{/if}
+{include_www file='lib/other_footer.html'}

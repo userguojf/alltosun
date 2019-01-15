@@ -1,0 +1,375 @@
+{include file="admin/lib/header.html" title="集团文件"}
+    <div class="header-sub">
+        <div class="inner">集团文件</div>
+    </div>
+    <div class="header-tabs">
+        <a href="{AnUrl('file_apply/admin/file')}" class="active">集团文件</a>
+        <a href="{AnUrl('file_apply/admin/apply')}" >改造申请{if $new_num}<em class="num">{$new_num}</em>{else}{/if}</a>
+    </div>
+    <!--start:主内容-->
+    {if !empty($list)}
+    <div class="inner main" {if $count <=8 }style="height:500px;"{/if}>
+        <div class="top-options clearfix">
+            {if $member_info['ranks'] == 1}
+            <a id="file_upload" class="btn-add left" style="cursor: pointer;">+发布文件</a>
+            {/if}
+            <a class="btn-add left" id="success_del" style="display:none;margin-left: 400px;background-color: #4C93FF;">删除成功</a>
+            <div class="search right">
+                <form action="{AnUrl('file_apply/admin/file')}" id="subForm" method='get'>
+                    <input type="text" name="search_filter[content]" value="{$search_filter['content']}" placeholder="文件名" class="left">
+                    <input type="hidden" name="search_filter[search_type]" value="{$search_filter['search_type']}">
+                    <button type="submit" class="right"><i class="icon-search"></i></button>
+                </form>
+            </div>
+        </div>
+        <div class="content-list">
+            <table>
+                <thead>
+                <tr>
+                    <th width="20%">文件号</th>
+                    <th width="20%">文件名</th>
+                    <th width="20%">文件印发时间</th>
+                    <th width="20%">平台发布时间</th>
+                    <th class="txtcenter" width="20%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $v}
+                {$che = file_apply_helper::get_record_update($member_info['id'], $v.id)}
+                <tr>
+                    <td>{if $member_info['ranks'] != 1}{if $che['code'] == 0}<em class="point point-warning"></em>{/if}{/if}{$v.file_number}</td>
+                    <td resId={$v.id} mId={$member_info['id']}>
+                        {file_apply_helper::get_content_html_by_suffix($v,1)}
+                    </td>
+                    <td>{date('Y-m-d' ,strtotime($v.print_time))}</td>
+                    <td>{date('Y-m-d H:i' ,strtotime($v.add_time))}</td>
+                    <td class="txtcenter" resId={$v.id} mId={$member_info['id']}>
+                        {if $member_info['ranks'] == 1}
+                        <a href="{AnUrl("file_apply/admin/file/record_list?id={$v.id}&search_filter[pc]=province")}" title="查看记录" class="btn-option"><i class="icon-care"></i></a>
+                        {/if}
+                        {if $member_info['ranks'] != 1}
+                            {file_apply_helper::get_content_html_by_suffix($v,2)}&nbsp;&nbsp;
+                        {/if}
+                        <a href="{AnUrl("file_apply/admin/file/download?id={$v.id}")}" class="btn-option download" title="下载"><i class="icon-download"></i></a>
+                        {if $member_info['ranks'] == 1}
+                            <a href="javascript:void(0);" class="btn-option delete_hot"><i class="icon-delete" title="删除"></i></a>
+                        {/if}
+                    </td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="5">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    {else}
+    <div class="inner main">
+        <div class="none-box">
+            <img src="{$smarty.const.SITE_URL}/images/img-jituan/kong.png">
+            <p>集团还没有下发过文件</p>
+            {if $member_info['ranks'] == 1}
+            <p><a id="file_upload" class="btn-primary" style="cursor: pointer;">发布文件</a></p>
+            {/if}
+        </div>
+    </div>
+    {/if}
+        <!--end:主内容-->
+</div>
+
+<!--start:文件发布弹层-->
+<div class="pop-bg hidden" id="message">
+    <div class="pop-publish">
+        <div class="pop-close" id="message-x"><i class="icon-close"></i></div>
+        <input type="hidden"  name="rank"  value="{$curr_member_ranks}" id='rank'/>
+        <div class="title">发布文件</div>
+        <div class="item">
+            <label>文件号：</label>
+            <span class="input"><input type="text" name="file_number" id="file_number" required="required"></span>
+        </div>
+        <div class="item">
+            <label>文件印发时间：</label>
+            <span class="input">
+                <input type="date" class="form-control last" validate="required" name="print_time" id="print_time" required="required">
+            </span>
+        </div>
+        <div class="item" id="btn-upload" >
+            <label>上传文件：</label>
+            <div class="btn-upload"><span><i class="icon-upload"></i>上传文件</span><input id="file" type="file" name="myfile"></div>
+        </div>
+
+        <div class="item hidden" id="upload-status">
+            <label>上传文件：</label>
+            <div class="upload-status" ><span id="name_load"><i class="icon-yes"></i></span><a href="javascript:void(0);" id="btn-upload-again" class="btn-upload-again">重新上传</a></div>
+
+        </div>
+        <div class="btn-area">
+            <button type="button" id='start_upload' class="btn-primary">发布</button>
+            <button type="button" id='click_close' class="btn-default">取消</button>
+        </div>
+    </div>
+</div>
+<!--end:文件发布弹层-->
+
+<!--start:文件发布中弹层-->
+<div class="pop-bg hidden" id="uploading">
+    <div class="pop-publish">
+        <div class="pop-close" id="uploading-x"><i class="icon-close"></i></div>
+        <div class="status-ing">
+            <div class="title">发布中</div>
+            <div class="progress">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                <div id="progressBar-text" style="font-size: 14.4px;">0%</div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end:文件发布中弹层-->
+
+<!--star:发布结果弹层-->
+<div class="pop-bg hidden" id="upload-success">
+    <div class="pop-publish">
+        <div class="pop-close" id="upload-success-x"><i class="icon-close"></i></div>
+        <div class="title">发布成功</div>
+        <div class="title-info">是否短信通知省市管理员</div>
+        <div class="default">
+            <textarea placeholder="" id="upload-success-text"></textarea>
+        </div>
+        <div class="btn-area">
+            <button type="button" class="btn-primary" id="upload-success-noti">通知</button>
+            <button type="button" class="btn-default" id="upload-success-no">不用了</button>
+        </div>
+    </div>
+</div>
+<!--end:发布结果弹层-->
+
+<!-- star:删除弹窗 -->
+<div class="pop-bg hidden" id="del-win">
+    <div class="pop-publish">
+        <div class="pop-close" id="del-win-x"><i class="icon-close"></i></div>
+        <div class="title">确认删除</div>
+        <div class="title-info">是否要把所选的文件删除？</div>
+        <div class="btn-area">
+            <button type="button" class="btn-primary" id="del-win-ok">确定</button>
+            <button type="button" class="btn-default" id="del-win-no">取消</button>
+        </div>
+    </div>
+</div>
+<!-- end:删除弹窗 -->
+
+<!-- star:pdf弹窗 -->
+<div class="pop-bg hidden" id="pdf_show">
+    <div class="pop-view-header">
+        <div class="title left pdf_title"></div>
+        <div class="options right">
+            <a class="btn-download pdf_down" href="" ></a>
+            <a href="javascript:void(0);" class="btn-close pdf_close"></a>
+        </div>
+    </div>
+    <div class="pop-view">
+        <embed class="pdf_url" style="width: 100%; height: 100%;" src=""> </embed>
+    </div>
+</div>
+<!-- end:pdf弹窗 -->
+
+<!-- star:提醒弹窗 -->
+<div class="short-tips" id="alert_noti" style="display: none;z-index: 100000;">短信已发送至省市管理员</div>
+<!-- end:提醒弹窗 -->
+
+<script src="{$smarty.const.SITE_URL}/js/upload_folder/upload3.js" id="ll_url"></script>
+<script src="{$smarty.const.SITE_URL}/js/dialog/dialogimg.js"></script>
+
+<script>
+    // 上传文件事件
+    $('#file').change(function () {
+        var file_name = document.getElementById("file").files[0].name; // js 获取文件名称
+        var file = document.getElementById("file").files[0]; // js 获取文件名称
+        $('#btn-upload').addClass('hidden');
+        $('#upload-status').removeClass('hidden');
+
+        var index1=file_name.lastIndexOf(".");
+        var index2=file_name.length;
+        var postf=file_name.substring(index1,index2);//后缀名
+        if (index1 > 11) {
+            new_name = file_name.substring(file_name, 11);
+            file_name = new_name+'..'+postf;
+        }
+        $('#name_load').html('<i class="icon-yes"></i>'+file_name);
+    });
+
+    // 点击重新上传按钮调用文件上传
+    $('#btn-upload-again').click(function () {
+        $('#file').trigger('click');
+    });
+
+    $(document).ready(function () {
+        // 提醒弹窗按钮关闭
+        $('#prompt .pop-close').on('click', function () {
+           $('#prompt').addClass('hidden');
+        });
+        // 提醒弹窗知道了按钮
+        $('#prompt_success').on('click' ,function () {
+            $('#prompt .pop-close').trigger('click');
+        });
+        // 发布文件按钮
+        $('#file_upload').click(function () {
+            $('#message').removeClass('hidden');
+        });
+        //发布页面取消按钮
+        $('#click_close').click(function(){
+            $('#message').addClass('hidden');
+        });
+        // 上传中-x
+        $('#uploading-x').click(function () {
+            $('#uploading').addClass('hidden');
+            cancleUploadFile(); // 点X取消上传
+            window.location.reload();
+        });
+        // 上传成功'不用了'按钮
+        $('#upload-success-no').click(function () {
+            $('#upload-success').addClass('hidden');
+            window.location.reload();
+        });
+        // 上传成功-x
+        $('#upload-success-x').click(function () {
+            $('#upload-success-no').trigger('click');
+        });
+        // 发布页面-X
+        $('#message-x').click(function () {
+            $('#message').addClass('hidden');
+        });
+        // 删除弹框X
+        $('#del-win-x').click(function () {
+            $('#del-win').addClass('hidden');
+            $('.out_res_id').remove();
+        });
+        // 删除弹框取消按钮
+        $('#del-win-no').click(function () {
+            $('#del-win-x').trigger('click');
+        });
+        // pdf弹窗关闭按钮
+        $('#pdf_show .pdf_close').on('click', function () {
+            $('#pdf_show').addClass('hidden');
+        });
+        // 发布按钮
+        $('#start_upload').click(function () {
+            var file_num = $('#file_number').val();
+            var posturl = "{AnUrl('file_apply/admin/ajax/file_number_exists')}";
+            // 发送ajax判断文件号是否重复
+            $.ajax({
+                url: posturl,
+                data : { file_number:file_num },
+                async: false,
+                type: 'POST',
+                success: function (res) {
+                   if (res == 0) {
+                       alert_info_replace('您已经发布过该文件');
+                       return false;
+                   }
+                   UpladFile();
+                }
+            });
+        });
+
+    });
+
+
+    // 执行文件删除
+    $('.delete_hot').click(function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var resid = $(this).parent().attr('resId');
+        $('#del-win').removeClass('hidden');
+        var out = '<span class="out_res_id" style="display:none">'+resid+'</span>';
+        var outthis = '<span class="out_tr'+resid+'" style="display:none;"></span>';
+        $('#del-win .btn-area').append(out);
+        $(this).parent().append(outthis);
+    });
+
+    // 删除弹框确认按钮
+    $('#del-win-ok').click(function () {
+       var resid = $('.out_res_id').html();
+       $('#del-win').addClass('hidden');
+       $('.out_res_id').remove();
+       var url = "{AnUrl('file_apply/admin/ajax/update_file_status')}";
+       $.post(url,{ id:resid },function(json){
+            if (json.info == 'ok') {
+                $('.out_tr'+resid).parents('tr').fadeOut();
+                $('.out_tr'+resid).remove();
+                if (json.count == 0) {
+                    window.location.reload();
+                }
+                $('#success_del').css('display','block');
+                del_succ_show();
+                // alert_info_replace('删除成功')
+            } else {
+                alert_info_replace('删除失败');
+            }
+       },'json')
+    });
+    // 删除成功提示按钮
+    function del_succ_show(){
+        setTimeout(function () {
+            $('#success_del').fadeOut();
+        },700)
+    }
+    // 点击文件请求ajax将文件浏览次数+1
+    $('.online_show').click(function () {
+        $(this).parents('tr').find('.point').remove();
+        var resId = $(this).parents('td').attr('resId');
+        var url = "{AnUrl('file_apply/admin/ajax/update_file_count')}";
+        var mId = $(this).parents('td').attr('mId');
+        $.post(url,{ id:resId,mId:mId },function () {
+
+        });
+    });
+
+    // 点击下载按钮时移除红点
+    $('.download').click(function () {
+        $(this).parents('tr').find('.point').remove();
+    });
+
+    // pdf 弹窗事件
+    $('.pdf').on('click', function () {
+        var pdf_href = $(this).attr('pdf_href');
+        var pdf_name = $(this).attr('pdf_name');
+        var file_id = $(this).attr('file_id');
+        $('#pdf_show .pdf_title').html('');
+        $('#pdf_show .pdf_title').html(pdf_name);
+        var down_url = '{AnUrl("file_apply/admin/file/download?id='+file_id+'")}';
+        $('#pdf_show .pdf_url').attr({ 'src':pdf_href });
+        $('#pdf_show .pdf_down').attr({ 'href':down_url });
+        $('#pdf_show').removeClass('hidden');
+    });
+
+    // 上传成功通知按钮 给省市管理员发送短信
+    $('#upload-success-noti').click(function () {
+        var file_name = document.getElementById("file").files[0].name; // js 获取文件名称
+        var print_time = document.getElementById("print_time").value; // 印发日期
+        var file_number = document.getElementById("file_number").value; //文件号
+        var new_time =  new Date(print_time).Format("yyyy年MM月dd日");
+
+        var url = "{AnUrl('file_apply/admin/ajax/file_release_noti')}";
+        $.post(url, { file_name:file_name, print_time: new_time, file_number: file_number }, function (e) {
+            if (e.info == 'ok') {
+                $('#upload-success').addClass('hidden');
+                alert_info_replace('短信已发送至省市管理员');
+                setTimeout(function () {
+                   window.location.reload();
+                },700);
+            }
+        },'json');
+    });
+
+    // 弹窗查看图片
+    $(function() {
+        $('.gallery').poptrox({
+            usePopupCaption: true
+        });
+    });
+
+</script>
+
+</body>
+</html>

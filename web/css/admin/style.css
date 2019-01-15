@@ -1,0 +1,7 @@
+/* $Id: style.css 970 2012-07-06 07:34:04Z fengxx $ */
+
+.table-admin-menu { border-collapse:collapse; border-spacing:0; width:100%; border:1px solid #ddd; border-right:none; }
+.table-admin-menu th { background:#eee; border-bottom:2px solid #ddd; border-right:1px solid #ddd;}
+.table-admin-menu td { padding:5px; border-right:1px solid #ddd; border-top:0;}
+.table-admin-menu tr:hover { background:#eee}
+.table-admin-menu .even { background:rgba(245, 245, 245, 0.6);}

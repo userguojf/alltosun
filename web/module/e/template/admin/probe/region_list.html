@@ -1,0 +1,69 @@
+{include_www file="admin/lib/e_header.html" title="探针统计"}
+<section class="container">
+    <div class="column-list1 column-list2">
+        <div class="crumd">
+            <a href="###">{$date}</a> &gt;
+            {if $hour}
+                <a href="javascript:void(0):" class="curr">{$hour}:00</a>
+            {/if}
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>地区</th>
+                    <th>
+                        {if $type == 1}
+                            室外人数
+                        {else if $type == 2}
+                            室内人数
+                        {else if $type == 3}
+                            新顾客
+                        {else if $type == 4}
+                            老顾客
+                        {/if}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {foreach $list as $k => $v}
+                    <tr>
+                        <td>{if $v.name}{$v.name}{else}{$v.title}{/if}</td>
+                        <td><span class="blue js_num" id="{$v.id}">{$v.num}</span></td>
+                    </tr>
+                {/foreach}
+            </tbody>
+        </table>
+    </div>
+</section>
+<script>
+$(function(){
+    var res_name = "{$res_name}";
+    var res_id   = "{$res_id}";
+    var date     = "{$date}";
+    var hour     = "{$hour}";
+    var type     = "{$type}";
+
+    $('.js_num').click(function(){
+        var id  = $(this).attr('id');
+        var url = siteUrl + '/e/admin/probe';
+
+        if ( res_name == 'group' ) {
+            url += '/region_list?res_name=province&res_id='+ id;
+        } else if ( res_name == 'province' ) {
+            url += '/region_list?res_name=city&res_id='+ id;
+        } else if ( res_name == 'city' ) {
+            url += '/region_list?res_name=area&res_id='+ id;
+        } else if ( res_name == 'area' ) {
+            url += '/mac_list?business_id='+ id;
+        } else {
+            alert('error');
+            return false;
+        }
+
+        url += '&date='+ date + '&hour='+ hour + '&type=' + type;
+
+        window.location.href = url;
+    });
+});
+</script>
+{include_www file="admin/lib/e_footer.html"}

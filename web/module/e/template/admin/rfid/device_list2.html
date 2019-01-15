@@ -1,0 +1,28 @@
+{include file="admin/rfid/header3.html" title="最受欢迎"}
+
+            <div class="tabs1-con">
+                
+                <div class="rank-list">
+                    <div class="title">
+                        <h3>您的厅店共有{count($list)}台终端</h3>
+                        <a href="{AnUrl('e/admin/rfid/add')}" class="btn-add">添加RFID终端</a>
+                    </div>
+                    <ul>
+                    {foreach $list as $k => $v}
+                    <a href="{AnUrl('e/admin/rfid/add',"?id={$v.id}")}" >
+                        <li>
+                            <div class="infos">
+                                <p>机型<span>{$v.name} {$v.version}</span></p>
+                                <p>IMEI<span>{$v.imei}</span></p>
+                                <p>IMEI<span>{$v.color}</span></p>
+                            </div>
+                            <div class="id">
+                                <p>ID：{$v.label_id}</p>
+                            </div>
+                        </li>
+                      </a>
+                  {/foreach}
+                    </ul>
+                </div>
+            </div>
+{include file="admin/rfid/footer3.html"}

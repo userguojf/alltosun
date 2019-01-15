@@ -1,0 +1,46 @@
+{include_www file="admin/lib/header_new.html" title="价格记录"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen_stat/admin/device_stat')}"><i class="iconfont iconfont-logo2"></i>亮屏管理</a>
+            &gt;
+            <span>修改价格统计</span>
+            <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+          </div>
+          <br>
+         <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="text-align:center">省</th>
+                  <th style="text-align:center">市</th>
+                  <th style="text-align:center">地区</th>
+                  <th style="text-align:center">营业厅</th>
+                  <th style="text-align:center">价格</th>
+                  <th style="text-align:center">时间</th>
+                </tr>
+              </thead>
+              <tbody>
+                {foreach $price_list as $k=>$v}
+                <tr>
+                    <td style="text-align:center">{business_hall_helper::get_info_name('province', $v.province_id, 'name')}</td>
+                    <td style="text-align:center">{business_hall_helper::get_info_name('city', $v.city_id, 'name')}</td>
+                    <td style="text-align:center">{business_hall_helper::get_info_name('area', $v.area_id, 'name')}</td>
+                    <td style="text-align:center">{business_hall_helper::get_info_name('business_hall', $v.business_hall_id, 'title')}</td>
+                    <td style="text-align:center">{$v.price}</td> 
+                    <td style="text-align:center">{$v.date}</td> 
+                </tr>
+                {foreachelse}
+                <tr><td colspan="5">暂无相关信息</td></tr>
+                {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        </div>
+
+{include_www file="admin/lib/footer_new.html"}

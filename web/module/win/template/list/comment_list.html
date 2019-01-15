@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <title>版本列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel='Shortcut Icon' type='image/x-icon' href='{$smarty.const.SITE_URL}/images/win10/windows.ico'>
+    <script type="text/javascript" src="{$smarty.const.SITE_URL}/js/win/jquery-2.2.4.min.js"></script>
+    <link href="{$smarty.const.SITE_URL}/css/win/animate.css" rel="stylesheet">
+    <script type="text/javascript" src="{$smarty.const.SITE_URL}/component/layer-v3.0.3/layer/layer.js"></script>
+    <link rel="stylesheet" href="{$smarty.const.SITE_URL}/component/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link href="{$smarty.const.SITE_URL}/css/win/default.css" rel="stylesheet">
+    <script type="text/javascript" src="{$smarty.const.SITE_URL}/js/win/win10.js"></script>
+    <link href="{$smarty.const.SITE_URL}/css/layui/css/layui.css" rel="stylesheet">
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend>点赞列表</legend>
+</fieldset>
+
+<div class="layui-form layui-col-xs10 layui-col-md-offset1">
+    <table class="layui-table">
+        <colgroup>
+            <col width="25%">
+            <col width="25%">
+            <col width="25%">
+            <col>
+        </colgroup>
+        <thead>
+        <tr>
+            <th>评论者</th>
+            <th>评论内容</th>
+            <th>评论时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {foreach $comment_list as $k=>$v}
+
+        <tr>
+
+            <td>{$v.name}</td>
+            <td>{$v.content}</td>
+            <td>{$v.add_time}</td>
+            <td infoid="{$v.id}">
+                <button class="layui-btn layui-btn-radius" title="编辑" onclick="Win10.openUrl('{AnUrl("win/admin/list/add?id={$v.id}")}')">编辑</button>
+                <button class="layui-btn layui-btn-radius layui-btn-danger delete">删除</button>
+            </td>
+        </tr>
+        {foreachelse}
+        <tr>
+            <td colspan="4">暂无相关信息</td>
+        </tr>
+        {/foreach}
+        </tbody>
+    </table>
+</div>
+
+
+<script src="{$smarty.const.SITE_URL}/js/lay/modules/layer.js" charset="utf-8"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+    $('.delete').on('click', function () {
+        var infoid = $(this).parents('td').attr('infoid');
+        var it = $(this).parents('tr');
+        $.ajax({
+            url: '{AnUrl("win/admin/list/ajax_delete")}',
+            data: { infoid: infoid },
+            dataType: 'json',
+            type: 'POST',
+            success: function (data) {
+                if (data.code=1) {
+                    it.remove();
+                } else {
+                    layer.alert('删除错误');
+                }
+            }
+        });
+    })
+</script>
+
+</body>

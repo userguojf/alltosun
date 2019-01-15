@@ -1,0 +1,275 @@
+{include_www file="admin/lib/header_new.html" title="添加设备"}
+<style>
+    .pic-upload { width:250px;height:133px; }
+    .btn-upload{ width:106px; height: 33px; }
+    .btn-upload a{ display: block;position:relative;width: 104px;height: 33px;line-height: 18px;padding: 6px 0;text-align: center;color: #4c4c4c;background: #fff;border: 1px solid #eee;}
+    .btn-upload input{ width:106px; height:33px; position:relative; left:0px; top:-32px; z-index:1;filter:alpha(opacity=0);-moz-opacity:0;opacity:0; cursor:pointer;}
+    .js_upFileBox{ margin-left:0px;margin-top:30px;}
+</style>
+<!--start:右侧-->
+<div class="main mian2 ">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('screen_photo/admin')}"><i class="iconfont iconfont-logo2"></i>套餐管理</a>
+            &gt;
+            <span>套餐设置</span>
+            <a href="{AnUrl('screen_photo/admin')}" class="btn btn-primary btn-sm pull-right">设置套餐</a>
+        </div>
+
+        <div class="clearfix">
+            <div class="form-add pull-left">
+                <form class="form-horizontal" action='{AnUrl("screen_photo/admin/save")}' method="post">
+                    <input type="hidden" name="id" value="{$info.id}" />
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">省</label>
+                        <div class="col-sm-9">
+                            <select name="province" class="form-control js_province required" default_text="全国(所有省份)" default_value="0">
+                                <option value="0">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">市</label>
+                        <div class="col-sm-9">
+                            <select name="city" class="form-control js_city required" default_text="全国(所有省份)" default_value="0">
+                                <option value="0">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">区</label>
+                        <div class="col-sm-9">
+                            <select name="area" class="form-control js_area required" default_text="全国(所有省份)" default_value="0">
+                                <option value="0">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">营业厅</label>
+                        <div class="col-sm-7">
+                            <a class="less-box">
+                                <span>
+                                    <input type="text" name="business_title" value="{business_hall_helper::get_business_hall_info($info.business_id, 'title')}" class="form-control required selectBusiness" placeholder="请输入营业厅名称">
+                                    <input type="hidden" name="business" value="{$info.business_id}" class="selectBusinessId">
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">品牌</label>
+                        <div class="col-sm-9">
+                            <select name="phone_name" class="form-control js_phone_name required" default_value="0">
+                                <option value="0">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">品牌</label>
+                        <div class="col-sm-9">
+                            <select name="phone_version" class="form-control js_phone_version required" default_value="0">
+                                <option value="0">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">选择套餐</label>
+                        <div class="col-sm-7">
+                            <a class="less-box">
+                                <span><input type="text" name="device" {if $info}readonly="readonly"{/if} value="{$info.device}" class="form-control required js_device" placeholder="请输入设备编号"></span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="form-group js_formBtnBox">
+                        <div class="col-sm-offset-3 col-sm-10">
+                            <button type="submit" disabled="disabled" class="btn btn-sm btn-success js_useCurrBtn">&nbsp;&nbsp;使用现有套餐&nbsp;&nbsp;</button>
+                            <button type="submit" disabled="disabled" class="btn btn-sm btn-success js_uploadNewBtn">&nbsp;&nbsp;上传新套餐&nbsp;&nbsp;</button>
+                        </div>
+                    </div>
+                </form> 
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{$smarty.const.SITE_URL}/js/business_hall/admin/region_select.js"></script>
+
+<script>
+var business_id = 0;
+var phone_name  = '';
+var phone_version = '';
+var set_meal_id = 0;
+$(function(){
+    {if $info}
+        region({$info.province_id}, {$info.city_id}, {$info.area_id}, {$info.business_id});
+    {else}
+        region(0, 0, 0, 0);
+    {/if}
+
+    $('.selectSub').click(function(e) {
+        e.preventDefault();
+
+        var province_id = $('.js_province').val();
+        var city_id     = $('.js_city').val();
+        var area_id     = $('.js_area').val();
+        var business_id = $('.js_business').val();
+        var device      = $('.js_device').val();
+        var rssi        = $('.js_rssi').val();
+
+// console.log(province_id);
+        if ( province_id == 0 ) {
+            return error('请选择省');
+        }
+        if ( city_id == 0 ) {
+            return error('请选择市'); 
+        }
+        if ( area_id == 0) {
+            return error('请选择区');
+        }
+        if ( business_id == 0 ) {
+            return error('请选择营业厅');
+        }
+        if ( !device ) {
+        	return error('请输入设备编号');
+        }
+        if ( !rssi ) {
+            return error('请输入设备探测范围');
+        }
+        if ( isNaN(rssi) ) {
+        	return error('探测范围只能是数字');
+        }
+
+        $('.form-horizontal').submit();
+    });
+    
+    //品牌change事件
+    $('.js_phone_name').on('change', function () {
+      phone_name = $(this).val();
+      //根据营业厅、品牌初始化型号
+      setHtmlphoneVersion();
+      
+    });
+    
+    //型号change事件
+    $('.js_phone_version').on('change', function () {
+      phone_version = $(this).val();
+      //获取套餐
+      getSetMealId();
+    });
+});
+
+function businessAutocomplete(business_hall_titles) {
+  console.log(business_hall_titles);
+  $('.selectBusiness').autocomplete({ 
+    
+    // 静态的数据源，根据label属性进行显示或模糊匹配，当给输入框设置value属性值
+    source: business_hall_titles,
+    
+    //选择
+    select: function(event, ui){
+      
+      $(this).val(ui.item.label);
+      //隐藏域
+      $('.selectBusinessId').val(ui.item.id);
+      business_id = ui.item.id;
+      //根据营业厅初始化品牌
+      setHtmlphoneName();
+
+      // 必须阻止事件的默认行为，否则autocomplete默认会把ui.item.value设为输入框的value值
+      event.preventDefault();
+      
+    }
+  })
+}
+
+//设置品牌html
+function setHtmlphoneName()
+{
+  if (!business_id) {
+    return false;
+  }
+  
+  $.post(siteUrl+'/screen_photo/admin/ajax/get_phone_name_by_business_hall', { business_id:business_id }, function (res) {
+    if (res.info != 'ok') {
+      alert('获取失败');
+      return false;
+    }
+    
+    if (res.data.length < 1) {
+      alert('本厅下暂无设备');
+      return false;
+    }
+    
+    var html = joinHtml(res.data, 'phone_name');
+    $('.js_phone_name').html(html);
+
+  }, 'json');
+}
+
+//设置型号html
+function setHtmlphoneVersion()
+{
+  if (!phone_name || !business_id) {
+    return false;
+  }
+  
+  $.post(siteUrl+'/screen_photo/admin/ajax/get_phone_version_by_business_hall', { business_id:business_id, phone_name:phone_name }, function (res) {
+    if (res.info != 'ok') {
+      alert('获取失败');
+      return false;
+    }
+    
+    var html = joinHtml(res.data, 'phone_version');
+    $('.js_phone_version').html(html);
+
+  }, 'json');
+  
+}
+
+//拼接html元素
+function joinHtml(list, type)
+{
+  var html = '<option value="0">请选择</option>';
+  $.each(list, function (i, o) {
+    
+    console.log(type+'_nickname');
+    if (o[type+'nickname']) {
+      var phone_name = o[type+'nickname'];
+    } else {
+      var phone_name = o[type];
+    }
+    html += '<option value="'+o[type]+'">'+phone_name+'</option>';
+  });
+  
+  return html;
+}
+
+//获取此机型下的套餐
+function getSetMealId()
+{
+  if (!phone_name || !phone_version || !business_id) {
+    return false;
+  }
+  
+  $.post(siteUrl+'/screen_photo/admin/ajax/get_set_meal_id', { business_id:business_id, phone_name:phone_name, phone_version:phone_version }, function (res) {
+    if (res.info != 'ok') {
+      alert('获取失败');
+      return false;
+    }
+    
+    
+
+  }, 'json');
+  
+}
+
+function error( msg )
+{
+    alert(msg);
+    return false;
+}
+</script>
+{include_www file="admin/lib/footer_new.html"}

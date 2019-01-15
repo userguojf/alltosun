@@ -1,0 +1,293 @@
+{include file='header2.html' title='亮屏--内容投放'}
+  <style>
+  .none-tips {
+        padding: 10% 0 0;
+        text-align: center;
+        color: #9d9d9d;
+        font-size: 14px;
+    }
+    .manage-options .left {
+        position: absolute;
+        left: 0;
+        top: 0;
+        line-height: 1.07rem;
+        padding-left: 0.27rem;
+        font-size: 12px;
+        color: #949494;
+    }
+  </style>
+  <div class="tabs2">
+      <a href="{AnUrl('screen_dm/device')}" ><span>亮屏状态</span></a>
+      <a href="{AnUrl('screen_dm/screen_price')}" class="active"><span>内容投放</span></a>
+      <a href="{AnUrl('screen_dm/')}"><span>统计分析</span></a>
+  </div>
+    
+   <div class="tabs1-con">
+      <div class="sub-tabs2">
+          <div class="con">
+              <a href="javascript:void(0);" class="active">价格管理</a>
+              <a href="{AnUrl('screen_dm/screen_content')}">投放内容</a>
+          </div>
+      </div>
+    <div class="tabs2-con">
+        <form>
+            <div class="status-reorder">
+                <div class="title">
+                     <span class="all_dev_num"></span>
+                </div>
+                <div class="count"></div>
+                <a href="javascript:;" class="btn-ask js_btnEditAll">编辑全部价格</a>
+            </div>
+            <div class="line"></div>
+            {if $list}
+            <div class="price-list">
+                <ul class="dep_length">
+                {foreach $list as $k => $v}
+                    <li class="">
+                        <div class="inner">
+                            <div class="infos">
+                                <p>机型<span>{if $v.phone_name_nickname} {$v.phone_name_nickname} {else} {$v.phone_name} {/if}{if $v.phone_version_nickname} {$v.phone_version_nickname} {else} {$v.phone_version} {/if}</span></p>
+                                <p>IMEI<span>{if $v.imei}{$v.imei}{else}手机无IMEI{/if}</span></p>
+                                <p>安装时间<span>{date('Y-m-d',strtotime($v.day))}</span></p>
+                            </div>
+                            {if $v.price}
+                             <div class="status">
+                                <span class="blue edit_price">￥{$v.price}元</span>
+                                 <input type = 'hidden'   class="js_price"  price="{$v.price}" res_id="{$v.id}" phone_name="{if $v.phone_name_nickname} {$v.phone_name_nickname} {else} {$v.phone_name} {/if}" phone_version="{if $v.phone_version_nickname} {$v.phone_version_nickname} {else} {$v.phone_version} {/if}"></span>
+                            </div>
+                            <div class="price-edit">
+                                <label>
+                                    <span class="unit">￥</span>
+                                    <span class="num"><input type="text" class="js_price all_price" name="" value="{$v.price}" device_id="{$v.id}"></span>
+                                    <span class="unit">元</span>
+                                    <input class= 'res_id' type="hidden" value="">
+                                </label>
+                            </div>
+                            <div class="price-options">
+                                <div class="btn btn-save price-save"><button type="submit">保存</button></div>
+                                <div class="btn btn-concel js_btnConcel"><button type="button">取消</button></div>
+                                <div class="btn btn-reset"><button type="reset">清除<br>价格</button></div>
+                            </div>
+                            {else}
+                            <div class="status">
+                                <span class="btn-edit js_btnEdit "></span>
+                                <input type = 'hidden'   class="js_price"  price="{$v.price}" res_id="{$v.id}" phone_name="{if $v.phone_name_nickname} {$v.phone_name_nickname} {else} {$v.phone_name} {/if}" phone_version="{if $v.phone_version_nickname} {$v.phone_version_nickname} {else} {$v.phone_version} {/if}"></span>
+                            </div>
+                            <div class="price-edit">
+                                <label>
+                                    <span class="unit">￥</span>
+                                    <span class="num"><input type="text" class="js_price all_price" name="" value="{$v.price}" device_id="{$v.id}"></span>
+                                    <span class="unit">元</span>
+                                    <input class= 'res_id' type="hidden" value="">
+                                </label>
+                            </div>
+                            <div class="price-options">
+                                <div class="btn btn-save price-save"><button type="submit">保存</button></div>
+                                <div class="btn btn-concel js_btnConcel"><button type="button">取消</button></div>
+                                <div class="btn btn-reset"><button type="reset">清除<br>价格</button></div>
+                            </div>
+                            {/if}
+                        </div>
+                    </li>
+                    {/foreach}
+                </ul>
+            </div>
+         {else}
+            <div class="none-tips">暂无数据</div>
+          {/if}
+        </form>
+    </div>
+</div>
+    <div class="pop-bg szy hidden">
+      <div class="pop-firm">
+          <div class="con">
+              <div class="text">确认要发布终端价格？</div>
+              <div class="options">
+                  <input type= "hidden" class="device_id">
+                  <input type= "hidden" class="price">
+                  <input type= "hidden" class="reset" value='0'>
+                  <a href="javascript:void(0);" class="btn_close">取消</a>
+                  <a href="javascript:void(0);" class='btn_sure  btn_clear' ><strong>确认</strong></a>
+              </div>
+          </div>
+      </div>
+  </div>
+  
+   <div class="pop-bg szy_reset hidden">
+      <div class="pop-firm">
+          <div class="con">
+              <div class="text">确定请出价格？</div>
+              <div class="options">
+                  <input type= "hidden" class="device_id">
+                  <input type= "hidden" class="price">
+                  <input type= "hidden" class="reset" value='0'>
+                  <a href="javascript:void(0);" class="btn_close">取消</a>
+                  <a href="javascript:void(0);" class='btn_sure_reset  btn_clear' ><strong>确认</strong></a>
+              </div>
+          </div>
+      </div>
+  </div>
+  
+  
+    <script>
+    
+var member_id = "{$member_info.id}";
+var num = {$num};
+var sub_sure  = true;
+var res_id    = price = '';
+var isCli     = false;
+var arr = new Array();
+var siteUrl = "{$smarty.const.SITE_URL}";
+    $(function() {
+        
+         var length = $(".dep_length li").length;
+         var html = '共'+length+'台终端';
+         $('.all_dev_num').html(html);
+         if(!num){
+             $('.status-reorder').find('.btn-ask').remove();
+         }
+         
+         
+         //价格编辑
+      $('.js_btnEditAll').on('click', function(){
+          $(this).removeClass('js_btnEditAll').addClass('save_order');
+          $('.save_order').html('保存全部价格');
+          $('.save_order').addClass('btn-save');
+          $('.save_order').on('click',function(){
+              $('.btn_clear').off();
+              $('.btn_clear').removeClass('btn_sure');
+              $('.btn_clear').addClass('btn_all_sure');
+              $('.szy').show();
+            });
+          $('.price-list ul li .status').hide();
+          $('.price-list  ul li .price-edit').show();
+          $('.price-list  ul li .price-save').hide(); 
+          //event.stopPropagation();
+          
+      }); 
+        
+      $(".options").on('click','.btn_all_sure', function(){
+          $(".all_price").each(function(){
+          var price=$(this).val();
+          var device_id=$(this).attr('device_id'); 
+          
+            $.post(siteUrl+'/screen_dm/ajax/edit_all_price',{ 'device_id':device_id,'price':price },function(json){
+              if (parseInt(json.errcode)) {
+                  /* alert(json.errmsg); */
+              }
+          },'json');
+        });
+            window.location.href = siteUrl+'/screen_dm/screen_price'; 
+      
+      });
+        
+      
+
+      $('.edit_price').on('click', function(){
+          var parentObj = $(this).parents('.status')
+          $(this).parents('li').addClass('active')
+          res_id        = $(this).next('input').attr('res_id');
+          price        = $(this).next('input').attr('price');
+          parentObj.hide();
+          parentObj.siblings('.price-edit').find('.res_id').val(res_id);
+          parentObj.siblings('.price-edit').find('.js_price').val(price);
+          parentObj.siblings('.price-edit').show();
+          parentObj.siblings('.price-save').show();
+          
+      });
+      
+        /* $('.js_btnEdit').on('click', function(){
+        	alert(1);
+            var parentObj = $(this).parents('.status')
+            $(this).parents('li').addClass('active')
+            
+            parentObj.hide();
+            res_id        = $(this).next('input').attr('res_id');
+            price        = $(this).next('input').attr('price');
+            parentObj.siblings('.price-edit').find('.res_id').val(res_id);
+            parentObj.siblings('.price-edit').find('.js_price').val(price);
+            parentObj.siblings('.price-edit').show();
+        }) */
+        
+         $('.js_btnEdit').bind('click', function(){
+            var parentObj = $(this).parents('.status')
+            $(this).parents('li').addClass('active')
+
+            parentObj.hide()
+            parentObj.siblings('.price-edit').show()
+        })
+        
+        //取消
+        $('.js_btnConcel').bind('click', function(){
+            $(this).parents('li').removeClass('active')
+            var parentObj = $(this).parents('.price-options')
+            parentObj.siblings('.price-edit').hide()
+            parentObj.siblings('.status').show()
+        })
+        
+        
+        $('.price-save').on('click',function(){
+            var price  = $(this).parent().prev('.price-edit').find('.num input').val();
+            var res_id = $(this).parent().prev('.price-edit').find('.res_id').val();
+            console.log(price,res_id);
+            $('.options').find('.device_id').val(res_id);
+            $('.options').find('.price').val(price);
+            if(price <= 0){
+                
+                window.location.href = siteUrl+'/screen_dm/screen_price';
+                return false;
+            }
+             $('.szy').show();
+             return false;
+            //加锁
+         });
+        
+        //清除
+        $('.btn-reset').on('click',function(){
+            var res_id = $(this).parent().prev('.price-edit').find('.res_id').val();
+            $('.options').find('.device_id').val(res_id);
+             $('.szy_reset').show();
+             return false;
+            //加锁
+         });
+        
+        
+        $('.btn_sure').on('click',function(){
+             var res_id = $('.options').find('.device_id').val();
+             var price  = $('.options').find('.price').val();
+               if (!parseInt(price)) {
+                 return false;
+             }
+              $.post(siteUrl+'/screen_dm/ajax/edit_price',{ 'device_id':res_id,'price':price },function(json){
+                 if (parseInt(json.errcode)) {
+                     alert(json.errmsg);
+                 } else {
+                     window.location.href = siteUrl+'/screen_dm/screen_price';
+                 }
+             },'json');
+        });
+        
+        $('.btn_sure_reset').on('click',function(){
+            var res_id = $('.options').find('.device_id').val();
+            var reset =  1;
+             $.post(siteUrl+'/screen_dm/ajax/reset_price',{ 'device_id':res_id,'reset':reset },function(json){
+                if (parseInt(json.errcode)) {
+                    alert(json.errmsg);
+                } else {
+                    window.location.href = siteUrl+'/screen_dm/screen_price';
+                }
+            },'json');
+       });
+        
+       
+        //取消
+        $('.btn_close').on('click',function(){
+            $('.pop-bg').hide();
+            window.location.href = siteUrl+'/screen_dm/screen_price';
+        });
+    
+
+    })
+  
+    </script>
+{include_www file="admin/lib/s_footer.html"}

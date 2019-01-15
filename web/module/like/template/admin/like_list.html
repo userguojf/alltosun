@@ -1,0 +1,67 @@
+{include_www file="admin/lib/header_new.html" title="点赞列表"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    .btn-top{
+        margin-top:5px;
+    }
+    .pop-bg p .w_url{
+        word-wrap: break-word;
+    }
+
+    .btn_msg{
+        cursor:pointer;
+    }
+
+    .btn_msg:hover{
+        color:#23527c;
+    }
+</style>
+<!-- 主内容 start -->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+                <a href="{AnUrl("like/admin?search_filter[module]={$module}")}"><i class="iconfont iconfont-logo2"></i>{like_config::$module[$module]}</a>
+            &gt;
+            <span>{$nav_title}</span>
+            >
+            <span>点赞列表</span>
+        </div>
+
+        <div class="form-search clearfix">
+
+        </div>
+
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th width="25%">点赞者</th>
+                    <th width="15%">点赞时间</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {foreach $like_list as $k=>$v}
+
+                <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                    <td>{$v.user_name}</td>
+                    <td>{$v.add_time}</td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="6">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+</div>
+<!--end:右侧-->
+
+
+<!-- 引入弹层 -->
+{include_www file="admin/lib/pop.html"}
+{include_www file="admin/lib/footer_new.html"}

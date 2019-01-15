@@ -1,0 +1,62 @@
+{include_www file="admin/lib/header_new.html" title="营业厅规则列表"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('probe_rule/admin/business')}"><i class="iconfont iconfont-logo2"></i>探针管理</a>
+            &gt;
+            <span>营业厅规则列表</span>
+        </div>
+        <!-- <div class="form-search clearfix">
+            <div class="pull-right">
+                <a href="{AnUrl('probe_rule/admin/business/add')}" class="btn btn-sm btn-success">添加规则</a>
+            </div>
+        </div> -->
+		<div class="form-search clearfix">
+		{if 'group' == $member_info['res_name']}
+            <div class="pull-left">
+                <form action="{AnUrl('probe_rule/admin/business')}" methhod='get'>
+                    <input type="text" name="business_hall_title" style="width:150px" value="{$business_hall_title}" class="form-control input-sm pull-left" placeholder="按营业厅搜索"  id="autocomplete"/>
+                    <button type="submit" class="btn-search pull-left">搜索</button>
+                </form>
+            </div>
+         {/if}
+        </div>
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>营业厅</th>
+                        <th>规则</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {foreach $b_ids as $k => $v}
+                        <tr id="dataList{$v}" class="view_id">
+                            <td>{get_resource_info('business_hall', $v, 'title')}</td>
+                            <td>{probe_rule_helper::business_rule($v)}</td>
+                            <td>
+                                <a class="btn btn-xs btn-success" href='{AnUrl("probe_rule/admin/business/edit?business_id={$v}")}'>编辑</a>
+                            </td>
+                        </tr>
+                    {foreachelse}
+                        <tr>
+                            <td colspan="3">暂无数据</td>
+                        </tr>
+                    {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+</div>
+<script>
+$('#autocomplete').autocomplete({
+    source: 'probe_rule/admin/ajax/get_business_hall_list',
+});
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

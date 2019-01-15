@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <title>终端-亮屏统计-统计分析</title>
+    <link rel="stylesheet" type="text/css" href="../css/m-zhongduan.css">
+    <script>
+      var htmlElm = document.getElementsByTagName('html')[0];
+      htmlElm.style.opacity = '0';
+      ! function (a, b) {
+        function c() {
+          var c, b = f.getBoundingClientRect().width;
+          b / i > 540 && (b = 540 * i), c = b / 10, f.style.fontSize = c + "px", k.rem = a.rem = c
+        }
+        var d, l, m, n, o, p, q, r, s, t, e = a.document,
+          f = e.documentElement,
+          g = e.querySelector('meta[name="viewport"]'),
+          h = e.querySelector('meta[name="flexible"]'),
+          i = 0,
+          j = 0,
+          k = b.flexible || (b.flexible = {});
+        g ? (l = g.getAttribute("content").match(/initial\-scale=([\d\.]+)/), l && (j = parseFloat(l[1]), i = parseInt(1 / j))) : h && (m = h.getAttribute("content"), m && (n = m.match(/initial\-dpr=([\d\.]+)/), o = m.match(/maximum\-dpr=([\d\.]+)/), n && (i = parseFloat(n[1]), j = parseFloat((1 / i).toFixed(2))), o && (i = parseFloat(o[1]), j = parseFloat((1 / i).toFixed(2))))), i || j || (p = a.navigator.userAgent, !!p.match(/android/gi), q = !!p.match(/iphone/gi), r = q && !!p.match(/OS 9_3/), s = a.devicePixelRatio, i = q && !r ? s >= 3 && (!i || i >= 3) ? 3 : s >= 2 && (!i || i >= 2) ? 2 : 1 : 1, j = 1 / i), f.setAttribute("data-dpr", i), g || (g = e.createElement("meta"), g.setAttribute("name", "viewport"), g.setAttribute("content", "initial-scale=" + j + ", maximum-scale=" + j + ", minimum-scale=" + j + ", user-scalable=no"), f.firstElementChild ? f.firstElementChild.appendChild(g) : (t = e.createElement("div"), t.appendChild(g), e.write(t.innerHTML))), a.addEventListener("resize", function () {
+          clearTimeout(d), d = setTimeout(c, 300)
+        }, !1), a.addEventListener("pageshow", function (a) {
+          a.persisted && (clearTimeout(d), d = setTimeout(c, 300))
+        }, !1), "complete" === e.readyState ? e.body.style.fontSize = 12 * i + "px" : e.addEventListener("DOMContentLoaded", function () {
+          e.body.style.fontSize = 12 * i + "px"
+        }, !1), c(), k.dpr = a.dpr = i, k.refreshRem = c, k.rem2px = function (a) {
+          var b = parseFloat(a) * this.rem;
+          return "string" == typeof a && a.match(/rem$/) && (b += "px"), b
+        }, k.px2rem = function (a) {
+          var b = parseFloat(a) / this.rem;
+          return "string" == typeof a && a.match(/px$/) && (b += "rem"), b
+        }
+      }(window, window.lib || (window.lib = {}));
+      window.onload = function () {
+        htmlElm.style.opacity = '1';
+      }
+    </script>
+</head>
+
+<body>
+    <div class="wrap">
+        <header class="header">
+            <a href="javascript:void(0);" class="btn-back"><i class="icon-arrow-left"></i>首页</a>
+            <h1>终端</h1>
+        </header>
+        <section class="container">
+            <div class="tabs2">
+                <a href="m-liangPing-zhuangTai.html"><span>亮屏状态</span></a>
+                <a href="m-liangPing-touFang.html"><span>内容投放</span></a>
+                <a href="javascript:void(0);" class="active"><span>统计分析</span></a>
+            </div>
+            
+            <div class="tabs1-con">
+                <div class="line"></div>
+                <div class="count-map">
+                    <div class="count1-pic">
+                        <div class="con" style="position: absolute;width: 180px; height: 180px;">
+                            <img src="../images/m-zhongduan/test3.png" >
+                        </div>
+                        <ul class="list">
+                            <li><em style="background-color: #4779c2"></em><span class="name">oppo 9</span><span class="time">1.3小时</span></li>
+                            <li><em style="background-color: #e18543"></em><span class="name">华为P10</span><span class="time">2.4小时</span></li>
+                            <li><em style="background-color: #a5a5a5"></em><span class="name">oppo 10</span><span class="time">0.6小时</span></li>
+                            <li><em style="background-color: #f9bf32"></em><span class="name">三星note10</span><span class="time">0.8小时</span></li>
+                            <li><em style="background-color: #7d77e5"></em><span class="name">三星note9</span><span class="time">1小时</span></li>
+                            <li><em style="background-color: #7fa649"></em><span class="name">华为P9</span><span class="time">1.1小时</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="count-rank">
+                    <div class="title">终端体验排行</div>
+                    <table cellspacing="0" cellpadding="0">
+                         <tr>
+                             <td><div class="num num01">1</div></td>
+                             <td>
+                                 <div class="time">
+                                    <h3>13.5小时</h3>
+                                    <p>体验时长</p>
+                                </div>
+                             </td>
+                             <td>
+                                 <div class="infos">
+                                    <p>机型<span>华为 P10</span></p>
+                                    <p>IMEI<span>986554544</span></p>
+                                </div>
+                             </td>
+                         </tr>
+                         <tr>
+                             <td><div class="num num01">1</div></td>
+                             <td>
+                                 <div class="time">
+                                    <h3>13.5小时</h3>
+                                    <p>体验时长</p>
+                                </div>
+                             </td>
+                             <td>
+                                 <div class="infos">
+                                    <p>机型<span>华为 P10</span></p>
+                                    <p>IMEI<span>986554544</span></p>
+                                </div>
+                             </td>
+                         </tr>
+                         <tr>
+                             <td><div class="num num01">1</div></td>
+                             <td>
+                                 <div class="time">
+                                    <h3>13.5小时</h3>
+                                    <p>体验时长</p>
+                                </div>
+                             </td>
+                             <td>
+                                 <div class="infos">
+                                    <p>机型<span>华为 P10</span></p>
+                                    <p>IMEI<span>986554544</span></p>
+                                </div>
+                             </td>
+                         </tr>
+                         <tr>
+                             <td><div class="num num01">1</div></td>
+                             <td>
+                                 <div class="time">
+                                    <h3>13.5小时</h3>
+                                    <p>体验时长</p>
+                                </div>
+                             </td>
+                             <td>
+                                 <div class="infos">
+                                    <p>机型<span>华为 P10</span></p>
+                                    <p>IMEI<span>986554544</span></p>
+                                </div>
+                             </td>
+                         </tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <footer class="footer">
+        	<ul class="nav">
+        		<li>
+        			<a href="m-rank-index.html"><span class="icon icon-rank"></span><span class="name">体验排行</span></a>
+        		</li>
+        		<li class="active">
+        			<a href="###"><span class="icon icon-liangping"></span><span class="name">亮屏统计</span></a>
+        		</li>
+        		<li>
+        			<a href="###"><span class="icon icon-tag"></span><span class="name">电子价签</span></a>
+        		</li>
+        	</ul>
+        </footer>
+    </div>
+    <script type="text/javascript" src="../js/jquery-2.1.1.min.js"></script>
+    <script>
+    $(function() {
+        //时间范围
+        var startTime, endTime;
+        $('#js_timeStart input').change(function(e) {
+            startTime = e.target.value
+            $(this).siblings('span').css({ opacity: 0 })
+            $(this).css({ opacity: 1 })
+            //alert(startTime)
+        })
+
+        $('#js_timeEnd input').change(function(e) {
+            endTime = e.target.value
+            console.log(e)
+            $(this).siblings('span').css({ opacity: 0 })
+            $(this).css({ opacity: 1 })
+            setTimeout(function() {
+                if (startTime > endTime) alert("结束时间必须大于开始时间")
+            }, 300)
+        })
+    })
+    $(function(){
+        //判断是否微信登陆
+        function isWeiXin() {
+            var ua = window.navigator.userAgent.toLowerCase();
+            console.log(ua); //mozilla/5.0 (iphone; cpu iphone os 9_1 like mac os x) applewebkit/601.1.46 (khtml, like gecko)version/9.0 mobile/13b143 safari/601.1
+            if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        if (isWeiXin()) {
+            console.log(" 是来自微信内置浏览器")
+            $('.header').addClass('hidden');
+            $('.pop-reorder').css({ top:'1.146rem' });
+        } else {
+            console.log("不是来自微信内置浏览器")
+        }
+    })
+    </script>
+</body>
+
+</html>

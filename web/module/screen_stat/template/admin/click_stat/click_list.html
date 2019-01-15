@@ -1,0 +1,62 @@
+{include_www file="admin/lib/header_new.html" title="点击记录"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('screen_stat/admin/device_stat')}"><i class="iconfont iconfont-logo2"></i>亮屏管理</a>
+      &gt;
+      <span>点击记录</span>
+      <!-- <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a> -->
+    </div>
+    <br />
+
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            {if $member_info.res_name != 'business_hall'}
+              <th>省</th>
+              <th>市</th>
+              <!-- <th>区</th> -->
+              <th>厅</th>
+            {/if}
+            <th>品牌</th>
+            <th>型号</th>
+            <th>IMEI</th>
+            <th>内容标题</th>
+            <th>点击次数</th>
+            <th>点击时间</th>
+            <!-- <th>更新时间</th> -->
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $click_list as $k=>$v}
+          <tr id="dataList{$k}">
+            {if $member_info.res_name != 'business_hall'}
+              <td>{_uri('province', $v.province_id, 'name')}</td>
+              <td>{_uri('city', $v.city_id, 'name')}</td>
+              <!-- <td>{_uri('area', $v.area_id, 'name')}</td> -->
+              <td>{_uri('business_hall', $v.business_id, 'title')}</td>
+            {/if}
+            <td>{$v.phone_name}</td>
+            <td>{$v.phone_version}</td>
+            <td>{$v.phone_imei}</td>
+            <td>{if $v.res_title}{$v.res_title}{else}--{/if}</td>
+            <td>{if $v.click_num}{$v.click_num}{else}1{/if}</td>
+            <td>{$v.add_time|date_format:"Y-m-d H:i"}</td>
+            <!-- <td>{$v.update_time}</td> -->
+          </tr>
+          {foreachelse}
+          <tr><td colspan="{if $member_info.res_name != 'business_hall'}9{else}6{/if}">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

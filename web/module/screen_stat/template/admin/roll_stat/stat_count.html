@@ -1,0 +1,115 @@
+{include_www file="admin/lib/header_new.html" title="轮播列表"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen_content/admin')}"><i class="iconfont iconfont-logo2"></i>亮屏管理</a>
+            &gt;
+            <span>轮播图统计</span>
+            <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+          </div>
+          <div class="form-search row clearfix">
+            <div class="tabs2">
+                <ul class=" col-sm-4">
+                    <li class="dateType {if $search_filter.date_type==1}curr{/if}" ><a href="{AnUrl("screen_stat/admin/roll_stat?content_id={$content_id}&res_name={$action_type}&res_id={$action_id}&search_filter[date_type]=1")}" >今日</a></li>
+                    <li class="dateType {if $search_filter.date_type==2}curr{/if}" ><a href="{AnUrl("screen_stat/admin/roll_stat?content_id={$content_id}&res_name={$action_type}&res_id={$action_id}&search_filter[date_type]=2")}" >近7天</a></li>
+                    <li class="dateType {if $search_filter.date_type==3}curr{/if}" ><a href="{AnUrl("screen_stat/admin/roll_stat?content_id={$content_id}&res_name={$action_type}&res_id={$action_id}&search_filter[date_type]=3")}" >近30天</a></li>
+                </ul>
+
+                <div class="col-sm-8">
+                    <div class="form-inline" id="dateSelectBox" >
+                        <div class="form-group">
+                            <label for="exampleInputName2">时间：</label>
+                            <input type="text" class="form-control" style="width:100px; text-align:center;" name="start_date" id="start_time" value="{$search_filter.start_time}" />
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputName2">至</label>
+                            <input type="text" class="form-control" style="width:100px; text-align:center;" name="end_date" id="end_time" value="{$search_filter.end_time}" />
+                        </div>
+                        <button type="button" class="btn btn-success btn-sm" id="searchData">搜索</button>
+                    </div>
+                </div>
+            </div>
+        </div> 
+          <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="text-align:center">时间</th>
+              {if $member_info.res_name == 'group'}
+                  <th style="text-align:center">门店量</th>
+              {else if $member_info.res_name == 'province'}
+                  <th style="text-align:center">省</th>
+              {else if $member_info.res_name == 'city'}
+                  <th style="text-align:center">市</th>
+              {else if $member_info.res_name == 'business_hall'}
+                  <th style="text-align:center">营业厅</th>
+              {/if}
+                  <th style="text-align:center">设备量</th>
+                  <th style="text-align:center">播放量</th>
+                </tr>
+              </thead>
+              <tbody>
+              <!--  今日统计  -->
+              {if $search_filter.end_time == date('Y-m-d', time())}
+                  {$count_arr = screen_stat_helper::get_today_count_num($content_id)}
+                  {if $count_arr}
+                    <tr>
+                        <td style="text-align:center">{$count_arr.date}</td>
+                      {if $action_type == 'group'}
+                        <td style="text-align:center"><a href="{AnUrl('screen_stat/admin/roll_stat/stat_business',"?content_id={$content_id}&date={$count_arr.date}")}">{$count_arr.business_num}</a></td>
+                      {else if $action_type == 'province'}
+                        <td style="text-align:center">{screen_helper::by_id_get_field($action_id, 'province', 'name')}</td>
+                      {else if $action_type == 'city'}
+                        <td style="text-align:center">{screen_helper::by_id_get_field($action_id, 'city', 'name')}</td>
+                      {else if $action_type == 'business_hall'}
+                        <td style="text-align:center">{screen_helper::by_id_get_field($action_id, 'business_hall', 'title')}</td>
+                      {/if}
+                        <td style="text-align:center"><a href="{AnUrl('screen_stat/admin/roll_stat/stat_device',"?content_id={$content_id}&res_name={$action_type}&res_id={$action_id}&date={$count_arr.date}")}">{$count_arr.device_num}</a></td>
+                        <td style="text-align:center"><a href="{AnUrl('screen_stat/admin/roll_stat/record',"?content_id={$content_id}&res_name={$action_type}&res_id={$action_id}&date={$count_arr.date}")}">{$count_arr.roll_num}</td>
+                    </tr>
+                    {/if}
+                {/if}
+                {foreach $list as $k=>$v}
+                <tr>
+                    <td style="text-align:center">{$v.date}</td>
+                  {if $action_type == 'group'}
+                    <td style="text-align:center"><a href="{AnUrl('screen_stat/admin/roll_stat/stat_business',"?content_id={$content_id}&date={$v.date}")}">{$v.business_hall_num}</a></td>
+                  {else if $action_type == 'province'}
+                    <td style="text-align:center">{screen_helper::by_id_get_field($action_id, 'province', 'name')}</td>
+                  {else if $action_type == 'city'}
+                    <td style="text-align:center">{screen_helper::by_id_get_field($action_id, 'city', 'name')}</td>
+                  {else if $action_type == 'business_hall'}
+                    <td style="text-align:center">{screen_helper::by_id_get_field($action_id, 'business_hall', 'title')}</td>
+                  {/if}
+                    <td style="text-align:center"><a href="{AnUrl('screen_stat/admin/roll_stat/stat_device',"?content_id={$v.content_id}&res_name={$action_type}&res_id={$action_id}&date={$v.date}")}">{$v.device_num}</a></td>
+                    <td style="text-align:center"><a href="{AnUrl('screen_stat/admin/roll_stat/record',"?content_id={$v.content_id}&res_name={$action_type}&res_id={$action_id}&date={$v.date}")}">{$v.roll_num}</td>
+                </tr>
+                {/foreach}
+                {if !$count_arr && !$list}
+                <tr><td colspan="5">暂无相关信息</td></tr>
+                {/if}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        </div>
+<script>
+    $(function () {
+        var url        = siteUrl + "/screen_stat/admin/roll_stat";
+        var content_id = "{$content_id}";
+        var res_name   = "{$action_type}";
+        var res_id   = "{$action_id}";
+
+        $('#searchData').on('click', function () {
+            var startTime = $('#start_time').val();
+            var endTime   = $('#end_time').val();
+
+            window.location.href = url + '?content_id='+ content_id +'&res_name='+ res_name +'&res_id='+ res_id +'&search_filter[start_time]=' + startTime + '&search_filter[end_time]=' + endTime;
+       });
+    });
+</script>
+{include_www file="admin/lib/footer_new.html"}

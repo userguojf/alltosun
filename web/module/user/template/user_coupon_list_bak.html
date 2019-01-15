@@ -1,0 +1,80 @@
+{include_www file='lib/other_header.html' title="个人中心" other_title='我的优惠券' return_url='home'}
+    <section class="my-gift2">
+    <div class="none-tips">您还没有优惠券!</div>
+          {*
+        <ul>
+          <li>
+            <dl class="box1">
+              <dt>
+                <span class="txt1">￥</span>
+                <span class="txt2">50</span>
+                <span class="txt3">满499元可用<br><strong>元优惠券</strong></span>
+              </dt>
+              <dd><a href="###" class="had">点击领取</a></dd>
+            </dl>
+            <div class="box2">
+              <p><span>品智通用券</span>    每人限领1张</p>
+              <p>有效期至：2015-10-28    </p>
+            </div>
+          </li>
+          <li>
+            <dl class="box1">
+              <dt>
+                <span class="txt1">￥</span>
+                <span class="txt2">50</span>
+                <span class="txt3">满499元可用<br><strong>元优惠券</strong></span>
+              </dt>
+              <dd><a href="###">点击领取</a></dd>
+            </dl>
+            <div class="box2">
+              <p><span>品智通用券</span>    每人限领1张</p>
+              <p>有效期至：2015-10-28    </p>
+            </div>
+          </li>
+          <li>
+            <dl class="box1">
+              <dt>
+                <span class="txt1">￥</span>
+                <span class="txt2">50</span>
+                <span class="txt3">满499元可用<br><strong>元优惠券</strong></span>
+              </dt>
+              <dd><a href="###">点击领取</a></dd>
+            </dl>
+            <div class="box2">
+              <p><span>品智通用券</span>    每人限领1张</p>
+              <p>有效期至：2015-10-28    </p>
+            </div>
+          </li>
+          <li>
+            <dl class="box1">
+              <dt>
+                <span class="txt1">￥</span>
+                <span class="txt2">50</span>
+                <span class="txt3">满499元可用<br><strong>元优惠券</strong></span>
+              </dt>
+              <dd><a href="###">点击领取</a></dd>
+            </dl>
+            <div class="box2">
+              <p><span>品智通用券</span>    每人限领1张</p>
+              <p>有效期至：2015-10-28    </p>
+            </div>
+          </li>
+        </ul>
+        *}
+      </section>
+    <!--end:优惠券列表-->
+<!--  footer-->
+{load_js file="activity.js"}
+<script>
+$(function(){
+  var windowH = $(window).height();
+  var bodyH = $('body').height();
+  if (windowH >= bodyH){
+ bodyH = windowH;
+ var listH = bodyH - $('.nav').height() - $('.footer').height() - 70;
+ $('.my-gift2, .my-gift').css({ height:listH });
+    $('.footer').css({ position:'absolute', bottom:'0' });
+  }
+});
+</script>
+{include_www file='lib/other_footer.html'}

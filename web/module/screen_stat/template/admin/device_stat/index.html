@@ -1,0 +1,175 @@
+{include_www file="admin/lib/header_new.html" title="亮屏覆盖量统计"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    #mainEchart{
+        height:500px;
+        border:1px solid #ccc;
+        margin: 10px;
+        padding:10px;
+    }
+</style>
+
+<script src="{$smarty.const.STATIC_URL}/js/echarts-2.2.7/echarts-all.js"></script>
+<script src="{$smarty.const.STATIC_URL}/js/screen_stat/admin/device_stat_echart.js?v={time()}"></script>
+
+{* 主内容START *}
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('screen_stat/admin/device_stat')}"><i class="iconfont iconfont-logo2"></i>亮屏覆盖量统计</a>
+            &gt;
+            <span>设备统计</span>
+        </div>
+        {* 时间判断 *}
+        <div class="form-search row clearfix">
+            <div class="tabs2">
+                <ul class=" col-sm-4">
+                    <li class="dateType {if $search_filter.date_type==2}curr{/if}" ><a href="{AnUrl("screen_stat/admin/device_stat?search_filter[date_type]=2")}" >今日</a></li>
+                    <li class="dateType {if $search_filter.date_type==3}curr{/if}" ><a href="{AnUrl("screen_stat/admin/device_stat?search_filter[date_type]=3")}" >本周</a></li>
+                    <li  class="dateType {if $search_filter.date_type==4}curr{/if}"><a href="{AnUrl("screen_stat/admin/device_stat?search_filter[date_type]=4")}" >本月</a></li>
+                </ul>
+
+                <div class="col-sm-8">
+                    {if $action_type == 'province_all' || $action_type == 'province_one'}
+                    <div class="form-group" style="float:left;">
+                        <select id="province">
+                            <option value="0">全部</option>
+                            {$province_list = array_to_option(city_helper::get_province_list(),'name')}
+                            {html_options options="$province_list" selected="{$resource_id}" }
+                        </select>
+                    </div>
+                    {/if}
+                    <div class="form-inline" id="dateSelectBox" >
+                        {if $action_type != 'province_all'}
+                        <div class="form-group">
+                            <label for="exampleInputName2">时间：</label>
+                            <input type="text" class="form-control" style="width:100px; text-align:center;" name="start_date" id="start_time" value="{$search_filter.start_time}" />
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputName2">至</label>
+                            <input type="text" class="form-control" style="width:100px; text-align:center;" name="end_date" id="end_time" value="{$search_filter.end_time}" />
+                        </div>
+                        {/if}
+                        <button type="button" class="btn btn-success btn-sm" id="searchData">搜索</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="mainEchart"></div>
+        
+        
+        <div class="list">
+            <table class="table table-bordered table-striped center table_co_td">
+                <thead>
+                <tr>
+                    <th width='10%;'>区域</th>
+                    <th width='12%;'>营业厅总覆盖量</th>
+                    <th width='10%;'>设备总安装量</th>
+                    {if $search_filter.date_type == 2 && $member_info.res_name == 'group'}
+                    <th width='8%;'>在线数量</th>
+                    {/if}
+                    <th width='8%;'>新增营业厅</th>
+                    <th width='8%;'>新增设备量</th>
+                    <th width='8%;'>活跃数量</th>
+                    <th width='8%;'>下柜数量</th>
+                    {if $member_info.res_name == 'group'}
+                      <th width='10%;'>体验时长</th>
+                    {/if}
+                </tr>
+                </thead>
+                <tbody>
+              
+                {foreach $table_list as $k=>$v}
+                {if $k == 0}
+                {$is_group = 1}
+                {else}
+                {$is_group = 0}
+                {/if}
+                  <tr id="dataList{$k}">
+                      <td>{$v.region_name}</td>
+                      <td>
+                        {*if $k != 0*}
+                       
+                            <a href="{AnUrl("screen_stat/admin/device_stat/business_hall_list/business_hall_list{$search_filter_str}&search_filter[date_type]={$search_filter.date_type}&search_filter[region_id]={$v[$region_id]}&search_filter[region_type]={$region_type}&is_group={$is_group}")}">{$v.business_hall_num}</a>
+                        {*else*}
+                            {*$v.business_hall_num*}
+                        {*/if*}
+                      </td>
+                      <td>
+                        {*if $k != 0*}
+                          <a href="{AnUrl("screen_stat/admin/device_stat/device_list/device{$search_filter_str}&search_filter[date_type]={$search_filter.date_type}&search_filter[region_id]={$v[$region_id]}&search_filter[region_type]={$region_type}&type=4&is_group={$is_group}")}">{$v.device_num}</a>
+                        {*else*}
+                          {*$v.device_num*}
+                        {*/if*}
+                      </td>
+                      
+                      <!-- 在线数量 -->
+                      {if $search_filter.date_type == 2 && $member_info.res_name == 'group'}
+                        <td>
+                         {*if $k != 0*}
+                           <a href="{AnUrl("screen_stat/admin/device_stat/device_list/device{$search_filter_str}&search_filter[date_type]={$search_filter.date_type}&search_filter[region_id]={$v[$region_id]}&search_filter[region_type]={$region_type}&type=3&is_group={$is_group}")}">{$v.online_num}</a>
+                         {*else*}
+                           {*$v.online_num*}
+                         {*/if*}
+                        </td>
+                      {/if}
+                      <!-- 新增营业厅 -->
+                      <td>
+                      <a href="{AnUrl("screen_stat/admin/device_stat/new_business/new_business{$search_filter_str}&search_filter[date_type]={$search_filter.date_type}&search_filter[region_id]={$v[$region_id]}&search_filter[region_type]={$region_type}")}">{$v.new_business_num}</a></td>
+                      <!-- 新增设备 -->
+                      <td>
+                      <a href="{AnUrl("screen_stat/admin/device_stat/new_business/new_device{$search_filter_str}&search_filter[date_type]={$search_filter.date_type}&search_filter[region_id]={$v[$region_id]}&search_filter[region_type]={$region_type}")}">{$v.new_device_num}</a></td>
+                      <td>
+                      <!-- 活跃数 -->
+                      {*if $k != 0*}
+                        <a href="{AnUrl("screen_stat/admin/device_stat/device_list/device{$search_filter_str}&search_filter[date_type]={$search_filter.date_type}&search_filter[region_id]={$v[$region_id]}&search_filter[region_type]={$region_type}&is_active=1&type=2&is_group={$is_group}")}">{$v.active_num}</a>
+                      {*else*}
+                        {*$v.active_num*}
+                      {*/if*}
+                      
+                      </td>
+                      <td>
+                          <a href="{AnUrl("screen_stat/admin/device_stat/drop_off?search_filter[res_id]={$v[$region_id]}&search_filter[res_name]={$region_type}")}">
+                          {$v.drop_off_num}
+                          </a>
+                      </td>
+                      {if $member_info.res_name == 'group'}
+                        <td>
+                          <a href="{AnUrl("screen_stat/admin/device_stat/device_list/device{$search_filter_str}&search_filter[date_type]={$search_filter.date_type}&search_filter[region_id]={$v[$region_id]}&search_filter[region_type]={$region_type}&type=1&is_group={$is_group}")}">{screen_helper::format_timestamp_text($v.experience_time)}</a>
+                        </td>
+                      {/if}
+                      
+                  </tr>
+                {foreachelse}
+                <tr><td colspan="{if $member_info.res_name == 'group'}9{else}7{/if}">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+<script>
+  var jsonData = {$echart_data}; 
+  $(function () {
+    
+     var myChart         = echarts.init(document.getElementById('mainEchart'), theme);
+     myChart.setOption(setOption(jsonData));
+    
+     $('#searchData').on('click', function () {
+       var startTime = $('#start_time').val();
+       var endTime  = $('#end_time').val();
+       var url = siteUrl + "/screen_stat/admin/device_stat/";
+       window.location.href = url + '?search_filter[start_time]=' + startTime + '&search_filter[end_time]=' + endTime;
+     });
+     
+  });
+  
+  
+  
+  
+  
+</script>
+{include_www file="admin/lib/footer_new.html"}

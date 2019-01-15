@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>{if $title}{$title}-{/if}中国电信A-Wifi管理 </title>
+  {*var_dump($module)*}
+  {load_css file="css/admin/base.css"}
+  {load_css file="css/admin/admin.css"}
+  {*{if in_array($module, explode(',', ',autoreply,appmsg,appmenu,appmenu_stat,key_stat,message,user'))}
+  {load_css file="css/admin/weixin.css"}
+  {/if}*}
+  
+  {load_js file='jquery-1.7.1.min.js'}
+  {load_js lib='jquery-ui'}
+  {load_js file='common.js?b=time()'}
+  {load_js file='admin.js'}
+  {*load_js file='qDialog.js'*}
+<!--[if IE 6]>
+<script src="{$smarty.const.SITE_URL}/js/DD_belatedPNG_0.0.8a-min.js"></script>
+<script>
+  DD_belatedPNG.fix('.logo a,.n-icon');
+</script>
+<![endif]-->
+<script type="text/javascript">
+  var siteUrl = "{$smarty.const.SITE_URL}";
+  var uploadUrl = "{$smarty.const.UPLOAD_URL}";
+</script>
+</head>
+<body {if $nobg != 1}style="background:#f0f3f7;"{/if}>
+<div id="wrap">
+  <div class="header">
+    <div class="htop clearfix">
+      <h1 class="logo left" style="font-size:16px;">中国电信品智平台管理</h1>
+      <div class="htop-login right">
+        <a href="{AnUrl('admin')}" data-id="12">登录</a>
+      </div>
+    </div>
+  </div>
+  <div class="container clearfix {if $nobg == 1}nobg{/if}">

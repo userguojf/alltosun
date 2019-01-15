@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script>
+var siteUrl = "{$smarty.const.SITE_URL}";
+</script>
+<title>登录</title>
+<link rel="stylesheet" href="{$smarty.const.STATIC_URL}/css/base.css">
+<link rel="stylesheet" href="{$smarty.const.STATIC_URL}/css/admin/admin.css">
+<link rel="stylesheet" href="{$smarty.const.STATIC_URL}/css/base.css" type="text/css" />
+<link rel="stylesheet" href="{$smarty.const.STATIC_URL}/css/admin/admin.css" type="text/css" />
+<link rel="stylesheet" href="{$smarty.const.STATIC_URL}/css/admin/weixin.css" type="text/css" />
+<script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/jqueryui/1.8.11/jquery-ui.js"></script><script type="text/javascript" src="/js/jqueryui/1.8.11/i18n/jquery.ui.datepicker-zh-CN.js"></script><link rel="stylesheet" href="/js/jqueryui/1.8.11/themes/base/jquery-ui.css" type="text/css" />
+<script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/qDialog.js"></script>
+<script src="http://live189.alltosun.net/js/seajs/dist/sea.js" ></script>
+
+<!--[if IE 6]>
+<script src="{$smarty.const.STATIC_URL}/js/DD_belatedPNG_0.0.8a-min.js"></script>
+<script>
+  DD_belatedPNG.fix('.logo a,.n-icon');
+</script>
+<![endif]-->
+</head>
+<body>
+<div class="float-login">
+  <div class="logo"><a href="javascript:void(0);">互动阳光</a></div>
+  <div class="login-f-con">
+      <p><input type="text" id="tel" placeholder="请输入中国电信手机号码"  value="{$remeber_me_user}" class="login-ipt1"></p>
+      <p class="login-pwd">
+        <input type="text" id="code" placeholder="请输入验证码" class="login-ipt2">
+        <img class="captchaImage" width="93px" height="36px" src="{AnUrl('captcha')}" style="cursor:pointer;" >
+        <a href="javascript:void(0);" class="icon icon-refresh captchaRefresh" ></a>
+     </p>
+      <p class="login-pwd">
+        <input name="password" id="msgPassword" type="text" class="login-ipt2" placeholder="短信验证码" value="">
+        <button type="btn" class="btn btn-info btn-danger right sendVcode">下发验证码</button>
+     </p>
+     <input type="hidden" value="{$is_admin}" id="admin" />
+     <input type="hidden" value="{$redirect_url}" id="redirect_url"/>
+      <div class="clearfix">
+        <div class="login-chk left"></div>
+        <button type="submit" style="width:371px;height:42px;margin-top:3px;" id="loginBtn" class="btn btn-info btn-danger right js_loginBtn">登录</button>
+      </div>
+  </div>
+</div>
+<script>
+  seajs.use(['{$smarty.const.STATIC_URL}/module/user/js/login']);
+</script>
+</body>
+</html>

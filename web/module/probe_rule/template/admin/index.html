@@ -1,0 +1,50 @@
+{include_www file="admin/lib/header_new.html" title="探针规则列表"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('admin')}"><i class="iconfont iconfont-logo2"></i>探针管理</a>
+            &gt;
+            <span>探针规则列表</span>
+        </div>
+        <div class="form-search clearfix">
+            <div class="pull-right">
+                <a href="{AnUrl('probe_rule/admin/add')}" class="btn btn-sm btn-success">添加规则</a>
+            </div>
+        </div>
+
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>规则内容</th>
+                        <th>规则别名</th>
+                        <th>添加时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {foreach $list as $k=>$v}
+                        <tr id="dataList{$v.id}" class="view_id">
+                            <td>{$v.content}</td>
+                            <td>{$v.alias}</td>
+                            <td>{$v.add_time}</td>
+                            <td>
+                                <a class="btn btn-xs btn-success" href='{AnUrl("probe_rule/admin/edit?id={$v.id}")}'>编辑</a>
+                            </td>
+                        </tr>
+                    {foreachelse}
+                        <tr>
+                            <td colspan="3">暂无数据</td>
+                        </tr>
+                    {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

@@ -1,0 +1,117 @@
+===== 2015年10月19日 =====
+- [修改] Rule.php 和 init.php 修改成支持windows环境
+
+
+===== 2015年01月05日 =====
+- [增加] Model类中在__call()中增加勾子,
+     执行前勾子$this->hook_pre_call(&$name, &$params); 
+     和执行后勾子 $this->hook_back_call(&$name, &$params, &$r);
+     两者可以改变类的任何特性
+- [修正] 修复_model()函数中对象缓存（序列化存储）中，报不存在表的问题，revision 879号 http://ace.alltosun.com/alltosun.com/task/9893.html
+- [改进] MemcacheWrapper::deleteNS() 删除时不再清空key，同时将 $this->ns_val = FALSE; 清空key使用$this->NS('')
+     同时在Model和ModelRes类中配合进行改进，减少不必要unset()  MemcacheWrapper 对象操作
+
+
+===== 2014年12月17日 =====
+- [打包] 1.1.2 自 Revision 799
+- [改进] Cookie::set()新增$path, $domain,$secure,$httponly, 不影响之前的写法，对于限制cookie只在http中传输的，
+    可以传入第7个参数$httponly = true，这样可以防XSS攻击时通过JS获取到用户的cookie模拟登录
+- [新增]新增对第三方库tcpdf的自动加载
+- [新增]openapi集成微信授权
+- [修正]限制数据表名不能以数字开头，否则可能会导致MySQL自动转义错误定向到resource表
+- [修正] ModelRes类如果主键记录在数据库里不存在的话，更新/删除该主键值，都会返回1，实际应返回0, 修改 570行 缺少 return 导致 update 执行失败也返回 true 的情况
+
+
+===== 2013年7月30日 =====
+- [打包] 1.1.1 自 Revision 731
+- [增加] AnDaemon，Daemon.php，后台守护进程
+- [修正] init.php,Pager.php,Gd.php,String.php,Module.php,OpenApi\driver\sinaweibo\Authorize.php,OpenApi\connect\db.php
+
+
+===== 2013年7月 =====
+- [修正] init.php _model() 判断类是否存在时自动加载的问题
+- [修正] Pager.php getLimit() 判断参数问题
+- [增加] Response.php flush() 显示版本号
+- [增加] Gd.php 增加 imagecreatefrombmp()和优化语法
+- [改进] Module.php 调整文件路径变量拼装方式
+- [增加] String.php stripHtml() 补充字符、cutStr()把补充字符串长度计算在于，如果字符串＋补充字符串长度超过指定长度再进行截取
+- [改进] 
+OpenApi\OpenApi.php
+OpenApi\connect\db.php
+OpenApi\driver\sinaweibo\Authorize.php
+
+
+===== 2013年4月 =====
+- [增加] AnDaemon，Daemon.php，后台守护进程
+- [改进] init.php _model() 添加支持加载module里的model，_model('friend.friend'), _model('friend.someone'),2013-02-21
+- [改进] AnString String.php Revision 654
+    1、增加 AnString::cut() 截取两个字串之间的字符
+    2、增加 AnString::cutAll() 依次截取两个字串之间的字符
+- [改进] AnPHP::flush() 显示Powered-By与框架的版本号
+- [改进] AnPHP::autoload() 加载AnUrl类时，优先加载MODULE_CORE下的类，以达到重载
+- [改进] AnPHP::isSysModel() 通过自定义AnPHP::sysModel数组来重新自定义系统类范围 
+
+    
+===== 2013年2月5日 =====
+- [打包] 1.1.0 自 Revision 630
+- [新增加] Form.php、Message.php、Url.php、Module.php、Rule.php、Router.php
+
+
+===== 2012年11月1日 =====
+- [改进] Model
+    1、setDB() 只支持传递字符串，通过字符串取Config中的配置。默认取this->op中的预设值，添加防重复调用。
+    2、将缓存默认生存期延长至1800秒，之前是900秒
+    3、__construct() 数据库参数传递，只接受字符串，不再接受对象和数组；进行debug和cache属性设定
+    4、initialization()函数不再接受参数传递，原来可以传递数据库与表参数；可以在钩子中传递对象自身，$this->init($this)，$this->init_after($this)，调整debug\cache的设置
+    5、__wakeup()进行debug和cache参数设定
+    6、setDB()只接收字符串，不再接受对象与数组，同时进行状态判断，避免重复设定
+    7、setTable()只接收表名，不再接受res_type与res_name，进行状态判断，避免重复设定；同步进行表前缀设定，减少操作步骤。
+- [改进] MemcacheWrapper
+    lock函数使用add()方法，去除isLock()，减少读取1次缓存操作
+
+===== 2012年9月 =====
+- [改进] DB 2012-9-26
+    1、DB中添加一个静态属性，public static $lastQuerySQL = array();
+    2、DBAbstract::query()，将传递过来的sql语句保存在DB::$lastQuerySQL变量中
+    3、DB::describe() 去除判断表是否存在的操作
+- [改进] ModelRes 2012-9-14
+    1、ModelRes::create()判断是否要对属性操作，添加$this->res_model属性判断。
+    2、ModelRes类中将setTable()中优化，可以使用Config中的设定的内容获取pk字段，提升固定表的操作速度。 - ModelRes.php
+    3、Models/所有类都去除自动创建表，将init_after()修改为creatTable()
+- [改进] Model 2012-9-10 
+    Model::selectDB() 时增加slave的pk字段设定
+- [改进] _model()
+    可以使用Config中的设定的内容获取pk字段，提升固定表的操作速度。 - init.php
+
+
+===== 2012年8月18日 =====
+- [改进] MemcacheWrapper 2012-8-18 
+    1、增加：$this->noLock，不使用锁定
+    2、增加：当使用set()与call_user_func_array()时，如果值是FALSE，抛出AnException
+    3、修改：call_user_func_array()当$key不存在时，生成$key时更加容易辨识
+    4、修改：NS()当$key不存在时，将ns,ns_val都设置成为空串''，去除ns_val的引用赋值
+    5、deleteNS() ，去除删除后的重置命名空间动作
+
+
+===== 2012年8月6日 =====
+  svn版本号：359－374
+- [新增] DB类添加checkPK($tb)，参数是表结构数组，判断如果结构中有pk字段返回pk字段，否则如果有uk字段返回uk字段。 - DB.php
+- [改进] Model类将setTable()优化，添加第2个参数，如果是初始化时执行，不清空通过_model()工作函数设定的值，减少重新读取赋值问题。 - Model.php
+- [改进] ModelRes类中将setTable()中优化，通过DB::checkPK()方法获取pk字段值，减少缓存读取。 - ModelRes.php
+
+
+===== AnPHP 1.0.1  =====
+- [修正] #13795 防止nfs网络通信超时，导致重新创建upload目录 - Uploadr.php
+- [修正] getLimit中$page传入0，导致SQL的LIMIT出现负数的问题 - Pager.php
+- [删除] 删除已废弃的类Uploader.php - Uploader.php
+- [删除] 删除AnPHP::Version
+- [新增] DB查询时，$filter支持LIKE的数组值的查询：array('title LIKE'=>array('allto%', '%tosun%')) 返回 WHERE (`title` LIKE? OR `title` LIKE?) - DB.php
+- [新增] 单元测试用例 - test
+- [改进] 去除全局变量$widgets使用AnPHP::$widgets[$name] - init.php
+- [改进] 添加AnPHP::runTime()，添加AnPHP::$autoload用于通过配置自动加载第三方类库 - init.php
+- [改进] 优化_model()事件加载
+- [改进] 将Model中表是否存在的属性移动到_model()中添加对象对应的表是否存在属性，以减少重复判断表是否存在的操作 
+- [完善] 补充@package AnDB、AnModel、AnSms相关的phpdoc
+
+
+- 创建该change_log.txt文件

@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>实时数据</title>
+        <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+        <script src="/js/echarts-2.2.7/echarts-all.js"></script>
+    </head>
+<body>
+    <div id="main" style="width:800px; height:500px;"></div>
+</body>
+<script>
+    var dev   = '{$dev}';
+    var secs   = [];
+    var titles = ['室内', '室外'];
+    var time   = 1000 * 60;
+
+    for ( var i = 0; i < 60; i ++ ) {
+    	secs[i] = i;
+    }
+
+    var myChart = echarts.init(document.getElementById('main'));
+
+    myChart.setOption({
+         tooltip : {
+             trigger: 'axis'
+         },
+         legend: {
+             data:titles
+         },
+         toolbox: {
+             show : true,
+             feature : {
+                 magicType : { show: true, type: ['line', 'bar'] },
+             }
+         },
+         calculable : true,
+         xAxis : [
+             {
+                 type : 'category',
+                 data : secs
+             }
+         ],
+         yAxis : [
+             {
+                 type : 'value',
+                 splitArea : { show : true }
+             }
+         ],
+         series : [
+             {
+                 name:titles[0],
+                 type:'line',
+                 itemStyle: { normal: { areaStyle: { type: 'default'} } },
+                 data:[{implode(',', $data['indoor'])}]
+             },
+             {
+                 name:titles[1],
+                 type:'line',
+                 itemStyle: { normal: { areaStyle: { type: 'default'} } },
+                 data:[{implode(',', $data['outdoor'])}]
+             },
+        ]
+    });
+
+    setInterval(function(){
+    	var url = 'http://201512awifi.alltosun.net/probe/min';
+    	$.post(url, { 'dev': dev }, function(json){
+    		if ( json.info != 'ok' ) {
+    			alert(json.info);
+    			return false;
+    		}
+
+    		var data = json.data;
+
+    		var indoor  = [];
+    		var outdoor = [];
+
+    		var n = 0;
+    		for ( var i in data.indoor ) {
+    			indoor[n++] = data.indoor[i];
+    		}
+    		n = 0;
+    		for ( var i in data.outdoor ) {
+                outdoor[n++] = data.outdoor[i];
+            }
+    		console.log(indoor, outdoor);
+
+    		myChart.setOption({
+                series : [
+                    {
+                        name:titles[0],
+                        type:'line',
+                        itemStyle: { normal: { areaStyle: { type: 'default'} } },
+                        data:indoor
+                    },
+                    {
+                        name:titles[1],
+                        type:'line',
+                        itemStyle: { normal: { areaStyle: { type: 'default'} } },
+                        data:outdoor
+                    },
+                ]
+            });
+    	}, 'json');
+    }, 10000);
+</script>
+</html>

@@ -1,0 +1,89 @@
+{include_www file="admin/lib/header_new.html" title="内容列表"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<style>
+    .pop-bg p .w_url{
+	   word-wrap: break-word;
+    }
+    .btn_msg{
+       cursor:pointer;
+    }
+    .btn_msg:hover{
+        color:#23527c;
+    }
+</style>
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen_content/admin/content_analysis')}"><i class="iconfont iconfont-logo2"></i>内容分析</a>
+            &gt;
+            <span>设备内容轮播（{$count}）</span>
+            <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+          </div>
+          <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th width='5%'>省</th>
+                  <th width='5%'>市</th>
+                  <th width='8%'>厅</th>
+                  <th width='5%'>品牌</th>
+                  <th width='5%'>型号</th>
+                  <th width='5%'>唯一标识</th>
+                  <th width='5%'>在线状态</th>
+                  <th width='35%'>正在轮播</th>
+                </tr>
+              </thead>
+              <br />
+              <tbody>
+                {foreach $device_list as $k=>$v}
+                <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                  <td>{$v.province_name}</td>
+                  <td>{$v.city_name}</td>
+                  <td>{$v.business_hall_name}</td>
+                  <td>{if $v.phone_name_nickname}{$v.phone_name_nickname}{else}{$v.phone_name}{/if}</td>
+                  <td>{if $v.phone_version_nickname}{$v.phone_version_nickname}{else}{$v.phone_version}{/if}</td>
+                  <td>{$v.device_unique_id}</td>
+                  <td>
+                    {if $v.is_online}
+                      <span class="label label-info">在线</span>
+                    {else}
+                      <span class="label label-warning">离线</span>
+                    {/if}
+                  </td>
+                  <td >
+                    {foreach $v.roll_content as $kk => $vv}
+                      <div title="{$vv.title}" style="margin:5px; padding:10px; width:100px;height:210px; background-color:#eee;" class="pull-left" >
+                        <span>
+                            {screen_content_config::$content_issuer_res_name_type[$vv.issuer_res_name]}<br><br>
+                            {if $vv.type == 1 || $vv.type == 4}
+                              <a href="{$vv.link}" target='_blank'><img width="80" src="{$vv.link}"></a>
+                            {else if $vv.type == 2}
+                              <video style="width:80px;" >
+                                  <source src='{$vv.link}' type="video/mp4"></source>
+                              </video>
+                            {else if $vv.type == 3}
+                                <a href="{$vv.link}">点击跳转</a>
+                            {/if}
+                        </span> 
+                      </div>
+                    {foreachelse}
+                      {if !$v.is_online}设备离线{else}默认轮播图{/if}
+                    {/foreach}
+                  </td>
+                </tr>
+                {foreachelse}
+                  <tr><td colspan='9'>暂无数据</td></tr>
+                {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        <!--end:列表-->
+<!-- 主内容 end -->
+      </div>
+
+{include_www file="admin/lib/pop.html"}
+{include_www file="admin/lib/footer_new.html"}

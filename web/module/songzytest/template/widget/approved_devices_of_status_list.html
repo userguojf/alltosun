@@ -1,0 +1,122 @@
+  <div class="tabs1">
+            <ul class="clearfix">                    
+                <li {if $search_filter['order_type'] == 1}class="curr" {/if}><a href="{compile_url($search_filter,'order_type',1,'probe_pandect/admin/device_application')}">待发货</a></li>
+                <li {if $search_filter['order_type'] == 2}class="curr"{/if}><a href="{compile_url($search_filter,'order_type',2,'probe_pandect/admin/device_application')}">已发货</a></li>
+                <li {if $search_filter['order_type'] == 3}class="curr"{/if}><a href="{compile_url($search_filter,'order_type',3,'probe_pandect/admin/device_application')}">已拒绝</a></li>
+               
+            </ul>
+        </div>
+    <div class="form-search clearfix">
+            <div class="pull-left">
+                <form action="{AnUrl('probe_pandect/admin/device_order_list')}" methhod='get'>
+                    <select class="form-control input-sm pull-left onlineStatus"  style="width:120px" name="search_filter[search_type]">
+                        {foreach probe_pandect_config::$search_type as $k => $v}
+                            <option value="{$k}" {if $search_filter.search_type == $k}selected{/if}>{$v}</option>
+                        {/foreach }
+                        
+                    </select>
+                    <input type= 'hidden' value="{$search_filter['order_type']}" name="search_filter[order_type]">
+                    <select class="form-control input-sm pull-left js_province" id='province' style="width:120px" name="search_filter[province]" >
+                        <option value="">请选择省</option>
+                    </select>
+                    <select class="form-control input-sm pull-left js_city" id="city" style="width:120px" name="search_filter[city]">
+                        <option value="">请选择市</option>
+                    </select>
+                    <button type="submit" class="btn-search pull-left">搜索</button>
+                </form>
+            </div>
+        </div>
+        
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+
+            <th style="text-align:center" width="20%">设备审批时间</th>
+            <th style="text-align:center" width="15%">审批状态</th>
+            <th style="text-align:center" width="15%">设备类型</th>
+            <th style="text-align:center" width="10%">省份</th>
+            <th style="text-align:center" width="10%">地市</th>
+            <th style="text-align:center" width="15%">设备总数</th>
+            <th style="text-align:center" width="15%">设备状态</th>
+            <th style="text-align:center" width="30%">备注</th>
+          </tr>
+        </thead>
+        <tbody>
+       {foreach $list as $k=>$v}
+      
+      <tr> 
+
+           <td style="text-align:center">{$v.update_time}</td>
+           <td style="text-align:center">审批通过</td>
+           <td style="text-align:center">{$v.device_type}</td>
+           <td style="text-align:center">{business_hall_helper::get_info_name('province', $v.province_id, 'name')}</td>
+           <td style="text-align:center">{business_hall_helper::get_info_name('city', $v.city_id, 'name')}</td>
+           {$num = probe_pandect_helper::get_device_num($v.device_type,$v.province_id,$v.city_id,$v.create_time)}
+           <td style="text-align:center">{$num}</td>
+            {if $v.order_status == 1}<td style="text-align:center">待发货</td>{/if}
+           {if $v.order_status == 2}<td style="text-align:center">已发货</td>{/if}
+           {if $v.order_status == 3}<td style="text-align:center">已拒绝</td>{/if}
+           <td>{$v.remark}</td>
+    
+      </tr>
+      {foreachelse}
+        <tr><td class="txtleft" colspan="8">暂无数据</td></tr>
+   {/foreach} 
+  
+            </tbody>
+          </table>
+           {include_www file="admin/lib/pager_new.html"}
+        </div>
+ <script src="{$smarty.const.SITE_URL}/js/region_func.js"></script>
+<script>
+$(function(){
+{if $search_filter.province}
+     var p_id = {$search_filter.province};
+ {else}
+     var p_id = 0;
+ {/if}
+
+ {if $search_filter.city}
+     var c_id = {$search_filter.city};
+ {else}
+     var c_id = 0;
+ {/if}
+
+ {if $search_filter.area}
+     var a_id = {$search_filter.area};
+ {else}
+     var a_id = 0;
+ {/if}
+
+ /**
+  * 省市区多级联动
+  *
+  * @author  wangl
+  */
+ region(p_id, c_id, a_id);
+});
+
+
+$('.change_status').on('click',function(){
+    var city_id     = $(this).prev().val();
+    var province_id = $(this).prev().prev().val();
+    var status      = $(this).prev().prev().prev().val();
+    var create_time = $(this).prev().prev().prev().prev().val();
+    var data = {
+            "city_id":city_id,
+            "status" :status,
+            "province_id" :province_id,
+            "create_time" :create_time
+    }; 
+    console.log(data);
+     $.post(siteUrl+'/probe_pandect/admin/ajax/update_ststus',data , function (res) {
+          if (res.info != 'ok') {
+            alert(res.msg);
+          }else{
+            
+              location.replace(location);
+          }
+    }, 'json');
+});
+</script>

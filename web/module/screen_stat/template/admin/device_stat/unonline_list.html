@@ -1,0 +1,133 @@
+{include_www file="admin/lib/header_new.html" title="亮屏设备统计"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('screen_stat/admin/device_stat')}"><i class="iconfont iconfont-logo2"></i>亮屏覆盖量统计</a>
+      &gt;
+      {if $business_hall_title}<span>{$business_hall_title}</span>&gt;{/if}
+
+      <span>离线列表</span>
+      <a href="javascript:go(-1)" class="btn btn-primary btn-sm pull-right">返回</a>
+      <!-- <a style="margin-right:10px;" href="{AnUrl("screen_stat/admin/device_stat/device_list/device_list{$search_filter_str}&is_export=1&search_filter[date_type]={$search_filter.date_type}&search_filter[region_id]={$region_id}&search_filter[region_type]={$region_type}&hall_title={$hall_title}&device_unique_id={$device_unique_id}")}" class="btn btn-primary btn-sm pull-right">导出</a> -->
+      <a style="margin-right:10px;" href="{AnUrl("screen_stat/admin/device_stat/online_list/unonline_day_list?is_export=1&device_unique_id={$device_unique_id}&province_id={$province_id}&city_id={$city_id}&business_id={$business_id}&start_time={$active_start_time}&stop_time={$active_stop_time}&from=device_stat_business_hall_list")}" class="btn btn-primary btn-sm pull-right">导出</a> 
+    </div>
+    <br />
+
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            {if $member_info.res_name != 'business_hall'}
+
+              <th width="">省</th>
+              <th width="">市</th>
+              <th width="">厅</th>
+              <th>渠道编码</th>
+            {/if}
+            <th width="">离线时间</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $diff_days as $k=>$v}
+          <tr id="dataList{$k}">
+            {if $member_info.res_name != 'business_hall'}
+              <td>{_uri('province', $province_id, 'name')}</td>
+              <td>{_uri('city', $city_id, 'name')}</td>
+              <td>{_uri('business_hall', $business_id, 'title')}</td>
+            {/if}
+              <td>{_uri('business_hall', $business_id, 'user_number')}</td>
+              <td>{date("Y-m-d", strtotime($v))}</td>
+            
+          </tr>
+          {foreachelse}
+          <tr><td colspan="{if $member_info.res_name != 'business_hall'}10{else}7{/if}">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}
+
+<script>
+var isVersionEdit = false;
+
+$(function () {
+  $('#title').autocomplete({
+    source: "/business_hall/admin/ajax/get_title_field",
+  });
+  
+  $('#searchData').on('click',function() {
+    $('#subForm').submit();
+    //refershUrl();
+  });
+
+  $('.phone_info_submit').on('click', function () {
+    var el = $(this).closest('.js_nickname');
+    var newValue = el.find('div input').val();
+    
+    if (!newValue) {
+      alert('值不能为空');return false;
+    }
+    
+    el.find('span').text(newValue);
+    el.find('div').toggleClass('hidden');
+    el.find('span').toggleClass('hidden');
+    
+    var type = el.data('type');
+    var imei = el.attr('data-imei');
+
+    $.post(siteUrl+'/screen/admin/ajax/update_nickname', { new_nickname:newValue, type:type, imei:imei }, function (res) {
+      if (res.info != 'ok') {
+        alert(res.msg);
+      }
+    }, 'json');
+  });
+});
+
+//排序
+$('.order_type').on('click', function () {
+
+  if ($(this).hasClass('glyphicon-arrow-up')) {
+    var order_dir = 'asc';
+  } else {
+    var order_dir = 'desc';
+  }
+  
+  window.location.href = window.location.href + '&order_dir=' + order_dir + '&order_field=' + $(this).attr('order_field');
+
+});
+
+function refershUrl(){
+  var $params           = { };
+  $params.start_date    = $('#start_time').val();
+  $params.end_date      = $('#end_time').val();
+
+  $a = 1;
+  var urlParam = '';
+  for (var i in $params) {
+    if ($params[i]) {
+      if ($a == 1) {
+        urlParam += '?';
+      } else {
+        urlParam += '&';
+      }
+      
+      urlParam += 'search_filter['+ i + ']=' + $params[i];
+    }
+    
+    $a += 1;
+  }
+
+  var url = siteUrl+'/screen/admin/device'+urlParam;
+  window.location.href = url;
+
+}
+</script>

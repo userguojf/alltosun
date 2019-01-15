@@ -1,0 +1,221 @@
+{include_www file="admin/lib/header_new.html" title="RFID统计管理"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    #main{
+        height:500px;
+        border:1px solid #ccc;
+        margin: 10px;
+        padding:10px;
+    }
+</style>
+<script src="{$smarty.const.STATIC_URL}/js/echarts-2.2.7/echarts-all.js"></script>
+{* 主内容START *}
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="javascript:void(0);"><i class="iconfont iconfont-logo2"></i>RFID管理</a>
+      &gt;
+      <span>RFID信息统计</span>
+    </div>
+
+    {* 时间判断 *}
+    <div class="form-search row clearfix">
+      <div class="tabs2">
+        <ul class=" col-sm-4" id='dateType'>
+            <li class="dateType {if $search_filter.date_type=='month'}curr{/if}" ><a href="javascript:void(0);" value="month">月</a></li>
+            <li class="dateType {if $search_filter.date_type=='week'}curr{/if}" ><a href="javascript:void(0);" value="week">周</a></li>
+            <li  class="dateType {if $search_filter.date_type=='day'}curr{/if}"><a href="javascript:void(0);"  value="day">日</a></li>
+            <li  class="dateType {if $search_filter.date_type=='hour'}curr{/if}"><a href="javascript:void(0);"  value="hour">时</a></li>
+        </ul>
+        <div class="col-sm-8">
+          <div class="form-inline" id="dateSelectBox" >
+            <div class="form-group">
+              <label for="exampleInputName2">时间：</label>
+              <input type="text" class="form-control" style="width:100px; text-align:center;" name="start_date" id="start_time" value="{$search_filter.start_date}" />
+            </div>
+            <div class="form-group">
+              <label for="exampleInputName2">至</label>
+              <input type="text" class="form-control" style="width:100px; text-align:center;" name="end_date" id="end_time" value="{$search_filter.end_date}" />
+            </div>
+            {*<input type='text' name='business_hall_title' value="{$business_hall_title}" text-align:center;" placeholder="请输入营业厅名称"  id="autocomplete"/>*}
+            <button type="button" class="btn btn-success btn-sm" id="searchData" data-url="{AnUrl($action_res_url)}" >搜索</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="main"></div>
+    <div class="list">
+      <table class="table table-bordered table-striped center table_co_td">
+        <thead>
+          <tr>
+            <th width='25%;'>时间</th>
+            <th width='25%;'>累计时长</th>
+            <th width='25%;'>设备数</th>
+            {if $search_filter.date_type == 'day'}
+            <th width='25%;'>操作</th>
+            {/if}
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $stat_list as $k=>$v}
+          <tr id="dataList{$v.id}">
+            <td>{$v.time}</td>
+            <td>{rfid_helper::format_timestamp_text($v.time_count)}</td>
+            <td>{$v.count}</td>
+            {if $search_filter.date_type == 'day'}
+            <td>
+              <a class="btn btn-xs btn-success" href="{AnUrl("rfid/admin/stat/detail{$search_filter_str}&search_filter[date]={$v.time}")}">查看详情</a>
+            </td>
+            {/if}
+          </tr>
+          {foreachelse}
+          <tr><td colspan="9">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}
+<script>
+
+  var StatTable = {
+    params  : { },
+    init    : function () {
+      this.params.date_type = "{$search_filter.date_type}";       //默认day 分天查询 
+      this.eventBind();
+    },
+    eventBind:function() {
+      var self = this;
+       
+      //年月日点击事件
+      $('.dateType').on('click', function() {
+        self.updateBtnColor(this)
+      });
+    
+      //搜索按钮点击事件
+      $('#searchData').click(function() {
+        self.refershUrl();
+      });
+    
+      //列表排序箭头点击事件
+      $('.order_stat').on('click',function(){
+        self.updateOrderColor(this,function() {
+          self.refershUrl();
+        });
+      });
+    },
+    refershUrl :function () {
+      // 获取 选择日，开始时间
+      this.params.business_hall_title = $('#autocomplete').val(); //输入框标题
+      this.params.start_date  = $('#start_time').val();           //开始时间
+      this.params.end_date    = $('#end_time').val();             //结束时间
+      this.params.resource_id = $('#province').val();             //省id
+      this.params.date_type   = $('#dateType .curr a').attr('value');
+      
+      //搜跳转地址
+      var href =  $('#searchData').data('url');
+      // 按时搜索，跳到另外地址
+      if ( this.params.date_type == 'hour' ) {
+         //href = "{$smarty.const.STATIC_URL}/stat/admin/user/hour";
+      }
+      
+      var a = 0;
+      
+      //拼接url参数
+      for(var key in this.params){  
+         if(this.params[key] == undefined){  
+             continue;
+         }
+      
+         
+         if (a == 0) {
+              href += "?search_filter[" + key + "]=" + this.params[key];
+         } else {
+              href += "&search_filter[" + key + "]=" + this.params[key];
+         }
+      
+         ++a;
+      }
+      //跳转
+      window.location.href = href;
+    },
+    updateBtnColor:function(self) {
+      //重新赋值分天查询为当前点击元素的值，比如value=week（self 是月周日元素）
+      this.params.date_type = $(self).children().attr('value');
+      // console.log(this.params.date_type);
+      //上级祖先元素中的ul的子元素,(移除类名curr)
+      $(self).closest('ul').children().removeClass('curr');
+      //添加当前点击元素curr类
+      $(self).addClass('curr');
+    },
+    
+    updateOrderColor:function(self,callback) {
+      //获取字段和值
+      this.params.order_field = $(self).attr('order_field');
+      this.params.order_dir   = $(self).attr('order_dir');
+      //拼接地址
+      callback();
+    }
+  };
+
+  StatTable.init();
+  // 选择，日，月，周事件
+  var jsonDate  = {$json_date_list};
+  var jsonNumberCount = {$json_number_count};
+  var jsonTimeCount = {$json_time_count};
+  var jsonTitle      = ["体验设备数", "体验时长(分钟)"];  //显示标题  //,"{$data.sub_title}"
+  var myChart = echarts.init(document.getElementById('main'));
+  
+  myChart.setOption({
+    tooltip : {
+        trigger: 'axis'
+    },
+  
+    legend: {
+        data:jsonTitle
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            magicType : { show: true, type: ['line', 'bar'] },
+        }
+    },
+    calculable : true,
+    xAxis : [
+        {
+            type : 'category',
+            data : jsonDate
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value',
+            splitArea : { show : true }
+        }
+    ],
+  
+    series : [
+        {
+            name:jsonTitle[0],
+            type:'line',
+            itemStyle: { normal: { areaStyle: { type: 'default'} } },
+            data:jsonNumberCount
+        },
+        {
+          name:jsonTitle[1],
+          type:'line',
+          itemStyle: { normal: { areaStyle: { type: 'default'} } },
+          data:jsonTimeCount
+      }
+        
+    ]
+  });
+  
+  $('#autocomplete').autocomplete({
+       source: '/stat/admin/ajax/get_business_hall_list',
+  });
+</script>

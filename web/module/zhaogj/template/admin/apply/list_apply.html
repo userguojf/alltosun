@@ -1,0 +1,108 @@
+{include file="admin/lib/header.html"}
+		<!--end:header-->
+		<div class="header-sub">
+			<div class="inner">门店形象改造</div>
+		</div>
+		<div class="header-tabs">
+			<a href="{AnUrl('file_apply/admin/file')}">集团文件</a>
+			<a href="{AnUrl('file_apply/admin/apply')}" class="active">改造申请{if $new_num}<em class="num">{$new_num}</em>{else}{/if}</a>
+		</div>
+		<!--start:主内容-->
+		<div class="inner main">
+          {if $res_name != 'group'}
+           <div class="top-options clearfix">
+                <a href="{AnUrl('file_apply/admin/apply/add')}" class="btn-add left">+提交申请</a>
+            </div>
+          {/if}
+			<div class="content-list">
+				<table>
+					<thead>
+						<tr>
+                         {if $res_name == 'province'}
+                            <th>申请区域</th>
+                        {/if}
+							<th>申请人</th>
+							<th>门店数量</th>
+							<th>申请时间</th>
+							<th>申请状态</th>
+							<th class="txtcenter">操作</th>
+						</tr>
+					</thead>
+					<tbody>
+                       {foreach $list as $k=>$v}
+						<tr>
+							{if $res_name == 'province'}  
+                                <td>{_uri('province', $v.province_id, 'name')}</td>
+                            {/if}
+							<td>{file_apply_helper::get_user_by_memberid($v.member_id)}</td>
+							<td>{$v.business_number}</td>
+                            <td>{substr($v.add_time, 0, 10)}</td>
+                            
+                            <!--审批状态 0 未提交  1省待审批 2省成功 3省失败 4集团待审批 5成功 6失败-->
+                            {if $res_name == 'city'}
+                                <td>{if $v.status == 0}未提交
+                                 {else if $v.status == 1}待审批
+                                 {else if $v.status == 2 || $v.status == 4 }审批中
+                                 {else if $v.status == 6 || $v.status == 3 || $v.status == 5}审批结束
+                                 {/if}
+                              </td>
+                            {/if}
+            
+                            {if $res_name == 'province'}
+                                <td>{if $v.status == 10}未提交
+                                 {else if $v.status == 1 || $v.status == 4}待审批
+                                 {else if $v.status == 2 }审批中
+                                 {else if $v.status == 6 || $v.status == 5 || $v.status == 3}审批结束
+                                 {/if}
+                               </td>
+                            {/if}
+                             {if $res_name == 'group'}
+                                <td>{if $v.status == 4 || $v.status == 2}待审批
+                                 {else if $v.status == 6 || $v.status == 5}审批结束
+                                 {/if}
+                               </td>
+                            {/if}
+            
+							<td class="txtcenter">
+                            {if $res_name == 'group'}
+                                  {if $v.status == 4 || $v.status == 2}
+                                    <a href='{AnUrl("file_apply/admin/apply/detail_apply?cid={$v.id}")}' class="btn-default">立即审批</a>
+                                  {else}
+                                    <a href='{AnUrl("file_apply/admin/apply/detail_apply?cid={$v.id}")}'>查看详情</a>
+                                  {/if}
+                            {/if}
+						     {if $res_name == 'province'}
+                                  {if $v.status == 1 }
+                                    <a href='{AnUrl("file_apply/admin/apply/detail_apply?cid={$v.id}")}' class="btn-default">立即审批</a>
+                                  {else if $v.status >1 && $v.status != 10}
+                                    <a href='{AnUrl("file_apply/admin/apply/detail_apply?cid={$v.id}")}'>查看详情</a>
+                                  {else}
+                                    <a href='{AnUrl("file_apply/admin/apply/load_apply?cid={$v.id}&index_id=1")}'>编辑</a>
+                                  {/if}
+                            {/if}
+                            
+                            {if $res_name == 'city'}
+                                  {if $v.status == 0 }
+                                    <a href='{AnUrl("file_apply/admin/apply/load_apply?cid={$v.id}&index_id=1")}'>编辑</a>
+                                  {else}
+                                    <a href='{AnUrl("file_apply/admin/apply/detail_apply?cid={$v.id}")}'>查看详情</a>
+                                  {/if}
+                            {/if}
+                                
+							</td>
+						</tr>
+                         {foreachelse}
+                          <tr><td class="txtleft" colspan="6">暂无数据</td></tr>
+                        {/foreach}
+					</tbody>
+				</table>
+                 <div class="pages">
+                {include file="admin/lib/pager_new.html"}
+                </div>
+			</div>
+		</div>
+		<!--end:主内容-->
+	</div>
+	
+</body>
+</html>

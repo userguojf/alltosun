@@ -1,0 +1,75 @@
+{include_www file="admin/lib/header_new.html" title="添加编辑权限控制"}
+<style>
+
+</style>
+<!--start:右侧-->
+<div class="main mian2 ">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('action/admin/action')}"><i class="iconfont iconfont-logo2"></i>权限控制</a>
+      &gt;
+      <span>权限控制添加/修改</span>
+      <a href="{AnUrl('action/admin/action')}" class="btn btn-primary btn-sm pull-right">返回权限列表</a>
+    </div>
+
+    <div class="clearfix">
+      <div class="form-add pull-left" style="width:80%;">
+        {AnForm class='form-horizontal' action="{AnUrl('action/admin/action/save')}" method="post"}
+        {AnForm type="hidden" name="id" value="{$info.id}"}
+        {AnForm type="hidden" name="info[pid]" value="{$p_info.id}"}
+
+        <div class="form-group">
+          <label class="col-sm-3 control-label">控制器名称(中文)：</label>
+          <div class="col-sm-6">
+
+            {AnForm type="text" name="info[name]" value="{$info['name']}" class="form-control" validate="required" filter="filter_string"}
+
+          </div>
+        </div>
+        <div class="form-group ">
+          <label class="col-sm-3 control-label">控制器名称(英文)：</label>
+
+          <div class="col-sm-6">
+            {AnForm type="text" name="info[action_name]" value="{$info['action_name']}" class="form-control" validate="required" filter="filter_string"}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-sm-3 control-label">控制器URL:</label>
+          <div class="col-sm-6" >
+            {AnForm type="text" name="info[url]" value="{$info['url']}"  class="form-control" filter="filter_string"}
+
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-sm-3 control-label">侧边栏展示:</label>
+          <div class="col-sm-6" >
+            {AnForm type="radio" name="info[is_ajax]" radios=action_config::$is_ajax_type checked="{$info.is_ajax}" class="" filter="filter_string"}
+
+          </div>
+        </div>
+
+        {if $p_info}
+        <div class="form-group">
+          <label class="col-sm-3 control-label">强制控制权限:</label>
+          <div class="col-sm-6" >
+            {AnForm type="radio" name="info[is_auth]" radios=action_config::$is_auth_type checked="{$info.is_auth}" class="" filter="filter_string"}
+            <p class="tips">提示:如果不强制授权，则不检查进入权限，可能存在安全隐患</p>
+          </div>
+        </div>
+       {/if}
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-10">
+            {AnForm type="submit" class="btn btn-primary Sub" value="保存"}
+          </div>
+        </div>
+
+        {AnForm}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{include_www file="admin/lib/footer_new.html"}

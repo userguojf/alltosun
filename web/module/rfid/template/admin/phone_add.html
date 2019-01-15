@@ -1,0 +1,101 @@
+{include_www file="admin/lib/header_new.html" title="RFID管理"}
+<!--start:右侧-->
+<div class="main mian2 ">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('rfid/admin/phone')}"><i class="iconfont iconfont-logo2"></i>手机管理</a>
+      &gt;
+      <span>手机品牌添加</span>
+    </div>
+
+    <div class="clearfix">
+      <div class="form-add pull-left" style="width:80%;">
+        {AnForm class='form-horizontal' action="{AnUrl('rfid/admin/phone/save')}" method="post" enctype="multipart/form-data"}
+         <input type="hidden"  name="id"  value="{$id}">
+
+            <div class="form-group form-inline" {if $id}style="display:none;"{/if}>
+                <label class="col-sm-3 control-label coupon-card">添加方式</label>
+                <div class="col-sm-9">
+                    {foreach rfid_config::$add_type as $k => $v}
+                    <div class="checkbox col-sm-5">
+                        <label>
+                            <input type="radio" name="phone_info[type]" value="{$k}" {if $k == 1} checked {/if} class='JS_siteType'>&nbsp;{$v}
+                        </label>
+                    </div>
+                    {/foreach}
+                </div>
+            </div>
+            {*线*}
+            <div class="form-line" {if $id}style="display:none;"{/if}><em></em></div>
+             <!--导入-->
+            <div class="form-group together_add " style="display:none;">
+                <label class="col-sm-3 control-label coupon-num">导入</label>
+                <div class="col-sm-3">
+                    <input type="file" name="phone_data">
+                </div>
+                
+                <div class="col-sm-3">
+                    <a type="button" class="btn btn-sm btn-warning" href="{AnUrl('rfid/admin/phone/load_instruction')}">&nbsp;下载手机信息导入模板</a>
+                    
+                </div>
+            </div>
+
+         <div class="form-group alone_add">
+              <label class="col-sm-3 control-label coupon-num">品牌</label>
+              <div class="col-sm-6">
+                  <input type="text"  name="phone_info[name]"  value="{$phone_info.name}" class="form-control" placeholder="请输入手机品牌">
+              </div>
+          </div>
+          <div class="form-group alone_add">
+              <label class="col-sm-3 control-label coupon-num">型号</label>
+              <div class="col-sm-6">
+                  <input type="text"  name="phone_info[version]"  value="{$phone_info.version}" class="form-control" placeholder="请输入手机型号">
+              </div>
+          </div>
+      {*
+          <div class="form-group alone_add">
+              <label class="col-sm-3 control-label coupon-num">颜色</label>
+              <div class="col-sm-6">
+                  <input type="text"  name="phone_info[color]"  value="{$phone_info.color}" class="form-control" placeholder="请输入手机颜色">
+              </div>
+          </div>
+      *}
+          <div class="form-group alone_add">
+              <label class="col-sm-3 control-label">颜色</label>
+               <div class="col-sm-6">
+               <select class="form-control"  name="phone_info[color]" >
+                       <option value="">请选择手机颜色</option>
+                       {$info = rfid_config::$phone_colors}
+                      {foreach  $info as $k=>$v}
+                        <option value="{$v}" {if $v == $phone_info.color}selected = "selected"{/if} >{$v}</option>
+                      {/foreach}
+                </select>
+              </div>
+            </div>
+          <br>
+          <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-10">
+              <button type="submit" class="btn btn-sm btn-success" id="btn"><span style='display: inline-block;width: 95px;' class='Sub'>保存</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+              <a type="button" class="btn btn-sm btn-warning" href="{AnUrl('rfid/admin/phone')}">&nbsp;&nbsp;返回&nbsp;&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;
+            </div> 
+          </div> 
+        {AnForm}
+      </div>
+
+    </div>
+  </div>
+</div>
+<script>
+$('.JS_siteType').click(function(){
+  var type = $(this).val();
+    if ( 2 == parseInt(type)) {
+        $('.together_add').show();
+        $('.alone_add').hide();
+    } else {
+        $('.together_add').hide();
+        $('.alone_add').show();
+    }
+})
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

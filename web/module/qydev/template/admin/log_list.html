@@ -1,0 +1,144 @@
+{include_www file="admin/lib/header_new.html" title="企业号通讯录请管理"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    .btn-top{
+        margin-top:5px;
+    }
+    </style>
+<!-- 主内容 start -->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('qydev/admin/log')}"><i class="iconfont iconfont-logo2"></i>企业号日志管理</a>
+             &gt;
+            <span>日志列表（总数：{$count}）</span>
+        </div>
+        <div class="form-search clearfix">
+             <div class="pull-left">
+                 <form action="{AnUrl('qydev/admin/log')}" method='get'>
+                   <input type="text"  style="width:150px;"  name="search_filter[app_id]" value="{$search_filter.app_id}" class="form-control input-sm pull-left js_search"  placeholder="按app_id搜索">
+                   <input type="text"  style="width:150px;"  name="search_filter[type]" value="{$search_filter.type}" class="form-control input-sm pull-left js_search"  placeholder="按类型搜索">
+                   <input type="text"  style="width:150px;"  name="search_filter[param]" value="{$search_filter.param}" class="form-control input-sm pull-left js_search"  placeholder="按联参数搜索">
+                   <input type="text"  style="width:150px;"  name="search_filter[response]" value="{$search_filter.response}" class="form-control input-sm pull-left js_search"  placeholder="按返回值搜索">
+                   <button type="submit" class="btn-search pull-left">搜索</button>
+                 </form>
+            </div>
+            <div class="pull-right">
+            <a href="{AnUrl('qydev/admin/add')}" class="btn btn-sm btn-success">添加</a>
+                {*<a href="{AnUrl('qydev/admin',"?user_number={$search_filter.user_number}&user_name={$search_filter.user_name}&user_phone={$search_filter.user_phone}")}" class="btn btn-sm btn-success">导出</a>*}
+            </div>
+        </div>
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th width="12.5%;">app_id</th>
+                    <th width="12.5%;">类型</th>
+                    <th width="12.5%;">参数</th>
+                    <th width="12.5%;">返回值</th>
+                    <th width="12.5%;">原数据</th>
+                    <th width="12.5%;">添加时间</th>
+                    <th width="12.5%;">更新时间</th>
+                    <th width="12.5%;">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $k=>$v}
+                    <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                    <td>{$v.app_id}</td>
+                    <td>{$v.type}</td>
+                    <td>{$v.param}</td>
+                    <td>{$v.response}</td>
+                    <td>{$v.old_data_info}</td>
+                    <td>{$v.add_time}</td>
+                    <td>{$v.update_time}</td>
+                    <td class="txtleft " resId={$v.id}">
+                      <a class="btn btn-xs btn-danger delete_hot" href="javascript:;">删除</a>
+                    </td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="13">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+</div>
+<script>
+var updateStatus = {
+    _id:'',
+    _msg :'操作失败',
+    _url:"{AnUrl('qydev/admin/ajax/delete_log')}",
+    update:function(obj,status){
+        this._id = $(obj).parent().attr('resId');
+
+        $.post(this._url,{ id:this._id, status:status },function(json){
+            if (json.info == 'ok') {
+                if (status == 0) {
+                    updateStatus.updateHtmlDown(obj);
+                } else if (status == 1) {
+                    updateStatus.updateHtmlUp(obj);
+                } else if (status == 2) {
+                    updateStatus.deleteHtml(obj);
+                }
+            } else {
+                alert(json.info);
+            }
+        },'json')
+    },
+    deleteHtml:function(obj){
+   	 $(obj).closest("tr").fadeOut(function(){
+           $(this).remove();
+           interLineColor();
+       });
+       return false;
+    },
+    updateHtmlDown:function(obj){
+        $(obj).html('立即发布');
+        $(obj).removeClass('btn-danger');
+        $(obj).removeClass('down_del');
+
+        $(obj).addClass('btn-info');
+        $(obj).addClass('up_del');
+       
+    },
+    updateHtmlUp:function(obj){
+        $(obj).html('手动下线');
+        $(obj).addClass('btn-danger');
+        $(obj).addClass('down_del');
+
+        $(obj).removeClass('btn-info');
+        $(obj).removeClass('up_del');
+    }
+};
+
+$('.down_del').live('click',function(event){
+    event.preventDefault();
+    var result = confirm('下线后的内容将不会展示， 确认下线？');
+    if (result) {
+      updateStatus.update(this,0);
+    }
+    
+    return false;
+    
+})
+$('.up_del').live('click',function(event){
+    event.preventDefault();
+    updateStatus.update(this,1);
+})
+
+$('.delete_hot').live('click',function(event){
+    event.preventDefault();
+    event.stopPropagation();
+    if (!confirm("确定要删除该条记录吗？")) {
+      return false;
+    }
+    updateStatus.update(this,2);
+})
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

@@ -1,0 +1,114 @@
+{include_www file="admin/lib/header_new.html" title="设备状态列表"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+  <!--start:右侧-->
+  <div class="main pull-right">
+    <div class="column">
+      <div class="position">
+        <a href="{AnUrl('probe_dev/admin/')}"><i class="iconfont iconfont-logo2"></i>设备管理</a>
+        &gt;
+        <span>读写器列表（{$count}）</span>
+        <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+      </div>
+
+      <br />
+      <div class="form-search clearfix">
+         <div class="pull-left">
+             <form action="{AnUrl('rfid/admin/rwtool')}" method='get'>
+               <input type="hidden" name="search_filter[start_time]" value="{$search_filter.start_time}">
+               <input type="hidden" name="search_filter[end_time]" value="{$search_filter.end_time}">
+               {if $member_res_name != 'business_hall'}
+                 {* 公共分权限搜索模块 *}
+                 {widget model='rfid' func='get_search_by_member' file='get_search_by_member.html' member_info="{$member_info}"}
+               {/if}
+             </form>
+        </div>
+        <div class="pull-right">
+          <div class="form-inline" id="dateSelectBox" >
+            <div class="form-group">
+              <label for="exampleInputName2">搜索日期：</label>
+              <input type="text" class="form-control" style="width:85px; text-align:center;" name="search_filter[start_date]" id="start_time" value="{$search_filter.start_date}" />
+            </div>
+            
+            <div class="form-group">
+              <label for="exampleInputName2">-</label>
+              <input type="text" class="form-control" style="width:85px; text-align:center;" name="search_filter[end_date]" id="end_time" value="{$search_filter.end_date}" />
+            </div>
+            
+            <button type="button" class="btn btn-success btn-sm" id="searchData" >搜索</button>
+            <a href="javascript:void(0);" class="btn btn-sm btn-success btnExport">导出</a>
+          </div>
+            
+        </div>
+        <br />
+    </div>
+    
+    <br />
+    <div class="list" style="overflow:scroll;">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+              {foreach $hand as $v}
+                <th style="width:10%;">{$v}</th>
+              {/foreach}
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $data_list as $k=>$v}
+          <tr id="dataList{$k}" >
+            {foreach $v as $v1}
+                <td>{$v1}</td>
+            {/foreach}
+          </tr>
+          {foreachelse}
+            <tr><td colspan="{count($hand)}">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+<script>
+$(function () {
+  
+  
+//排序
+  $('.order_type').on('click', function () {
+    var order_dir = 'desc';
+    var order_field = $(this).attr('order_field');
+    
+    if ($(this).hasClass('glyphicon-arrow-up')) {
+      order_dir = 'asc';
+    } else {
+     order_dir= 'desc';
+    }
+    $('form input[name="order_field"]').val(order_field);
+    $('form input[name="order_dir"]').val(order_dir);
+    submitData();
+  });
+  
+  $('.btnExport').on('click', function () {
+    $('form').prepend('<input type="hidden" name="is_export" value="1" >');
+    submitData();
+    $('form input[name="is_export"]').remove();
+  });
+  
+  function submitData () {
+    var start_date = $('#start_time').val();
+    var end_date   = $('#end_time').val();
+    $('input[name="search_filter[start_date]"]').val(start_date);
+    $('input[name="search_filter[end_date]"]').val(end_date);
+    $('form').submit();
+  }
+  
+  $('#searchData').on('click', function () {
+    submitData();
+  });
+  
+});
+
+</script>
+{include_www file="admin/lib/footer_new.html"}

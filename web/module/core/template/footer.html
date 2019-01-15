@@ -1,0 +1,26 @@
+<div class="nav-con-bottom"></div>
+</div>
+</div>
+{if $smarty.const.ONWEIBO}
+<!-- SUDA_CODE_START -->
+<script type='text/javascript' charset="utf-8">
+var SUDA = SUDA || [];SUDA.push(['setGatherInfo', '', '{$cid}', '{$appkey}']);
+</script>
+<script type="text/javascript" charset="utf-8" src="http://tjs.sjs.sinajs.cn/open/analytics/js/suda4sinaapp.js"></script>
+<!-- SUDA_CODE_END -->
+<!--页面在iframe中的长度可以不由sina限制-->
+<script src="http://js.t.sinajs.cn/t4/enterprise/js/public/appframe/client.js?version="></script>
+<script>
+//滚动时判断滚动条高度加载
+FrameClient.addEvent('scroll', function(evt, data){
+    if (($(document).height()+240 - data.scrollTop) < 1000 && !window.isLoading) {
+    
+    }
+    // 滚动时记下滚动条高度，用来计算授权框的位置
+    window.authBoxTop = data.scrollTop;
+    $("#js_alertBj").css("height", $(document).height());
+});
+</script>
+{/if}
+</body>
+</html>

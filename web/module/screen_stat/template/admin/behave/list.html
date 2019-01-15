@@ -1,0 +1,163 @@
+{include_www file="admin/lib/header_new.html" title="设备数据管理"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    .btn-top{
+        margin-top:5px;
+    }
+    </style>
+<!-- 主内容 start -->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('screen_stat/admin/behave')}"><i class="iconfont iconfont-logo2"></i>软件异常分析管理</a>
+             &gt;
+            <span>数据列表</span>
+<!--           
+            <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+ -->        </div>
+        <div class="form-search clearfix">
+              <div class="pull-left">
+                <form action="{AnUrl('screen_stat/admin/behave')}" method='get'>
+                   <!-- 
+                    <label class="pull-left" for="exampleInputName2">日期&nbsp;&nbsp;</label>
+                    <input type="text" class="form-control input-sm pull-left" style="width:100px; text-align:center;"  placeholder="{date('Y-m-d')}" name="search_filter[date]" id="start_time" value="{$search_filter.date}" />
+                    --> 
+                  <!-- <label class="pull-left" for="exampleInputName2">&nbsp;&nbsp;&nbsp;类型&nbsp;&nbsp;</label>
+                  <select name="search_filter[behave_type]" style="width:120px" class="form-control input-sm pull-left ">
+                    <option value=''>全部</option>
+                    {$msg_type = screen_stat_config::$behave_type}
+                    {foreach $msg_type as $k=>$v}
+                    <option value="{$k}" {if $search_filter.behave_type === $k}selected{/if}>{$v}</option>
+                    {/foreach}
+                  </select> -->
+
+                  <!-- <label class="pull-left" for="exampleInputName2">&nbsp;&nbsp;&nbsp;营业厅&nbsp;&nbsp;</label>
+                  <input type="text" id="title" style="width: 200px;" name="search_filter[business_hall_title]" value="{$search_filter.business_hall_title}" class="form-control input-sm pull-left js_search ui-autocomplete-input" placeholder="按营业厅名称搜索" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
+                  
+                  <label class="pull-left" for="exampleInputName2">&nbsp;&nbsp;&nbsp;设备ID&nbsp;&nbsp;</label>
+                  <input type="text" id="title" style="width: 200px;" name="search_filter[device_unique_id]" value="{$search_filter.device_unique_id}" class="form-control input-sm pull-left js_search ui-autocomplete-input" placeholder="按设备标识ID搜索" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
+                  <button type="submit" class="btn-search pull-left">搜索</button>
+ -->
+                </form>
+              </div>
+              
+         </div>
+
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th width="20%">区域</th>
+                    <th width="20%">总设备量</th>
+                    <th width="20%">可监测设备量</th>
+                    <th width="20%">今日异常设备</th>
+                    <th width="20%">近七天异常设备</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $k=>$v}
+                    <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                    <td>{$v.name}</td>
+                    <td>{$v.all_device_num}</td>
+                    <td>
+                        <a href="{AnUrl("screen_stat/admin/behave/monitor_device?res_id={$v.res_id}")}">
+                            {$v.monitor_device_num}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{AnUrl("screen_stat/admin/behave/today_unusual?res_id={$v.res_id}")}">
+                            {$v.today_unusual_device_num}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{AnUrl("screen_stat/admin/behave/unusual_device?res_id={$v.res_id}")}">
+                            {$v.seven_unusual_device_num}
+                        </a>
+                    </td>
+                    </tr>
+                {foreachelse}
+                <tr><td colspan="13">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+</div>
+<script>
+var updateStatus = {
+    _id:'',
+    _msg :'操作失败',
+    _url:"{AnUrl('qydev/admin/ajax/delete_log')}",
+    update:function(obj,status){
+        this._id = $(obj).parent().attr('resId');
+
+        $.post(this._url,{ id:this._id, status:status },function(json){
+            if (json.info == 'ok') {
+                if (status == 0) {
+                    updateStatus.updateHtmlDown(obj);
+                } else if (status == 1) {
+                    updateStatus.updateHtmlUp(obj);
+                } else if (status == 2) {
+                    updateStatus.deleteHtml(obj);
+                }
+            } else {
+                alert(json.info);
+            }
+        },'json')
+    },
+    deleteHtml:function(obj){
+   	 $(obj).closest("tr").fadeOut(function(){
+           $(this).remove();
+           interLineColor();
+       });
+       return false;
+    },
+    updateHtmlDown:function(obj){
+        $(obj).html('立即发布');
+        $(obj).removeClass('btn-danger');
+        $(obj).removeClass('down_del');
+
+        $(obj).addClass('btn-info');
+        $(obj).addClass('up_del');
+       
+    },
+    updateHtmlUp:function(obj){
+        $(obj).html('手动下线');
+        $(obj).addClass('btn-danger');
+        $(obj).addClass('down_del');
+
+        $(obj).removeClass('btn-info');
+        $(obj).removeClass('up_del');
+    }
+};
+
+$('.down_del').live('click',function(event){
+    event.preventDefault();
+    var result = confirm('下线后的内容将不会展示， 确认下线？');
+    if (result) {
+      updateStatus.update(this,0);
+    }
+    
+    return false;
+    
+})
+$('.up_del').live('click',function(event){
+    event.preventDefault();
+    updateStatus.update(this,1);
+})
+
+$('.delete_hot').live('click',function(event){
+    event.preventDefault();
+    event.stopPropagation();
+    if (!confirm("确定要删除该条记录吗？")) {
+      return false;
+    }
+    updateStatus.update(this,2);
+})
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

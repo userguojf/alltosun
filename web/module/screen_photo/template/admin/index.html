@@ -1,0 +1,180 @@
+{include_www file="admin/lib/header_new.html" title="亮屏管理"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('screen_photo/admin')}"><i class="iconfont iconfont-logo2"></i>套餐图管理</a>
+      &gt;
+      <span>套餐图列表（合计：{$count}/个）</span>
+    </div>
+    <br />
+
+    <div class="form-search clearfix">
+      <div class="pull-left">
+        <form action="{AnUrl('screen_photo/admin')}" id="subForm" method='get'>
+          <input type="hidden" name="type" value="{$type}">
+          {if $member_res_name != 'business_hall'}
+            {* 公共分权限搜索模块 *}
+            {widget model='screen' func='get_search_by_member' file='get_search_by_member.html' member_info="{$member_info}"}
+          {/if}
+          <button type="button" class="btn-search pull-left" id="searchData" data-url="{AnUrl('screen_photo/admin')}" >搜索</button>
+        </form>
+      </div>
+      <div class="pull-right">
+        <a href="javascript:void(0);" class="btn btn-sm btn-success js_compose_set_meal_all">合成本页套餐图</a>
+      </div>
+    </div>
+    <br />
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th width="8%">基本信息</th>
+            <th width="10%">卖点</th>
+            <th width="10%">设备参数</th>
+            <th width="5%">套餐背景图</th>
+            <th width="5%">套餐图</th>
+            <th width="5%">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $set_meal_list as $k=>$v}
+          <tr id="dataList{$k}" class="js_table_box" set_meal_id={$v.id}>
+            <!-- <td>
+              {$v.phone_name} {$v.phone_version}<br /><br />
+            </td> -->
+            <td>
+              <b>品牌：</b><span>{$v.phone_name}</span><br /><br />
+              <b>型号：</b><span>{$v.phone_version}</span><br /><br />
+              <b>添加时间：</b><span>{$v.add_time}</span><br /><br />
+            </td>
+            <td>
+              <b>零售价：</b>{$v.retail_price}元<br/><br/>
+              <b>推荐档位：</b>{$v.recommended_position}<br/><br/>
+              <b>卖点：</b>{$v.selling_point_1}<br/><br/>
+              <b>卖点：</b>{$v.selling_point_2}<br/><br/>
+              <b>卖点：</b>{$v.selling_point_3}<br/><br/>
+              <b>卖点：</b>{$v.selling_point_4}<br/><br/>
+              <b>卖点：</b>{$v.selling_point_5}<br/><br/>
+              <b>卖点：</b>{$v.selling_point_6}<br/><br/>
+            </td>
+            <td>
+                {$v.param_1}<br /><br />
+                {$v.param_2}<br /><br />
+                {$v.param_3}<br /><br />
+                {$v.param_4}<br /><br />
+                {$v.param_5}<br /><br />
+                {$v.param_6}<br /><br /> 
+            </td>
+            <td>
+              <a href="{$v.res_link}"><img style="width:120px;" src="{$v.res_link}"></a>
+            </td>
+            <td class="js_set_meal_link">
+              {if $v.link}
+                <a href="{_image($v.link)}"><img style="width:120px;"  src="{_image($v.link)}"></a>
+              {else}
+                暂无
+              {/if}
+            </td>
+      
+            <td>
+              <div class="js_status_box">
+                <a href="javascript:void(0);" {if $v.status == 1}disabled="disabled"{/if} class="btn btn-xs {if $v.status == 1}btn-success{else}label-warning{/if}">{screen_photo_config::$status[$v.status]}</a>
+                
+                {if $v.status == 0}
+                    <a href="javascript:void(0);" class="btn btn-xs btn-success compose_set_meal" set_meal_id="{$v.id}" >手动合图</a>
+                {/if}
+              </div>
+            </td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="{if $member_info.res_name != 'business_hall'}13{else}10{/if}">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<script>
+  $(function () {
+    //合图（单）
+    var lock = false;  //锁
+    $('.compose_set_meal').on('click', function() {
+      var set_meal_id = $(this).attr('set_meal_id');
+      var _this = $(this);
+      if (!set_meal_id) {
+        alert('套餐图不存在');return false;
+      }
+      
+      
+      if (lock == true) {
+        return false;
+      }
+      lock = true;
+      $('#putLoading').removeClass('hidden'); //弹层
+      $.post(siteUrl+'/screen_photo/admin/ajax/compose_set_meal_photo', { set_meal_id: set_meal_id }, function (res) {
+        lock = false;
+        $('#putLoading').addClass('hidden'); //弹层
+        if (res.info != 'ok') {
+          alert(res.msg); return false;
+        }
+        
+        if (res.data.status == 1) {
+          _this.closest('tr').find('.js_set_meal_link').html('<a href="'+res.data.link+'"><img style="width:120px;"  src="'+res.data.link+'"></a>');
+          _this.closest('tr').find('.js_status_box').html('<a href="javascript:void(0);" disabled="disabled" class="label label-info">已合图</a>');
+        } else {
+          $('.label').text(res.data.status_text);
+        }
+        
+      }, 'json');
+    });
+    
+    //合图 （多）
+    var lock2 = false;  //锁
+    $('.js_compose_set_meal_all').on('click', function() {
+      var set_meal_id = [];
+      $('.js_table_box').each(function (i, o) {
+        set_meal_id[i] = $(o).attr('set_meal_id');
+      });
+
+      if (!set_meal_id) {
+        alert('套餐图不存在');return false;
+      }
+      
+      if (lock2 == true) {
+        return false;
+      }
+      
+      lock2 = true;
+      $('#putLoading').removeClass('hidden'); //弹层
+      $.post(siteUrl+'/screen_photo/admin/ajax/compose_set_meal_photo_all', { set_meal_id: set_meal_id }, function (res) {
+        lock2 = false;
+        $('#putLoading').addClass('hidden'); //弹层
+        if (res.info != 'ok') {
+          alert(res.msg); return false;
+        }
+        //刷新
+        window.location.reload();
+
+      }, 'json');
+    });
+    
+    //提交
+    $('#searchData').on('click', function () {
+      $('#subForm').submit();
+    });
+    
+  });
+</script>
+{*弹层*}
+<div class="pop-bg hidden" id="putLoading">
+  <div class="modal-dialog" style=" width:200px; margin:0 auto;top: 30%;">
+    <div style="margin:0 auto;width:100px;"><img style="width:100px;" src="{$smarty.const.STATIC_URL}/images/loading.gif"></div>
+  </div>
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

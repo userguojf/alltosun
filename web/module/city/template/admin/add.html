@@ -1,0 +1,34 @@
+{include_www file="admin/lib/header.html" title="添加编辑版块信息"}
+{include_www file="admin/lib/sidebar.html"}  
+<!-- 主内容 start -->
+<div id="content" class="span10">
+  <!-- 标题 start -->
+  <div class="pageTit page-header">
+    <h1>{if $info}编辑{else}添加{/if}地区<small>在这里{if $info}编辑{else}添加新{/if}地区信息</small></h1>
+    <div class="opt">
+      <a class="btn btn-info" href="{AnUrl('city/admin/')}">返回地区列表</a>
+    </div>
+  </div>
+  <!-- 标题 end -->
+  <!-- 内容区块 start -->
+  <div class="formBox">
+    {AnForm action="{AnUrl('city/admin/save')}" method="post" enctype="multipart/form-data"}
+      <fieldset>
+        {AnForm type="hidden" name="id" value="{$info.id}"}
+        
+        <!-- 优惠券码 -->
+        <div class="control-group">
+          <label>地区名称：<em>(如：乐山市)</em></label>
+          {AnForm type="text" name="city[name]" value="{$info['name']}" class="" validate="required" filter="filter_string"}
+        </div>
+        <div class="control-group">
+          <img style="display:none;" src="images/loading.gif" />
+          {AnForm type="submit" class="btn btn-primary Sub" value="保存"}
+        </div>
+      </fieldset>
+    {AnForm}
+  </div>
+  <!-- 内容区块 end -->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer.html"}

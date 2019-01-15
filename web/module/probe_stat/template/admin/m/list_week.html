@@ -1,0 +1,52 @@
+{include_www file="admin/lib/e_header.html" title="探针统计"}
+<section class="container">
+    <div class="column-list1 column-list2">
+        <div class="crumd">
+            <a href="###">{$date}</a>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>时间</th>
+                    <th>本周</th>
+                    <th>上周</th>
+                </tr>
+            </thead>
+            <tbody>
+                {foreach $weeks as $k => $v}
+                    <tr>
+                        <td>{$v}</td>
+                        <td>{current($now_week_data['indoor'])}</td>
+                        <td>{current($prev_week_data['indoor'])}</td>
+                    </tr>
+                    {$t = next($now_week_data['indoor'])}
+                    {$t = next($prev_week_data['indoor'])}
+                {/foreach}
+            </tbody>
+        </table>
+    </div>
+</section>
+<script>
+$(function(){
+    var res_name = "{$member_info.res_name}";
+    var res_id   = "{$member_infi.res_id}";
+    var date     = "{$date}";
+    var type     = "{$type}";
+
+    $('.js_num').click(function(){
+        var hour = $(this).attr('hour');
+        var url  = siteUrl + '/probe_stat/admin/m';
+
+        if ( res_name == 'business_hall' ) {
+            url += '/mac_list?business_id='+ res_id;
+        } else {
+            url += '/region_list?res_name='+ res_name + '&res_id='+ res_id;
+        }
+
+        url += '&date='+ date + '&hour='+ hour + '&type=' + type;
+
+        window.location.href = url;
+    });
+});
+</script>
+{include_www file="admin/lib/e_footer.html"}

@@ -1,0 +1,144 @@
+@charset "UTF-8";
+/* CSS Document */
+
+/*测速*/
+/*测网速*/
+.net-speed {
+	height:76px;
+	position:fixed;
+	right:0;
+	bottom:100px;
+	z-index:1001;
+}
+.net-speed .btn-begin {
+	display:block;
+	height:25px;
+	padding:25px 5px 0 17px;
+	white-space:nowrap;
+	font-size:12px;
+	color:#50c2cf;
+	background:#fff url(../images/images/icon-click.png) 30px 5px no-repeat;
+	background-size:20px auto;
+	border-radius:50px 0 0 50px;
+	border-top:1px solid #fbfbfb;
+	border-bottom:1px solid #fbfbfb;
+	border-left:1px solid #fbfbfb;
+	position:absolute;
+	right:0;
+	top:50%;
+	margin-top:-26px;
+	box-shadow:4px 4px 0 rgba(0,0,0,0.1);
+}
+.net-speed .btn-begin:hover {
+	background-color:#f1f0ee;
+}
+.net-speed .con {
+	display:none;
+	width:256px;
+	height:76px;
+	position:absolute;
+	left:0;
+	top:0;
+	z-index:2;
+}
+.net-speed .con .intro {
+	width:115px;
+	height:44px;
+	padding-top:15px;
+	padding-bottom:15px;
+	padding-left:70px;
+	padding-right:70px;
+	background:#fff;
+	border-radius:50px 0 0 50px;
+	border-top:1px solid #50c2cf;
+	border-bottom:1px solid #50c2cf;
+	border-left:1px solid #50c2cf;
+	box-shadow:3px 5px 0 rgba(0,0,0,0.1);
+	position:relative;
+	z-index:2;
+}
+.net-speed .num {
+	width:60px;
+	height:44px;
+	text-align:center;
+	font-size:12px;
+	color:#b8b8b8;
+	border-right:1px solid #e0e0e0;
+	position:absolute;
+	left:0;
+	top:15px;
+}
+.net-speed .num span {
+	display:block;
+	font-size:16px;
+	color:#8bdf32;
+	padding-top:5px;
+}
+.net-speed .txt {
+	white-space:nowrap;
+	font-size:12px;
+	color:#7a7a7a;
+	line-height:22px;
+}
+.net-speed .btn-close {
+	display:block;
+	width:50px;
+	height:32px;
+	line-height:32px;
+	text-align:center;
+	font-size:14px;
+	color:#fff;
+	background:#fe6e72;
+	border-radius:4px;
+	position:absolute;
+	right:10px;
+	top:50%;
+	margin-top:-16px;
+}
+.net-speed .speed {
+	background:url(../images/images/icon-speed.png) no-repeat;
+	background-size:100% auto;
+	width:131px;
+	height:131px;
+	position:absolute;
+	left:-30px;
+	top:50%;
+	margin-top:-66px;
+	z-index:1;
+}
+.net-speed .speed-bg {
+	background:url(../images/images/icon-speed2.png) no-repeat;
+	background-size:100% auto;
+	width:131px;
+	height:131px;
+	position:absolute;
+	left:50%;
+	top:50%;
+	margin:-66px 0 0 -66px;
+	z-index:-1;
+}
+.net-speed .speed .arrow {
+	width:1px;
+	height:50px;
+	position:absolute;
+	left:50%;
+	margin-left:-2px;
+	top:50%;
+	margin-top:-50px;
+	-webkit-transform-origin:right bottom;
+	transform-origin:right bottom;
+	transform:rotate(0deg);
+}
+.net-speed .speed .arrow:after {
+	content:'';
+	display:block;
+	background:url(../images/images/arrow1.png) center top no-repeat;
+	background-size:100% auto;
+	width:14px;
+	height:50px;
+	position:absolute;
+	left:50%;
+	margin-left:-7px;
+	top:0px;
+}
+.rotate{ -webkit-animation:rotate 1s ease forwards;animation:rotate 1s ease forwards;}

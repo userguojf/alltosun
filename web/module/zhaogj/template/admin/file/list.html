@@ -1,0 +1,255 @@
+{include file="admin/lib/header.html" title="集团文件"}
+    <div class="header-sub">
+        <div class="inner">集团文件</div>
+    </div>
+    <div class="header-tabs">
+        <a href="{AnUrl('file_apply/admin/file')}" class="active">集团文件</a>
+        <a href="{AnUrl('file_apply/admin/apply')}" >改造申请{if $new_num}<em class="num">{$new_num}</em>{else}{/if}</a>
+    </div>
+    <!--start:主内容-->
+    <div class="inner main">
+        <div class="top-options clearfix">
+            {if $member_info['ranks'] == 1}
+            <a id="file_upload" class="btn-add left" style="cursor: pointer;">+发布文件</a>
+            {/if}
+            <div class="search right">
+                <form action="{AnUrl('file_apply/admin/file')}" id="subForm" method='get'>
+                    <input type="text" name="search_filter[content]" value="{$search_filter['content']}" placeholder="文件名" class="left">
+                    <input type="hidden" name="search_filter[search_type]" value="{$search_filter['search_type']}">
+                    <button type="submit" class="right"><i class="icon-search"></i></button>
+                </form>
+            </div>
+        </div>
+        <div class="content-list">
+            <table>
+                <thead>
+                <tr>
+                    <th>文件号</th>
+                    <th>文件名</th>
+                    <th>文件印发时间</th>
+                    <th>平台发布时间</th>
+                    <th class="txtcenter">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $v}
+                {$che = file_apply_helper::check_member_record($member_info['id'], $v.id)}
+                <tr {if $member_info['ranks'] != 1} {if $che['code'] == 1} style="background-color: #FAFAFA;" {/if}{/if}>
+                    <td>{if $member_info['ranks'] != 1}{if $che['code'] == 0}<em class="point point-warning"></em>{/if}{/if}{$v.file_number}</td>
+                    <td resId={$v.id} mId={$member_info['id']}>
+                        {file_apply_helper::get_content_html_by_suffix($v,1)}
+                    </td>
+                    <td>{date('Y-m-d' ,strtotime($v.print_time))}</td>
+                    <td>{date('Y-m-d H:i' ,strtotime($v.add_time))}</td>
+                    <td class="txtcenter" resId={$v.id} mId={$member_info['id']}>
+                        {if $member_info['ranks'] == 1}
+                        <a href="{AnUrl("file_apply/admin/file/record_list?id={$v.id}&search_filter[pc]=province")}" title="查看记录" class="btn-option"><i class="icon-care"></i></a>
+                        {/if}
+                        {if $member_info['ranks'] != 1}
+                            {file_apply_helper::get_content_html_by_suffix($v,2)}&nbsp;&nbsp;
+                        {/if}
+                        <a href="{AnUrl("file_apply/admin/file/download?id={$v.id}")}" class="btn-option" title="下载"><i class="icon-download"></i></a>
+                        {if $member_info['ranks'] == 1}
+                            <a href="javascript:void(0);" class="btn-option delete_hot"><i class="icon-delete" title="删除"></i></a>
+                        {/if}
+                    </td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="5">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+        <!--end:主内容-->
+</div>
+<!--start:文件发布弹层-->
+<div class="pop-bg hidden" id="message">
+    <div class="pop-publish">
+        <div class="pop-close" id="message-x"><i class="icon-close"></i></div>
+        <input type="hidden"  name="rank"  value="{$curr_member_ranks}" id='rank'/>
+        <div class="title">发布文件</div>
+        <div class="item">
+            <label>文件号：</label>
+            <span class="input"><input type="text" name="file_number" id="file_number" required="required"></span>
+        </div>
+        <div class="item">
+            <label>文件印发时间：</label>
+            <span class="input">
+                <input type="date" class="form-control last" validate="required" name="print_time" id="print_time" required="required">
+            </span>
+        </div>
+        <div class="item" id="btn-upload" >
+            <label>上传文件：</label>
+            <div class="btn-upload"><span><i class="icon-upload"></i>上传文件</span><input id="file" type="file" name="myfile"></div>
+        </div>
+
+        <div class="item hidden" id="upload-status">
+            <label>上传文件：</label>
+            <div class="upload-status" ><span id="name_load"><i class="icon-yes"></i></span><a href="javascript:void(0);" id="btn-upload-again" class="btn-upload-again">重新上传</a></div>
+
+        </div>
+        <div class="btn-area">
+            <button type="button" id='start_upload' class="btn-primary">发布</button>
+            <button type="button" id='click_close' class="btn-default">取消</button>
+        </div>
+    </div>
+</div>
+<!--end:文件发布弹层-->
+<!--start:文件发布中弹层-->
+<div class="pop-bg hidden" id="uploading">
+    <div class="pop-publish">
+        <div class="pop-close" id="uploading-x"><i class="icon-close"></i></div>
+        <div class="status-ing">
+            <div class="title">发布中</div>
+            <div class="progress">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                <div id="progressBar-text" style="font-size: 14.4px;">0%</div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end:文件发布中弹层-->
+<!--star:发布结果弹层-->
+<div class="pop-bg hidden" id="upload-success">
+    <div class="pop-publish">
+        <div class="pop-close" id="upload-success-x"><i class="icon-close"></i></div>
+        <div class="title">发布成功</div>
+        <div class="title-info">是否短信通知省市管理员</div>
+        <div class="default">
+            <textarea placeholder="" id="upload-success-text"></textarea>
+        </div>
+        <div class="btn-area">
+            <button type="button" class="btn-primary" id="upload-success-noti">通知</button>
+            <button type="button" class="btn-default" id="upload-success-no">不用了</button>
+        </div>
+    </div>
+</div>
+<!--end:发布结果弹层-->
+<script src="{$smarty.const.SITE_URL}/js/upload_folder/upload3.js" id="ll_url"></script>
+<script>
+    $('#file').change(function () {
+        var file_name = document.getElementById("file").files[0].name; // js 获取文件名称
+        $('#btn-upload').addClass('hidden');
+        $('#upload-status').removeClass('hidden');
+        $('#name_load').html('<i class="icon-yes"></i>'+file_name);
+    });
+
+    // 点击重新上传按钮调用文件上传
+    $('#btn-upload-again').click(function () {
+        $('#file').trigger('click');
+    });
+
+    $(document).ready(function () {
+        // 发布文件按钮
+        $('#file_upload').click(function () {
+            $('#message').removeClass('hidden');
+        });
+
+        //发布页面取消按钮
+        $('#click_close').click(function(){
+            $('#message').addClass('hidden');
+        });
+
+        // 上传中-x
+        $('#uploading-x').click(function () {
+            $('#uploading').addClass('hidden');
+            cancleUploadFile(); // 点X取消上传
+            window.location.reload();
+        });
+        // 上传成功-x
+        $('#upload-success-x').click(function () {
+            $('#upload-success').addClass('hidden');
+        });
+
+        // 发布页面-X
+        $('#message-x').click(function () {
+            $('#message').addClass('hidden');
+        });
+
+        // 发布按钮
+        $('#start_upload').click(function () {
+            // $('#message').addClass('hidden');
+            // $('#uploading').removeClass();
+            UpladFile();
+        });
+
+        // 上传成功'不用了'按钮
+        $('#upload-success-no').click(function () {
+            $('#upload-success').addClass('hidden');
+            window.location.reload();
+        });
+
+    });
+
+
+    var updateStatus = {
+        _id  : '',
+        _msg : '操作失败',
+        _url : "{AnUrl('file_apply/admin/ajax/update_file_status')}",
+        _table_name:'',
+
+        update:function(obj){
+            this._id = $(obj).parent().attr('resId');
+
+            $.post(this._url,{ id:this._id},function(json){
+
+                if (json.info == 'ok') {
+                    updateStatus.deleteHtml(obj);
+                } else {
+                    alert(json.info);
+                }
+            },'json')
+        },
+        deleteHtml:function(obj){
+            $(obj).closest("tr").fadeOut(function(){
+                $(this).remove();
+                interLineColor();
+            });
+            return false;
+        },
+
+    };
+
+    // 执行文件删除
+    $('.delete_hot').click(function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (!confirm("确定要删除该条记录吗？")) {
+            return false;
+        }
+        updateStatus.update(this);
+    });
+
+    // 点击文件请求ajax将文件浏览次数+1
+    $('.online_show').click(function () {
+        var resId = $(this).parent('td').attr('resId');
+        var url = "{AnUrl('file_apply/admin/ajax/update_file_count')}";
+        var mId = $(this).parent('td').attr('mId');
+        $.post(url,{ id:resId,mId:mId },function () {
+
+        });
+    });
+    
+    /*$('#upload-success-noti').click(function () {
+        // var file_name = document.getElementById("file").files[0].name; // js 获取文件名称
+        // var print_time = document.getElementById("print_time").value; // 印发日期
+        // var file_number = document.getElementById("file_number").value; //文件号
+
+        // var new_time =  new Date(print_time).Format("yyyy年MM月dd日");
+
+        var file_name = '文件名';
+        var new_time = '2018-3-26';
+        var file_number = '文件号';
+
+        var url = "{AnUrl('file_apply/admin/ajax/file_release_noti')}";
+        $.post(url, { file_name:file_name, print_time: new_time, file_number: file_number }, function (e) {
+            console.log(e);
+        },'json');
+    });*/
+
+</script>
+
+</body>
+</html>

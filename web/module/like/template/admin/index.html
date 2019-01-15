@@ -1,0 +1,128 @@
+{include_www file="admin/lib/header_new.html" title="{$module_name}"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    .btn-top{
+        margin-top:5px;
+    }
+    .pop-bg p .w_url{
+        word-wrap: break-word;
+    }
+
+    .btn_msg{
+        cursor:pointer;
+    }
+
+    .btn_msg:hover{
+        color:#23527c;
+    }
+</style>
+<!-- 主内容 start -->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('like/admin')}"><i class="iconfont iconfont-logo2"></i>{$module_name}</a>
+            &gt;
+            <span>{like_config::$module[$search_filter['module']]}列表</span>
+        </div>
+
+        <div class="form-search clearfix">
+            <div class="pull-left">
+                <form action="{AnUrl('like/admin')}" method='get'>
+                    <select name="search_filter[module]" style="width:250px;" class="form-control input-sm pull-left">
+                        <!--<option value="0">请选择模块</option>-->
+                        {foreach like_config::$module as $k => $v}
+                        <option value="{$k}" {if $k == $search_filter.module}selected = "selected"{/if}>{$v}</option>
+                        {/foreach}
+                    </select>
+                    <input type="text" id="title" style="width: 250px;" name="search_filter[title]" value="{$search_filter.title}" class="form-control input-sm pull-left js_search" placeholder="按标题名称搜索">
+
+                    <button type="submit" class="btn-search pull-left" >搜索</button>
+                </form>
+            </div>
+        </div>
+        {*全部、已上线、已下线、已过期、未开始*}
+
+        <div class="tabs2">
+            <ul class="clearfix">
+                {foreach like_config::$status as $k => $v}
+
+                <li {if $search_filter['search_type'] == $k}class="curr"{/if}>
+                <a href="{compile_url($search_filter, 'search_type', $k,'like/admin')}">{$v}</a>
+                </li>
+                {/foreach}
+            </ul>
+        </div>
+
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th width="25%">文章标题</th>
+                    <th width="10%">赞数</th>
+                    <th width="10%">评论数</th>
+                    <!--<th width="15%">评论内容(赞数)</th>-->
+                    <!--<th width="15%">回复内容</th>-->
+                    <th width="15%">最后一次点赞时间</th>
+                    <th width="15%">最后一次评论时间</th>
+                    <!--<th width="20%">操作</th>-->
+                </tr>
+                </thead>
+                <tbody>
+
+                {foreach $list as $k=>$v}
+
+                <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                    <td>{$v.title}</td>
+                    <!--点赞数-->
+                    <td>
+                        <a href="{AnUrl("like/admin/like_list?id={$v.id}&module={$search_filter['module']}")}"  type_id="{$v.id}">{like_helper::get_res_like_count_by_resid($v.id)}</a>
+                    </td>
+                    <!--评论数-->
+                    <td>
+                        <a href="{AnUrl("like/admin/comment_list?search_filter[id]={$v.id}&search_filter[module]={$search_filter['module']}")}"  type_id="{$v.id}">{like_helper::get_res_comment_count_by_resid($v.res_name, $v.id)}</a>
+                    </td>
+                    <!--最后一次点赞时间-->
+                    <td class='btn_end'>
+                        {if like_helper::get_last_like_by_resid($v.res_name, $v.id)}
+                            {like_helper::get_last_like_by_resid($v.res_name, $v.id)}
+                        {else}
+                            --
+                        {/if}
+                    </td>
+                    <!--最后一次评论时间-->
+                    <td class='btn_end'>
+                        {if like_helper::get_last_comment_by_resid($v.res_name, $v.id)}
+                            {like_helper::get_last_comment_by_resid($v.res_name, $v.id)}
+                        {else}
+                            --
+                        {/if}
+                    </td>
+                   <!-- <td class="txtleft " resId={$v.id}>
+
+                        {if !$v.examine}
+                        <a class="btn btn-xs btn-top btn-info up_del" href="javascript:">通过审核</a>
+                        {else}
+                        <a class="btn btn-xs btn-top btn-danger down_del" href="javascript:">取消审核</a>
+                        {/if}
+                        <a class="btn btn-xs btn-top btn-info" href="{AnUrl("comment/admin/reply?id={$v.id}")}">回复</a>
+                        <a class="btn btn-xs btn-top btn-danger delete_hot" href="javascript:">删除</a>
+                    </td>-->
+                </tr>
+                {foreachelse}
+                <tr><td colspan="6">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+</div>
+<!--end:右侧-->
+
+
+<!-- 引入弹层 -->
+{include_www file="admin/lib/pop.html"}
+{include_www file="admin/lib/footer_new.html"}

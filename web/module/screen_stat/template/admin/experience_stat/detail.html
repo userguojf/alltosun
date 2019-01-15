@@ -1,0 +1,56 @@
+{include_www file="admin/lib/header_new.html" title="统计详情"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('screen_stat/admin/experience_stat/stat_day')}"><i class="iconfont iconfont-logo2"></i>体验统计</a>
+      &gt;统计详情（{$count}）{if $business_title} &gt;{$business_title}{/if}
+      </span>
+      <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+    </div>
+    <br />
+
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>省</th>
+            <th>市</th>
+            <!-- <th>区</th> -->
+            <th>厅</th>
+            <th>品牌</th>
+            <th>型号</th>
+            <th>IMEI</th>
+            <th>时长</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $action_list as $k=>$v}
+          <tr id="dataList{$k}">
+            <td>{_uri('province', $v.province_id, 'name')}</td>
+            <td>{_uri('city', $v.city_id, 'name')}</td>
+            <!-- <td>{_uri('area', $v.area_id, 'name')}</td> -->
+            <td>{_uri('business_hall', $v.business_id, 'title')}</td>
+            <td>{$v.phone_name}</td>
+            <td>{$v.phone_version}</td>
+            <td>{$v.imei}</td>
+            <td>{screen_helper::format_timestamp_text($v.experience_time)}</td>
+            <td>{$v.add_time}</td>
+            <td>{$v.update_time}</td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="10">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

@@ -1,0 +1,23 @@
+{* $Id: sidebar.html 54862M 2013-08-20 07:04:06Z (local) $ *}
+<!-- 左侧导航栏 start -->
+<div id="sideBar" class="span2" {if $is_login}style="visibility: hidden;"{/if}>
+<ul class="nav nav-tabs nav-stacked" id="admin-menu-bar">
+    {foreach $action_module as $k=>$v}
+    {if $v.is_ajax}
+    <li class="active main-menu">
+        <a href="javascript:void(0);" class="main-menu-tit"><i class="{$v['icon']}"></i>{$v.name}</a>
+        <ul class="nav nav-list sub-menu">
+            {foreach $v['action'] as $key=>$val}
+            {if $val['is_ajax']}
+            <li>
+                <a href='{AnUrl("{$val.url}")}'>{$val.name}</a>
+            </li>
+            {/if}
+            {/foreach}
+        </ul>
+    </li>
+    {/if}
+    {/foreach}
+</ul>
+</div>
+<!-- 左侧导航栏 end -->

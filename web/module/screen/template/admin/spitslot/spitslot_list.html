@@ -1,0 +1,196 @@
+{include_www file="admin/lib/header_new.html" title="吐槽管理"}
+{include_www file="admin/lib/sidebar_new.html"}
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="###"><i class="iconfont iconfont-tucao"></i>亮屏管理</a>
+      &gt;
+      <span>吐槽列表(吐槽总数:{$count})（用户反馈）</span>
+    </div>
+    <div class="tabs2">
+      <ul class="clearfix">
+        {foreach screen_config::$search_status as $k => $v}
+          <li {if $search_filter['search_status'] == $k}class="curr"{/if}>
+            <a  href="{compile_url($search_filter,'search_status',$k,'screen/admin/spitslot')}">{$v}</a>
+          </li>
+        {/foreach}
+      </ul>
+    </div>
+    <div class="form-search clearfix">
+      <form action="{AnUrl('spitslot/admin')}" method="get">
+        <!-- <input type="text" class="form-control input-sm pull-left" name="search_filter[tel]" value="{$search_filter.tel}" placeholder="填写手机号码"> -->
+        <span class="pull-left">&nbsp;&nbsp;&nbsp;&nbsp;添加时间：</span>
+        <input type="text" id="start_time" name="search_filter[start_add_time]" placeholder="开始时间" value="{if $search_filter['start_add_time']}{$search_filter['start_add_time']}{/if}" class="form-control input-sm pull-left" style="width: 100px;">
+        <span class=" pull-left">&nbsp;&nbsp;至&nbsp;&nbsp;</span>
+        <input type="text" id="end_time" name="search_filter[end_add_time]" placeholder="结束时间" value="{if $search_filter['end_add_time']}{$search_filter['end_add_time']}{/if}" class="form-control input-sm pull-left" style="width: 100px;">
+        <input type="submit" class="btn-success btn-sm pull-left s-tucao-btn" style="width: 80px;" value='搜索'>
+        <button type="button" class="btn-success  btn-sm pull-left s-tucao-btn clearValue">重置</button>
+        <!-- <a href="javascript:void(0);" class="btn-success  btn-sm pull-left s-tucao-btn spitslot_export">导出吐槽记录</a> -->
+      </form>
+      
+      
+    </div>
+    <div class="list">
+      <ul class="tucao-list">
+      {foreach $list as $k => $v}
+        <li class="clearfix" id="dataList{$v.id}">
+          <div class="con pull-left">
+            <p class="addr">
+              <span>
+                {*省市信息*}
+                {$business_info = business_hall_helper::get_business_hall_info($v.business_id)}
+                {$province_title = business_hall_helper::get_info_name('province', $business_info['province_id'], 'name')}
+                {$city_title     = business_hall_helper::get_info_name('city', $business_info['city_id'], 'name')}
+                {$province_title}
+                {if $province_title != $city_title}
+                  {$city_title}
+                {/if}
+              </span>
+              {*营业厅标题*}
+              {_uri('business_hall',$v.business_id,'title')}
+            </p>
+            <div class="txt">{$v.content}</div>
+
+            <p class="time">
+              {$v.add_time|date_format:'Y-m-d H:i:s'}
+            </p>
+          </div>
+          <div class="infos pull-right">
+            <div class="options clearfix" resId="{$v.id}">
+              <a href="javascript:void(0);" class="btn-del pull-right deleteHot"><em></em>删除</a>
+              {if $v.is_read == 2}
+                <a href="javascript:void(0);" class="btn-readed pull-right readSuccess"><em></em>已阅读</a>
+              {else}
+                <a href="javascript:void(0);" class="btn-read pull-right setRead"><em></em>未阅读</a>
+              {/if}
+            </div>
+          </div>
+        </li>
+      {/foreach}
+      </ul>
+      {include_www file="admin/lib/pager_new.html"}
+      {include_www file="admin/lib/pop.html"}
+    </div>
+  </div>  
+</div>
+<script>
+  //导出
+  $('.spitslot_export').click(function(){
+    $('.spitslot_export').before('<input type="hidden" name="is_export" value=1>');
+    this.closest('form').submit();
+  });
+
+  var updateStatus = {
+
+    _id   : '',
+
+    _msg  : '操作失败',
+
+    _url  : "{AnUrl('screen/admin/spitslot/update_res_is_read')}",
+
+    _table: 'screen_spitslot',
+
+    init:function(obj,status){
+
+      this._id = $(obj).parent().attr('resId');
+
+      $.post(this._url,{ id:this._id, status:status },function(json){
+
+        if (json.info == 'ok') {
+
+          if (status == 0) { // 删除数据
+
+            updateStatus.deleteHtml(obj);
+
+          } else if (status == 1) {  //设为未读
+
+            updateStatus.setReadHtml(obj);
+
+          } else if (status == 2) {  //设为阅读
+
+            updateStatus.readSuccessHtml(obj);
+
+          }
+
+        } else {
+
+          alert(json.info);
+
+        }
+      },'json')
+    },
+
+    deleteHtml:function(obj){
+      $(obj).closest("li").fadeOut(function(){
+        $(this).remove();
+        interLineColor();
+      });
+      return false;
+    },
+
+    setReadHtml:function(obj){
+      $(obj).html('<em></em>未阅读');
+      $(obj).removeClass('readSuccess').removeClass('btn-readed');
+      //头部未吐槽数量+1
+      var count = parseInt($('.spitslotCount em').html());
+      $('.spitslotCount em').html(count+1);
+      $(obj).addClass('btn-read').addClass('setRead');
+    },
+    
+    readSuccessHtml:function(obj){
+      $(obj).html('<em></em>已阅读');
+      $(obj).removeClass('setRead').removeClass('btn-read');
+      //头部未吐槽数量-1
+      var count = parseInt($('.spitslotCount em').html());
+      $('.spitslotCount em').html(count-1);
+      $(obj).addClass('readSuccess').addClass('btn-readed');
+     
+    },
+
+  };
+  
+  //阅读点击事件
+  var eventObj = function () {
+    var clickEventObj = { };
+    $('.deleteHot,.setRead,.readSuccess').on('click',function(event){
+      event.preventDefault();
+      event.stopPropagation();
+      //提示弹层
+      $('.popWarning').removeClass('hide');
+      
+      //取消
+      $('.popCancel').on('click', function () {
+        $('.popWarning').addClass('hide');
+        return false;
+      });
+      clickEventObj = this;
+    });
+    
+    //确认
+    $('.popConfirm').on('click', function () {
+      $('.popWarning').addClass('hide');
+      if($(clickEventObj).is('.deleteHot')) {
+        updateStatus.init(clickEventObj,0);
+      }
+
+      if($(clickEventObj).is('.readSuccess')) {
+        updateStatus.init(clickEventObj,1);
+      }
+
+      if($(clickEventObj).is('.setRead')) {
+        updateStatus.init(clickEventObj,2);
+      }
+    });
+    
+    
+  }
+  
+  eventObj();
+  
+  $('.form-search .clearValue').on('click', function() {
+    $('.form-search input[type=text]').val('');
+    window.location.href="{AnUrl('spitslot/admin?search_filter[search_status]=0')}";
+  });
+</script>
+{include_www file="admin/lib/footer_new.html"}

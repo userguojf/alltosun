@@ -1,0 +1,1357 @@
+@color: #578ada;
+
+body{
+	font-family: 'Microsoft Yahei', Arial;
+	font-size: 14px;
+	color: #666;
+	background: #f2f3f8;
+}
+input,button,textarea,pre, select{
+	font-family: 'Microsoft Yahei', Arial;
+}
+a{
+	color: #666;
+}
+.txt-primary{
+	color: @color;
+}
+.txt-danger{
+	color: #f92b2b;
+}
+.txt-success{
+	color: #2dda0b;
+}
+.txt-disabled{
+	color: #999;
+}
+.hidden{
+	display: none;
+}
+.inner{
+	width: 1200px;
+	background: #fff;
+	margin: 0 auto;
+}
+.icon-arrow-down{
+	display: inline-block;
+	width: 6px;
+	height: 4px;
+	background: url(../img-jituan/arrow-down.svg) center no-repeat;
+	background-size: cover;
+	vertical-align: middle;
+	margin-left: 4px;
+}
+.loading-box{
+	padding: 240px 0;
+	text-align: center;
+	img{
+		width: 50px;
+	}
+}
+.header{
+	height: 30px;
+	line-height: 30px;
+	padding: 0 20px;
+	background: #fafafa;
+	border-bottom: 1px solid #f2f2f2;
+	.tag{
+		padding: 0 20px;
+		position: relative;
+		&:before{
+			content: '';
+			display: block;
+			width: 1px;
+			height: 14px;
+			background: #666;
+			position: absolute;
+			left: 0;
+			top: 50%;
+			margin-top: -7px;
+		}
+		&:last-child:before{
+			display: none;
+		}
+	}
+	.name{
+		margin-right: 20px;
+	}
+}
+
+.header-sub{
+	height: 55px;
+	line-height: 55px;
+	font-size: 18px;
+	background: #fff;
+	box-shadow: 0 10px 10px rgba(0,0,0,0.01);
+}
+
+.header-tabs{
+	height: auto;
+	text-align: center;
+	margin-top: 20px;
+	a{
+		display: inline-block;
+		height: 40px;
+		line-height: 40px;
+		padding: 0 45px;
+		font-size: 16px;
+		background: #fff;
+		position: relative;
+		&.active{
+			color: #fff;
+			background: @color;
+		}
+		.num{
+			display: inline-block;
+			height: 20px;
+			line-height: 20px;
+			padding: 0 7px;
+			color: #fff;
+			font-size: 12px;
+			background: #fbaa5a;
+			border: 2px solid #f2f3f8;
+			border-radius: 16px;
+			position: absolute;
+			right: -10px;
+			top: -10px;
+		}
+	}
+}
+
+/*主内容*/
+.main{
+	margin-top: 25px;
+	padding-bottom: 1px;
+}
+.bread{
+	padding: 20px;
+	.curr{
+		color: @color;
+	}
+}
+.file-detail{
+	padding: 20px 40px 40px;
+	font-size: 16px;
+	color: #999;
+	line-height: 24px;
+	.con{
+		width: 770px;
+	}
+	.title{
+		font-size: 20px;
+		color: #333;
+		padding: 20px 0 10px;
+	}
+	.date{
+		font-size: 20px;
+		color: #666;
+		padding-top: 10px;
+	}
+}
+.top-options{
+	padding: 20px 20px 35px;
+	.tabs{
+		border: 1px solid #d7d7d7;
+		a{
+			display: inline-block;
+			float: left;
+			line-height: 36px;
+			padding: 0 20px;
+			font-size: 16px;
+			color: #999;
+			&.active{
+				background: @color;
+				color: #fff;
+				&:hover{
+					color: #fff;
+				}
+			}
+			&:hover{
+				color: @color;
+			}
+		}
+	}
+	.btn-add{
+		width: 110px;
+		height: 36px;
+		line-height: 36px;
+		text-align: center;
+		color: #fff;
+		letter-spacing: 1px;
+		background: @color;
+		border-radius: 4px;
+	}
+	.search{
+		width: 245px;
+		height: 34px;
+		border: 1px solid #d7d7d7;
+		border-radius: 36px;
+		input{
+			width: 185px;
+			height: 34px;
+			padding: 0 0 0 20px;
+			background: none;
+			border: none;
+		}
+		button{
+			width: 40px;
+			height: 34px;
+			text-align: center;
+			background: none;
+			border: none;
+			.icon-search{
+				display: inline-block;
+				width: 15px;
+				height: 15px;
+				background: url(../img-jituan/search.svg) no-repeat;
+				background-size: cover;
+			}
+		}
+	}
+}
+.content-list{
+	table{
+		width: 100%;
+		height: auto;
+		th{
+			line-height: 50px;
+			white-space: nowrap;
+			font-size: 16px;
+			color: #333;
+			padding-left: 35px;
+			border-bottom: 1px solid #f0f2f6;
+			.select{
+				position: relative;
+				&:hover{
+					.select-list{
+						display: block;
+					}
+				}
+				.select-list{
+					display: none;
+					position: absolute;
+					left: -5px;
+					top: 90%;
+					max-height: 280px;
+					overflow-y: auto;
+					background: #fff;
+					border: 1px solid #d7d7d7;
+					box-shadow: 0 0 10px rgba(0,0,0,0.1);
+					p{
+						padding: 0 14px;
+						white-space: nowrap;
+						line-height: 40px;
+						cursor: pointer;
+						&:hover{
+							background: @color;
+							color: #fff;
+						}
+					}
+				}
+			}
+		}
+		tbody tr:hover td{
+			background: #fafafa;
+		}
+		td{
+			font-size: 14px;
+			color: #999;
+			line-height: 44px;
+			padding-left: 35px;
+			border-bottom: 1px solid #f0f2f6;
+			a{
+				color: #999;
+				&:hover{
+					color: @color;
+				}
+			}
+			.point{
+				display: inline-block;
+				width: 6px;
+				height: 6px;
+				border-radius: 6px;
+				vertical-align: middle;
+				margin-left: -8px;
+				margin-right: 4px;
+				position: relative;
+				top: -2px;
+				&.point-warning{
+					background: #fbaa5a;
+				}
+			}
+			.btn-option{
+				margin: 0 2px;
+				position: relative;
+				&:hover{
+					z-index: 1;
+					.icon-care{
+						background-image: url(../img-jituan/care-on.svg);
+					}
+					.icon-search2{
+						background-image: url(../img-jituan/icon-search2-on.png);
+					}
+					.icon-download{
+						background-image: url(../img-jituan/download-on.svg);
+					}
+					.icon-delete{
+						background-image: url(../img-jituan/delete-on.svg);
+					}
+					.desc{
+						display: block;
+					}
+				}
+				.desc{
+					display: none;
+					position: absolute;
+					left: 50%;
+					margin-left: -24px;
+					top: 110%;
+					width: 48px;
+					height: 30px;
+					line-height: 30px;
+					text-align: center;
+					color: #999;
+					background: #fff;
+					box-shadow: 0 0 10px rgba(0,0,0,0.1);
+				}
+			}
+			.icon-care{
+				display: inline-block;
+				width: 16px;
+				height: 10px;
+				background: url(../img-jituan/care.svg) no-repeat;
+				background-size: cover;
+				vertical-align: middle;
+			}
+			.icon-search2{
+				display: inline-block;
+				width: 16px;
+				height: 18px;
+				background: url(../img-jituan/icon-search2.png) no-repeat;
+				vertical-align: middle;
+			}
+			.icon-download{
+				display: inline-block;
+				width: 16px;
+				height: 16px;
+				background: url(../img-jituan/download.svg) no-repeat;
+				background-size: cover;
+				vertical-align: middle;
+			}
+			.icon-delete{
+				display: inline-block;
+				width: 16px;
+				height: 16px;
+				background: url(../img-jituan/delete.svg) no-repeat;
+				background-size: cover;
+				vertical-align: middle;
+			}
+			.btn-default{
+				display: inline-block;
+				height: 28px;
+				line-height: 28px;
+				font-size: 14px;
+				color: #999;
+				padding: 0 20px;
+				background: #fafafa;
+				border: 1px solid #d7d7d7;
+				&:hover{
+					color: @color;
+					border: 1px solid @color;
+				}
+			}
+		}
+	}
+	.pages{
+		text-align: center;
+		padding: 35px 0;
+		a{
+			display: inline-block;
+			height: 32px;
+			line-height: 32px;
+			padding: 0 12px;
+			font-size: 16px;
+			color: #999;
+			border: 1px solid #e9edf4;
+			margin: 0 2px;
+			&.active{
+				color: #fff;
+				background: @color;
+				border: 1px solid @color;
+				&:hover{
+					color: #fff;
+				}
+			}
+			&.disabled{
+				background: #eee;
+				cursor: no-drop;
+			}
+			&:hover{
+				border: 1px solid @color;
+				color: @color;
+			}
+		}
+		span{
+			line-height: 34px;
+			font-size: 16px;
+			color: #999;
+			margin-left: 10px;
+		}
+	}
+}
+
+/*上传弹层*/
+.pop-bg{
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 1001;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,0.75);
+}
+.pop-publish{
+	width: 460px;
+	height: auto;
+	padding: 35px 0;
+	font-size: 16px;
+	color: #333;
+	background: #fff;
+	position: absolute;
+	left: 50%;
+	margin-left: -230px;
+	top: 10%;
+}
+.pop-close{
+	position: absolute;
+	right: 20px;
+	top: 20px;
+}
+.icon-close{
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	background: url(../img-jituan/close.svg) no-repeat;
+	background-size: cover;
+	cursor: pointer;
+}
+.pop-publish .title{
+	text-align: center;
+	padding: 0 0 25px;
+}
+.pop-publish .item{
+	padding-bottom: 10px;
+	position: relative;
+}
+.pop-publish .item label{
+	display: inline-block;
+	width: 140px;
+	height: 38px;
+	line-height: 38px;
+	text-align: right;
+	padding-right: 10px;
+	vertical-align: top;
+}
+.pop-publish .item .input{
+	display: inline-block;
+	position: relative;
+	vertical-align: top;
+}
+.pop-publish .item .input input{
+	width: 220px;
+	height: 36px;
+	padding: 0 10px;
+	border: 1px solid #e9edf4;
+}
+.pop-publish .item .icon-date{
+	display: inline-block;
+	width: 21px;
+	height: 19px;
+	background: url(../img-jituan/date.svg) no-repeat;
+	background-size: cover;
+	position: absolute;
+	right: 10px;
+	top: 9px;
+	cursor: pointer;
+}
+.pop-publish .item .btn-upload{
+	display: inline-block;
+	width: 108px;
+	height: 36px;
+	line-height: 36px;
+	text-align: center;
+	font-size: 14px;
+	color: #999;
+	background: #fafafa;
+	border: 1px solid #e9edf4;
+	position: relative;
+	overflow: hidden;
+	vertical-align: top;
+}
+.pop-publish .item .btn-upload input{
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 1;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+}
+.icon-upload{
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	background: url(../img-jituan/upload.svg) no-repeat;
+	background-size: cover;
+	margin-right: 3px;
+}
+.pop-publish .item .upload-status{
+	display: inline-block;
+	line-height: 38px;
+	font-size: 14px;
+	color: #666;
+	vertical-align: top;
+}
+.pop-publish .item .btn-upload-again{
+	display: inline-block;
+	color: @color;
+	text-decoration: underline;
+	position: relative;
+	overflow: hidden;
+	vertical-align: middle;
+	margin-left: 10px;
+}
+.pop-publish .item .btn-upload-again input{
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 1;
+	width: 100%;
+	top: 100%;
+	opacity: 0;
+}
+.icon-loading{
+	display: inline-block;
+	width: 17px;
+	height: 17px;
+	background: url(../img-jituan/loading.gif) no-repeat;
+	background-size: 100% auto;
+	margin-right: 3px;
+	position: relative;
+	top: 4px;
+}
+.icon-yes{
+	display: inline-block;
+	width: 17px;
+	height: 17px;
+	background: url(../img-jituan/yes.svg) no-repeat;
+	background-size: 100% auto;
+	margin-right: 3px;
+	position: relative;
+	top: 4px;
+}
+.pop-publish .btn-area{
+	text-align: center;
+	padding-top: 25px;
+}
+.pop-publish .btn-area button{
+	width: 110px;
+	height: 35px;
+	border-radius: 4px;
+	margin: 0 10px;
+}
+.pop-publish .btn-primary{
+	background: @color;
+	border: 1px solid @color;
+	color: #fff;
+}
+.pop-publish .btn-default{
+	background: #fafafa;
+	border: 1px solid #d7d7d7;
+	color: #666;
+}
+.pop-publish .status-ing{
+	padding: 130px 0;
+}
+.pop-publish .progress{
+	width: 340px;
+	height: 8px;
+	background: #c9d7fc;
+	border-radius: 8px;
+	margin: 0 auto;
+}
+.pop-publish .progress-bar{
+	height: 8px;
+	background: #5a90fb;
+	border-radius: 8px;
+}
+.pop-publish .title-info{
+	text-align: center;
+	color: #666;
+	margin-top: -10px;
+	padding-bottom: 30px;
+}
+.pop-publish .default{
+	text-align: center;
+}
+.pop-publish .default textarea{
+	display: inline-block;
+	width: 390px;
+	height: 120px;
+	padding: 15px;
+	line-height: 24px;
+	color: #999;
+	font-size: 14px;
+	background: #fafafa;
+	border: none;
+	resize: none;
+	margin: 0 auto;
+}
+.icon-download-white{
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background: url(../img-jituan/download-white.svg) no-repeat;
+	background-size: cover;
+	vertical-align: middle;
+	margin-right: 3px;
+}
+
+/*预览*/
+.pop-view-header{
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 1;
+	width: 100%;
+	height: 60px;
+	line-height: 60px;
+	background: #000;
+}
+.pop-view-header .title{
+	padding-left: 30px;
+	width: 400px;
+	color: #fff;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.pop-view-header .btn-download{
+	display: inline-block;
+	width: 21px;
+	height: 19px;
+	background: url(../img-jituan/download-white2.svg) no-repeat;
+	background-size: cover;
+	vertical-align: middle;
+	margin-right: 3px;
+	margin-right: 20px;
+	opacity: 1;
+}
+.pop-view-header .btn-download:hover{
+	opacity: 0.8;
+}
+.pop-view-header .btn-close{
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background: url(../img-jituan/close-white.svg) no-repeat;
+	background-size: cover;
+	vertical-align: middle;
+	margin-right: 3px;
+	margin-right: 30px;
+	opacity: 1;
+}
+.pop-view-header .btn-close:hover{
+	opacity: 0.8;
+}
+.pop-view{
+	width: 720px;
+	background: #fff;
+	position: fixed;
+	left: 50%;
+	top: 60px;
+	bottom: 0;
+	margin-left: -360px;
+}
+
+
+
+/*改造申请*/
+.apply-infos{
+	font-size: 14px;
+	color: #999;
+	padding: 20px 35px;
+}
+.apply-infos .tag{
+	display: inline-block;
+	margin-right: 40px;
+}
+.apply-tabs{
+	height: 47px;
+	border-left: 1px solid #e9edf4;
+	border-bottom: 1px solid #e9edf4;
+	margin: 0 35px;
+	position: relative;
+	z-index: 1;
+	.item{
+		float: left;
+		height: 46px;
+		line-height: 46px;
+		padding: 0 12px;
+		background: #fff url(../img-jituan/arrow.png) 0 0 no-repeat;
+		border: 1px solid #e9edf4;
+		margin-left: -1px;
+		margin-bottom: -1px;
+		.status-ing{
+			color: #fca754;
+		}
+		.status-end{
+			color: #999;
+		}
+		&.active{
+			background: #fafafa;
+			border-bottom-color: #fafafa;
+			height: 52px;
+			line-height: 52px;
+			margin-top: -6px;
+		}
+		.btn-close{
+			display: inline-block;
+			width: 15px;
+			height: 15px;
+			background: url(../img-jituan/close.svg) no-repeat;
+			background-size: cover;
+			margin-left: 15px;
+			vertical-align: middle;
+			position: relative;
+			top: -2px;
+			cursor: pointer;
+		}
+	}
+	.btn-more{
+		padding: 9px;
+		margin-right: 10px;
+		position: relative;
+		.default{
+			width: 66px;
+			height: 28px;
+			line-height: 28px;
+			font-size: 14px;
+			text-align: center;
+			color: #666;
+			border: 1px solid #fff;
+		}
+		&:hover{
+			.default{
+				border: 1px solid #e9edf4;
+			}
+			.more-list{
+				display: block;
+			}
+		}
+		.more-list{
+			display: none;
+			position: absolute;
+			right: 0;
+			top: 44px;
+			background: #fff;
+			border: 1px solid #d7d7d7;
+			box-shadow: 0 0 10px rgba(0,0,0,0.1);
+		}
+		.more-list a{
+			display: block;
+			white-space: nowrap;
+			line-height: 40px;
+			padding: 0 15px;
+			&:hover{
+				background: @color;
+				color: #fff;
+			}
+		}
+	}
+}
+.apply-tabs-content{
+	padding: 30px;
+	border: 1px solid #e9edf4;
+	border-top: none;
+	background: #fafafa;
+	margin: 0 35px 35px;
+	.apply-detail{
+		border-bottom: 1px dashed #e8e9ea;
+		padding-bottom: 20px;
+		margin-bottom: 30px;
+		.con{
+			width: 750px;
+		}
+		.name{
+			font-size: 20px;
+			color: #333;
+		}
+		.info{
+			color: #999;
+			padding-bottom: 5px;
+		}
+		.desc{
+			color: #666;
+			padding: 10px 0;
+			.tag{
+				display: inline-block;
+				margin-right: 20px;
+			}
+		}
+		.btn-primary{
+			display: inline-block;
+			line-height: 35px;
+			padding: 0 35px;
+			color: #fff;
+			background: @color;
+		}
+		.icon-tel{
+			display: inline-block;
+			width: 15px;
+			height: 13px;
+			background: url(../img-jituan/icon-tel.png) no-repeat;
+			vertical-align: middle;
+			margin-right: 4px;
+			position: relative;
+			top: -2px;
+		}
+		.icon-level{
+			display: inline-block;
+			width: 13px;
+			height: 11px;
+			background: url(../img-jituan/icon-level.png) no-repeat;
+			vertical-align: middle;
+			margin-right: 4px;
+			position: relative;
+			top: -2px;
+		}
+		.icon-house{
+			display: inline-block;
+			width: 15px;
+			height: 13px;
+			background: url(../img-jituan/icon-house.png) no-repeat;
+			vertical-align: middle;
+			margin-right: 4px;
+			position: relative;
+			top: -2px;
+		}
+		.icon-money{
+			display: inline-block;
+			width: 16px;
+			height: 17px;
+			background: url(../img-jituan/icon-money.png) no-repeat;
+			vertical-align: middle;
+			margin-right: 4px;
+			position: relative;
+			top: -2px;
+		}
+		.status {
+			text-align: center;
+			color: #999;
+			.name.txt-danger{
+				color: #f92b2b;
+				margin-bottom: 10px;
+			}
+			.name.txt-success{
+				color: #2dda0b;
+				margin-bottom: 10px;
+			}
+			.icon-mark{
+				display: inline-block;
+				width: 13px;
+				height: 15px;
+				background: url(../img-jituan/icon-mark.png) no-repeat;
+				vertical-align: middle;
+				margin-right: 4px;
+				position: relative;
+				top: -2px;
+			}
+		}
+	}
+	.apply-detail-intro{
+		color: #999;
+		line-height: 1.8;
+	}
+	.apply-detail-tabs{
+		padding: 30px 0 15px;
+		a{
+			float: left;
+			display: inline-block;
+			width: 180px;
+			height: 40px;
+			line-height: 40px;
+			text-align: center;
+			color: #999;
+			background: #fff;
+			margin-right: 4px;
+			&.active{
+				background: @color;
+				color: #fff;
+			}
+		}
+	}
+	.apply-detail-tabs-conent{
+		text-align: center;
+		background: #fff;
+		margin-bottom: 20px;
+		img{
+			max-width: 100%;
+			height: auto;
+		}
+	}
+}
+/*审批弹层*/
+.pop-approval{
+	width: 390px;
+	height: auto;
+	padding: 30px 35px;
+	background: #fff;
+	position: absolute;
+	left: 50%;
+	margin-left: -230px;
+	top: 10%;
+	.title{
+		font-size: 16px;
+		color: #333;
+		padding-bottom: 20px;
+	}
+	.steps{
+		height: auto;
+		position: relative;
+		&:before{
+			content: '';
+			display: block;
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 8px;
+			height: 100%;
+			border-right: 1px dashed #d7d7d7;
+		}
+	}
+	.steps-item{
+		color: #999;
+		position: relative;
+		z-index: 1;
+		.point{
+			width: 14px;
+			height: 14px;
+			background: #fafafa;
+			border: 1px solid #d8d8d8;
+			border-radius: 14px;
+			position: relative;
+			&.point-primary:after{
+				content: '';
+				display: block;
+				width: 8px;
+				height: 8px;
+				background: #578ada;
+				border-radius: 8px;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				margin: -4px 0 0 -4px;
+			}
+			&.point-success:after{
+				content: '';
+				display: block;
+				width: 8px;
+				height: 8px;
+				background: #2dda0b;
+				border-radius: 8px;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				margin: -4px 0 0 -4px;
+			}
+			&.point-danger:after{
+				content: '';
+				display: block;
+				width: 8px;
+				height: 8px;
+				background: #f42134;
+				border-radius: 8px;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				margin: -4px 0 0 -4px;
+			}
+		}
+		.con{
+			margin-left: 15px;
+			margin-top: -1px;
+			padding-bottom: 20px;
+		}
+		p{
+			padding-bottom: 10px;
+			&.info{
+				color: #666;
+				padding-bottom: 15px;
+			}
+			.tag{
+				display: inline-block;
+				margin-right: 20px;
+			}
+		}
+		.text textarea{
+			width: 320px;
+			height: 100px;
+			background: #fafafa;
+			padding: 10px 15px;
+			border: none;
+			resize: none;
+		}
+	}
+}
+.pop-approval .btn-area{
+	text-align: center;
+	padding-top: 25px;
+}
+.pop-approval .btn-area button{
+	width: 110px;
+	height: 35px;
+	border-radius: 0px;
+	margin: 0 10px;
+}
+.pop-approval .btn-primary{
+	background: @color;
+	border: 1px solid @color;
+	color: #fff;
+}
+.pop-approval .btn-default{
+	background: #fafafa;
+	border: 1px solid #d7d7d7;
+	color: #666;
+}
+
+.none-box{
+	padding: 150px 0;
+	text-align: center;
+	font-size: 16px;
+}
+.none-box p{
+	padding: 10px 0 50px;
+}
+.none-box .btn-primary{
+	display: inline-block;
+	line-height: 36px;
+	padding: 0 30px;
+	color: #fff;
+	background: @color;
+}
+
+.short-tips{
+			width: 210px;
+			height: 40px;
+			line-height: 40px;
+			text-align: center;
+			color: #fff;
+			background: rgba(0,0,0,0.5);
+			border-radius: 4px;
+			position: fixed;
+			left: 50%;
+			top: 160px;
+			margin-left: -105px;
+			z-index: 1;
+		}
+
+/*申请表单*/
+.apply-form{
+	padding: 30px 0;
+	background: #fafafa;
+	border: 1px solid #e9edf4;
+	margin: -1px 35px 30px;
+	.item-tips{
+		font-size: 12px;
+		color: #5a90fb;
+		margin: 12px 0 12px 310px;
+	}
+	.item{
+		margin: 12px 0;
+		position: relative;
+		&.item-select{
+			z-index: 1;
+		}
+		.label{
+			display: block;
+			width: 285px;
+			line-height: 42px;
+			text-align: right;
+			padding-right: 25px;
+			.desc{
+				display: block;
+				color: #999;
+				margin-top: -20px;
+			}
+		}
+		.con{
+			.text{
+				display: inline-block;
+				position: relative;
+				input{
+					width: 572px;
+					height: 40px;
+					background: #fff;
+					border: 1px solid #d7d7d7;
+					padding: 0 18px;
+					&:focus{
+						border: 1px solid #5a90fb;
+					}
+				}
+				.unit{
+					display: inline-block;
+					line-height: 42px;
+					font-size: 20px;
+					margin-left: 15px;
+				}
+				.icon-date{
+					position: absolute;
+					right: 18px;
+					top: 10px;
+					display: block;
+					width: 21px;
+					height: 19px;
+					background: url(../img-jituan/date.svg) no-repeat;
+					background-size: cover;
+				}
+			}
+			.select{
+				display: block;
+				float: left;
+				width: 264px;
+				height: 40px;
+				padding: 0 18px;
+				line-height: 40px;
+				background: #fff;
+				border: 1px solid #d7d7d7;
+				border-radius: 0;
+				margin-right: 6px;
+				position: relative;
+				cursor: pointer;
+				&:hover{
+					border: 1px solid #5a90fb;
+				}
+				&:after{
+					content: '';
+					display: block;
+					width: 12px;
+					height: 8px;
+					background: url(../img-jituan/arrow-down.svg) no-repeat;
+					background-size: cover;
+					position: absolute;
+					right: 10px;
+					top: 16px;
+				}
+				select{
+					-webkit-appearance:none;
+				    -moz-appearance:none;
+				    appearance:none;
+				    background:transparent;
+				    border:none;
+				    padding-left:18px;
+				    position: absolute;
+				    left: 0;
+				    top: 0;
+				    width: 300px;
+				    height: 40px;
+				    background: #fff;
+				    border: 1px solid #fff;
+				}
+				.list{
+					position: absolute;
+					left: 0;
+					top: 100%;
+					z-index: 1;
+					width: 100%;
+					height: 160px;
+					overflow-y: auto;
+					padding: 4px 0;
+					background: #fff;
+					border: 1px solid #d7d7d7;
+					margin-top: 4px;
+					margin-left: -1px;
+					box-shadow: 0 0 10px rgba(0,0,0,0.07);
+					&::-webkit-scrollbar{ width:3px; height:100%; background-color:#eee;}
+					&::-webkit-scrollbar:hover{ background-color:#eee; }
+					&::-webkit-resizer{}
+					&::-webkit-scrollbar-thumb{ -webkit-border-radius:1px; background-color:#999; height:1px; }
+					&::-webkit-scrollbar-thumb:hover{ background-color: #999;}
+					&::-webkit-scrollbar-thumb:active{ background-color:#999;}
+					&::-moz-scrollbar{ width:3px; height:100%; background-color:#eee;}
+					&::-moz-scrollbar:hover{ background-color:#eee; }
+					&::-moz-resizer{}
+					&::-moz-scrollbar-thumb{ -webkit-border-radius:1px; background-color:#999; height:1px; }
+					&::-moz-scrollbar-thumb:hover{ background-color: #999;}
+					&::-moz-scrollbar-thumb:active{ background-color:#999;}
+					&::-o-scrollbar{ width:3px; height:100%; background-color:#eee;}
+					&::-o-scrollbar:hover{ background-color:#eee; }
+					&::-o-resizer{}
+					&::-o-scrollbar-thumb{ -webkit-border-radius:1px; background-color:#999; height:1px; }
+					&::-o-scrollbar-thumb:hover{ background-color: #999;}
+					&::-o-scrollbar-thumb:active{ background-color:#999;}
+					&::-ms-scrollbar{ width:3px; height:100%; background-color:#eee;}
+					&::-ms-scrollbar:hover{ background-color:#eee; }
+					&::-ms-resizer{}
+					&::-ms-scrollbar-thumb{ -webkit-border-radius:1px; background-color:#999; height:1px; }
+					&::-ms-scrollbar-thumb:hover{ background-color: #999;}
+					&::-ms-scrollbar-thumb:active{ background-color:#999;}
+					p{
+						line-height: 36px;
+						padding: 0 45px;
+						cursor: pointer;
+						&.active, &.active:hover{
+							color: #fff;
+							background: @color url(../img-jituan/check.svg) 18px 13px no-repeat;
+							background-size: 12px auto;
+						}
+						&:hover{
+							color: @color;
+						}
+					}
+				}
+			}
+			.sub-item{
+				padding-bottom: 14px;
+				label{
+					display: inline-block;
+					line-height: 42px;
+					color: #999;
+				}
+				.text{
+					margin: 0 20px;
+					input{
+						width: 158px;
+					}
+				}
+			}
+			.item-checkbox{
+				line-height: 42px;
+				margin-bottom: 30px;
+				label{
+					display: inline-block;
+					margin-right: 20px;
+					input{
+						margin-right: 4px;
+					}
+				}
+			}
+			.upload-btn{
+				width: 420px;
+				height: 200px;
+				background: #fff;
+				border: 1px solid #d7d7d7;
+				box-shadow: 0 0 10px rgba(0,0,0,0.08);
+				position: relative;
+				margin-bottom: 20px;
+				input{
+					position: absolute;
+					left: 0;
+					top: 0;
+					width: 100%;
+					height: 100%;
+					opacity: 0;
+					cursor: pointer;
+				}
+				.default{
+					text-align: center;
+					padding: 60px 0 0;
+					color: #999;
+					position: relative;
+					.icon-add{
+						display: block;
+						width: 48px;
+						height: 48px;
+						background: url(../img-jituan/icon-add.png) no-repeat;
+						margin: 0 auto 10px;
+					}
+				}
+				.default-white{
+					color: #fff;
+					.icon-add{
+						background-image: url(../img-jituan/icon-add2.png);
+						opacity: 0.8;
+					}
+				}
+				.img{
+					position: absolute;;
+					left: 10px;
+					top: 10px;
+					right: 10px;
+					bottom: 10px;
+					overflow: hidden;
+					img{
+						width: 100%;
+						height: auto;
+					}
+					&:after{
+						content: '';
+						display: block;
+						width: 100%;
+						height: 100%;
+						background: rgba(0,0,0,0.5);
+						position: absolute;
+						left: 0;
+						top: 0;
+					}
+				}
+			}
+			textarea{
+				width: 578px;
+				height: 150px;
+				padding: 10px 15px;
+				background: #fff;
+				border: 1px solid #d7d7d7;
+				resize: none;
+			}
+		}
+	}
+}
+.apply-btn-area{
+	padding: 0 35px 60px;
+}
+.apply-btn-area button{
+	display: inline-block;
+	height: 40px;
+	width: 180px;
+	border-radius: 0px;
+	&.left{
+		margin-left: 12px;
+	}
+	&.btn-default-primary{
+		color: @color;
+		border: 1px solid @color;
+		&:hover{
+			background-color: @color;
+			color: #fff;
+		}
+	}
+	&.btn-primary{
+		background: @color;
+		border: 1px solid @color;
+		color: #fff;
+		&:hover{
+			background-color: #5a90fb;
+			border: 1px solid #5a90fb;
+		}
+	}
+	&.btn-black{
+		background: #000;
+		border: 1px solid #d7d7d7;
+		color: #fff;
+	}
+	&.btn-default{
+		background: #eaeaea;
+		border: 1px solid #d7d7d7;
+		color: #666;
+		&:hover{
+			background-color: #fafafa;
+			color: #999;
+		}
+	}
+	&.btn-default-hover:hover{
+		color: @color;
+		border: 1px solid @color;
+		background-color: #fff;
+	}
+}

@@ -1,0 +1,31 @@
+<table class="table table-bordered" style="overflow:scroll;">
+  <thead>
+    <tr>
+      <th style="text-align:center" style="width:70px;">设备品牌</th>
+      <th style="text-align:center" style="width:70px;">设备型号</th>
+      <th style="text-align:center" style="width:70px;">设备离线量</th>
+      {for $foo=1 to $list.count}
+       <th style="text-align:center" style="width:70px;">第{$foo}天离线率</th>
+      {/for}
+    </tr>
+  </thead>
+  <tbody>
+    {foreach $list.data as $k => $v}
+      <tr>
+          {$info = screen_device_helper::get_device_nickname_info($k)}
+          <td style="text-align:center">{if $info.name_nickname}{$info.name_nickname}{else}{$info.phone_name}{/if}</td>
+          <td style="text-align:center">{if $info.version_nickname}{$info.version_nickname}{else}{$info.phone_version}{/if}</td>
+          <td style="text-align:center">{$v.offline_total}</td>
+      {foreach $v.data as $kk => $vv}
+          <td style="text-align:center" >{$vv.install_rate}({$kk})</td>
+      {/foreach}
+      {for $foo=1 to $list.count - count($v.data)}
+          <td style="text-align:center">暂无数据</td>
+      {/for}
+       </tr>
+   {foreachelse}
+    <tr><td colspan="2">暂无相关数据</td></tr>
+   {/foreach}
+  </tbody>
+</table>
+

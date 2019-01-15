@@ -1,0 +1,417 @@
+@charset "UTF-8";
+body {
+  font-size: 12px;
+  font-family: "Microsoft YaHei", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+.wrap {
+  position: relative;
+  width: 100%;
+  height: auto;
+  background: #ffffff;
+  }
+.nav {
+  width: 100%;
+  height: 2.5rem;
+}
+.nav .logo {
+  float: left;
+  width: 5rem;
+  height: 100%;
+  margin-left: 0.917rem;
+  background: url("../images/images/logo.png") no-repeat center;
+  background-size: contain;
+}
+.nav .logo img {
+  width: 100%;
+  height: 100%;
+}
+.nav .nav_right {
+  position: relative;
+  float: right;
+  width: 8.333rem;
+  height: 2.5rem;
+  line-height: 2.5rem;
+}
+.nav .nav_right h4 {
+  font-size: 1rem;
+  color: #303030;
+  float: left;
+  width: auto;
+}
+.nav .nav_right span {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  margin-top: -0.667rem;
+  margin-right: 0.833rem;
+  width: 1.333rem;
+  height: 1.333rem;
+  display: block;
+  background: url("../images/images/logo_head.png") no-repeat;
+  background-size: contain;
+}
+.slide {
+  width: 100%;
+  height: 13rem;
+}
+.slide .slide_inner {
+  width: 100%;
+  height: 11.111rem;
+}
+.slide .slide_inner img {
+  width: 100%;
+  height: 100%;
+}
+.slide .slide_btn {
+  width: 100%;
+  height: 1.333rem;
+  line-height: 1.333rem;
+  text-align: center;
+}
+.slide .slide_btn .cur {
+  background: #00a2eb;
+}
+.server {
+  width: 18.667rem;
+  height: auto;
+  margin: 0 auto;
+  margin-top: 0.333rem;
+  padding-bottom: 0.694rem;
+}
+.server dl {
+  width: 3.556rem;
+  height: 100%;
+  float: left;
+  margin-left: 1.306rem;
+}
+.server dl dt {
+  width: 3.556rem;
+  height: 3.556rem;
+}
+.server dl dt img{
+  width: 100%;
+  height: 100%;
+}
+.server dl dd {
+  width: 100%;
+  color: #303030;
+  font-size: 12px;
+  text-align: center;
+  padding-top: 0.361rem;
+}
+.server dl:nth-child(1) {
+  margin-left: 0.278rem;
+}
+/*.server dl:nth-child(1) dt {*/
+  /*background: url("../images/images/server0.png") no-repeat;*/
+  /*background-size: contain;*/
+/*}*/
+/*.server dl:nth-child(2) dt {*/
+  /*background: url("../images/images/server1.png") no-repeat;*/
+  /*background-size: contain;*/
+/*}*/
+/*.server dl:nth-child(3) dt {*/
+  /*background: url("../images/images/server2.png") no-repeat;*/
+  /*background-size: contain;*/
+/*}*/
+/*.server dl:nth-child(4) dt {*/
+  /*background: url("../images/images/server3.png") no-repeat;*/
+  /*background-size: contain;*/
+/*}*/
+.discount,
+.product {
+  width: 18.583rem;
+  height: auto;
+  margin: 0 auto;
+  font-size: 11px;
+  padding-bottom: 0.694rem;
+}
+.discount .dis_tittle,
+.product .dis_tittle,
+.discount .product_tittle,
+.product .product_tittle {
+  width: 100%;
+  height: 2.778rem;
+  line-height: 2.778rem;
+  margin-bottom: 0.694rem;
+}
+.discount .dis_tittle h2,
+.product .dis_tittle h2,
+.discount .product_tittle h2,
+.product .product_tittle h2 {
+  position: absolute;
+  z-index: 10;
+  display: inline-block;
+  width: auto;
+  height: 2.778rem;
+  line-height: 2.778rem;
+  padding-right: 0.917rem;
+  padding-left: 2px;
+  background: #fff;
+  color: #2d3030;
+  font-size: 18px;
+  font-weight: bold;
+}
+.discount .dis_tittle h2 em,
+.product .dis_tittle h2 em,
+.discount .product_tittle h2 em,
+.product .product_tittle h2 em {
+  display: inline-block;
+  width: 0.444rem;
+  height: 0.444rem;
+  margin-right: 0.361rem;
+  margin-left: 0.361rem;
+  border-radius: 50%;
+  background: #2ee781;
+}
+.discount .dis_tittle .line,
+.product .dis_tittle .line,
+.discount .product_tittle .line,
+.product .product_tittle .line {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  height: 2px;
+  background: #2ee781;
+  top: -3px;
+}
+.discount dl:nth-of-type(1),
+.product dl:nth-of-type(1) {
+  float: left;
+}
+.discount dl:nth-of-type(2),
+.product dl:nth-of-type(2) {
+  float: right;
+}
+.discount dl,
+.product dl {
+  width: 8.889rem;
+  height: auto;
+}
+.discount dl dt,
+.product dl dt {
+  width: 8.889rem;
+  height: 6.667rem;
+}
+.discount dl dt img,
+.product dl dt img {
+  width: 100%;
+  height: 100%;
+}
+.discount dl dd,
+.product dl dd {
+  margin-top: 0.556rem;
+}
+.product .product_tittle h2 em {
+  background: #ff5353;
+}
+.product .product_tittle .line {
+  background: #ff5353;
+}
+.product .pro_list > li {
+  width: 100%;
+  height: 2.222rem;
+  line-height: 2.222rem;
+  background: #f7f7f7;
+  text-indent: 20px;
+  margin-bottom: 0.278rem;
+}
+.product .pro_list > li a{
+  color: #000000;
+}
+  /*.product .pro_list > li:nth-child(2) {*/
+  /*margin-top: 0.278rem;*/
+  /*margin-bottom: 0.556rem;*/
+/*}*/
+.guale {
+  width: 100%;
+  height: 5.306rem;
+}
+.guale img {
+  width: 100%;
+  height: 100%;
+}
+.footer {
+  width: 100%;
+  height: auto;
+  padding-top: 0.722rem;
+  padding-bottom: 0.722rem;
+}
+.footer ul {
+  float: left;
+  margin-left: 20px;
+}
+.footer ul li {
+  width: auto;
+  height: 1rem;
+  line-height: 1rem;
+  color: #919191;
+}
+.footer .my_btn {
+  float: right;
+  width: 5.556rem;
+  height: 1.667rem;
+  line-height: 1.667rem;
+  text-align: center;
+  border-radius: 4px;
+  background: #f0f0f0;
+  margin-right: 20px;
+}
+/*
+ 浮层
+*/
+.wrapLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  padding-bottom: 70px;
+}
+.wrapLayer .header {
+  position: relative;
+  width: 100%;
+  height: 2.5rem;
+}
+.wrapLayer .header .header_close {
+  position: absolute;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: url("../images/images/close0.png") no-repeat;
+  background-size: contain;
+  top: 50%;
+  left: 50%;
+  margin-top: -0.75rem;
+  margin-left: -0.75rem;
+}
+.wrapLayer .inner {
+  width: 16.111rem;
+  height: auto;
+  margin: 0 auto;
+}
+.wrapLayer .inner .inner_img {
+  width: 15.778rem;
+  height: 19.944rem;
+  border: 0.16666667rem solid #fff;
+  border-radius: 15px;
+  overflow: hidden;
+}
+.wrapLayer .inner .inner_img img {
+  width: 100%;
+  height: 100%;
+}
+.wrapLayer .inner .download {
+  width: 100%;
+  height: 3.889rem;
+}
+.wrapLayer .inner .download .download_go {
+  float: left;
+  width: 3.667rem;
+  height: 3.667rem;
+  border: 0.16666667rem solid #ffffff;
+  border-radius: 15px;
+  background-color: white;
+  background-size: contain; background-size:100% auto;
+}
+.wrapLayer .inner .download .download_go img{ width:100%; height:auto; border-radius:15px;}
+.wrapLayer .inner .download .download_txt {
+  position: relative;
+  float: right;
+  width: 11.611rem;
+  height: 3.889rem;
+  background: #ffffff;
+  -webkit-border-radius: 8px;
+  border-radius: 15px;
+  text-align: center;
+}
+.download-top{ position:fixed; left:0; top:15px; width:100%;}
+.download-bottom{ position:fixed; left:0; bottom:15px; width:100%;}
+
+.wrapLayer .inner .download .download_txt p {
+  display: inline-block;
+  font-size: 10px;
+  color: #2d2d2d;
+  padding-top: 0.583rem;
+  padding-right: 0.889rem;
+  padding-bottom: 0.583rem;
+}
+.wrapLayer .inner .download .download_txt .download_btn {
+  display: inline-block;
+  width: 4.167rem;
+  height: 1.389rem;
+  line-height: 1.389rem;
+  text-align: center;
+  color: #ffffff;
+  background: #15589f;
+  border-radius: 3px;
+}
+.wrapLayer .inner .download .download_close {
+  position: absolute;
+  display: block;
+  width: 0.833rem;
+  height: 0.833rem;
+  background: url("../images/images/download-close.png") no-repeat;
+  background-size: contain;
+  top: 9px;
+  right: 10px;
+}
+.wrapLayer .inner .jump {
+  display: block;
+  width: 3.889rem;
+  height: 1.667rem;
+  line-height: 1.667rem;
+  text-align: center;
+  background: #ffde00;
+  color: #2d2d2d;
+  margin-top: 2.028rem;
+  margin-left: 2.722rem;
+  border-radius: 3px;
+  font-size: 13px;
+}
+.hide {
+  -webkit-animation: hide 1s ease ;
+  animation: hide 1s ease;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+@-webkit-keyframes hide {
+  100% {
+    opacity: 0;
+    display: none;
+  }
+}
+@keyframes hide {
+  100% {
+    opacity: 0;
+    display: none;
+  }
+}
+.show {
+  -webkit-animation: show 1s ease ;
+  animation: show 1s ease;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+@-webkit-keyframes show {
+  0% {
+    display: block;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes show {
+  0% {
+    display: block;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.hide {
+  display: none;
+}

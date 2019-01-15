@@ -1,0 +1,89 @@
+@charset "UTF-8";
+/* CSS Document */
+
+/*引导页*/
+*{
+	padding: 0;
+	margin: 0;
+}
+body{
+	font-family: 'Microsoft Yahei', Arial;
+	font-size: 12px;
+	background-color: #e6e6e6;
+}
+.wrap{
+	position: relative;
+	width: 100vw;
+	height: 100vh;
+	display: -webkit-flex;
+	display: -moz-flex;
+	display: -o-flex;
+	display: -ms-flex;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	text-align: center;
+}
+
+.logo{
+	width: 31.6vw;
+	height: 31.6vw;
+	margin: 0 auto;
+}
+.logo img{
+	width: 100%;
+	height: auto;
+	box-shadow: 0 5px 10px rgba(0,0,0,.3);
+	border-radius: 27px;
+}
+.title1{
+	font-size: 17px;
+	padding: 6.9vw 0 2.6vw;
+	letter-spacing: 1px;
+}
+.title2{
+	color: #9fa0a0;
+	font-size: 17px;
+	padding: 0 0 9.2vw;
+	letter-spacing: 1px;
+}
+.title3{
+	border-top: 1px dashed #5d5d5d; 
+	padding: 10.8vw 0 13.9vw;
+	font-size: 17px;
+	line-height: 1.7;
+	margin: 0 11.9vw;
+}
+.btn a{
+	display: block;
+	margin: 0 11.9vw;
+	height: 12vw;
+	line-height: 12vw;
+	text-align: center;
+	color: #fff;
+	font-size: 17px;
+	text-decoration: none;
+	letter-spacing: 2px;
+	background-color: #3dd063;
+	border-radius: 12vw;
+}
+.pop-bg{
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 10;
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(0,0,0,.75);
+}
+.pop-bg .text{
+	height: 50vw;
+	text-align: right;
+	padding: 18vw 26vw;
+	letter-spacing: 2px;
+	color: #fff;
+	font-size: 14px;
+	background: url(../images/m-info/share.png) 76vw 4vw no-repeat;
+	background-size: 19.4vw auto;
+}
+

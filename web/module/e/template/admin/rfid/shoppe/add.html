@@ -1,0 +1,133 @@
+{include file="admin/rfid/header_shoppe.html" title="添加柜台"}
+<link href="{$smarty.const.STATIC_URL}/js/iosselect/iosSelect.css" rel="stylesheet" type="text/css">
+<section class="container">
+    <div class="zhuanGui-form">
+      <form action={AnUrl("e/admin/rfid/shoppe/save?id={$id}&from={$from}")} method="post">
+        <div class="item">
+          <label>柜台品牌</label>
+          <em class="arrow"></em>
+           <div class="name">
+              <input type="hidden" name="phone_name" id="js_zhuanGuiName" value="">  
+              <span id="js_showName">请选择柜台品牌</span>
+            </div>
+        </div>
+        <div class="line"><span></span></div>
+        <div class="item">
+          <label>专柜名称</label>
+          <input class="shoppeName" type="text" name="shoppe_name" value="">
+        </div>
+        <button type="submit" class="btn-submit submitSave">保存</button>
+      </form>
+    </div>
+</section>
+<div class="info  error-tips"></div>
+<script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/iosselect/iscroll.js"></script>
+<script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/iosselect/iosSelect.js"></script>
+
+<script type="text/javascript">
+
+var click_able    = true;
+
+$(function(){
+  
+  //提交
+  $('.submitSave').on('click', function (e) {
+    //提示
+    if (!$('#js_zhuanGuiName').val()) {
+      tipMsg('提示：请选择柜台品牌');
+      cancelTipMsg();
+      return false;
+    }
+    
+    //提示
+    if (!$('.shoppeName').val()) {
+      tipMsg('提示：请输入专柜名称');
+      cancelTipMsg();
+      return false;
+    }
+    $('form').submit();
+  });
+ 
+  
+  var data = [
+    { "id" : "混合" ,"value": " 混合" },
+    { "id" : "华为" ,"value": " 华为" },
+    { "id" : "三星" ,"value": " 三星" },
+    { "id" : "VIVO" ,"value": " VIVO" },
+    { "id" : "OPPO" ,"value": " OPPO" },
+    { "id" : "酷派" ,"value": " 酷派" },
+    { "id" : "小米" ,"value": " 小米" },
+    { "id" : "苹果" ,"value": " 苹果" },
+    { "id" : "魅族" ,"value": " 魅族" },
+  ];
+  var showBankDom = document.querySelector('#js_showName');
+  var bankIdDom = document.querySelector('#js_zhuanGuiName');
+  showBankDom.addEventListener('click', function () {
+    var bankId = showBankDom.dataset['id'];
+    var bankName = showBankDom.dataset['value'];
+  
+    var bankSelect = new IosSelect(1,[data],{
+      container: '.iosselect',
+      title: '请选择品牌',
+      itemHeight: 50,
+      itemShowCount: 5,
+      oneLevelId: bankId,
+      callback: function (selectOneObj) {
+        bankIdDom.value = selectOneObj.id;
+        showBankDom.innerHTML = selectOneObj.value;
+        //专柜名称自动写入
+        $('.shoppeName').val(selectOneObj.id + '专柜');
+        //获取专柜后缀并拼接展示
+        generateShoppePostfix(selectOneObj.id, selectOneObj.id + '专柜')
+      }
+    });
+  });
+
+})
+
+function cancelTipMsg()
+{
+   if (!click_able) {
+      return false;
+   }
+
+   click_able = false;
+
+   setTimeout(function(){
+        $('.error-tips').removeClass('popup').html('');
+        click_able = true;
+        //点击保存加锁
+        lock = false;
+    },1200);
+   
+}
+
+function tipMsg(tip)
+{
+    $('.error-tips').addClass('popup').html('').html('<div class="inner">'+tip+'</div>');
+}
+
+/**
+ * 生成后缀
+ */
+function generateShoppePostfix(phoneName, shoppeName)
+{
+
+  var url = siteUrl+'/shoppe/admin/ajax/generate_postfix';
+  
+  $.post(url, { phone_name:phoneName,  shoppe_name:shoppeName }, function (result) {
+    if (result.info == 'ok') {
+      $('.shoppeName').val(shoppeName+result.postfix);
+      return true;
+    } else if (result.info == 'fail') {
+      tipMsg('提示：'+ result.msg);
+      cancelTipMsg();
+      return false;
+    }
+
+  }, 'json');
+  
+}
+</script>
+{include file="admin/rfid/footer.html"}

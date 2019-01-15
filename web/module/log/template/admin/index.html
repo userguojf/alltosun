@@ -1,0 +1,94 @@
+{include_www file="admin/lib/header_new.html" title="用户列表"}
+{include_www file="admin/lib/sidebar_new.html"}
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('log/admin')}"><i class="iconfont iconfont-logo2"></i>日志管理</a>
+            &gt;
+            <span>日志列表</span>
+        </div>
+        <!--
+        <div class="tabs1">
+          <ul class="clearfix">
+            <li class="curr"><a href="###">全国投放列表</a></li>
+            <li class=""><a href="###">各省投放列表</a></li>
+          </ul>
+        </div>
+        -->
+        <div class="form-search clearfix">
+            <div class="pull-left">
+                <form action="{AnUrl('log/admin')}" method="get">
+
+                    <input type="text" name="search_filter[member_id]" placeholder="请输入用户ID" value="{if $search_filter['member_id']}{$search_filter['member_id']}{/if}" class="form-control input-sm pull-left">
+
+                    <input type="text" name="search_filter[res_name]" placeholder="请输入资源名称/数据表名称" value="{if $search_filter['res_name']}{$search_filter['res_name']}{/if}" class="form-control input-sm pull-left">
+
+                    <input type="text" name="search_filter[res_id]" placeholder="请输入资源ID" value="{if $search_filter['res_id']}{$search_filter['res_id']}{/if}" class="form-control input-sm pull-left">
+
+
+                    <button type="submit" class="btn-search pull-left">搜索</button>
+
+                </form>
+            </div>
+            <div class="pull-right">
+                <!-- <span class="tips">*还可添加8个用户 </span> -->
+                <!--<a href="{AnUrl('focus/admin/add')}" class="btn btn-sm btn-success">添加用户</a>-->
+            </div>
+        </div>
+        {*
+        <div class="tabs2">
+            <ul class="clearfix">
+                {foreach focus_config::$search_type as $k => $v}
+                <li {if $search_filter['search_type'] == $k}class=" curr"{/if}><a  href="{compile_url($search_filter,'search_type',$k,'focus/admin')}">{$v}</a></li>
+                {/foreach}
+            </ul>
+        </div>
+        *}
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th class="td60"><input type="checkbox" class="selectAll"/>&nbsp;&nbsp;全选</th>
+                    <th>日志ID</th>
+                    <th>用户ID</th>
+                    <th>资源名称</th>
+                    <th>操作方式</th>
+                    <th>资源ID</th>
+                    <th>ip地址</th>
+                    <th>添加时间</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $k=>$v}
+                <tr id="dataList{$v.id}">
+                    <td><input type="checkbox" class="listSelect" /></td>
+                    <td>{$v.id}</td>
+                    <td>{$v.member_id}</td>
+                    <td>{log_helper::get_res_name($v.res_name)}</td>
+                    <td>{$v.action}</td>
+                    <td>{$v.res_id}</td>
+                    <td>{$v.ip}</td>
+                    <td>{$v.add_time}</td>
+                    <td class="txtcenter">
+                        <a title="删除" class="deleteOne btn btn-xs btn-danger" href="{AnUrl("log/admin/delete?id={$v.id}")}">删除</a>
+                    </td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="9">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+                <tfoot><tr><td colspan="8"><input type="checkbox" class="selectAll">&nbsp;&nbsp;全选</td><td><a href="{AnUrl("log/admin/delete?")}" class="btn btn-danger btn-xs deleteAll">批量删除</a></td></tr></tfoot>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+<!-- 分页 start -->
+
+<!-- 分页 end -->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

@@ -1,0 +1,60 @@
+{* $Id: pager.html 53047M 2013-08-14 01:39:08Z (local) $ *}
+{if isset($pager)}
+<div class="pages">
+  <div class="pagination pagination-right">
+    <ul>
+      {if $pager->getPage() > 1}
+        <li><a href="/{$pager->link($pager->prev())}{$attr}">&lt;</a></li>
+      {/if}
+      
+      {foreach $pager->getPagesArray(9) as $k=>$v}
+        {if $pager->getPage() == $v}
+          <li>
+            <a href="javascript:void(0);" class="curr">{$v}</a>
+          </li> 
+        {else}
+          <li>
+            <a href="/{$pager->link($v)}{$attr}">{$v}</a>
+          </li>
+        {/if}
+      {/foreach}
+      <li>
+          <input type="num" style="width: 40px" value="{$pager->getPage()}" />
+          <button type="submit" class="btn btn-success btn-sm js_pagego" style="vertical-align: top;">前往</button>
+      </li>
+      {if $pager->getPage() < $pager->getPages()}
+      <li>
+        <a href="/{$pager->link($pager->next())}{$attr}">&gt;</a>
+      </li>
+      {/if}
+      <li>
+        <a href="javascript:void(0);">共 {$pager->getPages()} 页</a>
+      </li>
+    </ul>
+  </div>
+</div>
+<script>
+    $('.js_pagego').click(function(e){
+    	e.preventDefault();
+
+    	var num = $(this).prev().val();
+    	var url = '/{$pager->link(0)}{$attr}';
+    	var max = {$pager->getPages()};
+
+    	if ( isNaN(num) ) {
+    		alert('页数只能为数字');
+    		return false;
+    	}
+    	if ( num < 1 ) {
+            alert('页数不能小于1');
+            return false;
+        }
+    	if ( num > max ) {
+    		num = max;
+    	}
+    	url = url.replace('&amp;page_no=0', '&page_no='+ parseInt(num));
+    	// console.log(url);
+    	window.location.href = url;
+    });
+</script>
+{/if}

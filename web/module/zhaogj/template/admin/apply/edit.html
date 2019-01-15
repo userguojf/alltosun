@@ -1,0 +1,15 @@
+  {load_js file='bootstrap-2.3.1/js/bootstrap.min.js'}
+  {load_js file='jquery-1.7.1.min.js'}
+ <div class="edit_div">
+    <div class="test_list" >
+          {foreach $list as $k=>$v}
+           {$v}
+          {/foreach}
+    </div>
+ </div>
+<script>
+
+$('.edit_div').on('click','.test_list',function(){
+    alert(1);
+});
+</script>

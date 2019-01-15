@@ -1,0 +1,687 @@
+{include_www file="admin/lib/header3.html" title="添加编辑内容信息"}
+<style>
+    .ui-timepicker-div{ padding:0 10px; }
+    .bg-gray{ background-color: #EEEEEE }
+</style>
+<!--start:container-add-->
+<form id="form" action="{AnUrl('screen_content_new/admin/save')}" method="post" enctype="multipart/form-data">
+
+<div class="container-add">
+    <div class="bread clearfix">
+        <div class="left">
+            <a href="{AnUrl('screen_content_new/admin')}">亮屏管理</a>
+            <i class="icon-arrow-right"></i>
+            <a href="javascript:void(0)" class="active">内容发布</a>
+        </div>
+        <div class="right">
+            <a href="{AnUrl('screen_content_new/admin')}" class="active">返回内容列表&gt;&gt;</a>
+        </div>
+    </div>
+    <div class="add-form">
+            {AnForm type="hidden" name="id" id="content_id" value="{$content_info.id}"}
+            <div class="main">
+                <!--标题 start -->
+                <div class="item clearfix">
+                    <label class="left">标题</label>
+                    <div class="con left">
+                        <div class="input"><input type="text" id="title" name="content[title]" value="{$content_info['title']}" placeholder="请输入标题"></div>
+                    </div>
+                </div>
+                <!--标题 end -->
+
+                <!--类型 start -->
+                <div class="item clearfix">
+                    <label class="left">类型</label>
+                    <div class="con left">
+                        {$content_type = screen_content_new_config::$content_type}
+                        {if $curr_member_ranks != 1}
+                            {$content_type = $content_type|array_diff_key:([4]|array_flip)}
+                        {/if}
+                        <div class="select " id="select_type" {if $content_info} style="background-color: #eeeeee" {/if}>
+                            {if !$content_info}
+                            <label id="content_type_text">请选择</label>
+                            <div class="select-list selectType hidden">
+                                <p value="" class="content_type active">请选择</p>
+                                {foreach $content_type as $k => $v}
+                                <p value="{$k}" class="content_type {if $k == $content_info.type} active{/if}" >{$v}</p>
+                                {/foreach}
+                                <input type="hidden" id="content_type" name="content[type]" value=""/>
+                            </div>
+                            {else}
+                            <label id="content_type_text">{$content_type[$content_info.type]}</label>
+                            <p class="active hidden"  value="{$content_info.type}">{$content_info.type}</p>
+                            <input type="hidden" id="content_type"  name="content[type]" value="{$content_info.type}">
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+                <!--类型 end -->
+
+                <!--图片和宣传图 start -->
+                <div class="item clearfix uploadImg {if $content_info.type != 1 && $content_info.type != 4}hidden{/if}">
+                    <label class="left">图片</label>
+                    <div class="con left js_perUpWrap">
+                        <div class="upload">
+                            <div class="pic">
+                                <div class="pic js_perUpOuter">
+                                    {if $content_info.link && ($content_info.type == 1 || $content_info.type == 4)}
+                                    <img class="tupian" src="{_image($content_info.link)}">
+                                    {/if}
+                                </div>
+                            </div>
+                            <div id="box_upload" class="box js_perUpArea {if $content_info.link && ($content_info.type == 1 || $content_info.type == 4)}hidden{/if}" style="z-index:0;">
+                                <div class="icon-add"></div>
+                                <div class="title box_title">上传图片</div>
+                                <div class="desc1">
+                                    <p>格式：jpg／gif／png</p>
+                                    <p>大小：不得超过4MB</p>
+                                </div>
+                            </div>
+                        </div><!--为上传图片时展示-->
+                        <div id="c_upload" style="cursor:pointer;" class="btn-upload js_perUpChange js_perUpArea {if !$content_info}hidden{/if} ">
+                            <span style="cursor:pointer;">重新选择</span>
+                        </div><!--已上传图片时展示-->
+                        {if !$content_info}
+                        {AnForm type="file" name="img_link" accept="image/*" class='js_perUpFile hidden'}
+                        {else}
+                        {AnForm type="file" name="img_link" accept="image/*" class='js_perUpFile hidden'}
+                        {/if}
+                    </div>
+                </div>
+                <!--图片和宣传图 end -->
+
+                <!--套餐图 start -->
+                <div class="item clearfix selectSetMealImg {if $content_info.type != 5}hidden{/if}">
+                    <label class="left">选择套餐底图</label>
+                    <div class="con left " >
+                        <div class="pic js_perUpWrap">
+                            {foreach screen_content_new_config::$content_set_meal_img as $k => $v}
+                            <img class="tupian" src="{$v}" style="width: 30%;">
+                            <div class="btn-control"><input name="set_meal" type="radio" {if $content_info.link == $v}checked{/if} value="{$v}"></div>
+                            {/foreach}
+                        </div>
+                    </div>
+                </div>
+                <!--套餐图 end -->
+
+                <!--字体颜色 start -->
+                <div class="item clearfix font-color {if $content_info.type != 4}hidden{/if}">
+                    <label class="left">字体颜色</label>
+                    <div class="con left">
+                        <label class="radio">
+                            <input type="radio" name="content[font_color_type]" {if $content_info.font_color_type == 2 || $content_info.font_color_type == 0}checked{/if} value="2">
+                            <span>白色</span>
+                        </label>
+                        <label class="radio">
+                            <input type="radio" name="content[font_color_type]" {if $content_info.font_color_type == 1}checked {/if} value="1">
+                            <span>黑色</span>
+                        </label>
+                    </div>
+                </div>
+                <!--字体颜色 end -->
+
+                <!--宣传价格 start-->
+                <div class="item price clearfix {if $content_info.type != 4}hidden{/if}">
+                    <label class="left">宣传价格</label>
+                    <div class="con left">
+                        <div class="input">
+                            <input type="number" id="xc_price" name="content[price]" value="{if $content_info.price}{$content_info.price}{else}{/if}"  placeholder="请输入宣传价格(可选)">
+                        </div>
+                    </div>
+                </div>
+                <!--宣传价格 end -->
+
+                <!--是否为专属机型 start -->
+                <div class="item clearfix IsSpecify {if $content_info.type != 4}hidden{/if}">
+                    <label class="left">是否为专属机型</label>
+                    <div class="con left">
+                        <label class="radio">
+                            <input type="radio" name="content[is_specify]" {if $content_info.is_specify == 1 || !$content_info}checked{/if} {if $content_info}disabled="disabled"{/if} value="1">
+                            <span>是</span>
+                        </label>
+                        <label class="radio">
+                            <input type="radio" name="content[is_specify]" {if $content_info && $content_info.is_specify == 0}checked{/if} {if $content_info}disabled="disabled"{/if} value="0">
+                            <span>否</span>
+                        </label>
+                    </div>
+                </div>
+                <!--是否为专属机型 end -->
+
+                <!--视频 start -->
+
+                <div class="item clearfix uploadvideo  {if $content_info.type != 2}hidden{/if}">
+                    <label class="left">视频</label>
+                    <div class="con left js_perUpWrap">
+                        <div class="upload">
+                            <div class="pic">
+                                <div class="pic js_perUpOuter js_perUpAdd" style="word-wrap:break-word; word-break:normal; ">
+                                    {if $content_info.link && $content_info.type ==2}
+                                        {$content_info.link}
+                                    {/if}
+                                </div>
+                            </div>
+                            <div id="vi_upload" class="box js_perUpArea {if $content_info.link && $content_info.type == 2}hidden{/if}" style="z-index:0;">
+                                <div class="icon-add"></div>
+                                <div class="title box_title">上传视频</div>
+                                <div class="desc1">
+                                    <p>格式：mp4／avi</p>
+                                    <p>大小：不得超过4MB</p>
+                                </div>
+                            </div>
+                        </div><!--为上传图片时展示-->
+                        <div id="v_upload" style="cursor:pointer;" class="btn-upload js_perUpChange js_perUpArea {if !$content_info}hidden{/if} ">
+                            <span style="cursor:pointer;">重新选择</span>
+                        </div><!--已上传图片时展示-->
+                        {if !$content_info}
+                        {AnForm type="file" name="video_link" accept="video/*" class='js_perUpFile hidden'}
+                        {else}
+                        {AnForm type="file" name="video_link" accept="video/*" class='js_perUpFile hidden'}
+                        {/if}
+                    </div>
+                </div>
+
+                <!--视频 end -->
+
+                <!--h5链接 start-->
+                <div class="item uploadlink clearfix {if $content_info.type != 3}hidden{/if}">
+                    <label class="left">链接</label>
+                    <div class="con left">
+                        <div class="input">
+                            <input type="text" id="url_link" name="content[link]" value="{if $content_info.type == 3}{$content_info['link']}{/if}" validate="required" placeholder="请输入H5链接">
+                        </div>
+                    </div>
+                </div>
+                <!--h5链接 end -->
+
+
+                <!--上线时间 start -->
+                <div class="item clearfix">
+                    <label class="left">上线时间</label>
+                    <div class="con left">
+                        <div class="input">
+                            <input type="text" id="online_time" name="content[start_time]" value="{$content_info['start_time']}" class="begin_time" validate="required" placeholder="">
+                            <i class="icon-date" id="sx-date" style="cursor: pointer"></i>
+                        </div>
+                    </div>
+                </div>
+                <!--上线时间 end -->
+
+                <!--下线时间 start -->
+                <div class="item clearfix">
+                    <label class="left">下线时间</label>
+                    <div class="con left">
+                        <div class="input">
+                            <input type="text" id="downline_time" name="content[end_time]" value="{$content_info['end_time']}" class="begin_time" placeholder="">
+                            <i class="icon-date" id="xx-date" style="cursor: pointer"></i>
+                        </div>
+                    </div>
+                </div>
+                <!--上线时间 end -->
+
+                <!-- 轮播间隔 start -->
+                <div class="item clearfix">
+                    <label class="left">轮播间隔</label>
+                    <div class="con left">
+                        <div class="input">
+                            <input class="js_roll_interval" type="number" name="content[roll_interval]" value="{if $content_info}{$content_info['roll_interval']}{else}0{/if}" {if !$content_info || $content_info.is_roll_interval_disabled}disabled="disabled" style="background-color: #eeeeee"{/if}  placeholder="">
+                            <!--<div class="tips">展示时长时间单位为秒</div>-->
+                        </div>
+                    </div>
+                </div>
+                <!-- 轮播间隔 end -->
+
+                <!-- 轮播次数 start -->
+                <div class="item clearfix">
+                    <label class="left">轮播次数</label>
+                    <div class="con left">
+                        <div class="input">
+                            <input class="js_roll_num" type="number" name="content[roll_num]" value="{if $content_info}{$content_info['roll_num']}{else}1{/if}" {if !$content_info || $content_info.is_roll_num_disabled}disabled="disabled"{/if} placeholder="">
+                            <!--<div class="tips">展示时长时间单位为秒</div>-->
+                        </div>
+                    </div>
+                </div>
+                <!-- 轮播次数 end -->
+
+                <!-- 套餐信息录入 start -->
+                <div class="item clearfix js_import_set_meal {if ($content_info && $content_info.type != 5) || !$content_info }hidden{/if}">
+                    <label class="left">套餐信息录入</label>
+                    <div class="con left">
+                        <div class="sub-items set_meal_add">
+                            <img style="width:50px; height:50px;" src="{$smarty_const.STATIC_URL}/images/loading2.gif">
+                        </div>
+                    </div>
+                </div>
+                <!-- 套餐信息录入 end -->
+
+                <div class="item clearfix">
+                    <label class="left">投放范围</label>
+
+                    <div class="con left">
+
+                            <div class="con left">
+                                {if !$content_info }
+                                <p id="fanwei">
+                                    <label class="radio">
+                                        <input type="radio" name="put_type" value="1">
+                                        <span>{$name}</span>
+                                    </label>
+                                </p>
+                                {/if}
+                                {if $member_info['res_name'] != 'business_hall'}
+                                <p>
+                                    <label class="radio">
+                                        <input type="radio" name="put_type" value="2">
+                                        <span>投放到指定区域</span>
+                                        <a href="javascript:void(0);" id="tf_area" class="btn-choose">{if $content_info}修改{else}选择{/if}投放地区</a>
+                                    </label>
+                                </p>
+                                {/if}
+                            </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- 按钮区 start-->
+            <div class="btn-area">
+                <button type="submit" class="btn-primary" id="q_toufang">立即投放</button>
+                <button type="submit" class="btn-default-primary" id="only_save">仅{if $content_info}修改{else}保存{/if}</button>
+            </div>
+            <!-- 按钮区 end -->
+    </div>
+</div>
+<!--end:container-add-->
+<!--start:上传背景图类型弹层-->
+<div class="pop-bg hidden"></div>
+<div class="pop-choose-types hidden">
+    <div class="pop-close"></div>
+    <div class="con">
+        <label><input type="radio" checked="" name="type"><span>使用平台制作一张宣传图</span></label>
+        <label><input type="radio" name="type"><span>不了，我要发布自己的宣传品</span></label>
+    </div>
+    <div class="bottom">
+        <button type="button" class="btn-default">取消</button>
+        <button type="button" class="btn-primary">下一步</button>
+    </div>
+</div>
+<!--end:上传背景图类型弹层-->
+<!--start:选择背景弹层-->
+
+<div class="pop-choose hidden">
+    <div class="pop-close"></div>
+    <div class="pop-top">选择一张背景</div>
+    <div class="pop-main">
+        <ul class="choose-bgs clearfix">
+            <li>
+                <div class="upload">
+                    <div class="icon-add"></div>
+                    <div class="desc1">上传背景</div>
+                </div>
+            </li>
+            <li class="active">
+                <div class="pic"><img src="{$smarty.const.SITE_URL}/html-liangping/img-liangping/test01.png"></div>
+                <div class="btn-radio"></div>
+            </li>
+            <li>
+                <div class="pic"><img src="{$smarty.const.SITE_URL}/html-liangping/img-liangping/test01.png"></div>
+                <div class="btn-radio"></div>
+            </li>
+            <li>
+                <div class="pic"><img src="{$smarty.const.SITE_URL}/html-liangping/img-liangping/test01.png"></div>
+                <div class="btn-radio"></div>
+            </li>
+            <li>
+                <div class="pic"><img src="{$smarty.const.SITE_URL}/html-liangping/img-liangping/test01.png"></div>
+                <div class="btn-radio"></div>
+            </li>
+            <li>
+                <div class="pic"><img src="{$smarty.const.SITE_URL}/html-liangping/img-liangping/test01.png"></div>
+                <div class="btn-radio"></div>
+            </li>
+            <li>
+                <div class="pic"><img src="{$smarty.const.SITE_URL}/html-liangping/img-liangping/test01.png"></div>
+                <div class="btn-radio"></div>
+            </li>
+            <li>
+                <div class="pic"><img src="{$smarty.const.SITE_URL}/html-liangping/img-liangping/test01.png"></div>
+                <div class="btn-radio"></div>
+            </li>
+        </ul>
+    </div>
+    <div class="pop-bottom">
+        <button type="button" class="btn-default">返回</button>
+        <button type="button" class="btn-primary">下一步</button>
+    </div>
+</div>
+<!--end:选择背景弹层-->
+<!--start:选择投放地区弹层-->
+<div class="pop-choose hidden" id="pop_area">
+    <div class="pop-close"></div>
+    <div class="pop-top">编辑投放区域</div>
+    <div class="pop-main clearfix">
+        <div class="choose-list left">
+            <div class="title">添加投放地区</div>
+            <div class="box">
+                {if $content_info.type != 5}
+                <div class="item clearfix" id="brand">
+                    <label class="left">品牌</label>
+                    <div class="select left brand_select">
+                        <label class="brand_title">全部品牌</label>
+                        <div class="select-list hidden" style="z-index: 4">
+                            <p class="brand_list active" value="">全部品牌</p>
+                            {foreach $phone_names as $k => $v}
+                                <p class="brand_list" value="{$v.phone_name}">{$v.phone_name}{if $v.phone_name_nickname}({$v.phone_name_nickname}){/if}</p>
+                            {/foreach}
+                        </div>
+                    </div>
+                </div>
+                <div class="item clearfix" id="model">
+                    <label class="left">型号</label>
+                    <div class="select left model_select">
+                        <label class="model_title">全部型号</label>
+                        <div class="select-list hidden" style="z-index: 4">
+                            <p class="model_list active" value="">全部型号</p>
+                        </div>
+                    </div>
+                </div>
+                {/if}
+                {if $member_info['res_name'] == 'group'}
+                <div class="item clearfix" id="province">
+                    <label class="left">省份</label>
+                    <div class="select left province_select">
+                        <label class="province_title">全国(所有省份)</label>
+                        <div class="select-list hidden" style="z-index: 4">
+                            <p class="province_list active" value="0">全国(所有省份)</p>
+                            {foreach $province_list as $k => $v}
+                                <p class="province_list" value="{$k}">{$v}</p>
+                            {/foreach}
+                        </div>
+                    </div>
+                </div>
+                {/if}
+
+                {if $member_info['res_name'] == 'group' || $member_info['res_name'] == 'province'}
+                <div class="item clearfix" id="city">
+                    <label class="left">城市</label>
+                    <div class="select left city_select">
+                        <label class="city_title">全部城市(省份下所有城市)</label>
+                        <div class="select-list hidden" style="z-index: 3">
+                            <p class="city_list active" value="0">全部城市(省份下所有城市)</p>
+                            {if $member_info['res_name'] == 'province'}
+                                {foreach $city_list as $k=>$v}
+                                    <p class="city_list" value="{$k}">{$v}</p>
+                                {/foreach}
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+                {/if}
+
+                {if $member_info['res_name'] == 'city' ||
+                $member_info['res_name'] == 'province' ||
+                $member_info['res_name'] == 'group' }
+                <div class="item clearfix" id="area">
+                    <label class="left">地区</label>
+                    <div class="select left area_select">
+                        <label class="area_title">全部区县(城市下所有区县)</label>
+                        <div class="select-list hidden" style="z-index: 2">
+                            <p class="area_list active" value="0">全部区县(城市下所有区县)</p>
+                            {if $member_info['res_name'] == 'city'}
+                            {foreach $area_list as $k=>$v}
+                            <p class="area_list" value="{$k}">{$v}</p>
+                            {/foreach}
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+                {/if}
+
+                {if $member_info['res_name'] == 'area' ||
+                $member_info['res_name'] == 'city' ||
+                $member_info['res_name'] == 'province' ||
+                $member_info['res_name'] == 'group'
+                }
+                <div class="item clearfix" id="business">
+                    <label class="left">营业厅</label>
+                    <div class="select left business_select">
+                        <label class="business_title">全部营业厅(区县下所有营业厅)</label>
+                        <div class="select-list hidden">
+                            <p class="business_list active selectInputBusinessHall" value="0">全部营业厅(区县下所有营业厅)</p>
+                            {if $member_info['res_name'] == 'area'}
+                            {foreach $business_hall_list as $k=>$v}
+                            <p class="business_list selectInputBusinessHall"  value="{$k}">{$v}</p>
+                            {/foreach}
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+                {/if}
+
+                {if $member_info['res_name'] == 'business_hall'}
+                <div class="item clearfix" id="business">
+                    <label class="left">营业厅</label>
+                    <div class="select left business_select">
+                        <label class="business_title">{$business_hall_info.title}</label>
+                        <div class="select-list hidden">
+                            <p class="business_list selectInputBusinessHall" value="{$business_hall_info}">{$business_hall_info.title}</p>
+                        </div>
+                    </div>
+                </div>
+                {/if}
+
+                <div class="btn">
+                    <button type="button" id="add_right_list" class="btn-default-primary">添加至右侧列表</button>
+                </div>
+            </div>
+        </div>
+        <div class="choosed-list left">
+            <div class="title">已选地区（单击移除）</div>
+            <div class="box">
+                <div class="item-thead clearfix">
+                    <div class="th info left">内容类型</div>
+                    <div class="th desc left">投放地区</div>
+                </div>
+                <div class="item-tbody" id="item-tbody">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="pop-bottom">
+        <button type="button" id="pop_area_exit" class="btn-default">取消</button>
+        <button type="button" id="pop_area_save" class="btn-primary">保存</button>
+    </div>
+</div>
+<!--end:选择投放地区弹层-->
+</form>
+
+<script>
+    var contentId = '{$content_info.id}';
+    var oldImgLink = "{$content_info.type}" == 1 ? "{$content_info.link}" : '';
+    var oldVideoLink = "{$content_info.type}" == 2 ? "{$content_info.link}" : '';
+    var error_list     = '{json_encode($error_list)}';
+    var res_name = "{$member_info['res_name']}";
+    var res_id = "{$member_info['res_id']}";
+    if ("{$content_info.type}") {
+        defaultType = "{$content_info.type}";
+    } else {
+        defaultType = "{$content_info.type}";
+    }
+</script>
+{load_js file="jquery.base64.min.js"}
+{load_js file="screen_content_new/upload.js"}
+{load_js file="screen_content_new/admin_add_new.js?v={time()}"}
+<script>
+    // 初始化省市区id （select.js使用）
+    var province_id = "{$province_id}";
+    var city_id = "{$city_id}";
+    var area_id = "{$area_id}";
+    var phoneName = "";
+    var phoneVersion = "";
+
+    // 获取设备型号ajax地址
+    var model_url = "{AnUrl('screen/admin/ajax/get_version_list')}";
+    // 获取城市ajax地址
+    var city_url = "{AnUrl('business_hall/admin/ajax/get_city_name')}";
+    // 获取区县ajax地址
+    var area_url = "{AnUrl('business_hall/admin/ajax/get_area_name')}";
+    // 获取营业厅ajax地址
+    var business_url = "{AnUrl('business_hall/admin/ajax/get_business_title')}";
+    // 根据区域资源名和资源id获取路径
+    var path_url = "{AnUrl('screen_content_new/admin/ajax/get_area_path')}";
+
+    // 添加投放区域的url
+    var type = $('#content_type').val();
+    if (type == 5) {
+        var puturl = "{AnUrl('screen_content_new/admin/ajax/add_res_type5')}";
+    } else {
+        var puturl = "{AnUrl('screen_content_new/admin/ajax/add_res')}";
+    }
+    // 点击仅保存按钮时
+    $('#only_save').on('click', function () {
+       $('input[name="put_type"]').val(0);
+    });
+
+    var s_lock = false;
+    // 点击选择投放地区按钮保存填入的信息
+    $('#tf_area').on('click', function () {
+        var res = checkForm();
+        if (!res) {
+            return false;
+        }
+        // 选中指定区域单选框
+        $('input[name="put_type"]').each(function () {
+           if ($(this).val() == 2) {
+               $(this).attr('checked','checked');
+           }
+        });
+        if (s_lock) {
+            return false;
+        } else {
+            s_lock = true;
+        }
+        $.ajax({
+            url: '{AnUrl("screen_content_new/admin/ajax/save_data")}',
+            dataType: 'JSON',
+            type: 'POST',
+            data: new FormData($('form')[0]),
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: false,
+            success: function (data) {
+                if (data && data.code == 0) {
+                    // 将保存成功的内容ID添加的隐藏域里
+                    s_lock = false;
+                    $('#content_id').val(data.info);
+                    var new_content_id = data.info;
+                    $('#item-tbody').load(siteUrl+"/screen_content_new/admin/put_content_list?content_id="+new_content_id, function () {
+                    });
+                } else if (data && data.code == 1) {
+                    s_lock = false;
+                    alert(data.info);
+                    return false;
+                }
+                s_lock = false;
+                var new_content_id = $('#content_id').val();
+                if (new_content_id) {
+                    // 加载推送列表
+                    $('#item-tbody').load(siteUrl+"/screen_content_new/admin/put_content_list?content_id="+new_content_id, function () {
+                    });
+                }
+                $('#pop_area').removeClass('hidden');
+            }
+        });
+
+    });
+
+    // X关闭投放地区弹层
+    $('#pop_area .pop-close').on('click', function () {
+       $('#pop_area').addClass('hidden');
+    });
+    // 点击取消关闭投放地区弹层
+    $('#pop_area_exit').click(function () {
+       $('#pop_area .pop-close').trigger('click');
+    });
+
+    // 点击保存关闭投放地区弹层
+    $('#pop_area_save').click(function () {
+        $('#pop_area').addClass('hidden');
+    });
+
+
+    // 表单提交事件
+    $('form').submit(function () {
+        return checkForm();
+    });
+    // 检查表单
+    function checkForm() {
+        // 标题
+        var title = $('#title').val();
+        // 类型
+        var content_type = $('#content_type').val();
+        // 开始时间
+        var online_time = $('#online_time').val();
+        // 结束时间
+        var downline_time = $('#downline_time').val();
+
+        if (title == '') {
+            alert('标题不能为空');
+            $('#title').focus();
+            return false;
+        }
+
+        if (content_type == '') {
+            alert('请选择类型');
+            return false;
+        }
+
+        if (online_time == '') {
+            alert('请选择开始时间');
+            $('#online_time').focus();
+            return false;
+        }
+
+        if (downline_time == '') {
+            alert('请选择结束时间');
+            $('#downline_time').focus();
+            return false;
+        }
+        // 判断套餐图参数是否填写完整
+        var is_t = false;
+        if (content_type == 5) {
+            $('.set_meal_input').each(function () {
+                if ($(this).val() == '') {
+                    is_t = true;
+                    alert('请完善套餐信息');
+                    return false;
+                }
+            });
+            if (is_t) { return false; }
+        }
+        return true;
+    }
+    // 选择移入移出hidden效果
+    $('.select-list').hover(function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        $(this).removeClass('hidden');
+    },function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        $(this).addClass('hidden');
+    });
+
+    // 上线日期和下线日期
+    $('#sx-date').on('click', function () {
+        $('#online_time').focus();
+    });
+
+    $('#xx-date').on('click', function () {
+        $('#downline_time').focus();
+    });
+
+</script>
+{load_js file="screen_content_new/select_bak.js?v={time()}"}
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+{* $Id: welcome.html 53047M 2013-08-14 01:39:08Z (local) $ *}
+{* 后台欢迎信息 *}
+{include_www file="admin/lib/header.html" title="管理中心"}
+{include_www file="admin/lib/sidebar.html"}
+<div id="content" class="span10">
+    <div class="pageTit page-header">
+    </div>
+    <div class="msgBox">
+        <div class="message alert alert-success">
+            <div class="span1">
+                <img alt="success" src="{$smarty.const.STATIC_URL}/images/admin/success.png">
+            </div>
+            <div class="span6">
+                <div style="margin-left:10px;">
+                    <h1>
+                        欢迎回到管理后台！
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!-- /content -->
+{include_www file="admin/lib/footer.html"}

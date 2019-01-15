@@ -1,0 +1,21 @@
+{include file="share_header.html" title="常见问题管理"}
+<section class="container">
+    <div class="question-list">
+      <h3 class="title2">常见问题</h3>
+      <ul>
+           {foreach $diff_info as $k => $v}
+              <li><a {if $v.site_type==1}href="{Anurl('faq/detail',"?id={$v.id}")}"{else}href="{$v.link}"{/if}>{$v.question}<em></em></a></li>
+           {foreachelse}
+              <li><a>暂无问题</a></li>
+           {/foreach}
+      </ul>
+    </div>
+    {*<a href="{AnUrl('e/admin/feedback')}" class="btn-go-fankui"><em></em>我要反馈</a>*}
+  </section>
+    <script>
+     $('.btn-back').on('click', function (e) {
+         window.history.back(-1);
+    }); 
+    </script>
+  
+{include file="share_footer.html"}

@@ -1,0 +1,243 @@
+{include file='header2.html' title='数字地图--数据分析'}
+<link rel="stylesheet" type="text/css" href="{$smarty.const.STATIC_URL}/css/m-zhongduan0301.css">
+            <div class="tabs2">
+                <a href="{AnUrl("screen_dm/status")}" class="active"><span>亮屏状态</span></a>
+                <a href="{AnUrl("screen_dm/screen_content")}"><span>内容投放</span></a>
+                <a href="{AnUrl("screen_dm/stat")}"><span>统计分析</span></a>
+            </div>
+            <!--start:排行筛选弹层-->
+            <div class="pop-reorder hidden dataTypePop">
+                <ul>
+                    <li class="dataTypePopLi" data_type="1">
+                        <label>
+                            <input type="radio" {if $search_filter.data_type == 1}checked="checked"{/if} name="reorder"><span>总有效门店量</span></label>
+                    </li>
+                    <li class="dataTypePopLi" data_type="2">
+                        <label>
+                            <input type="radio" {if $search_filter.data_type == 2}checked="checked"{/if} name="reorder"><span>总有效终端量</span></label>
+                    </li>
+                    <li class="dataTypePopLi" data_type="3">
+                        <label>
+                            <input type="radio" {if $search_filter.data_type == 3}checked="checked"{/if} name="reorder"><span>终端活跃量</span></label>
+                    </li>
+                    <li class="dataTypePopLi" data_type="4">
+                        <label>
+                            <input type="radio" {if $search_filter.data_type == 4}checked="checked"{/if} name="reorder"><span>离线设备量</span></label>
+                    </li>
+                </ul>
+            </div>
+            <!--end:排行筛选弹层-->
+            <div class="tabs1-con zhongduan-download">
+                <div class="count-reorder">
+                  <div class="item js_times">
+                    <span>
+                      {if $search_filter.date_type == 1}
+                        今日
+                      {else if $search_filter.date_type == 2}
+                        近七天
+                      {else if $search_filter.date_type == 4}
+                        本月
+                      {else}
+                        {$search_filter.start_date}至{$search_filter.end_date}
+                      {/if}
+                    </span>
+                    <em class="icon-arrow-down"></em>
+                  </div>
+                  <div class="item js_select_data_type">
+                    <span>
+                      {if $search_filter.data_type == 1}
+                        总有效门店量
+                      {else if $search_filter.data_type == 2}
+                        总有效终端
+                      {else if $search_filter.data_type == 3}
+                        终端活跃量
+                      {else if $search_filter.data_type == 4}
+                        离线设备量
+                      {/if}
+                     </span>
+                     <em class="icon-arrow-down"></em>
+                  </div>
+                </div>
+              {foreach $stat_list as $k => $v}
+                <div class="line"></div>
+                <div class="count-map">
+                    <div class="count-title">
+                        <span>{$v.title}</span>
+                        {if $res_name != 'business_hall' && $res_name != 'area'}
+                            <a href='{AnUrl("screen_dm/status/details{$search_filter_str}&res_name={$subordinate_res_name}&res_id={$v.res_id}")}' class="icon-arrow-right"></a>
+                        {/if}
+                    </div>
+                    <div class="count-nums count-nums2">
+                        <div class="item">
+                            <div class="title">总有效门店(家)</div>
+                            <div class="num">{if $search_days >= $valid}{$v.data1}{else}----{/if}</div>
+                        </div>
+                        <div class="item">
+                            <div class="title">{if $search_filter.data_type == 1}新覆盖(家){else if $search_filter.data_type == 2}新增(台){else}总有效终端(台){/if}</div>
+                            <div class="num">{$v.data2}</div>
+                        </div>
+                        <div class="item">
+                            <div class="title">
+                                {if $search_filter.data_type == 1}
+                                  可安装厅店数
+                                {else if $search_filter.data_type == 2}
+                                  总有效终端
+                                {else if $search_filter.data_type == 3}
+                                  终端月活跃量
+                                {else if $search_filter.data_type == 4}
+                                  离线(台)
+                                {/if}
+                            </div>
+                            <div class="num">{if $search_days lt $valid && $search_filter.data_type == 3}----{else}{$v.data3}{/if}</div>
+                        </div>
+                        {if $search_filter.data_type == 1 || $search_filter.data_type == 2}
+                          <div class="item">
+                              <div class="title">总覆盖厅店(家)</div>
+                              <div class="num">{$v.data4}</div>
+                          </div>
+                        {/if}
+                    </div>
+                </div>
+              {/foreach}
+            </div>
+            <!-- <div class="btn-download js_downLoad">
+                <span><i class="icon-download"></i>下载{if $search_filter.data_type == 1}有效活跃厅店{else if  $search_filter.data_type == 3}终端活跃率{else}终端离线率{/if}</span>
+            </div> -->
+            <!--start:日期选择弹层-->
+              <div class="js_pop pop-bg hidden selectDate">
+                <div class="pop-date">
+                  <div class="title">
+                    <a href="javascript:void(0);" class="concel closeSelectDate">取消</a>
+                    <span>选择日期</span>
+                    <a href="javascript:void(0);" class="sure closeSelectDate">确定</a>
+                  </div>
+                  <form class="js_searchForm" action="{AnUrl("screen_dm/status/details")}" method="get">
+                    <input type="hidden" class="js_timeStart" name="search_filter[start_date]" value="{$search_filter.start_date}">
+                    <input type="hidden" class="js_endStart" name="search_filter[end_date]" value="{$search_filter.end_date}">
+                    <input type="hidden" class="js_data_type" name="search_filter[data_type]" value="{$search_filter.data_type}">
+                    <input type="hidden" name="res_name" value="{$res_name}">
+                    <input type="hidden" name="res_id" value="{$res_id}">
+                    <div class="btns">
+                      <label>
+                        <input type="radio" {if $search_filter.date_type == 1}checked="checked"{/if} name="search_filter[date_type]" value="1"><span>今天</span></label>
+                      <label>
+                        <!-- <input type="radio" {if $search_filter.date_type == 2}checked="checked"{/if} name="search_filter[date_type]" value="2"><span>近7日</span></label> -->
+                        <input type="radio" {if $search_filter.date_type == 4}checked="checked"{/if} name="search_filter[date_type]" value="4"><span>本月</span></label>
+                      <label>
+                        <input type="radio"  {if $search_filter.date_type == 3}checked="checked"{/if} name="search_filter[date_type]" value="3"><span>任一段时间</span></label>
+                    </div>
+                    <div class="date">
+                      <div id="js_timeStart" class="item "><span>选择时间</span>
+                        <input type="date">
+                        <span class="js_timeStartSpan"></span>
+                      </div>
+                      <span class="txt">至</span>
+                      <div id="js_timeEnd" class="item "><span>选择时间</span>
+                        <input type="date">
+                        <span class="js_timeEndSpan"></span>
+                      </div>
+                      <span class="btn-concel"></span>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <!--end:日期选择弹层-->
+<script>
+  var defaultStartDate  = '{$search_filter.start_date}';
+  var defaultEndDate    = '{$search_filter.end_date}';
+
+  //设置时间默认值
+  setDateValue();
+
+  function setDateValue() {
+    if (defaultStartDate) {
+      $('#js_timeStart span').text(defaultStartDate);
+    }
+    
+    if (defaultEndDate) {
+      $('#js_timeEnd span').text(defaultEndDate);
+    }
+  }
+  $(function() {
+///////////////////////////////////////// 日期插件 /////////////////////////////////////////////////
+    //时间范围
+    var startTime, endTime;
+    $('#js_timeStart input').change(function(e) {
+      startTime = e.target.value;
+      $('.js_timeStart').val(startTime);
+      $(this).siblings('span').css({ opacity: 0 })
+      $(this).css({ opacity: 1 })
+    })
+    
+    $('#js_timeEnd input').change(function(e) {
+      endTime = e.target.value
+      console.log(e)
+      $('.js_endStart').val(endTime);
+      $(this).siblings('span').css({ opacity: 0 })
+      $(this).css({ opacity: 1 })
+      setTimeout(function() {
+        if (startTime > endTime) alert("结束时间必须大于开始时间")
+      }, 300)
+    });
+    
+    //开启日期插件
+    $('.js_times').on('click', function () {
+      $('.js_pop').addClass('hidden');
+      $('.selectDate').removeClass('hidden');
+    });
+    
+    //关闭日期插件
+    $('.closeSelectDate').on('click', function () {
+      $('.selectDate').addClass('hidden');
+      if ($(this).hasClass('sure')) {
+        $('.js_searchForm').submit();
+        startPopLoading();
+      }
+    });
+    
+    //清除日期
+    $('.js_clearDate').on('click', function () {
+      $('#js_timeStart .js_timeStart').css({ opacity: 0 });
+      $('#js_timeStart input').css({ opacity:1 });
+      $('#js_timeEnd .js_timeEnd').css({ opacity: 0 });
+      $('#js_timeEnd input').css({ opacity:1 });
+    });
+  /////////////////////////////////////////////// 体验数据选择 ////////////////////////////////////////
+    //开启弹层
+    $('.js_select_data_type').on('click', function () {
+      $('.dataTypePop').removeClass('hidden');
+    });
+    //关闭弹层
+    $('.dataTypePop').on('click', function () {
+      $('.dataTypePop').addClass('hidden');
+    });
+    
+    //选择数据类型
+    $('.dataTypePopLi').on('click', function (e) {
+      e.stopPropagation();
+      var data_type = $(this).attr('data_type');
+      $('.js_data_type').val(data_type);
+      $('.dataTypePop').addClass('hidden');
+      if (data_type == 1) {
+        $('.js_select_data_type span').html('已覆盖厅店');
+      } else if (data_type == 3) {
+        $('.js_select_data_type span').html('设备活跃量');
+      } else if (data_type == 3) {
+        $('.js_select_data_type span').html('离线设备量');
+      }
+      $('.js_searchForm').submit();
+    });
+    
+////////////////////////////导出 ////////////////////////////
+    $('.js_downLoad').on('click', function () {
+      //导出sheet1
+      var url = window.location.href;
+      var newUrl = url+'&if_export=1&download_from=weixin';
+      window.open(newUrl);
+      newurl = url+'&if_export=2&download_from=weixin';
+      window.open(newurl);
+    });
+    
+  })
+</script>
+ {include_www file="admin/lib/s_footer.html"}

@@ -1,0 +1,204 @@
+{include_www file="admin/lib/header_new.html" title="亮屏管理"}
+{include_www file="admin/lib/sidebar_new.html"}
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+    <div class="column">
+
+        <div class="position">
+            <a href="{AnUrl('file_apply/admin/file?search_filter[search_type]=file')}"><i class="iconfont iconfont-logo2"></i>集团文件</a>
+            >
+            <span>统计</span><span>({if $count}{$count}{else}0{/if})</span>
+        </div>
+
+        <div class="tabs1">
+            <ul class="clearfix">
+                <li {if $search_filter['search_type'] == 'file'} class="curr"{/if}>
+                <a href="{AnUrl('file_apply/admin/file?search_filter[search_type]=file')}">集团文件</a>
+                </li>
+                <li {if $search_type == 'apply'} class="curr"{/if}>
+                <a href="{AnUrl('file_apply/admin/apply?search_type=apply')}">门店改造申请</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="form-search clearfix">
+            <div class="pull-left">
+                <form action="{AnUrl('file_apply/admin/file')}" id="subForm" method='get'>
+                    <input type="text" style="width: 130px;" name="search_filter[content]" value="{$search_filter['content']}" class="form-control input-sm pull-left " placeholder="文件名">
+                    <button type="button" class="btn-search pull-left" id="searchData" >搜索</button>
+                </form>
+            </div>
+            {if $curr_member_ranks == 1}
+            <div class="pull-right">
+                <button id="file_upload" data-id="14" class="btn btn-primary btn-large"><i class="icon-trash icon-white"></i>上传</button>
+            </div>
+            {/if}
+        </div>
+
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th width="20%">文件号</th>
+                        <th width="20%">文件名</th>
+                        <th width="20%">文件印发时间</th>
+                        <th width="20%">平台发布时间</th>
+                        <th width="20%">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $v}
+                    <tr id="dataList{$k}">
+                     <td>{$v.file_number}</td>
+                     <td>
+                         <a href="{AnUrl("file_apply/admin/file/online_show&file_id={$v.id}")}">{file_apply_helper::file_suffix($v.content, $v.suffix)}</a>
+                     </td>
+
+                     <td>{date('Y-m-d' ,strtotime($v.print_time))}</td>
+                     <td>{date('Y-m-d H:i' ,strtotime($v.add_time))}</td>
+                     <td resId={$v.id}>
+                         <a href="{AnUrl("file_apply/admin/file/record_list?id={$v.id}&search_filter[pc]=province")}" data-id="14" class="btn btn-primary btn-xs" title="记录"><i class="icon-trash icon-white"></i>记录</a>
+                         <a href="{AnUrl("file_apply/admin/file/download?id={$v.id}")}" data-id="14" class="btn btn-primary btn-xs" title="下载"><i class="icon-trash icon-white"></i>下载</a>
+                         <a href="javascript:void" data-id="14"  title="删除" class="delete_hot btn btn-danger btn-xs"><i class="icon-trash icon-white"></i>删除</a>
+                     </td>
+                    </tr>
+                    {foreachelse}
+                    <tr><td colspan="5">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}
+
+{* 引入浮层上传js *}
+<script src="{$smarty.const.SITE_URL}/js/upload_folder/upload2.js" id="ll_url"></script>
+<!--start:弹层-->
+<div class="modal" id="message">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close btn_close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <div id="upload_tip" style="color:red;"></div>
+
+                <input type="hidden"  name="rank"  value="{$curr_member_ranks}" id='rank'/>
+                文&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;件&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名: {AnForm type="text" name="content" id='content' value="" filter="filter_string" placeholder="文件名可为空"}
+                <br/>
+                文&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;件&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号: {AnForm type="text" name="file_number" id='file_number' value="" class="" validate="required" filter="filter_string" placeholder="请输入文件号"}
+                <br/>
+                文件印发时间:  <input type="date"  name="print_time" id='print_time' required="required"/>
+                <h4 class="modal-title w_title" id="myModalLabel">
+                    <progress id="progressBar" value="0" max="100" style="height:10px;width: 290px;display:none;"></progress>
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="media row">
+                    <div class=" col-xs-8">
+                        <div class="media-body">
+                            <p class=""><span id="percentage"></span><span id="time"></span></p>
+                            <p class='w_start'><input type="file" id="file" value="" name="myfile" /></p>
+                            <p class="w_pro">
+                                <input type="button" id='start_upload' class="btn btn-sm btn-success js_saveBtn" value="上传" />
+                                <input type="button" id='click_cancel' class="btn btn-sm btn-warning"  style='display:none;' value="取消上传" />
+                                <input type="button" id='click_close' class="btn btn-sm btn-warning" style='display:none;' value="关闭" />
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+       $('#file_upload').click(function () {
+           $('#message').addClass('show');
+       });
+
+       //关闭刷新
+       $('#click_close').click(function(){
+           $('#message').removeClass('show');
+           //刷新
+           window.location.reload();
+       })
+
+
+//X点击隐藏
+       $('.btn_close').click(function(){
+           $('#message').removeClass('show');
+           $('#upload_tip').html('重新上传，点击上传；取消，请重新选择文件');
+           $('#time').hide();
+           $('#percentage').hide();
+           $('#start_upload').show();
+           //隐藏就取消上传
+           cancleUploadFile();
+           //刷新
+       })
+
+        //点击上传
+        $('#start_upload').click(function(){
+            $('#time').show();
+            $('#percentage').show();
+            UpladFile();
+        })
+        // 取消上传
+        $('#click_cancel').click(function(){
+            $('#upload_tip').html('重新上传，请点击上传；取消，请重新选择文件');
+            //取消上传
+            cancleUploadFile();
+        })
+   })
+
+
+</script>
+
+<script>
+
+    var updateStatus = {
+        _id  : '',
+        _msg : '操作失败',
+        _url : "{AnUrl('file_apply/admin/ajax/update_file_status')}",
+        _table_name:'',
+
+        update:function(obj){
+
+            this._id = $(obj).parent().attr('resId');
+
+
+            $.post(this._url,{ id:this._id},function(json){
+
+                if (json.info == 'ok') {
+                    updateStatus.deleteHtml(obj);
+                } else {
+                    alert(json.info);
+                }
+
+            },'json')
+        },
+        deleteHtml:function(obj){
+            $(obj).closest("tr").fadeOut(function(){
+                $(this).remove();
+                interLineColor();
+            });
+            return false;
+        },
+
+    };
+
+    $('.delete_hot').live('click',function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        if (!confirm("确定要删除该条记录吗？")) {
+            return false;
+        }
+        updateStatus.update(this);
+    });
+
+</script>

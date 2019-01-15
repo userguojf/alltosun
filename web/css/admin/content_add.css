@@ -1,0 +1,29 @@
+.tags{
+    padding: 15px 0 5px 15px;
+    margin-bottom: 10px;
+}
+.tags .tag{
+    display: inline-block;
+    line-height: 30px;
+    padding: 0 30px 0 7px;
+    font-size: 13px;
+    color: #666;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    margin: 0 7px 10px 0;
+    position: relative;
+}
+.tags .tag .icon-del{
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background: url(../../images/icon-add.png) no-repeat;
+    background-size: 100% auto;
+    position: absolute;
+    right: 7px;
+    top: 8px;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    transform: rotate(45deg);
+}

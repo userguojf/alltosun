@@ -1,0 +1,54 @@
+{include_www file="admin/lib/header_new.html" title="企业号通讯录请管理"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    .btn-top{
+        margin-top:5px;
+    }
+    </style>
+<!-- 主内容 start -->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('qydev/admin/prize')}"><i class="iconfont iconfont-logo2"></i>企业号发奖管理</a>
+             &gt;
+            <span>发奖记录列表（总数：{$count}）</span>
+        </div>
+        <div class="form-search clearfix">
+        </div>
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th width="12.5%;">卡号</th>
+                    <th width="12.5%;">渠道码</th>
+                    <th width="12.5%;">企业号ID</th>
+                    <th width="12.5%;">手机号</th>
+                    <th width="12.5%;">类型</th>
+                    <th width="12.5%;">发短信</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $k=>$v}
+                    <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                    <td>{$v.card_num}</td>
+                    <td>{$v.user_number}</td>
+                    <td>{$v.unique_id}</td>
+                    <td>{$v.user_phone}</td>
+                    <td>{$v.user_type}</td>
+                    <td>{$v.send_result}</td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="13">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+</div>
+
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

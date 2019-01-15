@@ -1,0 +1,44 @@
+{include file="news/header.html" title="电信智慧门店运营"}
+<section class="container">
+            <div class="article">
+                <div class="title">
+                    <p>{$info.title}</p>
+                </div>
+                <div class="comments-pulish">
+                <input type="hidden" id="btn-id" name="id" value="{$info.id}" />
+                    <div class="text">
+                        <textarea name = 'content' id="btn-content"  placeholder="留言将由公众号筛选后显示，对所有人可见"></textarea>
+                    </div>
+                    <div class="options">
+                        <!-- <div class="btn-face"></div> -->
+                    </div>
+                    <button type="" class="btn-sure js_submit">提交</button>
+                </div>
+            </div>
+</section>
+<script>
+var target = true;
+$('.js_submit').click(function(e){
+    var content = $('#btn-content').val();
+    var id      = $('#btn-id').val();
+
+    if ( !content || !id ) {
+		return '';
+	}
+
+    if ( !target ) {
+    	return '';
+    }
+
+    target = false;
+
+	$.post( "{AnUrl("wework/news/write")}",{ 'id' : id, 'content' : content },function(json){
+        if (json.info == 'ok') {
+        	window.location.href = "{AnUrl("wework/news")}" + "?id=" + id; 
+        } else {
+        	return '';
+        }
+    },'json')
+})
+</script>
+{include file="news/footer.html"}

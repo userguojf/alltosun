@@ -1,0 +1,109 @@
+@charset "UTF-8";
+/* CSS Document */
+
+body{ font-family:'Microsoft Yahei', Arial, Helvetica, sans-serif; font-size:62.5%;}
+
+/*index*/
+.index{ position:fixed; left:0; top:0; width:100%; height:100%; overflow:auto; background:#a24e1f url(../images/summer/bg1.jpg) center top no-repeat; background-size:100% auto;}
+.btn-rules{ display:block; background:url(../images/summer/btn-rules.png) no-repeat; background-size:100% auto; width:43px; height:55px; text-indent:-999px; overflow:hidden; position:absolute; right:10px; top:50px;}
+.index .title{ width:70%; height:auto; padding:40px 0 0; margin:0 auto;}
+.index .title img{ width:100%; height:auto;}
+.index .txt{ width:90%; height:auto; padding:20px 0 0; margin:0 auto;}
+.index .txt img{ width:100%; height:auto;}
+.btn-begin{ display:block; background:url(../images/summer/btn1.png) no-repeat; background-size:100% auto; width:212px; height:57px; text-indent:-999px; overflow:hidden; margin:20px auto 0;}
+/*游戏规则弹层*/
+.pop-bg{ position:fixed; left:0; top:0; z-index:1001; width:100%; height:100%; background:rgba(0,0,0,0.7);}
+.pop-bg .ask2-con{}
+.btn-close{ display:block; background:url(../images/summer/btn-close.png) no-repeat; background-size:100%; width:30px; height:30px; text-indent:-999px; overflow:hidden; position:absolute; right:-5px; top:-80px; z-index:1;}
+.rules-con{ font-size:1.6em; line-height:24px; word-wrap:break-word;}
+.rules-con p{ padding:0 0 20px;}
+
+/*第一题*/
+.index .title2{ width:90%; padding:50px 0 0;}
+.index .options{ text-align:center; padding:20px 0 0;}
+.btn-done{ display:inline-block; background:url(../images/summer/btn2.png) no-repeat; background-size:100% auto; width:130px; height:57px; text-indent:-999px; overflow:hidden; margin:0 10px;}
+.btn-done:hover{ background:url(../images/summer/btn2-2.png) no-repeat; background-size:100% auto;}
+.btn-nodone{ display:inline-block; background:url(../images/summer/btn3.png) no-repeat; background-size:100% auto; width:130px; height:57px; text-indent:-999px; overflow:hidden; margin:0 10px;}
+.btn-nodone:hover{ background:url(../images/summer/btn3-2.png) no-repeat; background-size:100% auto;}
+
+/*第二题*/
+.ask2{ position:fixed; left:0; top:0; width:100%; height:100%; overflow:auto; background:url(../images/summer/bg2.jpg) center top no-repeat; background-size:cover;}
+.ask2_my-con{ background:#fff; border:2px solid #000; min-height:10%; border-radius:10px; padding:35px 10px 0; position:relative; margin:190px 35px 60px;}
+.ask2-con{ background:#fff; border:2px solid #000; min-height:70%; border-radius:10px; padding:35px 10px 0; position:relative; margin:77px 17px 60px;}
+.ask2_my-con .title1{ width:100px; height:97px; background:url(../images/summer/title1.png) no-repeat; background-size:100% auto; position:absolute; left:0; top:-70px;}
+.ask2_my-con .title2{ width:176px; height:54px; background:url(../images/summer/title3.png) no-repeat; background-size:100% auto; position:absolute; right:-5px; top:-51px;}
+.ask2-con .title1{ width:100px; height:97px; background:url(../images/summer/title1.png) no-repeat; background-size:100% auto; position:absolute; left:0; top:-70px;}
+.ask2-con .title2{ width:176px; height:54px; background:url(../images/summer/title3.png) no-repeat; background-size:100% auto; position:absolute; right:-5px; top:-51px;}
+.ask2-con .title3{ font-size:1.4em; line-height:24px; word-wrap:break-word; padding:0 10px 15px;}
+.ask2-answer{ height:auto;}
+.ask2-answer li{ padding:0 0 20px;}
+.ask2-answer li label{ display:block; height:auto; position:relative;}
+.ask2-answer li input{ position:absolute; left:0; top:0; opacity:0;}
+.ask2-answer li input+em{ display:block; width:35px; height:35px; border-radius:35px; position:absolute; left:-5px; top:3px;}
+.ask2-answer li:nth-child(1) input+em{ background:#ffb600;}
+.ask2-answer li:nth-child(1) input:checked+em{ background:#ffb600 url(../images/summer/icon-checked.png) center center no-repeat; background-size:22px auto;}
+.ask2-answer li:nth-child(2) input+em{ background:#3ca5e2;}
+.ask2-answer li:nth-child(2) input:checked+em{ background:#3ca5e2 url(../images/summer/icon-checked.png) center center no-repeat; background-size:22px auto;}
+.ask2-answer li:nth-child(3) input+em{ background:#f05c42;}
+.ask2-answer li:nth-child(3) input:checked+em{ background:#f05c42 url(../images/summer/icon-checked.png) center center no-repeat; background-size:22px auto;}
+.ask2-answer li:nth-child(4) input+em{ background:#99bc2a;}
+.ask2-answer li:nth-child(4) input:checked+em{ background:#99bc2a url(../images/summer/icon-checked.png) center center no-repeat; background-size:22px auto;}
+.ask2-answer li span{ display:block; line-height:30px; font-size:1.4em; padding:5px 25px; background:#b8edff; margin-left:10px;}
+
+/*领取优惠券或充值卡*/
+.ask2-phone{ height:auto; padding:10px 5px;}
+.ask2-phone p{ padding:0 0 10px 60px; position:relative;}
+.ask2-phone label{ display:block; width:60px; height:50px; line-height:50px; font-size:1.6em; position:absolute; left:0; top:0;}
+.ask2-phone span{ display:block; height:48px; padding:0 10px; background:#fff; border:1px solid #a2c5eb; border-radius:10px; vertical-align:middle;}
+.ask2-phone span input{ display:block; width:100%; padding:0 10px; height:48px; margin:0 -10px; background:none; border:none; font-size:1.6em; color:#a2c5eb;}
+.ask2-phone span.text-yanz{ margin-right:90px; margin-bottom:10px;}
+.ask2-phone button.btn-yanz{ width:80px; height:37px; color:#fff; font-size:1.3em; border-radius:10px; vertical-align:middle; background:#76cb12; border:none; position:absolute; right:0; top:50%; margin-top:-27px;}
+.ask2-phone button.btn-yanz-again{ background:#cacaca;}
+a.btn-youhui,
+a.btn-chongzhi,
+a.btn-search{ display:block; width:90%; height:auto; margin:0 auto 10px;}
+a.btn-youhui img,
+a.btn-chongzhi img,
+a.btn-search img{ display:block; width:100%;}
+
+/*充值卡密*/
+.ask2-num1{ background:url(../images/summer/title4.png) no-repeat; background-size:100% 100%; height:42px; line-height:35px; text-align:center; color:#fff; font-size:1.4em; margin:0 auto 20px;}
+.ask2-num1 span.num{ color:#ffd671;}
+
+/*结果*/
+.result-be1, 
+.result-be2{ padding:20px 10px 0;}
+.result-be1 img,
+.result-be2 img,
+.result-be3 img,
+.result-he1 img,
+.result-he2 img,
+.result-he3 img{ width:100%; height:auto;}
+.result-be3{ height:auto;}
+.result-he1,
+.result-he2{ padding:30px 10px 0; height:auto;}
+.result-he3{ padding:20px 10px 0; height:auto;}
+.result-options1{ position:absolute; left:0; top:75%; width:100%; height:auto; text-align:center;}
+.result-options1 a{ display:inline-block; width:120px; height:44px; text-indent:-999px; overflow:hidden;}
+.btn-again{ background:url(../images/summer/btn7.png) no-repeat; background-size:100% auto;}
+.btn-links{ background:url(../images/summer/btn8.png) no-repeat; background-size:100% auto;}
+.result-options2{ position:absolute; left:0; top:75%; width:100%; height:auto; text-align:center;}
+.result-options2 a{ display:inline-block; width:150px; height:45px; text-indent:-999px; overflow:hidden; background:url(../images/summer/btn9.png) no-repeat; background-size:100% auto;}
+
+@media screen and (max-height:568px){
+  .result-be1, 
+  .result-be2{ padding-top:10px;}
+  .result-options1{ top:78%;}
+  .result-options2{ top:78%;}
+}
+
+@media screen and (max-height:480px){
+  .result-be1, 
+  .result-be2{ padding-top:0px;}
+  .result-options1{ top:82%;}
+  .result-options2{ top:82%;}
+}
+
+/*查询附近营业厅*/
+.ask2-con .title4{ font-size:2.1em; color:#0a7bf5; line-height:1.6; padding:0 0 25px;}
+.ask2-con .title5{ text-align:center; font-size:1.6em; line-height:24px; padding:0 0 25px;}

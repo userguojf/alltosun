@@ -1,0 +1,433 @@
+/*绑定设备*/
+
+.body {
+    font-family: 'Microsoft Yahei', Arial;
+    font-size: 13px;
+    color: #39383f;
+    background-color: #fff;
+}
+input,button,select{
+    font-family: 'Microsoft Yahei', Arial;
+    font-size: 14px;
+}
+.step {}
+
+.step .banner {
+    text-align: center;
+    color: #fff;
+    background: #38c9ff;
+    margin-bottom: 28vw;
+    position: relative;
+}
+
+.step .banner:after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 28vw;
+    background: url(../images/bang/banner.png) no-repeat;
+    background-size: 100% 100%;
+    position: absolute;
+    left: 0;
+    top: 100%;
+}
+
+.step .banner h3 {
+    font-size: 17px;
+    font-weight: bold;
+    padding: 20px 0 15px;
+}
+
+.step .banner p {
+    font-size: 14px;
+    position: relative;
+    z-index: 1;
+}
+
+.step1 .banner {
+    height: 40.3vw;
+    padding-top: 15vw;
+}
+
+.step1 .banner img {
+    display: block;
+    width: 24vw;
+    height: 24vw;
+    border-radius: 50%;
+    margin: 0 auto;
+}
+
+.step1 .text,
+.step3 .text {
+    text-align: center;
+    font-size: 14px;
+    line-height: 24px;
+}
+
+.step1 .text a,
+.step3 .text a {
+    color: #3bcbff;
+}
+
+.btns {
+    text-align: center;
+    padding-left: 16.7vw;
+    padding-right: 16.7vw;
+}
+
+.btns .btn {
+    display: block;
+    height: 11.5vw;
+    text-align: center;
+    line-height: 11.5vw;
+    border-radius: 11.5vw;
+    margin-top: 5.33vw;
+}
+
+.btns .btn-default {
+    border: 2px solid #53daff;
+    background-color: #fff;
+    color: #53daff;
+}
+
+.btns .btn-primary {
+    color: #fff;
+    background-color: #53daff;
+}
+
+.btns .btn-disabled {
+    color: #9c9c9c;
+    background-color: #f3f2f2;
+}
+
+
+/*step2*/
+
+.step2 .banner {
+    height: 21.7vw;
+    padding-top: 8.33vw;
+}
+
+.step2 .banner img {
+    width: 14.13vw;
+    height: auto;
+    margin: 0 auto;
+}
+
+.step2 .banner h3 {
+    padding: 10px 0 5px;
+}
+.bang-form{
+    padding-bottom: 20px;
+}
+.bang-form .item1 {
+    margin-left: 4.67vw;
+    margin-right: 4.67vw;
+    margin-bottom: 6.67vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 12vw;
+    background-color: #f5fafe;
+    border: 1px solid #f5fafe;
+    position: relative;
+}
+
+.bang-form .item1 label {
+    display: inline-block;
+    width: 24vw;
+    line-height: 12vw;
+    font-size: 14px;
+    padding-left: 5.33vw;
+}
+
+.bang-form .item1 input {
+    flex: 1;
+    text-align: right;
+    font-size: 14px;
+    padding-right: 5.33vw;
+    height: 12vw;
+    color: #3bcbff;
+    background: none;
+    border: none;
+}
+
+.bang-form .btns {
+    padding-left: 4.67vw;
+    padding-right: 4.67vw;
+}
+
+.bang-form .item1 .tips {
+    display: none;
+}
+
+.bang-form .item-danger {
+    position: relative;
+    border-color: #ff484b;
+}
+
+.bang-form .item-danger input {
+    color: #ff484b;
+}
+
+.bang-form .item-danger .tips {
+    display: block;
+    position: absolute;
+    right: 0;
+    bottom: 100%;
+    font-size: 13px;
+    color: #ff484b;
+    line-height: 20px;
+}
+
+.bang-form .item-danger .tips img {
+    vertical-align: middle;
+    margin: -2px 1px 0 0;
+}
+
+.bang-form .title {
+    background: url(../images/bang/icon4.png) left 3px no-repeat;
+    background-size: 19px auto;
+    font-size: 14px;
+    line-height: 30px;
+    padding-left: 20px;
+    margin-left: 4.67vw;
+    margin-right: 4.67vw;
+    margin-bottom: 2.67vw;
+}
+
+.bang-form .title span {
+    font-size: 12px;
+    color: #3bcbff;
+}
+
+.bang-form .item1 select {
+    flex: 1;
+    height: 12vw;
+    font-size: 14px;
+    text-align: right;
+    position: relative;
+    display: block;
+    background: none;
+    border: none;
+    -webkit-appearance: button;
+    appearance: button;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.bang-form .item1 .arrow {
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-right: 1px solid #bdbdbd;
+    border-bottom: 1px solid #bdbdbd;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    margin-top: -8px;
+    z-index: 1;
+    pointer-events: none;
+}
+
+
+/*step3*/
+
+.step3 .banner,
+.step6 .banner {
+    height: 87.33vw;
+    background: url(../images/bang/banner2.png) no-repeat;
+    background-size: 100% auto;
+    margin: 0;
+}
+
+.step3 .banner:after,
+.step6 .banner:after {
+    display: none;
+}
+
+.step3 .banner h3,
+.step6 .banner h3 {
+    padding-top: 54.67vw;
+}
+
+.copyright {
+    position: absolute;
+    left: 0;
+    bottom: 5.33vw;
+    width: 100%;
+    text-align: center;
+    font-size: 13px;
+    line-height: 20px;
+    color: #bdbdbd;
+}
+
+.copyright a {
+    color: #3bcbff;
+}
+
+
+/*step6*/
+
+.step6 .banner {
+    background-image: url(../images/bang/banner3.png);
+}
+
+
+/*step7*/
+
+.step7,
+.step7 .swiper-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.step7 .page-bg {
+    height: 10vw;
+    background-color: #34c7ff;
+}
+
+.step7 .title-bg {
+    height: 20.33vw;
+    background: url(../images/bang/banner.png) no-repeat;
+    background-size: 100% 100%;
+}
+
+.step7 .title {
+    height: 20.33vw;
+    text-align: center;
+    color: #fff;
+    font-size: 14px;
+    line-height: 8.67vw;
+    padding-top: 10vw;
+}
+
+.step7 .pic {
+    width: 60.7vw;
+    height: auto;
+    border: 1px solid #c5efff;
+    margin: 0 auto;
+    box-shadow: 0 0 10px rgba(83, 218, 255, .3);
+}
+
+.step7 .pic img {
+    width: 100%;
+}
+
+.step7 .copyright {
+    position: static;
+    padding-top: 20px;
+}
+
+.step7 .tips {
+    text-align: center;
+    padding-top: 20px;
+    font-size: 13px;
+}
+
+.step7 .tips a {
+    color: #34c7ff;
+}
+
+.step7 .swiper-button-prev {
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+
+.step7 .swiper-button-prev,
+.step7 .swiper-container-rtl .swiper-button-next,
+.step7 .swiper-button-next,
+.step7 .swiper-container-rtl .swiper-button-prev {
+    background-image: url(../images/bang/arrow1.png);
+    background-size: 15px 26px;
+}
+
+.step7 .swiper-button-next.swiper-button-disabled,
+.step7 .swiper-button-prev.swiper-button-disabled {
+    opacity: 0;
+}
+
+.step7 .swiper-pagination,
+.step7 .swiper-container-horizontal>.swiper-pagination-bullets,
+.step7 .swiper-pagination-custom,
+.step7 .swiper-pagination-fraction {
+    bottom: auto;
+    top: 4.93vw;
+    left: 5vw;
+    width: 90vw;
+    height: 5px;
+    background-color: #17afe8;
+    border-radius: 5px;
+}
+
+.step7 .swiper-container-horizontal>.swiper-pagination-bullets .swiper-pagination-bullet {
+    float: left;
+    width: 25%;
+    height: 5px;
+    border-radius: 5px;
+    background: none;
+    opacity: 0;
+    margin: 0;
+    position: relative;
+}
+
+.step7 .swiper-container-horizontal>.swiper-pagination-bullets .swiper-pagination-bullet-active {
+    background-color: #e6faff;
+    opacity: 1;
+    color: #33c7ff;
+    font-size: 12px;
+}
+
+.step7 .swiper-container-horizontal>.swiper-pagination-bullets .swiper-pagination-bullet-active:before {
+    content: '';
+    display: block;
+    width: 16px;
+    height: 16px;
+    background-color: #e6faff;
+    border-radius: 16px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -8px 0 0 -8px;
+}
+
+.step7 .swiper-container-horizontal>.swiper-pagination-bullets .swiper-pagination-bullet-active i {
+    display: block;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    font-family: Arial;
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: 50%;
+    margin: -8px 0 0 -8px;
+}
+.pop-share{
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 100;
+	width: 100%;
+	height: 100%;
+	text-indent: -999px;
+	overflow: hidden;
+	background:rgba(0,0,0,.8) url(../images/bang/icon6.png) 48vw 2.67vw no-repeat;
+	background-size: 46.7vw auto;
+}
+
+@media screen and (max-height:550px){
+    .step7 .title{
+        height: 19.33vw;
+    }
+    .step7 .pic{
+        width: 50vw;
+    }
+}
+
+

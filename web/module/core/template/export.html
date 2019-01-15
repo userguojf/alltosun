@@ -1,0 +1,97 @@
+<script type="text/javascript">
+var maxExportPages = 5;
+{literal}
+$(function(){
+  $(".export").click(function(e){
+    e.preventDefault();        
+    // 首先判断一下是否需要分页
+    $.post(checkUrl, function(json){
+      if (json.info != 'ok') {
+          alert(json.info);
+      } else {
+          var html = '';
+          for (i in json.page_arr) {
+              html += "<option value="+json.page_arr[i]+">"+json.page_arr[i]+"</option>";                    
+          }
+          $("select[name=page_start]").children('option').remove();
+          $("select[name=page_start]").append(html);
+          var start = $("select[name=page_start]").val();
+          var end = parseInt(start) + maxExportPages - 1;
+          // 不要超过最大值
+          if (end > json.total) {
+              end = json.total;
+          }
+          $("select[name=page_end]").html("<option selected='selected'>"+end+"</option>");
+          selectPagesDialog.show();                            
+      }
+    }, 'json');
+    return false;
+  });
+
+  $("select[name=page_start]").change(function(){
+      var start = $(this).val();
+      var startLast = $("select[name=page_start]").children("option:last").val();
+      var end = parseInt(start) + maxExportPages - 1;
+      // 不要超过最大值
+      if (end > startLast) {
+          end = startLast;
+      }
+      $("select[name=page_end]").html("<option selected='selected'>"+end+"</option>") 
+  });
+
+  // bgiframe used to fix the issue in IE6 where select boxes show on top of other elements, regardless of zIndex.
+  // If set to true, other items on the page will be disabled (i.e. cannot be interacted with).
+  $('#selectPages').dialog({ 
+    bgiframe: true, 
+    //height: 450,
+    width: 600,
+    autoOpen: false,
+    //show: 'scale',
+    //hide: 'scale',
+    modal: true,
+    buttons: {
+      '取消' : function(){ $(this).dialog('close');},
+      '导出' : function(){
+                 var pageStart = $("select[name=page_start]").children("option:selected").val();                 
+                 var pageEnd   = $("select[name=page_end]").children("option:selected").val();
+                 var order     = $("[name=order]:checked").val();
+                 var timeStart = $("input[name=time_start]").val();
+                 var timeEnd   = $("input[name=time_end]").val();
+              	 var url       = exportUrl+'?page_start='+pageStart+'&page_end='+pageEnd 
+              
+                 if (timeStart) {
+                   timeStart = timeStart+" "+$("select[name=time_start_Hour]").val()+":00:00";
+                   url += '&time_start='+timeStart;
+                 }
+                 if (timeEnd) {
+                   timeEnd   = timeEnd+" "+$("select[name=time_end_Hour]").val()+":00:00"; 
+                   url += '&time_end='+timeEnd;
+                 }
+                 window.location.replace(url);
+                 // 清空数据
+                 $("select[name=page_start]").children('option').remove();
+                 $("select[name=page_end]").children('option').remove();
+                 $(this).dialog("close");
+               }
+       }
+  });
+  
+  //弹出层调用对象
+  var selectPagesDialog = {
+      show : function(){
+          $('#selectPages').dialog("open");
+      },
+      hide : function(){
+          $('#selectPages').dialog('close');
+      }
+  } 
+});
+{/literal}
+</script>
+<div id="selectPages" title="请选择分页">
+    微博数据过多，一次导出可能对系统性能产生影响，请选择分页导出(每页100条记录，每次导出5页)<br/>
+    <input type="hidden" name="topic_id" value=''>
+    <br/>时间选择：<input type='text' name='time_start' size=10 class="exportTime">{html_select_time prefix='time_start_' display_seconds=false display_minutes=false}
+    至 <input type='text' name='time_end' size=10 class="exportTime">{html_select_time prefix='time_end_' display_seconds=false display_minutes=false}<br/><br/>
+    分页选择：第<select name='page_start'></select>页 至 第<select name='page_end'  disabled></select>页
+</div>

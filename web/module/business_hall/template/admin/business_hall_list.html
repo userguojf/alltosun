@@ -1,0 +1,206 @@
+{include_www file="admin/lib/header_new.html" title="营业厅列表"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    .btn-top{
+        margin-top:5px;
+    }
+    </style>
+<!-- 主内容 start -->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('business_hall/admin/')}"><i class="iconfont iconfont-logo2"></i>营业厅管理</a>
+            &gt;
+            <span>营业厅列表{$count}条</span>
+           
+        </div>
+       
+        <div class="form-search clearfix">
+             <div class="pull-left">
+                 <form action="{AnUrl('business_hall/admin')}" method='get'>
+                   {* 公共分权限搜索模块 *}
+                  {widget model='screen' func='get_search_by_member' file='get_search_by_member.html' member_info="{$member_info}"}
+                   {* 搜索类型 *}
+                   <select class="form-control input-sm pull-left js_search_type" style="width:120px" name="search_filter[search_type]">
+                     {$search_type = business_hall_config::$search_type}
+                     {foreach $search_type as $type_k=>$type_v}
+                        <option {if $search_filter.search_type == $type_k}selected="selected"{/if}  value="{$type_k}">{$type_v}</option>
+                     {/foreach}
+                   </select>
+                   
+                   {* 营业厅渠道编码 *}
+                   <input type="text" id="user_number" style="width:120px; {if $search_filter.search_type != 'user_number'}display:none;{/if}" name="search_filter[search_type_value][user_number]" value="{$search_filter.search_type_value.user_number}" class="form-control input-sm pull-left js_search"  placeholder="按营业厅编码搜索">
+                   
+                   {* 营业厅名称 *}
+                   <input type="text" id="title" style="width:120px; {if $search_filter.search_type != 'title'}display:none;{/if}" name="search_filter[search_type_value][title]" value="{$search_filter.search_type_value.title}" class="form-control input-sm pull-left js_search"  placeholder="按营业厅名称搜索">
+
+                   {* 营业厅联系人 *}
+                   <input type="text" id="contact"  style="width:120px;{if $search_filter.search_type != 'contact'}display:none;{/if}"" name="search_filter[search_type_value][contact]" value="{$search_filter.search_type_value.contact}" class="form-control input-sm pull-left js_search" placeholder="按联系人搜索">
+                   
+                   {* 营业厅类型 *}
+                   <select id="store_type" class="form-control input-sm pull-left js_search" style="width:120px; {if $search_filter.search_type != 'store_type'}display:none;{/if}" name="search_filter[search_type_value][store_type]">
+                     {$search_store_type = business_hall_config::$search_store_type}
+                     {foreach $search_store_type as $store_k=>$store_v}
+                        <option {if $search_filter.search_type_value.store_type == $store_k}selected="selected"{/if}  value="{$store_k}">{$store_v}</option>
+                     {/foreach}
+                   </select>
+                   
+                   {* 活跃度搜索 *}
+                   <select id="activity" class="form-control input-sm pull-left js_search" style="width:100px; {if $search_filter.search_type != 'activity'}display:none;{/if}" name="search_filter[search_type_value][activity]">
+                    <option value='100'>活跃度</option>
+                    {$activity_info= business_hall_config::$activity}
+                      {foreach $activity_info as $activity_k => $activity_v}
+                        <option {if $search_filter.search_type_value.activity == $activity_k}selected="selected"{/if}  value="{$activity_k}">{$activity_v}</option>
+                      {/foreach}
+                   </select>
+                   
+                   {* 绑定状态 *}
+                   <select id="is_bounding" class="form-control input-sm pull-left js_search" style="width:100px; {if $search_filter.search_type != 'is_bounding'}display:none;{/if}" name="search_filter[search_type_value][is_bounding]">
+                     <option value='100'>请选择</option>
+                     <option {if $search_filter.search_type_value.is_bounding == 0}selected="selected"{/if}  value="0">未绑定</option>
+                     <option {if $search_filter.search_type_value.is_bounding == 99}selected="selected"{/if}  value="99">已绑定(全部)</option>
+                     <option {if $search_filter.search_type_value.is_bounding == 1}selected="selected"{/if}  value="1">已绑定(接口)</option>
+                     <option {if $search_filter.search_type_value.is_bounding == 2}selected="selected"{/if}  value="2">已绑定(省对接)</option>
+                   </select>
+                   {* 接入类型 *}
+                   <select id="connect_type" class="form-control input-sm pull-left js_search" style="width:100px; {if $search_filter.search_type != 'connect_type'}display:none;{/if}" name="search_filter[search_type_value][connect_type]">
+                     {$search_connect_type = business_hall_config::$search_connect_type}
+                     {foreach $search_connect_type as $connect_k=>$connect_v}
+                        <option {if $search_filter.search_type_value.connect_type == $connect_k}selected="selected"{/if}  value="{$connect_k}">{$connect_v}</option>
+                     {/foreach}
+                   </select>
+                   
+                   <button type="submit" class="btn-search pull-left">搜索</button>
+                    
+                        
+                    
+                 </form>
+
+            </div>
+            <div class="pull-right">
+                <!-- <a href="javascript:void(0);" class="btn btn-sm btn-success csv_export">导出</a> -->
+                <a href="{AnUrl('business_hall/admin/add')}" class="btn btn-sm btn-success">添加</a>
+            </div>
+        </div>
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th width="15%">营业厅名称</th>
+                    <th width="10%">省</th>
+                    <th width="10%">市</th>
+                    <th width="10%">区</th>
+                    <th width="10%">类别</th>
+                    <th width="15%">渠道码</th>
+                    <th width="12%">添加时间</th>
+                    <th width="13">更新时间</th>
+                    <th width="5%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {foreach $business_list as $k=>$v}
+
+                <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+ 
+                    <td>{$v.title}</td>
+                    <!-- <td>{business_hall_config::$type[$v.type]}</td> -->
+                    <td>{business_hall_helper::get_info_name('province' , $v.province_id ,'name')}</td>
+                    <td>{business_hall_helper::get_info_name('city' , $v.city_id ,'name')}</td>
+                    <td>{business_hall_helper::get_info_name('area' , $v.area_id ,'name')}</td>
+                    <td>{business_hall_config::$type[$v.type]}</td>
+                    <td>{$v.user_number}</td>
+                    <td>{substr($v.add_time, 0, 10)}</td>
+                    <td>{substr($v.update_time, 0, 10)}</td>
+                    <td class="txtleft " resId={$v.id}>
+                        <a class="btn btn-xs  btn-top btn-info" href="{AnUrl("business_hall/admin/add?id={$v.id}")}">编辑</a>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="13">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+</div>
+<script>
+	$(function(){
+		$('#title').autocomplete({
+ 			source: "/business_hall/admin/ajax/get_title_field",
+		});
+
+		$('#province').change(function(){
+			 var province_id =  $(this).val();
+			 $.post("{AnUrl('business_hall/admin/ajax/get_city_name')}" , { province_id:province_id } ,function(json){
+				 if (json.msg=='ok') {
+					 var html = "<option selected='selected' value=''>请选择市</option>";
+					 var jsonnum = eval(json.city_info);
+				  for(var i=0; i< jsonnum.length; i++){
+					     html += "<option value= '"+jsonnum[i].id+"'>"+jsonnum[i].name+"</option>";
+					    }
+					    $('#city').html('').append(html);
+					    $('#city').trigger('change');
+					   }
+				 
+				 
+			 },'json')
+		 })
+		 
+	     $('#city').change(function(){
+	    	 var city_id =  $(this).val();
+	    	 $.post("{AnUrl('business_hall/admin/ajax/get_area_name')}" , { city_id:city_id } ,function(json){
+	    		 if (json.msg=='ok') {
+	    			 var html = "<option selected='selected' value=''>请选择地区</option>";
+	    			 var jsonnum = eval(json.area_info);
+	    		  for(var i=0; i< jsonnum.length; i++){
+	    			     html += "<option value= '"+jsonnum[i].id+"'>"+jsonnum[i].name+"</option>";
+	    			    }
+	    			    $('#area').html('').append(html);
+	    			   }else {
+	    				   var html = "<option selected='selected' value=''>请选择地区</option>";
+	    				   $('#area').html('').append(html);
+	    			   }
+	    	 },'json')
+	     })
+	     
+	     //王敬飞
+	     //搜索类型事件
+	     $('.js_search_type').change(function () {
+	       var search_type = $(this).val();
+           $('#connect_type').val('undefine');
+           $('#store_type').val('undefine');
+           $('#title').val('');
+           $('#user_number').val('');
+           $('#contact').val('');
+           $('#activity').val('');
+           $('#is_bounding').val('');
+	       $('.js_search').hide();
+	       if (search_type == 'undefined') {
+	         return false;
+	       }
+	       $('#'+search_type).show();
+	       
+	     });
+		
+		//王敬飞
+		//营业厅数据导出  
+    	$(".csv_export").click(function(e){
+          e.preventDefault();
+          var thisObj = $(this);
+          //添加导出标识
+          thisObj.closest('.form-search').find('form').append("<input type='hidden' name='if_export' value='1'>");
+          //提交
+          $('botton').trigger('click');
+          $('form').submit();
+          //移除标识
+          thisObj.closest('.form-search').find('form').find('input[type="hidden"]').remove();
+        });
+
+	})		
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

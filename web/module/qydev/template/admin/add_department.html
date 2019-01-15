@@ -1,0 +1,47 @@
+{include_www file="admin/lib/header_new.html" title="企业号部门管理"}
+<!--start:右侧-->
+<div class="main mian2 ">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('qydev/admin/department')}"><i class="iconfont iconfont-logo2"></i>企业部门管理</a>
+      &gt;
+      <span>部门{if !$department_info.id}添加{else}编辑{/if}</span>
+      <a href="{AnUrl('qydev/admin/department')}" class="btn btn-primary btn-sm pull-right">企业号部门列表</a>
+    </div>
+    <div class="clearfix">
+      <div class="form-add pull-left" style="width:80%;">
+        {AnForm class='form-horizontal' action="{AnUrl('qydev/admin/department/save')}" method="post"}
+        {AnForm type="hidden" name="department_info[id]" value="{$department_info.id}"}
+        {*添加都是2级部门 所以parent_id默认为1*}
+        {if !$department_info}
+            {AnForm type="hidden" name="department_info[parent_id]" value="1"}
+        {/if}
+        <div class="form-group">
+          <label class="col-sm-3 control-label">部门ID：</label>
+          <div class="col-sm-6">
+               {AnForm type="text" name="department_info[department_id]" value="{$department_info.department_id}"  class="form-control"  filter="filter_string" placeholder="请输入部门ID" }
+               <p class="tips">部门ID唯一值，一定和企业号部门ID保持一致</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-3 control-label">部门名称：</label>
+          <div class="col-sm-6">
+               {AnForm type="text" name="department_info[name]" value="{$department_info.name}"  class="form-control"  filter="filter_string" placeholder="请输入部门名称"}
+               <p class="tips">部门名称，一定和企业号部门名称保持一致</p>
+          </div>
+        </div>
+       </div>
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-10">
+            <button type="submit" class="btn btn-sm btn-success" id="btn"><span style='display: inline-block;width: 95px;' class='Sub'>保存模板</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a type="button" class="btn btn-sm btn-warning" href="{AnUrl('qydev/admin/department')}">&nbsp;&nbsp;返回上一页&nbsp;&nbsp;</a>
+          </div> 
+        </div> 
+   {AnForm}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

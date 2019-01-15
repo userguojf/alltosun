@@ -1,0 +1,395 @@
+{include file='header2.html' title='数字地图--数据分析'}
+<link rel="stylesheet" type="text/css" href="{$smarty.const.STATIC_URL}/css/m-zhongduan0301.css">
+<link rel="stylesheet" type="text/css" href="{$smarty.const.STATIC_URL}/js/swiper/swiper.min.css">
+<script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/swiper/swiper.min.js"></script>
+<script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/echarts/3/echarts.3.8.4.min.js"></script>
+<div class="tabs2">
+  <a href="{AnUrl("screen_dm/status")}"><span>亮屏状态</span></a>
+  <a href="{AnUrl("screen_dm/screen_content")}"><span>内容投放</span></a>
+  <a href="{AnUrl("screen_dm/stat")}" class="active"><span>统计分析</span></a>
+</div>
+<!--start:日期选择弹层-->
+<div class="js_pop pop-bg hidden selectDate">
+  <div class="pop-date">
+    <div class="title">
+      <a href="javascript:void(0);" class="concel closeSelectDate">取消</a>
+      <span>选择日期</span>
+      <a href="javascript:void(0);" class="sure closeSelectDate">确定</a>
+    </div>
+    <form class="js_searchForm" action="{AnUrl("screen_dm/stat")}" method="get">
+      <input type="hidden" class="js_timeStart" name="search_filter[start_date]" value="{$search_filter.start_date}">
+      <input type="hidden" class="js_endStart" name="search_filter[end_date]" value="{$search_filter.end_date}">
+      <div class="btns">
+        <label>
+          <input type="radio" {if $search_filter.date_type == 1}checked="checked"{/if} name="search_filter[date_type]" value="1"><span>今天</span></label>
+        <label>
+          <!-- <input type="radio" {if $search_filter.date_type == 2}checked="checked"{/if} name="search_filter[date_type]" value="2"><span>近7日</span></label> -->
+          <input type="radio" {if $search_filter.date_type == 4}checked="checked"{/if} name="search_filter[date_type]" value="4"><span>本月</span></label>
+        <label>
+          <input type="radio"  {if $search_filter.date_type == 3}checked="checked"{/if} name="search_filter[date_type]" value="3"><span>任一段时间</span></label>
+      </div>
+      <div class="date">
+        <div id="js_timeStart" class="item "><span>选择时间</span>
+          <input type="date">
+          <span class="js_timeStartSpan"></span>
+        </div>
+        <span class="txt">至</span>
+        <div id="js_timeEnd" class="item "><span>选择时间</span>
+          <input type="date">
+          <span class="js_timeEndSpan"></span>
+        </div>
+        <span class="btn-concel"></span>
+      </div>
+    </form>
+  </div>
+</div>
+<!--end:日期选择弹层-->
+<div class="tabs1-con">
+<!-- 暂时隐藏掉 -->
+<!--     <div class="count-nums">
+        <div class="item">
+            <div class="title">覆盖厅店(家)</div>
+            <div class="num">{$cover_business_hall_count}</div>
+        </div>
+        <div class="item">
+            <div class="title">安装设备(台)</div>
+            <div class="num">{$install_device_count}</div>
+        </div>
+        <div class="item">
+            <div class="title">活跃(台)</div>
+            <div class="num">{$active_device_count}</div>
+        </div>
+    </div> -->
+    <div class="count-reorder js_times">
+        <div class="item">
+                <span>
+                  {if $search_filter.date_type == 1}
+                    今日
+                  {else if $search_filter.date_type == 2}
+                    近七天
+                  {else if $search_filter.date_type == 4}
+                    本月
+                  {else}
+                    {$search_filter.start_date}至{$search_filter.end_date}
+                  {/if}
+                </span><em class="icon-arrow-down"></em>
+        </div>
+    </div>
+    <div class="line"></div>
+    <div class="count-map">
+        <div class="count-title">
+            <span>终端体验排行</span>
+            <a class="icon-arrow-right js_go_detail" href="{AnUrl("screen_dm/stat/detail{$search_filter_str}")}"></a>
+        </div>
+        <div class="count-swiper">
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                      <a class="js_go_detail" href="{AnUrl("screen_dm/stat/detail{$search_filter_str}")}">
+                        <div class="info"><em></em>平均体验时长(分钟)</div>
+                        <div class="box" id="echartBarExperienceTime"></div>
+                      </a>
+                    </div>
+                    <div class="swiper-slide">
+                      <a class="js_go_detail" href="{AnUrl("screen_dm/stat/detail{$search_filter_str}")}">
+                        <div class="info"><em></em>平均体验次数</div>
+                        <div class="box" id="echartBarActionNum"></div>
+                      </a>
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+    </div>
+    <div class="line"></div>
+    <div class="count-map">
+        <div class="count-title">
+            <span>终端上柜占比</span>
+            <a href="{AnUrl("screen_dm/stat/detail{$search_filter_str}&search_filter[data_type]=3")}" class="icon-arrow-right"></a>
+        </div>
+        <div class="count1-pic">
+            <div class="con" id="echartPie"></div>
+            <ul class="list">
+              {foreach $boutique_rate_echarts as $k => $v}
+                <li><em style="background-color: {$pie_color[$k]}"></em><span class="name">{$v.name}</span><span class="time"></span></li>
+              {/foreach}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+
+var defaultStartDate  = '{$search_filter.start_date}';
+var defaultEndDate    = '{$search_filter.end_date}';
+
+//设置时间默认值
+setDateValue();
+
+function setDateValue() {
+  if (defaultStartDate) {
+    $('#js_timeStart span').text(defaultStartDate);
+  }
+  
+  if (defaultEndDate) {
+    $('#js_timeEnd span').text(defaultEndDate);
+  }
+}
+
+$(function() {
+///////////////////////////////////////// 日期插件 /////////////////////////////////////////////////
+  
+  //时间范围
+  var startTime, endTime; 
+  
+  $('#js_timeStart input').change(function(e) {
+      startTime = e.target.value;
+      $('.js_timeStart').val(startTime);
+      $(this).siblings('span').css({ opacity: 0 })
+      $(this).css({ opacity: 1 })
+      //alert(startTime)
+  })
+
+  $('#js_timeEnd input').change(function(e) {
+      endTime = e.target.value
+      console.log(e)
+      $('.js_endStart').val(endTime);
+      $(this).siblings('span').css({ opacity: 0 })
+      $(this).css({ opacity: 1 })
+      setTimeout(function() {
+          if (startTime > endTime) alert("结束时间必须大于开始时间")
+      }, 300)
+  });
+  
+  //开启日期插件
+  $('.js_times').on('click', function () {
+    $('.js_pop').addClass('hidden');
+    $('.selectDate').removeClass('hidden');
+  });
+  
+//关闭日期插件
+  $('.closeSelectDate').on('click', function () {
+    $('.selectDate').addClass('hidden');
+    if ($(this).hasClass('sure')) {
+      $('.js_searchForm').submit();
+      //开启弹层
+      startPopLoading();
+    }
+  });
+  
+  //清除日期
+  $('.js_clearDate').on('click', function () {
+    $('#js_timeStart .js_timeStart').css({ opacity: 0 });
+    $('#js_timeStart input').css({ opacity:1 });
+    $('#js_timeEnd .js_timeEnd').css({ opacity: 0 });
+    $('#js_timeEnd input').css({ opacity:1 });
+  });
+////////////////////// a 链接点击事件 ////////////////////////
+ $('a').on('click', function () {
+   if ($(this).attr('href').indexOf('screen_dm/stat') != -1) {
+     //开启弹层
+     startPopLoading();
+   }
+ });
+
+////////////////////// 轮播滑动事件 ////////////////////////
+  var swiper = new Swiper('.swiper-container', {
+    onSlideChangeEnd: function(swiper){
+      var url = $('.js_go_detail').attr('href');
+      $('.js_go_detail').attr('href', SetUrlParam(url, 'search_filter[data_type]', swiper.activeIndex+1));
+    },
+    
+    pagination: '.swiper-pagination',
+    paginationClickable: true,
+  });
+});
+
+//开启加载中弹层方法
+function startPopLoading()
+{
+  $('#popLoading').removeClass('hidden');
+}
+
+//重组url
+function SetUrlParam ( url, name, value) {
+  urlArr = url.split('?');
+  
+  var urlArr1 = urlArr[1];
+  var urlArr2 = urlArr1.split('&');
+  
+  for (var i=0; i < urlArr2.length; i++) {
+    var urlArr3 = urlArr2[i].split('=');
+    if (urlArr3[0] == name) {
+      urlArr2[i] = '';
+    }
+  }
+  
+  var newUrl = urlArr[0] + '?';
+  for (var i=0; i < urlArr2.length; i++) {
+    if (i == 0) {
+      newUrl += urlArr2[i];
+    } else {
+      newUrl += '&' + urlArr2[i];
+    }
+  }
+  return newUrl += '&' + name + '=' + value;
+  
+}
+  
+  
+////////////////////// 图表 ////////////////////////
+  //体验时长图表
+  var experience_time_echarts   = {$experience_time_echarts};
+  var action_num_echarts        = {$action_num_echarts};
+  
+  function getBarOption(echartsData) {
+    return {
+      color: ['rgb(75, 131, 251)'],
+      tooltip : {
+          trigger: 'axis',
+          axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+              type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+          }
+      },
+      grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '5%',
+          top: '12%',
+          containLabel: true
+      },
+      xAxis : [
+          {
+              type : 'category',
+              data : echartsData.title,
+              axisTick: {
+                  show:false
+              },
+              axisLabel: {
+                fontSize: 8,
+                interval: 0,
+              },
+              axisLine: {
+                lineStyle: {
+                    color: 'rgb(200,200,200)',
+                    opacity: 1
+                }
+              }
+          }
+      ],
+      yAxis : [
+          {
+            type : 'value',
+            splitLine: {
+              lineStyle: {
+                  color: ['rgb(230,230,230)'],
+                  width: 1,
+                  type: 'dotted',
+              }
+            },
+            axisLine: {
+              show: false,
+            },
+            axisTick: {
+              show: false,
+            },
+            
+            axisLabel: {
+              color:'rgb(200,200,200)'
+            },
+          }
+      ],
+      series : [
+          {
+              type:'bar',
+              barWidth: '35%',
+              data: echartsData.data,
+              label: {
+                normal: {
+                    show: true,
+                    position: 'top',
+                }
+              }
+          }
+      ]
+    };
+  }
+  
+  //体验时长
+  //if (experience_time_echarts.length > 0) {
+    var ExperienceTimeEchartBar   = echarts.init(document.getElementById('echartBarExperienceTime'));
+    ExperienceTimeEchartBar.setOption(getBarOption(experience_time_echarts));
+  //}
+  
+  //if (action_num_echarts.length > 0) {
+    var BarActionNumEchartBar   = echarts.init(document.getElementById('echartBarActionNum'));
+    BarActionNumEchartBar.setOption(getBarOption(action_num_echarts));
+  //}
+  
+  var pie_data  = {$json_boutique_rate_echarts};
+  var pie_color = {$json_pie_color};
+  var value2    = [];
+  {literal}
+  $.each(pie_data, function (i, o) {
+    value2[i] = { 
+        value: o.value, 
+        label:{ 
+          normal:{ 
+            show:true,
+            position: 'inner',
+            formatter:'{c}%',  
+            color:pie_color[i],
+          } 
+        } 
+    };
+    o = { value:o.value, name:o.name,itemStyle:{ normal:{ color: pie_color[i] } } };
+    pie_data[i] = o;
+  });
+  
+  //终端上柜
+  option = {
+      series : [
+        {
+          type: 'pie',
+          radius : '65%',
+          data:value2,
+          legendHoverLink:false,
+          hoverAnimation:false,
+          label:{
+            normal: {
+              show: true,
+              fontSize:8,
+            },
+            
+          },
+          itemStyle: {
+            normal: {
+              color: 'rgb(244,247,255)',
+            }
+          }
+        },
+        {
+          type: 'pie',
+          radius : ['70%','90%'],
+          center: ['50%', '50%'],
+          data:pie_data,
+          label: {
+            normal: {
+              show: false,
+            },
+          },
+          itemStyle: {
+            normal: {
+              borderColor: '#fff',
+              borderWidth: 2,
+            },
+          }
+        }
+      ]
+    };
+  
+  var echartPie   = echarts.init(document.getElementById('echartPie'));
+  echartPie.setOption(option);
+  {/literal}
+</script>
+{include_www file="admin/lib/s_footer.html"}

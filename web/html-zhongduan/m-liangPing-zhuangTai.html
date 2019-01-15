@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <title>终端-亮屏统计-亮屏状态</title>
+    <link rel="stylesheet" type="text/css" href="../css/m-zhongduan.css">
+    <script>
+    var htmlElm = document.getElementsByTagName('html')[0];
+    htmlElm.style.opacity = '0';
+    ! function(a, b) {
+        function c() {
+            var c, b = f.getBoundingClientRect().width;
+            b / i > 540 && (b = 540 * i), c = b / 10, f.style.fontSize = c + "px", k.rem = a.rem = c
+        }
+        var d, l, m, n, o, p, q, r, s, t, e = a.document,
+            f = e.documentElement,
+            g = e.querySelector('meta[name="viewport"]'),
+            h = e.querySelector('meta[name="flexible"]'),
+            i = 0,
+            j = 0,
+            k = b.flexible || (b.flexible = {});
+        g ? (l = g.getAttribute("content").match(/initial\-scale=([\d\.]+)/), l && (j = parseFloat(l[1]), i = parseInt(1 / j))) : h && (m = h.getAttribute("content"), m && (n = m.match(/initial\-dpr=([\d\.]+)/), o = m.match(/maximum\-dpr=([\d\.]+)/), n && (i = parseFloat(n[1]), j = parseFloat((1 / i).toFixed(2))), o && (i = parseFloat(o[1]), j = parseFloat((1 / i).toFixed(2))))), i || j || (p = a.navigator.userAgent, !!p.match(/android/gi), q = !!p.match(/iphone/gi), r = q && !!p.match(/OS 9_3/), s = a.devicePixelRatio, i = q && !r ? s >= 3 && (!i || i >= 3) ? 3 : s >= 2 && (!i || i >= 2) ? 2 : 1 : 1, j = 1 / i), f.setAttribute("data-dpr", i), g || (g = e.createElement("meta"), g.setAttribute("name", "viewport"), g.setAttribute("content", "initial-scale=" + j + ", maximum-scale=" + j + ", minimum-scale=" + j + ", user-scalable=no"), f.firstElementChild ? f.firstElementChild.appendChild(g) : (t = e.createElement("div"), t.appendChild(g), e.write(t.innerHTML))), a.addEventListener("resize", function() {
+            clearTimeout(d), d = setTimeout(c, 300)
+        }, !1), a.addEventListener("pageshow", function(a) {
+            a.persisted && (clearTimeout(d), d = setTimeout(c, 300))
+        }, !1), "complete" === e.readyState ? e.body.style.fontSize = 12 * i + "px" : e.addEventListener("DOMContentLoaded", function() {
+            e.body.style.fontSize = 12 * i + "px"
+        }, !1), c(), k.dpr = a.dpr = i, k.refreshRem = c, k.rem2px = function(a) {
+            var b = parseFloat(a) * this.rem;
+            return "string" == typeof a && a.match(/rem$/) && (b += "px"), b
+        }, k.px2rem = function(a) {
+            var b = parseFloat(a) / this.rem;
+            return "string" == typeof a && a.match(/px$/) && (b += "rem"), b
+        }
+    }(window, window.lib || (window.lib = {}));
+    window.onload = function() {
+        htmlElm.style.opacity = '1';
+    }
+    </script>
+</head>
+
+<body>
+    <div class="wrap">
+        <header class="header">
+            <a href="javascript:void(0);" class="btn-back"><i class="icon-arrow-left"></i>首页</a>
+            <h1>终端</h1>
+        </header>
+        <section class="container">
+            <div class="tabs2">
+                <a href="javascript:void(0);" class="active"><span>亮屏状态</span></a>
+                <a href="m-liangPing-touFang.html"><span>内容投放</span></a>
+                <a href="m-liangPing-fenXi.html"><span>统计分析</span></a>
+            </div>
+            <!--start:排行筛选弹层-->
+            <div class="pop-reorder hidden">
+                <ul>
+                    <li>
+                        <label>
+                            <input type="radio" checked="" name="reorder"><span>今日离线量</span></label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="radio" name="reorder"><span>近三日活跃量</span></label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="radio" name="reorder"><span>累计安装量</span></label>
+                    </li>
+                </ul>
+            </div>
+            <!--end:排行筛选弹层-->
+            <div class="tabs1-con">
+                <div class="status-reorder">
+                    <div class="title">
+                        <span>今日离线量</span><i class="icon-arrow-down"></i>
+                    </div>
+                    <div class="count"><span class="red">7台</span> / <span>15台</span></div>
+                    <a href="###" class="btn-ask"><img src="../images/m-zhongduan/icon-ask.png" />离线怎么办</a>
+                </div>
+                <div class="line"></div>
+                <div class="rank-list">
+                    <ul>
+                        <li>
+                            <div class="infos">
+                                <p>机型<span>华为 P10</span></p>
+                                <p>IMEI<span>986554544</span></p>
+                                <p>安装时间<span>2017-11-24</span></p>
+                            </div>
+                            <!--start:添加“下柜”按钮-->
+                            <div class="status">
+                                <p class="gray">连续离线3天</p>
+                                <a href="javascript:void(0);" class="btn-down">下柜</a>
+                            </div>
+                            <!--end:添加“下柜”按钮-->
+                            <span class="status-new">new</span>
+                        </li>
+                        <li>
+                            <div class="infos">
+                                <p>机型<span>华为 P10</span></p>
+                                <p>IMEI<span>986554544</span></p>
+                                <p>安装时间<span>2017-11-24</span></p>
+                            </div>
+                            <div class="status">
+                                <p class="gray">连续离线3天</p>
+                            </div>
+                            <span class="status-new">new</span>
+                        </li>
+                        <li>
+                            <div class="infos">
+                                <p>机型<span>华为 P10</span></p>
+                                <p>IMEI<span>986554544</span></p>
+                                <p>安装时间<span>2017-11-24</span></p>
+                            </div>
+                            <div class="status">
+                                <p class="red">连续离线3天</p>
+                            </div>
+                            <span class="status-new">new</span>
+                        </li>
+                        <li>
+                            <div class="infos">
+                                <p>机型<span>华为 P10</span></p>
+                                <p>IMEI<span>986554544</span></p>
+                                <p>安装时间<span>2017-11-24</span></p>
+                            </div>
+                            <div class="status">
+                                <p class="red">连续离线3天</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="infos">
+                                <p>机型<span>华为 P10</span></p>
+                                <p>IMEI<span>986554544</span></p>
+                                <p>安装时间<span>2017-11-24</span></p>
+                            </div>
+                            <div class="status">
+                                <p class="red">连续离线3天</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="infos">
+                                <p>机型<span>华为 P10</span></p>
+                                <p>IMEI<span>986554544</span></p>
+                                <p>安装时间<span>2017-11-24</span></p>
+                            </div>
+                            <div class="status">
+                                <p class="red">连续离线3天</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <footer class="footer">
+            <ul class="nav">
+                <li>
+                    <a href="m-rank-index.html"><span class="icon icon-rank"></span><span class="name">体验排行</span></a>
+                </li>
+                <li class="active">
+                    <a href="###"><span class="icon icon-liangping"></span><span class="name">亮屏统计</span></a>
+                </li>
+                <li>
+                    <a href="###"><span class="icon icon-tag"></span><span class="name">电子价签</span></a>
+                </li>
+            </ul>
+        </footer>
+    </div>
+    <script type="text/javascript" src="../js/jquery-2.1.1.min.js"></script>
+    <script>
+    $(function() {
+        //时间范围
+        var startTime, endTime;
+        $('#js_timeStart input').change(function(e) {
+            startTime = e.target.value
+            $(this).siblings('span').css({ opacity: 0 })
+            $(this).css({ opacity: 1 })
+            //alert(startTime)
+        })
+
+        $('#js_timeEnd input').change(function(e) {
+            endTime = e.target.value
+            console.log(e)
+            $(this).siblings('span').css({ opacity: 0 })
+            $(this).css({ opacity: 1 })
+            setTimeout(function() {
+                if (startTime > endTime) alert("结束时间必须大于开始时间")
+            }, 300)
+        })
+    })
+    $(function(){
+        //判断是否微信登陆
+        function isWeiXin() {
+            var ua = window.navigator.userAgent.toLowerCase();
+            console.log(ua); //mozilla/5.0 (iphone; cpu iphone os 9_1 like mac os x) applewebkit/601.1.46 (khtml, like gecko)version/9.0 mobile/13b143 safari/601.1
+            if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        if (isWeiXin()) {
+            console.log(" 是来自微信内置浏览器")
+            $('.header').addClass('hidden');
+            $('.pop-reorder').css({ top:'1.146rem' });
+        } else {
+            console.log("不是来自微信内置浏览器")
+        }
+    })
+    </script>
+</body>
+
+</html>

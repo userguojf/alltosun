@@ -1,0 +1,84 @@
+{include_www file="admin/lib/header_new.html" title="内容列表"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<style>
+    .pop-bg p .w_url{
+	   word-wrap: break-word;
+    }
+    .btn_msg{
+       cursor:pointer;
+    }
+    .btn_msg:hover{
+        color:#23527c;
+    }
+</style>
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen_content/admin')}"><i class="iconfont iconfont-logo2"></i>亮屏管理</a>
+            &gt;
+            <span>内容分析</span>
+          </div>
+          <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th width='8%'>标题</th>
+                  <th width='5%'>内容</th>
+                  <th width='5%'>类型</th>
+                  <th width='8%'>上线时间</th>
+                  <th width='8%'>下线时间</th>
+                  <th width='10%'>投放总览</th>
+                  <th width='5%'>已轮播<br>(设备数)</th>
+                  <th width='5%'>应轮播<br>(设备数)</th>
+                  <th width='5%'>未轮播<br>(设备数)</th>
+                </tr>
+              </thead>
+              <br />
+              <tbody>
+                {foreach $content_list as $k=>$v}
+                <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                  <td>{$v.title}</td>
+                  <td>
+                    {screen_content_helper::get_content_html_by_type($v)}
+                  </td>
+                  <td>{screen_content_config::$content_type[$v.type]}</td>
+                  <td class='btn_start'>{substr($v.start_time, 0, 10)}</td>
+                  <td class='btn_end'>{substr($v.end_time, 0, 10)}</td>
+                  <td >
+                    {foreach $v.region_put as $kk => $vv}
+                      {$count = count(array_unique($vv))}
+                      {if $kk == 'group'}
+                        投放全国{$count}条<br>
+                      {else if $kk == 'province'}
+                        投放省{$count}个<br>
+                      {else if $kk == 'city'}
+                        投放城市{$count}个<br>
+                      {else if $kk == 'area'}
+                        投放区县{$count}个<br>
+                      {else if $kk == 'business_hall'}
+                        发布营业厅{$count}个<br>
+                      {/if}
+                    {foreachelse}
+                      暂未投放
+                    {/foreach}
+                  </td>
+                  <td><a style="color:green;" href="{AnUrl("screen_content/admin/content_analysis/device_roll?type=1&content_id={$v.id}")}">{$v.roll_device_num}</a></td>
+                  <td><a style="color:green;" href="{AnUrl("screen_content/admin/content_analysis/device_roll?type=3&content_id={$v.id}")}">{$v.all_roll_device_num}</a></td>
+                  <td><a style="color:green;" href="{AnUrl("screen_content/admin/content_analysis/device_roll?type=2&content_id={$v.id}")}">{$v.not_roll_device_num}</a></td>
+                </tr>
+                {foreachelse}
+                  <tr><td callspan='9'>暂无数据</td></tr>
+                {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        <!--end:列表-->
+<!-- 主内容 end -->
+      </div>
+
+{include_www file="admin/lib/pop.html"}
+{include_www file="admin/lib/footer_new.html"}

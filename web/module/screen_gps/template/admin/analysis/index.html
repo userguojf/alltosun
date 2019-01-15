@@ -1,0 +1,87 @@
+{include_www file="admin/lib/header_new.html" title="亮屏管理"}
+<script type="text/javascript" src="http://api.map.baidu.com/api?ak=188b7db0b3c2f79359e05e64d87b222e&v=2.0"></script>
+<style type="text/css">
+  .map { 
+    width: 300px;
+    height: 150px;
+    overflow: hidden;
+    margin:0;
+    font-family:"微软雅黑"; 
+  }
+</style>
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('screen_gps/admin/analysis')}"><i class="iconfont iconfont-logo2"></i>营业厅坐标分析</a>
+      &gt;
+      <span>营业厅坐标分析（合计：{if $count}{$count}{else}0{/if}/条）</span>
+    </div>
+    <br />
+
+    <div class="form-search clearfix">
+      <div class="pull-left">
+        <form action="{AnUrl('screen_gps/admin/analysis')}" id="subForm" method='get'>
+          {if $member_res_name != 'business_hall'}
+            {* 公共分权限搜索模块 *}
+            {widget model='screen' func='get_search_by_member' file='get_search_by_member.html' member_info="{$member_info}"}
+          {/if}
+          <button type="submit" class="btn-search pull-left" id="searchData" data-url="{AnUrl('screen_gps/admin/analysis')}" >搜索</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th width="5%">省</th>
+            <th width="5%">市</th>
+            <th width="5%">区</th>
+            <th width="10%">营业厅</th>
+            <th width="8%">经度</th>
+            <th width="8%">纬度</th>
+            <th width="15%">地图</th>
+            <th width="8%">查看上报</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $coords as $k=>$v}
+          <tr id="dataList{$k}">
+            <td>{_uri('province', $v.province_id, 'name')}</td>
+            <td>{_uri('city', $v.city_id, 'name')}</td>
+            <td>{_uri('area', $v.area_id, 'name')}</td>
+            <td>{_uri('business_hall', $v.business_id, 'title')}</td>
+            <td>{$v.lng}</td>
+            <td>{$v.lat}</td>
+            <td><div class="map" id="map{$k}" dataId="{$k}" lng="{$v.lng}" lat="{$v.lat}"></div></td>
+            <td>
+              <a href="{AnUrl("screen_gps/admin/analysis/coord_detail?business_id={$v.business_id}")}" class="label label-info">查看上报</a>
+            </td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="6">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+<script type="text/javascript">
+  $('.map').each(function () {
+    var lng = $(this).attr('lng');
+    var lat = $(this).attr('lat');
+    var map = new BMap.Map("map" + $(this).attr('dataId'));
+    var point = new BMap.Point(lng, lat);
+    map.centerAndZoom(point, 18);
+    var marker = new BMap.Marker(point);  // 创建标注
+    map.addOverlay(marker);               // 将标注添加到地图中
+    //marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+  });
+</script>
+{include_www file="admin/lib/footer_new.html"}

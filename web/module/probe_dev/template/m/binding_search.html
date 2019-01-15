@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+ 
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <title>设备绑定</title>
+     <link rel="stylesheet" type="text/css" href="{$smarty.const.STATIC_URL}/css/m-bang.css">
+      <link href="http://201512awifiprobe.alltosun.net/js/jqueryui/1.8.11/themes/base/jquery-ui.css"/>
+</head>
+
+<body>
+      <input type="hidden" name="title"  class="selectId"> 
+    <div class="bang-wrap">
+        <div class="search-wrap">
+            <div class="box">
+                <span class="text">
+                    <i class="icon-search"></i>
+                    <input type="text" name="" class="selectBusiness">
+                    <i class="icon-delete"></i>
+                </span>
+                <button type="button" class="back_btn">取消</button>
+            </div>
+            <ul class="list">
+                <li>
+                    <i class="icon-checkbox"></i>
+                    <div class="con">
+                        <div class="name selectBusinessId" ><span class="selected "></span></div>
+                         <input type="hidden" name="" value="" autocomplete="off" class="">
+                        <div class="num"></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/jqueryui/1.8.11/jquery-ui.js"></script>
+<script>
+$('.selectBusiness').autocomplete({ 
+    // 静态的数据源，根据label属性进行显示或模糊匹配，当给输入框设置value属性值
+    source: "/probe_dev/m/ajax/get_info_by_title",
+    
+    //选择
+    select: function(event, ui){
+      
+      $('.selectBusinessId').html(ui.item.label);
+      $('.num').text(ui.item.user_number);
+      //隐藏域
+      //$('.selectBusinessId').val(ui.item.id);
+      //$('.selectBusinessId').text(ui.item.id);
+      // 必须阻止事件的默认行为，否则autocomplete默认会把ui.item.value设为输入框的value值
+      event.preventDefault();
+      
+    }
+  })
+  
+  $('.selectBusinessId').click(function(){
+	  var title=$(this).html();
+	  var user_number=$('.num').text();
+      window.location.replace("{$smarty.const.STATIC_URL}/probe_dev/m/binding/{$mac}?title="+title+"&user_number="+user_number+"&flag="+1);
+
+
+  });
+  
+  $('.back_btn').click(function(){
+	  window.history.back(-1);
+  });
+</script>
+</html>

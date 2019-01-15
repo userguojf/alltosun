@@ -1,0 +1,48 @@
+{*an_dump($message_list)*}
+<div class="main2 right">
+    <div class="main2-top clearfix">
+      <div class="main2-tab1 left">
+        <a href="{AnUrl("message")}"><em class="icon-msg2"></em>我的私信</a><span class="gray">（共{$message_count}条私信）</span>
+      </div>
+      <div class="header-search right">
+        <a href="javascript:void(0);" class="btn-add1 right js_createPrivateMessage">发私信</a>
+      </div>
+    </div>
+    <div class="private-list1">
+    {if $message_list}
+      <ul>
+      {foreach $message_list as $k => $v}
+        <li class="{if $v.is_read == 0}before{/if} clearfix" data-message-id="{$v.message_id}">
+          <a href="{AnUrl("message/{$v.message_id}")}" class="icon-msg3 left"></a>
+          <div class="avatar left"><a href="javascript:void(0);"><img src="{user_helper::avatar($v.with_user_id)}"></a></div>
+          <div class="private-list1-con left">
+            <div class="name"><a href="{AnUrl("message/{$v.message_id}")}">
+            {*用户名*}
+            {if $v.with_user_id}
+              {user_helper::display_name($v.with_user_id, 'real_name')}
+            {else if is_array($v.user_ids)}
+              {foreach $v.user_ids as $k2 => $v2}
+                {if $v2 == user_helper::get_user_id()}
+                    {continue}
+                {/if}
+                {user_helper::display_name($v2, 'real_name')}、
+              {/foreach}
+            {/if}
+            </a><span class="date">{time_format($v.add_time, 'Y-m-d H:i')}</span></div>
+            <div class="txt">{strip_html($v.content, 40, '...')}</div>
+          </div>
+          <a href="javascript:void(0);" class="icon-del2 right js_delMsg" title="删除"></a>
+        </li>
+      {/foreach}
+      </ul>
+      {else}
+        <div class="none-tips">
+           <em class="icon-tips"></em>
+                                  还没有消息~
+         </div>
+      {/if}
+    </div>
+    <!--start:分页-->
+    {include_core file="lib/page.html"}
+    <!--end:分页-->
+</div>

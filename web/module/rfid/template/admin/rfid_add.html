@@ -1,0 +1,338 @@
+{include_www file="admin/lib/header_new.html" title="RFID管理"}
+<!--start:右侧-->
+<div class="main mian2 ">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('rfid/admin')}"><i class="iconfont iconfont-logo2"></i>RFID管理</a>
+      &gt;
+      <span>RFID添加</span>
+    </div>
+
+    <div class="clearfix">
+      <div class="form-add pull-left" style="width:80%;">
+        {AnForm class='form-horizontal' action="{AnUrl('rfid/admin/save')}" method="post" enctype="multipart/form-data"}
+         <input type="hidden"  name="id"  value="{$id}">
+        <div class="form-group" {if $member_info.ranks > 1}style="display:none;" {/if}>
+          <label class="col-sm-3 control-label">省</label>
+           <div class="col-sm-6">
+           <select class="form-control" id='province' name="rfid[province_id]" >
+                   <option value="0">请选择省</option>
+                   {$info = business_hall_helper::get_info('province','')}
+                  {foreach  $info as $k=>$v}
+                    <option value="{$v.id}" {if $province_id == $v.id}selected = "selected"{/if} >{$v['name']}</option>
+                  {/foreach}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" {if $member_info.ranks > 2}style="display:none;" {/if}">
+          <label class="col-sm-3 control-label">市</label>
+           <div class="col-sm-6">
+          <select  class="form-control" id="city" name="rfid[city_id]" >
+          <option selected='selected' value='0'>请选择市</option>
+                   {if $rfid_info.id || $member_info.res_name == 'province'}
+                     {$pro_info= business_hall_helper::get_info('city' ,$province_arr)}
+                     {foreach $pro_info as  $k=>$v}
+                       <option {if $city_id == $v.id} selected = "selected" {/if}  value="{$v.id}"> {$v.name} </option>
+                     {/foreach}
+                   {/if}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" {if $member_info.ranks > 3}style="display:none;" {/if}">
+          <label class="col-sm-3 control-label">地区</label>
+           <div class="col-sm-6">
+           
+          <select class="form-control" id="area" name="rfid[area_id]" >
+          <option selected='selected' value='0'>请选择地区</option>
+             {if $rfid_info.id || $member_info.res_name == 'city'}
+               {$city_info= business_hall_helper::get_info('area' ,$city_arr)}
+               {foreach $city_info as $k=>$v}
+                 <option {if $area_id == $v.id} selected = "selected"{/if}  value="{$v.id}">{$v.name}</option>
+               {/foreach}
+             {/if}
+          </select>
+          </div>
+        </div>
+
+        <div class="form-group" {if $member_info.ranks > 4}style="display:none;" {/if}">
+          <label class="col-sm-3 control-label">选择厅店</label>
+           <div class="col-sm-6">
+          <select class="form-control" id="business" name="rfid_info[business_hall_id]" >
+          <option selected='selected' value='0'>请选择厅店</option>
+             {if $rfid_info.id}
+	             {$business_hall_info = rfid_helper::get_business_title($province_id ,$city_id , $area_id)}
+	             {foreach $business_hall_info as $k=>$v}
+	                 <option {if $rfid_info.business_hall_id == $v.id} selected = "selected" {/if} value="{$v.id}">{$v.title}</option>
+	             {/foreach}
+             {/if}
+          </select>
+          </div>
+        </div>
+
+       <div class="form-group" >
+          <label class="col-sm-3 control-label">选择探针</label>
+           <div class="col-sm-6">
+          <select class="form-control" id="probe" name="rfid_info[device]" >
+          <option selected='selected' value='0'>请选择探针（可选项）</option>
+             {if $rfid_info.id}
+	             {$probe_info = probe_helper::rfid_get_devs($rfid_info.business_hall_id)}
+	             {foreach $probe_info as $k=>$v}
+	                 <option {if $rfid_info.device == $v} selected = "selected" {/if} value="{$v}">{$v}</option>
+	             {foreachelse}
+	                 <option selected='selected' value="">该营业厅没有探针设备</option>
+	             {/foreach}
+             {/if}
+          </select>
+          </div>
+        </div>
+
+       <div class="form-group ">
+          <label class="col-sm-3 control-label">柜台</label>
+           <div class="col-sm-6">
+          <select  class="form-control"  id="shoppe" name="rfid_info[shoppe_id]" >
+          <option selected='selected' value='0'>请选择柜台</option>
+	             {$shoppe_info = rfid_helper::get_shoppe_info($rfid_info.business_hall_id)}
+	             {var_dump($shoppe_info)}
+	             {foreach $shoppe_info as $k => $v}
+	                 <option {if $rfid_info.shoppe_id == $v.id} selected = "selected" {/if} value="{$v.id}">{$v.shoppe_name}</option>
+	             {foreachelse}
+	                 <option selected='selected' value="">该营业厅还未添加柜台</option>
+	             {/foreach}
+            </select>
+          </div>
+        </div>
+
+          <div class="form-group alone_add">
+              <label class="col-sm-3 control-label coupon-num">标签ID</label>
+              <div class="col-sm-6">
+                  <input type="text"  name="rfid_info[label_id]"  value="{$rfid_info.label_id}" {if $rfid_info.id}readonly="true"{/if} class="form-control" placeholder="请输入标签ID">
+                  {if $rfid_info}
+                  <p class="tips">友情提示：标签ID不可修改</p>
+                  {/if}
+              </div>
+          </div>
+
+       <div class="form-group ">
+          <label class="col-sm-3 control-label">手机品牌</label>
+           <div class="col-sm-6">
+          <select  class="form-control" id="phone_name" name="rfid_info[name]]" >
+          <option selected='selected' value='0'>请选择手机品牌</option>
+                     {$name_info= rfid_helper::get_phone_field_info('name', '' , '')}
+                     {foreach $name_info as  $k=>$v}
+                       <option {if $rfid_info.name == $v}  selected = "selected"; {/if}   value="{$v}"> {$v} </option>
+                     {/foreach}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group ">
+          <label class="col-sm-3 control-label">型号</label>
+           <div class="col-sm-6">
+          <select  class="form-control" id="phone_version" name="rfid_info[version]" >
+          <option selected='selected' value='0'>请选择型号</option>
+                   {if $rfid_info.id}
+                   {$version_info = rfid_helper::get_phone_field_info('version' , $rfid_info.name , '')}
+                     {foreach $version_info as  $k=>$v}
+                       <option {if $rfid_info.version == $v} selected = "selected" {/if}  value="{$v}"> {$v} </option>
+                     {/foreach}
+                   {/if}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group ">
+          <label class="col-sm-3 control-label">颜色</label>
+           <div class="col-sm-6">
+          <select class="form-control" id="phone_color" name="rfid_info[color]" >
+          <option selected='selected' value='0'>请选择颜色</option>
+             {if $rfid_info.id}
+               {$color_info= rfid_helper::get_phone_field_info('color' , $rfid_info.name  ,  $rfid_info.version)}
+               
+               {foreach $color_info as $k=>$v}
+                 <option {if $rfid_info.color == $v}selected = "selected"{/if}  value="{$v}">{$v}</option>
+               {/foreach}
+             {/if}
+          </select>
+          </div>
+        </div>
+
+          <div class="form-group alone_add">
+              <label class="col-sm-3 control-label coupon-num">IMIEI末六位</label>
+              <div class="col-sm-6">
+                  <input type="number"  name="rfid_info[imei]"  value="{$rfid_info.imei}" class="form-control" placeholder="请输入IMIEI末六位">
+                  <p class="tips">注：IMEI(缩写)是国际移动设备身份码，由15位数字组成。请您输入末6位数字</p>
+              </div>
+          </div>
+
+          <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-10">
+              <button type="submit" class="btn btn-sm btn-success" id="btn"><span style='display: inline-block;width: 95px;' class='Sub'>保存</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+              <a type="button" class="btn btn-sm btn-warning" href="{AnUrl('rfid/admin')}">&nbsp;&nbsp;返回&nbsp;&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;
+            </div> 
+          </div> 
+        {AnForm}
+      </div>
+
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+var province_id   ='';
+var city_id       = '';
+var area_id       = '';
+var business_id   ='';
+var phone_name    = '';
+var phone_version = '';
+
+$('#province').change(function(){
+    province_id =  $(this).val(); 
+    console.log(province_id);
+
+    $.post( siteUrl + '/api/ajax/get_city_name' , { province_id:province_id } ,function(json){
+        if (json.msg == 'ok') {
+            var html    = "<option value='0'>请选择所属市</option>";
+            var jsonnum = eval(json.city_info);
+
+            for(var i=0; i< jsonnum.length; i++){
+                html += "<option value= '"+jsonnum[i].id+"'>"+jsonnum[i].name+"</option>";
+             }
+        
+             $('#city').html('').append(html);
+             $('#city').trigger('change');
+        }
+    },'json')
+})
+
+$('#city').change(function(){
+	province_id =  $('#province').val();
+    city_id =  $(this).val();
+    console.log(province_id);
+    console.log(city_id);
+
+    $.post( siteUrl + '/api/ajax/get_area_name' , { city_id:city_id } ,function(json){
+
+        if (json.msg=='ok') {
+            var html    = "<option value='0'>请选择所属地区</option>";
+            var jsonnum = eval(json.area_info);
+
+            for(var i=0; i< jsonnum.length; i++){
+               html += "<option value= '"+jsonnum[i].id+"'>"+jsonnum[i].name+"</option>";
+               }
+
+            $('#area').html('').append(html);
+            $('#area').trigger('change');
+        }else {
+            var html = "<option  value='0'>请选择所属地区</option>";
+            $('#area').html('').append(html);
+            $('#area').trigger('change');
+        }
+   },'json')
+})
+
+$('#area').change(function(){
+	province_id =  $('#province').val();
+    city_id     =  $('#city').val();
+    area_id     =  $(this).val();
+
+    $.post( siteUrl + '/rfid/admin/ajax/get_business_title', { area_id:area_id  } ,function(json){
+
+        if (json.msg == 'ok') {
+            var html    = "<option value='0'>请选择营业厅</option>";
+            var jsonnum = eval(json.business_hall_info);
+
+            for(var i=0; i< jsonnum.length; i++){
+               html += "<option value= '"+jsonnum[i].id+"'>"+jsonnum[i].title+"</option>";
+            }
+
+            $('#business').html('').append(html);
+        }/* else if (json.msg == 'unactivity'){
+         var html = "<option  value='0'>无在线营业厅</option>";
+         $('#business').html('').append(html);
+       } */else {
+            var html = "<option selected='selected' value='0'>请选择营业厅</option>";
+            $('#business').html('').append(html);
+        }
+
+    },'json')
+})
+$('#business').change(function(){
+	business_id =  $(this).val();
+    $.post( siteUrl + '/rfid/admin/ajax/get_probe_device', { business_id : business_id } ,function(json){
+
+        if (json.probe_msg == 'ok') {
+            var html    = "<option value='0'>请选择探针（可选项）</option>";
+            var jsonnum = eval(json.probe_info);
+
+            for(var i=0; i< jsonnum.length; i++){
+               html += "<option value= '"+jsonnum[i]+"'>"+jsonnum[i]+"</option>";
+            }
+
+            $('#probe').html('').append(html);
+        } else {
+            var html = "<option selected='selected' value='0'>该营业厅暂无探针设备</option>";
+            $('#probe').html('').append(html);
+        }
+
+        if (json.shoppe_msg == 'ok') {
+            var html    = "<option value='0'>请选柜台</option>";
+            var jsonnum = eval(json.shoppe_info);
+
+            for(var i=0; i< jsonnum.length; i++){
+               html += "<option value= '"+jsonnum[i].id+"'>"+jsonnum[i].shoppe_name+"</option>";
+            }
+
+            $('#shoppe').html('').append(html);
+        } else {
+            var html = "<option selected='selected' value='0'>该营业厅未添加柜台</option>";
+            $('#shoppe').html('').append(html);
+        }
+
+    },'json')
+})
+
+
+
+$('#phone_name').change(function(){
+    phone_name =  $(this).val(); 
+
+    $.post( siteUrl + '/rfid/admin/ajax/get_phone_version' , { phone_name:phone_name } ,function(json){
+        if (json.msg == 'ok') {
+            var html    = "<option value='0'>请选择型号</option>";
+            var jsonnum = eval(json.version_info);
+
+            for(var i = 0; i < jsonnum.length; i ++){
+                html += "<option value= '"+jsonnum[i]+"'>"+jsonnum[i]+"</option>";
+            }
+
+            $('#phone_version').html('').append(html);
+            $('#phone_version').trigger('change');
+        }
+    },'json')
+})
+
+$('#phone_version').change(function(){
+    phone_version =  $(this).val();
+    phone_name    =  $('#phone_name').val();
+
+    $.post( siteUrl + '/rfid/admin/ajax/get_phone_color' , { phone_name:phone_name,phone_version:phone_version } ,function(json){
+
+        if (json.msg=='ok') {
+            var html    = "<option value='0'>请选择颜色</option>";
+            var jsonnum = eval(json.color_info);
+
+            for(var i=0; i< jsonnum.length; i++){
+               html += "<option value= '"+jsonnum[i]+"'>"+jsonnum[i]+"</option>";
+            }
+
+            $('#phone_color').html('').append(html);
+        }else {
+            var html = "<option  value='0'>请选择颜色</option>";
+            $('#phone_color').html('').append(html);
+        }
+   },'json')
+})
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

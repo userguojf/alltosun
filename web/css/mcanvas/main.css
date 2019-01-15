@@ -1,0 +1,180 @@
+/* reset */
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, legend, input, button, textarea, p, blockquote, th, td ,header, section, aside, nav, menu, hgroup, audio, video, figure, figcaption, footer, article{ margin:0; padding:0; }
+table { border-collapse:collapse; border-spacing:0; }
+em { font-style:normal; }
+fieldset, img { border:0; vertical-align: middle;}
+li { list-style:none; }
+caption, th { text-align:left; }
+h1, h2, h3, h4, h5, h6 { font-size:100%;}
+body,input, button, textarea, select {*font-size:100%;outline:none; -webkit-appearance:none; }
+textarea { resize: none; outline:none; }
+i,cite{font-style:normal;}
+a {text-decoration:none; }
+a:focus{outline: none;}
+html{font-size:20px;}
+html,body{-webkit-touch-callout:none;height:100%;}
+.clearfix {  zoom:1; }
+.clearfix:after { content:""; display:block;clear:both;height: 0;visibility: hidden;}
+.hide{display:none} .fr{float:right} .fl{float:left;}.block{display: block;}
+.bold{font-weight: bold;} .center{position:absolute;left: 50%;top: 50%;transform:translate(-50%,-50%);} .auto{margin-left:auto;margin-right:auto}
+
+@media only screen and (max-width: 360px) and (min-width: 321px){
+html{font-size: 22.5px}
+}
+@media only screen and (max-width: 375px) and (min-width: 361px){
+html{font-size: 23.4px}
+}
+@media only screen and (max-width: 390px) and (min-width: 376px){
+html{font-size: 24px;}
+}
+@media only screen and (max-width: 416px) and (min-width: 391px){/*iphone6 plus*/
+html{font-size: 25.9px;}
+}
+
+/**/
+body{font:normal 18px/1.5 'helvetica neue','hiragino sans gb','Microsoft YaHei',arial,tahoma,sans-serif;background-color: #fff;}
+a {
+-webkit-touch-callout: none;
+-webkit-user-select: none;
+-moz-user-select: moz-none;
+-ms-user-select: none;
+user-select: none;
+}
+a,button,input,textarea{-webkit-tap-highlight-color:rgba(255,0,0,0);}
+
+*{
+    padding: 0;
+    margin: 0;
+}
+html,body{
+    width: 100%;
+    /*height: 100%;*/
+    overflow-x: hidden;
+    text-align: center;
+}
+
+.top{
+    display: inline-block;
+    border: 2px solid #FF9999;
+    width: 70%;
+    max-width: 400px;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.origin{
+    width: 100%;
+}
+.result{
+    width:100%;
+}
+
+.addBtn{
+    display: inline-block;
+    width: 90%;
+    margin: 15px 0;
+}
+
+.Button{
+    text-align: center;
+    display: inline-block;
+    width: 90px;
+    height: 35px;
+    background: #996699;
+    color: white;
+    font-size: 14px;
+    line-height: 35px;
+    border-radius: 20px;
+    margin: 10px 3px;
+}
+
+.Button.clear{
+    width: 150px;
+    border-radius: 50px;
+}
+
+.Button.taped{
+    background: #CC99CC;
+}
+.title{
+    text-align: center;
+    color: #996699;
+    font-size: 40px;
+    line-height: 60px;
+    margin-bottom: 10px;
+}
+.sub-title{
+    text-align: center;
+    color: #996699;
+    font-size: 20px;
+    line-height: 30px;
+    margin-bottom: 10px;
+    padding: 0 20px;
+}
+
+.dialog{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    text-align: left;
+    display: none;
+}
+.dialog h3{
+    color:#996699;
+    text-align: left;
+}
+.dialog>.window{
+    display: inline-block;
+    position: absolute;
+    padding: 20px 30px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%,-50%);
+    background: white;
+    max-width: 400px;
+    text-align: center;
+    width: 70%;
+}
+.window>.Button{
+    width: 45%;
+    min-width: 40px;
+}
+.params{
+    text-align: left;
+    margin: 20px 0;
+}
+.params>li{
+    position: relative;
+    white-space: nowrap;
+}
+.params .input{
+    position: absolute;
+    border: 2px solid #eee;
+    top: 5px;
+    right: 60px;
+    width: 100px;
+    height: 70%;
+    box-sizing: border-box;
+    padding: 5px;
+}
+
+.params .select{
+    position: absolute;
+    top: 5px;
+    right: 60px;
+    width: 100px;
+    height: 70%;
+    border-radius: 0;
+    padding-left: 5px;
+    box-sizing: border-box;
+    background: white;
+    border: 2px solid #eee;
+}
+
+.params .input.focus{
+    border: 2px solid #FF9999;
+}

@@ -1,0 +1,52 @@
+<!-- 使用说明 -->
+{*include_www file="lib/ueditor.html" name="hospital[intro]" content="{$info.intro}"*}
+<script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/ueditor1_2_6_1-src/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/ueditor1_2_6_1-src/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/ueditor1_2_6_1-src/ueditor/ueditor.at.js"></script>
+<link rel="stylesheet" href="{$smarty.const.STATIC_URL}/js/ueditor1_2_6_1-src/themes/default/ueditor.css"/>
+
+          <div id="editor" class="wrap-textarea left">
+          <div style="display:none" id="hospitalIntro">{$content}</div>
+                     <script>
+                      var editorOption = {
+                            //这里可以选择自己需要的工具按钮名称,此处仅选择如下2个 分别代表上传图片和表情
+                            toolbars:[[
+                                       'source', 'insertvideo', 'link',
+                                       'undo'  , 'bold'       , 'italic'    , 'underline', 'strikethrough',
+                                       'forecolor', 'fontfamily', 'fontsize', 'justifyleft', 'justifycenter',
+                                       'justifyright', 'justifyjustify', 'touppercase', 'tolowercase', 'link', 
+                                        'inserttable', 'deletetable', 'insertrow', 'removeformat', 'pasteplain',
+                                       'insertcol', 'insertparagraphbeforetable', 'deleterow', 'deletecol', 
+                                       'mergeright', 'mergedown', 'splittocells', 'mergecells', 'autotypeset',
+                                       'blockquote', 'fullscreen'
+                                       
+                            ]],
+                            //focus时自动清空初始化时的内容
+                            autoClearinitialContent:true,
+                            //关闭字数统计
+                            wordCount:false,
+                            //关闭elementPath
+                            elementPathEnabled:false
+                            //更多其他参数，请参考editor_config.js中的配置项
+                        }
+                        //调用百度编辑器
+                         var ue = new baidu.editor.ui.Editor(editorOption);
+                        //editor代表上面的id值，可以修改。 
+                        ue.render('editor');
+                        //ue.options.imageUrl = "{AnUrl('thread/ajax/upload_file')}";
+                        ue.options.zIndex = 1;
+                        ue.options.filePath = '';
+                        ue.options.scrawlPath = '';
+                        ue.options.imagePath = '';
+                        // textarea
+                        ue.options.textarea = "{$name}";
+                        console.log(ue.options.textarea);
+                        ue.ready(function(){
+                            ue.setContent($('#hospitalIntro').html());
+                            // 绑定编辑器@事件
+                            ueditorAt.bind(ue);
+                        })
+                     
+                    </script>
+          </div>
+        </div>

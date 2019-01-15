@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	   <link rel="stylesheet" type="text/css" href="autosuggest.css"></link>
+
+	 <script type="text/javascript"src = "jquery-1.7.1.min.js"></script>
+     <script type="text/javascript" src="jquery.autoSuggest.js"></script>
+</head>
+<body>
+	<input type="text" name="" value="" id ="text1"/>
+	<script language="javascript" type="text/javascript">
+	var data = {items: [
+	{value: "21", name: "Mick Jagger"},
+	{value: "43", name: "Johnny Storm"},
+	{value: "46", name: "Richard Hatch"},
+	{value: "54", name: "Kelly Slater"},
+	{value: "55", name: "Rudy Hamilton"},
+	{value: "79", name: "Michael Jordan"}
+	]};
+	$("input[type=text]").autoSuggest(data.items, {selectedItemProp: "name", searchObjProps: "name"});
+	</script>
+	<script type="text/javascript">
+		$("#text2").autoSuggest("{}", {minChars: 1, matchCase: true});
+	</script>
+	<script type="text/javascript">
+		formatList: function(data, elem){
+		var my_image = data.image;
+		var new_elem = elem.html("add/change stuff here, put image here, etc.");
+		return new_elem;
+		}
+	</script>
+</body>
+</html>
+<?php
+$input = $_GET["q"];
+$data = array();
+// query your DataBase here looking for a match to $input
+$query = mysql_query("SELECT * FROM my_table WHERE my_field LIKE '%$input%'");
+while ($row = mysql_fetch_assoc($query)) {
+$json = array();
+$json['value'] = $row['id'];
+$json['name'] = $row['username'];
+$json['image'] = $row['user_photo'];
+$data[] = $json;
+}
+header("Content-type: application/json");
+echo json_encode($data);
+?>

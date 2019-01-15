@@ -1,0 +1,25 @@
+{* $Id: pager.html 53047M 2013-08-14 01:39:08Z (local) $ *}
+
+{if isset($pager)}
+<div class="pages">
+
+    {if $pager->getPage() > 1}
+        <a href="/{$pager->link($pager->prev())}{$attr}">&lt;</a>
+    {/if}
+
+    {foreach $pager->getPagesArray(9) as $k=>$v}
+        {if $pager->getPage() == $v}
+            <a href="javascript:void(0);" class="active">{$v}</a>
+        {else}
+            <a href="/{$pager->link($v)}{$attr}">{$v}</a>
+        {/if}
+    {/foreach}
+
+    {if $pager->getPage() < $pager->getPages()}
+        <a href="/{$pager->link($pager->next())}{$attr}">&gt;</a>
+    
+   {/if}
+    <span>共{$pager->getPages()}页，共{$count}条数据</span>
+</div>
+{/if}
+

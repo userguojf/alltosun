@@ -1,0 +1,378 @@
+{include file='header2.html' title='亮屏--内容投放'}
+  <style>
+  .none-tips {
+        padding: 10% 0 0;
+        text-align: center;
+        color: #9d9d9d;
+        font-size: 14px;
+    }
+    .manage-options .left {
+        position: absolute;
+        left: 0;
+        top: 0;
+        line-height: 1.07rem;
+        padding-left: 0.27rem;
+        font-size: 12px;
+        color: #949494;
+    }
+  </style>
+  <div class="tabs2">
+    <a href="{AnUrl('screen_dm/device')}" ><span>亮屏状态</span></a>
+    <a href="{AnUrl('screen_dm/screen_price')}" ><span>内容投放</span></a>
+    <a href="{AnUrl('screen_dm/')}" class="active"><span>统计分析</span></a>
+  </div>
+  
+   <div class="tabs1">
+    <a href="javascript:void(0);" class='selectDateClick selectDatecheckClick'>
+    {if 'today' == $time_type}
+      <span>{$year}</span>年<span>{$month}</span>月<span>{$day}</span>日
+      {else if 'weekday' == $time_type }
+          <span>近7日</span>
+       {else if 'somedays' == $time_type}
+       <span>{$start_year}</span>/<span>{$start_month}</span>/<span>{$start_day}</span>
+       -
+       <span>{$end_year}</span>/<span>{$end_month}</span>/<span>{$end_day}</span>
+    {/if}
+    <i class="icon-arrow-down"></i></a>
+    <a href="javascript:void(0);" class="js_data_type js_check_data_type" style="z-index:1;"><span>{if $data_type == 1}按体验时长{else}按体验次数{/if}</span><i class="icon-arrow-down"></i></a>
+  </div> 
+  
+  
+  <div class="tabs1-con">
+    <div class="line"></div>
+    {if $list}
+    <div class="count-map">
+      <div class="count1-pic">
+        <div class="con" id="echartPie" style="position: absolute; width: 200px; height: 200px;"></div>
+        <ul class="list">
+          {foreach $pie_chart_info as $k => $v}
+            <li><em style="background-color:{$pie_chart_color[$k]}"></em>
+              <span class="name">{$v.phone_name}&nbsp;{$v.phone_version}</span>
+              {if $data_type == '1'}
+                <span class="time">{{$v.experience_time}}</span>
+              {else}
+                <span class="time">{{$v.action_num}}  次</span>
+              {/if}
+            </li>
+          {/foreach}
+        </ul> 
+      </div>
+    </div>
+    <div class="count-rank">
+      <div class="title">终端体验排行</div>
+      <table cellspacing="0" cellpadding="0">
+        {foreach $list as $k => $v}
+            <tr  class="details_stat" device_unique_id={$v.device_unique_id} date={$date} start_date={$start_date} end_date={$end_date}>
+                <td>
+                    <div {if $k == 0} class="num num01" {/if}>
+                        {$k+1}
+                    </div>
+                </td>
+                <td>
+                      <div class="time">
+                      {if $data_type == '1'}
+                        <h3>{$v.experience_time}</h3>
+                        <p>体验时长</p>
+                      {else}
+                        <h3>{{$v.action_num}}  次</h3>
+                        <p>体验次数</p>
+                      {/if}
+                      </div>
+                </td>
+                <td>
+                     <div class="infos">
+                        <p>机型<span>{$v.phone_name}&nbsp;{$v.phone_version}</span></p>
+                        <p>IMEI<span>{screen_helper::by_device_unique_id_get_imei($v.device_unique_id)}</span></p>
+                    </div>
+                </td>
+            </tr>
+        {/foreach}
+      </table>
+    </div>
+    {else}
+      <div class="none-tips">暂无数据</div>
+    {/if}
+  </div>
+  
+  <!--start:日期选择弹层-->
+  <div class="pop-bg time_pop hidden">
+    <div class="pop-date">
+      <div class="title">
+          <a href="javascript:void(0);" class="concel">取消</a>
+          <span>选择日期</span>
+          <a href="javascript:void(0);" class="sure">确定</a>
+      </div>
+      <div class="btns">
+          <label><input type="radio" id="today" {if $time_type == 'today'}checked{/if} name="date" value="today"><span class="btn-select">今天</span></label>
+          <label><input type="radio" id="weekday" {if $time_type == 'weekday'}checked{/if} name="date" value="weekday"><span class="btn-select">近7日</span></label>
+          <label><input type="radio" id="somedays" {if $time_type == 'somedays'}checked{/if} name="date" value="somedays"><span class="btn-select">任一段时间</span></label>
+      </div>
+      <div class="date">
+          <div id="js_timeStart" class="item "><span>{if $time_type == 'somedays' && $start_year && $start_month && $start_day}{$start_year}年{$start_month}月{$start_day}日{else}选择时间{/if}</span><input type="date"></div>
+          <span class="txt">至</span>
+          <div id="js_timeEnd" class="item "><span>{if $time_type == 'somedays' && $end_year && $end_month && $end_day}{$end_year}年{$end_month}月{$end_day}日{else}选择时间{/if}</span><input type="date"></div>
+          <span class="btn-concel"></span>
+      </div>
+    </div>
+  </div>
+  <!--end:日期选择弹层-->
+            
+   <!--start:排行筛选弹层-->
+  <div class="js_pop  pop-reorder hidden js_data_type_pop">
+    <ul>
+      <li>
+        <label>
+          <input type="radio" class="js_data_type_redio" {if $data_type == 1}checked="checked"{/if}  name="reorder" value="1"><span>按体验时长</span></label>
+      </li>
+      <li>
+        <label>
+          <input type="radio" class="js_data_type_redio" {if $data_type == 2}checked="checked"{/if} name="reorder" value="2"><span>按体验次数</span></label>
+      </li>
+    </ul>
+  </div>
+<!--end:排行筛选弹层-->
+<script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/echarts/3/echarts.3.8.4.min.js"></script>
+<script>
+
+    //选择按次数按体验时长弹层
+    $('.js_data_type').on('click', function (e) {
+      $('.selectDatecheckClick').removeClass('selectDateClick');
+      $('.js_data_type_pop').removeClass('hidden');
+    });
+  
+ 
+    //点击按次数按体验时长弹层
+    $('.js_data_type_pop').on('click', function (e) {
+      $('.js_pop').addClass('hidden');
+      $('.selectDatecheckClick').addClass('selectDateClick');
+      $(this).removeClass('hidden');
+    });
+  
+    $(function(){
+        var start_time = "{$start_time}";
+        var end_time   = "{$end_time}";
+        var timeType   = "{$time_type}";
+        var data_type   = "{$data_type}";
+        var startTime  = 0; 
+        var endTime    = 0 ; 
+     
+        var siteUrl    = '{$smarty.const.STATIC_URL}'; 
+
+    
+    //点击时间浮层出现
+    $('.selectDateClick').on('click',function(){
+        $('.js_check_data_type').removeClass('js_data_type');
+        $('.time_pop').removeClass('hidden');
+        //时间段
+        if (timeType == 'somedays' && start_time &&  end_time) {
+          $('#js_timeStart input').siblings('span').css({ opacity: 1 }).text("{$start_year}年{$start_month}月{$start_day}日");
+            $('#js_timeStart input').css({ opacity:0 });
+
+            $('#js_timeEnd input').siblings('span').css({ opacity: 1}).text("{$end_year}年{$end_month}月{$end_day}日");
+            $('#js_timeEnd input').css({ opacity:0});
+       }
+        
+    })
+    
+      
+        $('#js_timeStart input').change(function(e){
+            startTime = e.target.value
+            console.log(e.target.value)
+            $(this).siblings('span').css({ opacity: 0 })
+            $(this).css({ opacity:1 })
+        })
+
+        $('#js_timeEnd input').change(function(e){
+            endTime = e.target.value
+            $(this).siblings('span').css({ opacity: 0 })
+            $(this).css({ opacity:1 })
+
+            /* setTimeout(function(){
+                if(startTime>endTime) alert("结束时间必须大于开始时间")
+            },300) */  
+        })
+        
+    
+    
+    //取消关闭浮层
+        $('.concel').on('click',function(){
+            $('.js_check_data_type').addClass('js_data_type');
+            $('.time_pop').addClass('hidden');
+        })
+     //选择的时间类型
+        $('.btn-select').on('click',function(){
+            timeType = $(this).siblings('input').val();
+
+            if (timeType != 'somedays') {
+                 $('#js_timeStart input').siblings('span').css({ opacity: 1 }).text('选择时间');
+                 $('#js_timeEnd input').siblings('span').css({ opacity: 1}).text('选择时间');
+            } else  {
+               if (start_time &&  end_time) {
+                    $('#js_timeStart input').siblings('span').css({ opacity: 1 }).text("{$start_year}年{$start_month}月{$start_day}日");
+                    $('#js_timeStart input').css({ opacity:0 });
+
+                    $('#js_timeEnd input').siblings('span').css({ opacity: 1}).text("{$end_year}年{$end_month}月{$end_day}日");
+                    $('#js_timeEnd input').css({ opacity:0});
+               }
+               
+            }
+        });
+    //时间删除
+    $('.btn-concel').on('click',function(){
+        $('#js_timeStart input').siblings('span').css({ opacity: 1 }).text('选择时间');
+        $('#js_timeStart input').css({ opacity:0 });
+
+        $('#js_timeEnd input').siblings('span').css({ opacity: 1}).text('选择时间');
+        $('#js_timeEnd input').css({ opacity:0});
+    })
+
+    //点击确定按钮
+    $('.sure').on('click',function(){
+        $('.js_check_data_type').addClass('js_data_type');
+        $('.selectDatecheckClick').addClass('selectDateClick');
+        if ('somedays' == timeType) {
+            //用户没选并且也数据
+            //用户没有选择开始时间
+            //if (!startTime) {
+                /* startTime = start_time; */
+            //  alert("请选择开始时间");
+              //  return false;
+            //}
+            //用户没有选择结束时间
+           // if (!endTime) {
+                //endTime = end_time;
+           ////     alert("请选择结束时间");
+              //  return false;
+            //}
+            if (!startTime || !endTime) {
+                alert('请选择时间段');
+                return false;
+            }
+
+            if(startTime > endTime) {
+                alert("结束时间必须大于开始时间");
+                return false;
+            }
+        }
+        //关闭浮层
+        $('.time_pop').addClass('hidden');
+        
+        //重新加载数据
+        window.location.href = siteUrl + '/screen_dm/?time_type=' + timeType+ '&start_time='+startTime+ '&end_time='+endTime;
+    });
+    
+    //按次数按体验时长点击事件
+    $('.js_data_type_redio').on('click', function (e) {
+       var data_type = $(this).val();
+       
+       window.location.href = siteUrl + '/screen_dm/?time_type=' + timeType+ '&start_time='+startTime+ '&end_time='+endTime+'&data_type='+data_type;
+
+      
+    });
+    
+    $('.details_stat').on('click',function(){
+        
+    	var device_unique_id = $(this).attr('device_unique_id');
+    	var date = $(this).attr('date');
+    	var start_date = $(this).attr('start_date');
+    	var end_date = $(this).attr('end_date');
+    	
+        window.location.href = siteUrl + '/screen_dm/detail?device_unique_id=' + device_unique_id+ '&date='+date+ '&start_date='+start_date+'&end_date='+end_date;
+
+
+    });
+  
+});
+    </script>
+    
+        <script>
+    var pic_data  = {$pic_data};
+    var pic_color = {$pic_color};
+    var pie_chart_color = {$pie_chart_color};
+    var value2            = [];
+    var colors            = [];
+    {literal}
+  //console.log(pic_data);
+    $.each(pic_data, function (i, o) {
+          value2[i] = { 
+              value: o.value, 
+              label:{ 
+                normal:{ 
+                  show:true,
+                  position: 'inner',
+                  formatter:'{d}%',  
+                  color:pic_color[i],
+                } 
+              } 
+          };
+          o = { value:o.value, name:o.name,itemStyle:{ normal:{ color: pic_color[i] } } };
+          pic_data[i] = o;
+        });
+    option = {
+      series : [
+        {
+          type: 'pie',
+          radius : '65%',
+          data:value2,
+          legendHoverLink:false,
+          hoverAnimation:false,
+          label:{
+            normal: {
+              show: true,
+              fontSize:9,
+            },
+            
+          },
+          itemStyle: {
+            normal: {
+              color: 'rgb(244,247,255)',
+            }
+          }
+        },
+        {
+          type: 'pie',
+          radius : ['70%','90%'],
+          center: ['50%', '50%'],
+          data:pic_data,
+          label: {
+            normal: {
+              show: false,
+            },
+          },
+          itemStyle: {
+            normal: {
+              borderColor: '#fff',
+              borderWidth: 2,
+            },
+          }
+        }
+      ]
+    };
+    {/literal}
+    if (pic_data.length > 0) {
+      var myChart   = echarts.init(document.getElementById('echartPie'));
+      myChart.setOption(option);
+    }
+    
+    $(function() {
+        //时间范围
+        var startTime, endTime;
+        $('#js_timeStart input').change(function(e) {
+            startTime = e.target.value
+            $(this).siblings('span').css({ opacity: 0 })
+            $(this).css({ opacity: 1 })
+            //alert(startTime)
+        })
+
+        $('#js_timeEnd input').change(function(e) {
+            endTime = e.target.value
+            console.log(e)
+            $(this).siblings('span').css({ opacity: 0 })
+            $(this).css({ opacity: 1 })
+            setTimeout(function() {
+                if (startTime > endTime) alert("结束时间必须大于开始时间")
+            }, 300)
+        })
+    })
+</script>
+{include_www file="admin/lib/s_footer.html"}

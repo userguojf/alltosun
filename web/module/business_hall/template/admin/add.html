@@ -1,0 +1,196 @@
+{include_www file="admin/lib/header.html" title="添加编辑版块信息"}
+{include_www file="admin/lib/sidebar.html"}  
+<!-- 主内容 start -->
+<div id="content" class="span10">
+  <!-- 标题 start -->
+  <div class="pageTit page-header">
+    <h1>{if $info}编辑{else}添加{/if}营业厅<small>在这里{if $info}编辑{else}添加新{/if}营业厅信息</small></h1>
+    <div class="opt">
+      <a class="btn btn-info" href="{AnUrl('business_hall/admin')}">返回商家列表</a>
+    </div>
+  </div>
+  <!-- 标题 end -->
+  <!-- 内容区块 start -->
+  <div class="formBox">
+  
+    {AnForm action="{AnUrl("business_hall/admin/save")}" method="post" enctype="multipart/form-data" }
+        {AnForm type="hidden" name="id" value=$info['id']}
+        <!-- 营业厅名称 -->
+        <div class="control-group">
+          <label>营业厅名称：<em>(必填)</em></label>
+          {AnForm type="text" name="info[title]" value=$info['title'] }
+        </div>
+        
+        <!-- 区域 -->
+        <div class="control-group">
+          <label>省份：<em>(必填)</em></label>
+          <div class="controls">
+              <select name="info[p_id]" class="selectPro">
+                 <option value="0">请选择</option>
+                 {html_options options=business_hall_helper::get_province_list() selected=$info.p_id}
+              </select>
+          </div>
+        </div>
+        
+         <div class="control-group">
+          <label>城市：<em>(必填)</em></label>
+          <div class="controls">
+              <select name="info[c_id]" class="selectCity">
+                 <option>请选择</option>
+                 {if $info['p_id']}
+                 {html_options options=business_hall_helper::get_city_list($info['p_id']) selected=$info.c_id}
+                 {/if}
+              </select>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>京东地址编号区域：<em>(必填)</em></label>
+          <div class="controls areaSelect">
+              <select name="area_info[p_id]" class="selectArea">
+                 <option value="0">请选择</option>
+                 {html_options options=screen_helper::get_area_list() selected=$area_info.p_id}
+              </select>
+              <select name="area_info[c_id]" class="selectArea">
+                 <option value="0">请选择</option>
+                 {if $area_info['c_id']}
+                 {html_options options=screen_helper::get_area_list($area_info['p_id']) selected=$area_info.c_id}
+                 {/if}
+              </select>
+              <select name="area_info[cou_id]" class="selectArea">
+                 <option value="0">请选择</option>
+                 {if $area_info['cou_id']}
+                 {html_options options=screen_helper::get_area_list($area_info['c_id']) selected=$area_info.cou_id}
+                 {/if}
+              </select>
+          </div>
+        </div>
+        
+        <div class="control-group">
+          <label>图片：<em>(必填)</em></label>
+          <input type="file" name="logo" />
+          <br/>
+          {if $info.cover}
+          <img src="{_image($info.cover)}" />
+          {/if}
+        </div>
+        
+        <div class="control-group">
+          <label>经度：<em>(必填)</em></label>
+          {AnForm type="text" name="info[lng]" value=$info['lng']}
+        </div>
+
+        <div class="control-group">
+          <label>纬度：<em>(必填)</em></label>
+          {AnForm type="text" name="info[lat]" value=$info['lat']}
+        </div>
+        
+        <div class="control-group">
+          <label>渠道号：<em>(必填)</em></label>
+          {AnForm type="text" class="channel" name="info[ditch_num]" value=$info['ditch_num']}
+          <div class="channel_tips"></div>
+        </div>
+        
+        <div class="control-group">
+          <label>微信公众号：<em>(可选)</em></label>
+          {AnForm type="text" name="info[weix_name]" value=$info['weix_name']}
+        </div>
+        
+        <div class="control-group">
+          <input type="submit" id="submit_btn" class="btn btn-primary Sub" value="保存"/>
+        </div>
+    </form>
+  </div>
+  <!-- 内容区块 end -->
+</div>
+<script>
+$(function(){
+    var replace = function(list, obj) {
+        var html = "";
+        $.each(list, function(k, v){
+            html += ('<option value="'+k+'">'+v+'</option>');
+        });
+        obj.html(html);
+    }
+    $(".selectPro").on('change', function(){
+        var pid = $(this).val();
+        var url = siteUrl + "/business_hall/ajax/get_city_list";
+        if (pid != '0') {
+            $.post(url, { "pid":pid}, function(json){
+                if (json.info == 'ok') {
+                    replace(json.list, $(".selectCity"));
+                } else {
+                    var data = { "0": " 请选择 "};
+                    replace(data, $(".selectCity"));
+                }
+            }, 'json');
+        }
+    });
+    
+    $(".channel").blur(function(){
+        var chanel_id = $(this).val();
+        var url = siteUrl + '/business_hall/ajax/check_channel';
+        if (chanel_id) {
+            $.post(url, { "channel": chanel_id}, function(json){
+                if (json.info != 'ok') {
+                    $(".channel").val("");
+                    $(".channel").focus();
+                    $(".channel_tips").text(json.info);
+                    setTimeout(function(){
+                        $(".channel_tips").text("");
+                    }, 3000);
+                } else {
+                    $(".channel_tips").text("");
+                }
+            }, 'json');
+        }
+    });
+    
+    var selects = $('.areaSelect .selectArea');
+    selects.live('change', function() {
+      var index = selects.index($(this));
+      var pid = $(this).val();
+      var url = siteUrl + '/business_hall/ajax/get_area_list';
+      
+      if (index == selects.length - 1) {
+        return;
+      }
+      
+      if (pid != 0) {
+        $.post(url, { pid: pid }, function(json) {
+          // console.log(json);
+          // throw '';
+          if (json.info == 'ok') {
+            // 清空后面所有的，只给后面一个添加
+            recoverDefault(index);
+            // replace(json.list, selects.eq(index + 1));
+            var html = '';
+            $.each(json.list,function(k, v) {
+              html += '<option value="' + k + '">' + v + '</option>';
+            });
+            // 最后一个不用请选择
+            if (index == selects.length - 2) {
+              selects.eq(index + 1).html(html);
+            } else {
+              selects.eq(index + 1).append(html);
+            }
+          }
+        }, 'json');
+      } else {
+        recoverDefault(index);
+      }
+    });
+    
+    var recoverDefault = function(index) {
+      selects.filter(function() {
+        return selects.index($(this)) > index;
+      }).empty()
+        .html('<option value="0"> 请选择 </option>');
+      
+      // selects.eq(index + 2).html('<option value="0"> 请选择 </option>');
+    }
+    
+});
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer.html"}

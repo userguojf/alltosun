@@ -1,0 +1,165 @@
+{include_www file="admin/lib/header_new.html" title="企业客服"}
+{include_www file="admin/lib/sidebar_new.html"}
+  <!--start:右侧-->
+  <div class="main pull-right">
+      <div class="column">
+          <div class="position">
+              <a href="###"><i class="iconfont iconfont-logo2"></i>企业客服</a> &gt;
+              <span>咨询</span>
+          </div>
+          <div class="chat">
+              <!--start:会话列表-->
+              <div class="chat-list">
+                  <div class="title">咨询中<i id="chat_title" class="glyphicon glyphicon-menu-down pull-right"></i></div>
+                  <div id="js_chatCurr" class="con">
+                    <ul>
+                        {foreach $conversation_list as $k => $v}
+                        <li {if $k == 0}class="curr" {/if} data-id="{$v.id}" title="{$v.completion_user_name}">
+                          {$v.completion_user_name_substr}
+                          <em class="delete"></em>
+                        </li>
+                        <!-- <li>西单营业厅<span class="badge">42</span></li> -->
+                        {foreachelse}
+                          <li data-id="">《暂无》</li>
+                        {/foreach}
+                        
+                    </ul>
+                  </div>
+              </div>
+              <!--end:会话列表-->
+              <div class="chat-container">
+                  <div class="chat-infos">
+                      <span>渠道号：{$conversation_list[0]['user_number']}</span>
+                      <em>|</em>
+                      <span title="{$conversation_list[0]['hall_name']}">营业厅：{$conversation_list[0]['hall_name_substr']}</span>
+                      <em>|</em>
+                      <span title="{$conversation_list[0]['user_name']}">姓名：{$conversation_list[0]['user_name_substr']}</span>
+                      <em>|</em>
+                      <span>联系方式：{$conversation_list[0]['user_phone']}</span>
+                  </div>
+                  <div id="js_chatContent" class="chat-content ">
+                      <ul>
+                         {foreach $message_list as $m_k => $m_v}
+                          <li {if $m_v.is_reply}class="mine"{/if}>
+                              <div class="time">{$m_v.add_time}</div>
+                              <div class="clearfix">
+                                  
+                                  <div class="ava">
+                                    {if $m_v.is_reply }
+                                        <img src="{$smart.const.STATIC_URL}/images/service_avatar.png">
+                                    {else if $conversation_list[0]['user_avatar']}
+                                        <img src="{$conversation_list[0]['user_avatar']}">
+                                    {else}
+                                        <img src="{$smart.const.STATIC_URL}/images/admin2/a_test01.jpg">
+                                    {/if}
+                                  </div>
+                                  <div class="con">
+                                      <em class="arrow"></em>
+                                      
+                                        {if $m_v.content}
+                                          <div class="text">{$m_v.content}</div>
+                                        {else if $m_v.pic_url}
+                                          <div class="text" style="text-align:center">
+                                            <a href="{$m_v.pic_url}" target="_blank"><img width=200 src="{$m_v.pic_url}"></a>
+                                          </div>
+                                        {/if}
+                                      
+                                  </div>
+                              </div>
+                          </li>
+                          {/foreach}
+                      </ul>
+                  </div>
+                  <!--end:聊天内容-->
+                  <div class="chat-options1 clearfix">
+                      <div class="btn-face pull-left js_faceBtn"></div>
+                      <div class="face-box hidden">
+                        {foreach $face_list as $k => $v}
+                          <em class="arrow"></em>
+                          <span class="emotion_img">{$v}</span>
+                        {/foreach}
+                      </div>
+                      <div class="btn-export pull-right js_btnExport"><i class="icon-export"></i>导出咨询记录</div>
+                      <div class="export-date js_exportBox">
+                          <div class="title">导出咨询记录</div>
+                          <button type="submit" class="js_export">立即导出</button>
+                          <em class="arrow"></em>
+                      </div>
+                  </div>
+                  <div class="chat-publish">
+                      <textarea id="js_text_content" placeholder="请在这里输入回复内容"></textarea>
+                  </div>
+                  <div class="chat-options2 clearfix">
+                      <span id="quit"><i class="icon-quit"></i>结束会话</span>
+                      <em></em>
+                      <span class="js_btnReply"><i class="icon-reply"></i>快速回复</span>
+                      <em></em>
+                      <span class="js_reply_msg"><i class="icon-send"></i>发送</span>
+                      <div class="reply-box js_replyBox hidden">
+                          <div class="con">
+                              <ul>
+                                  {foreach $reply_list as $r_k => $r_v}
+                                    <li>{$r_v.content}</li>
+                                  {/foreach}
+                              </ul>
+                          </div>
+                          <em class="arrow"></em>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  <!--end:右侧-->
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}
+<script src="{$smarty.const.STATIC_URL}/js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="{$smarty.const.STATIC_URL}/js/jquery.mousewheel.min.js"></script>
+<script src="{$smarty.const.STATIC_URL}/js/emotion/weiboface.js"></script>
+<script src="{$smarty.const.STATIC_URL}/js/qy/service.js"></script>
+<script>
+var conversation_list = {$json_conversation_list};
+var message_list      = {$json_message_list};
+//当前会话id
+var conversationId = 0;
+//当前会话最后一条消息
+var lastMsgId      = 0; 
+//最后一条会话id
+var lastConversationId =0;
+//会话类型
+var conversationType = "{$conversation_type}";
+//客服id
+var serviceId = "{$service_id}";
+//轮询间隔时间
+var rollPolingTime = 4000;
+
+var emotion_list = {json_encode($face_list)}
+
+
+//用户缺省头像 和 客服头像
+var defaultUserAvatar = "{$smart.const.STATIC_URL}/images/admin2/a_test01.jpg";
+var currAvatar = defaultUserAvatar;
+var defaultServiceAvatar = "{$smart.const.STATIC_URL}/images/service_avatar.png";
+
+
+if (conversation_list.length > 0) {
+  //最后一条会话id
+  lastConversationId = conversation_list[0]['id'];
+  //当前会话id
+  conversationId = conversation_list[0]['id'];
+  //当前用户头像
+  if (conversation_list[0]['user_avatar'] != '') {
+    currAvatar = conversation_list[0]['user_avatar'];
+  }
+}
+
+if (message_list.length > 0) {
+  //当前会话最后一条消息
+  lastMsgId = message_list[message_list.length-1]['id'];
+}
+
+//轮询新消息
+serviceConversation.rollPoling();
+
+
+</script>

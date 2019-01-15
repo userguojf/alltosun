@@ -1,0 +1,96 @@
+{include_www file="admin/lib/header_new.html" title="{$action_res_name}"}
+{include_www file="admin/lib/sidebar_new.html"}
+
+{* 主内容START *}
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('probe/admin/stat')}"><i class="iconfont iconfont-logo2"></i>统计管理</a>
+            &gt;
+            <span>探针统计</span>
+            <span style="color: red;">（{$b_info.title}）</span>
+        </div>
+
+        <div class="form-search row clearfix">
+            <div class="tabs2">
+                <div class="col-sm-8">
+                    <div class="form-group" style="float:left;">
+                        <select id="b_id" style="width: 200px;">
+                            {foreach $b_ids as $k => $v}
+                                <option {if $v == $b_info.id} selected {/if} value="{$v}">{get_resource_info('business_hall', $v, 'title')}</option>
+                            {foreachelse}
+                                <option value="0">请选择</option>
+                            {/foreach}
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="float:left;">
+                        <select id="rule">
+                            <option {if $rule == 0} selected {/if} value="0">连续活跃N天</option>
+                            <option {if $rule == 1} selected {/if} value="1">停留时长小于M分钟</option>
+                        </select>
+                    </div>
+
+                    <div class="form-inline" id="dateSelectBox" >
+                        <div class="form-group">
+                            <label for="exampleInputName2">时间：</label>
+                            <input type="text" class="form-control" style="width:100px; text-align:center;" name="date" id="start_time" value="{$date}" />
+                        </div>
+                        <button type="button" class="btn btn-success btn-sm" id="search">搜索</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="list">
+            <table class="table table-bordered table-striped center table_co_td">
+                <thead>
+                    <tr>
+                        <th>时间</th>
+                        <th>首次探测时间</th>
+                        <th>mac地址</th>
+                        <th>停留时长</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {foreach $list as $k=>$v}
+                        <tr>
+                            <td>{$v.date}</td>
+                            <td>{date('Y-m-d H:i:s', $v.frist_time)}</td>
+                            <td>{probe_helper::mac_encode($v.mac)}</td>
+                            {$ary = probe_helper::get_remain($v.remain_time)}
+                            <td diff="">
+                                {if $ary.hour}{$ary.hour}小时{$ary.min}分{$ary.sec}秒{elseif $ary.min}{$ary.min}分{$ary.sec}秒{else}{$ary.sec}秒{/if}
+                            </td>
+                        </tr>
+                    {foreachelse}
+                        <tr><td colspan="9">暂无相关信息</td></tr>
+                    {/foreach}
+                </tbody>
+            </table>
+<script>
+    $('#search').click(function(){
+        // 选择的营业厅
+        var b_id = $('#b_id').val();
+        // 选择的时间
+        var date = $('#start_time').val();
+        // 选择的规则
+        var rule = $('#rule').val();
+
+    	if ( !b_id ) {
+    		b_id = 0;
+        }
+
+    	if ( !date ) {
+    		date = '';
+        }
+
+    	window.location.href = siteUrl+'/probe/admin/stat/rule_filter?b_id='+b_id+'&date='+date+'&rule='+rule;
+    });
+</script>
+{include_www file="admin/lib/pager_new.html"}
+</div>
+</div>
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

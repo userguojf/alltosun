@@ -1,0 +1,172 @@
+{include_www file="admin/lib/header_new.html" title="企业微信通讯录管理"}
+
+<!--start:右侧-->
+<div class="main mian2 ">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('wework/admin/user')}"><i class="iconfont iconfont-logo2"></i>企业微信通讯录管理</a>
+      &gt;
+      <span>{if !$user_info.id}通讯录添加{else}通讯录编辑{/if}</span>
+      <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回列表</a>
+    </div>
+    <div class="clearfix">
+      <div class="form-add pull-left" style="width:80%;">
+        <form class='form-horizontal' action="{AnUrl('wework/admin/user/save')}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="user_info[id]" value="{$user_info.id}">
+
+        {*added*}
+        <div class="form-group alone_add">
+          <label class="col-sm-3 control-label">姓名</label>
+          <div class="col-sm-6">
+               <input type="text" name="user_info[name]" value="{$user_info.name}"  class="form-control"  filter="filter_string"  placeholder="请输入联系人" >
+          </div>
+        </div>
+        <div class="form-group alone_add">
+                <label class="col-sm-3 control-label">性别</label>{* 性别。1表示男性，2表示女性 *}
+                <div class="col-sm-9">
+                        <div class="checkbox col-sm-3">
+                            <label>
+                                <input type="radio"  name="user_info[gender]" value="1" {if $user_info.gender == 1}checked{/if} >&nbsp;男
+                            </label>
+                        </div>
+                        <div class="checkbox col-sm-3">
+                            <label>
+                                <input type="radio"  name="user_info[gender]" value="2" {if $user_info.gender == 2}checked{/if}>&nbsp;女
+                            </label>
+                        </div>
+                </div>
+        </div>
+
+         <div class="form-group alone_add">
+          <label class="col-sm-3 control-label">账号</label>
+           <div class="col-sm-6">
+                <input type="text" name="user_info[user_id]" value="{$user_info.user_id}"  class="form-control"  filter="filter_string"  placeholder="请输入账户">
+          </div>
+        </div>
+
+        <div class="form-group alone_add">
+          <label class="col-sm-3 control-label">手机</label>
+          <div class="col-sm-6">
+               <input type="text" name="user_info[mobile]" value="{$user_info.mobile}"  class="form-control"  filter="filter_string" placeholder="请输入手机号">
+                <p class='tips  link_show hidden'>提示请输入正确手机号码</p>
+          </div>
+        </div>
+
+        <div class="form-group alone_add">
+          <label class="col-sm-3 control-label">邮箱</label>
+          <div class="col-sm-6">
+               <input type="text" name="user_info[email]" value="{$user_info.email}"  class="form-control"  filter="filter_string" placeholder="请输入邮箱（选填）">
+          </div>
+        </div>
+
+        <div class="form-group alone_add">
+          <label class="col-sm-3 control-label">职位</label>
+           <div class="col-sm-6">
+                <input type="text" name="user_info[position]" value="{$user_info.position}"  class="form-control"  filter="filter_string" placeholder="请输入职务（选填）">
+          </div>
+        </div>
+
+        <div class="form-group alone_add">
+                <label class="col-sm-3 control-label">身份</label>{* 性别。1表示男性，2表示女性 *}
+                <div class="col-sm-9">
+                        <div class="checkbox col-sm-3">
+                            <label>
+                                <input type="radio"  name="user_info[isleader]" value="0" {if !$user_info}checked {/if} {if $user_info.isleader == 0}checked{/if} >&nbsp;普通成员
+                            </label>
+                        </div>
+                        <div class="checkbox col-sm-3">
+                            <label>
+                                <input type="radio"  name="user_info[isleader]" value="1" {if $user_info.isleader == 1}checked{/if} >&nbsp;上级
+                            </label>
+                        </div>
+                </div>
+        </div>
+
+         <div class="form-group alone_add">
+          <label class="col-sm-3 control-label">平台账号</label>
+           <div class="col-sm-6">
+                <input type="text" name="user_info[account]" value="{$user_info.account}"  class="form-control"  filter="filter_string" placeholder="请输入登录账号（accout）">
+          </div>
+        </div>
+
+        <div class="form-group alone_add">
+          <label class="col-sm-3 control-label">营业厅名称</label>
+           <div class="col-sm-6">
+                <input type="text" name="user_info[t_name]" value="{$user_info.t_name}"  class="form-control"  filter="filter_string" placeholder="请输入营业厅名称（t_name）">
+          </div>
+        </div>
+
+        <!-- 部门 -->
+        <div class="form-group alone_add">
+             <label class="col-sm-3 control-label">所属部门：</label>
+              <div class="col-sm-8" style="margin-top: 20px;" >
+                  {$department_list = wework_department_helper::get_level_department(1)}
+                 {foreach $department_list as $k => $v}
+                     {if $user_info && in_array($v['work_depart_id'] , explode("," , $user_info['business']))}
+                         <input type="checkbox" name="user_info[business][]" value="{$v.work_depart_id}" checked="checked"  class="sub_category categoryInput" style="margin-top: 10px;"/>
+                     {else}
+                         <input type="checkbox" name="user_info[business][]" value="{$v.work_depart_id}"  class="sub_category categoryInput" style="margin-top: 10px;"/>
+                     {/if}
+                     {$v.name}
+                 {/foreach}
+             </div>
+          </div>
+
+        <br>
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-10">
+            <button type="submit" class="btn btn-sm btn-success" id="btn"><span style='display: inline-block;width: 95px;' class='Sub'>保存</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a type="button" class="btn btn-sm btn-warning" href="javascript:history.go(-1);">&nbsp;&nbsp;返回上一页&nbsp;&nbsp;</a>
+          </div> 
+        </div> 
+       </div>
+   </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+    
+<script>
+$('.JS_siteType').click(function(){
+      var type = $(this).val();
+        if ( 2 == parseInt(type)) {
+            $('.together_add').show();
+            $('.alone_add').hide();
+        } else {
+            $('.together_add').hide();
+            $('.alone_add').show();
+        }
+    })
+    
+    
+   
+$('.user_mobile').blur(function(){
+    var phone = $(this).val();
+    var bool = checkPhone(phone);
+    alert(bool);
+    if(!bool){
+        $('.link_show').removeClass('hidden');
+        return false;
+    }
+    $('.link_show').addClass('hidden');
+});
+
+//验证phone
+function checkPhone(phone) {  
+      var strReg = "/^1(3|4|5|7|8)\d{9}$/";
+      var re = new RegExp(strReg);  
+      if(!re.test(url)) {  
+    	  alert(1);
+          return false;  
+      } else {  
+    	  alert(2);
+          return true;  
+      }  
+  }
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

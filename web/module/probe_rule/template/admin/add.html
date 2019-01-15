@@ -1,0 +1,74 @@
+{include_www file="admin/lib/header_new.html" title="{if $info}编辑{else}添加{/if}探针规则"}
+<style>
+    .pic-upload { width:250px;height:133px; }
+    .btn-upload{ width:106px; height: 33px; }
+    .btn-upload a{ display: block;position:relative;width: 104px;height: 33px;line-height: 18px;padding: 6px 0;text-align: center;color: #4c4c4c;background: #fff;border: 1px solid #eee;}
+    .btn-upload input{ width:106px; height:33px; position:relative; left:0px; top:-32px; z-index:1;filter:alpha(opacity=0);-moz-opacity:0;opacity:0; cursor:pointer;}
+    .js_upFileBox{ margin-left:0px;margin-top:30px;}
+</style>
+<!--start:右侧-->
+<div class="main mian2 ">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('probe/admin')}"><i class="iconfont iconfont-logo2"></i>内容管理</a>
+            &gt;
+            <span>{if $info}编辑{else}添加{/if}探针规则</span>
+            <a href="{AnUrl('probe_rule/admin')}" class="btn btn-primary btn-sm pull-right">返回探针规则列表</a>
+        </div>
+
+        <div class="clearfix">
+            <div class="form-add pull-left">
+                <form class="form-horizontal" action='{AnUrl("probe_rule/admin/save")}' method="post">\
+                    <input type="hidden" name="id" value="{$info.id}" />
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">规则内容</label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control js_content" name="content" placeholder="请在这里输入规则内容">{$info.content}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">规则别名</label>
+                        <div class="col-sm-7">
+                            <a class="less-box">
+                                <span><input type="text" name="alias" value="{$info.alias}" class="form-control required js_alias" placeholder="请输入规则别名"></span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-10">
+                            <button type="submit" class="btn btn-sm btn-success selectSub">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;确定&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(function(){
+    $('.selectSub').click(function(e) {
+        e.preventDefault();
+
+        var content = $('.js_content').val();
+        var alias   = $('.js_alias').val();
+
+        if ( !content ) {
+        	return error('请输入规则内容');
+        }
+        if ( !alias ) {
+        	return error('请输入规则别名');
+        }
+
+        $('.form-horizontal').submit();
+    });
+});
+function error( msg )
+{
+    alert(msg);
+    return false;
+}
+</script>
+{include_www file="admin/lib/footer_new.html"}

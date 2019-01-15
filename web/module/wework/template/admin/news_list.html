@@ -1,0 +1,101 @@
+{include_www file="admin/lib/header_new.html" title="企业号通讯录请管理"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    .btn-top{
+        margin-top:5px;
+    }
+    </style>
+<!-- 主内容 start -->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('wework/admin/news')}"><i class="iconfont iconfont-logo2"></i>素材管理</a>
+             &gt;
+            <span>日志列表（总数：{$count}）</span>
+            <div class="pull-right">
+            <a href="{AnUrl('wework/admin/news/add')}" class="btn btn-sm btn-success">添加素材</a>
+                {*<a href="{AnUrl('wework/admin',"?user_number={$search_filter.user_number}&user_name={$search_filter.user_name}&user_phone={$search_filter.user_phone}")}" class="btn btn-sm btn-success">导出</a>*}
+            </div>
+        </div>
+        <div class="form-search clearfix">
+             <!-- <div class="pull-left">
+                 <form action="{AnUrl('wework/admin/log')}" method='get'>
+                   <input type="text"  style="width:150px;"  name="search_filter[app_id]" value="{$search_filter.app_id}" class="form-control input-sm pull-left js_search"  placeholder="按app_id搜索">
+                   <input type="text"  style="width:150px;"  name="search_filter[type]" value="{$search_filter.type}" class="form-control input-sm pull-left js_search"  placeholder="按类型搜索">
+                   <input type="text"  style="width:150px;"  name="search_filter[param]" value="{$search_filter.param}" class="form-control input-sm pull-left js_search"  placeholder="按联参数搜索">
+                   <input type="text"  style="width:150px;"  name="search_filter[response]" value="{$search_filter.response}" class="form-control input-sm pull-left js_search"  placeholder="按返回值搜索">
+                   <button type="submit" class="btn-search pull-left">搜索</button>
+                 </form>
+            </div> -->
+        </div>
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th width="60%">图文素材</th>
+                    <th width="40%">具体数据</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $k=>$v}
+                    <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                    <td style="center">
+                    {$v.title}<br>
+                    <img src="{_image($v.cover_link,'big','coupon_index')}" style='width:340px;height:190px;'><br>
+                    {$v.summary}
+                    <br><br>
+                      <a class="btn btn-xs  btn-info" href="{AnUrl("wework/admin/news/add?id={$v.id}")}">编辑图文消息</a>
+                      <a class="btn btn-xs  btn-info" href="{AnUrl("wework/admin/news/share?news_id={$v.id}")}">编辑分享信息</a>
+                      <a class="btn btn-xs  btn-info {if $v.status}btn-danger delete_hot{else}btn-send{/if} " resId="{$v.id}"  href="javascript:;">{if $v.status}已发布{else}发布{/if}</a>
+                    </td>
+                    <td>
+                       <br><br>
+                        <b>阅读数：</b>{$v.reading_num}<br><br>
+                        <b>原文点赞数：</b>{$v.zan_num}<br><br>
+                        <b>评论数：</b>{$v.content_num}<br><br>
+                        <b>分享次数：</b>{$v.share_num}<br><br>
+                    </td>
+                    </tr>
+                {foreachelse}
+                <tr><td colspan="13">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+</div>
+<script>
+var updateStatus = {
+    _id:'',
+    _msg :'操作失败',
+    _url:"{AnUrl('wework/admin/news/send')}",
+    update:function(obj){
+        this._id = $(obj).attr('resId');
+
+        $.post(this._url,{ id:this._id, status:status },function(json){
+            if (json.info == 'ok') {
+                $(obj).addClass('delete_hot');
+                $(obj).addClass('btn-danger');
+                $(obj).text('已发布');
+            } else {
+                alert(json.info);
+            }
+        },'json')
+    }
+};
+
+$('.btn-send').live('click',function(event){
+    event.preventDefault();
+    event.stopPropagation();
+    if (!confirm("确定要发布这条图文消息？")) {
+      return false;
+    }
+    updateStatus.update(this);
+})
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

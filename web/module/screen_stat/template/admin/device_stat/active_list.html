@@ -1,0 +1,134 @@
+{include_www file="admin/lib/header_new.html" title="亮屏活跃统计"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('screen_stat/admin/device_stat')}"><i class="iconfont iconfont-logo2"></i>亮屏活跃统计</a>
+      &gt;
+      {if $business_hall_title}<span>{$business_hall_title}</span>&gt;{/if}
+
+      <a style="margin-right:10px;" href="{AnUrl("screen_stat/admin/device_stat/active_list/active?is_export=1")}" class="btn btn-primary btn-sm pull-right">导出</a>
+    </div>
+    <br />
+    {$url = AnUrl("screen_stat/admin/device_stat/device_list/device{$search_filter_str}&search_filter[date_type]={$search_filter.date_type}&search_filter[region_id]={$search_filter.region_id}&search_filter[region_type]={$search_filter.region_type}")}
+
+    <div class="form-search clearfix">
+      <div class="pull-left">
+        <form action="{$url}" id="subForm" methhod='get'>
+          {if $member_res_name != 'business'}
+            <!-- <input type="text" id="title" style="width: 120px;" name="hall_title" value="{$hall_title}" class="form-control input-sm pull-left js_search ui-autocomplete-input" placeholder="按营业厅名称搜索" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true"> -->
+          {/if}
+
+          <!-- <button type="button" class="btn-search pull-left" id="searchData" data-url="{AnUrl('screen_stat/admin/device_stat/device_list/device_list')}" >搜索</button> -->
+        </form>
+      </div>
+    </div>
+
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th width="30%">天数</th>
+            <th width="10%">厅店量</th>
+            <th width="10%">设备量</th>
+<!--             <th width="10%">占比</th> -->
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $list as $k=>$v}
+          <tr id="dataList{$k}">
+            <td>{if $k == 'first'}{$type=1}仅活跃1天的设备量{elseif $k == 'second'}{$type=2}仅活跃2天的设备量{elseif $k == 'third'}{$type=3}仅活跃3天的设备量{elseif $k == 'fifth'}{$type=4}活跃5天的设备量{elseif $k == 'seventh'}{$type=5}活跃7天的设备量{elseif $k == 'eighth'}{$type=6}7天以上{/if}</td>
+            <td>{$v.business_num}</td>
+            <td><a href="{AnUrl("screen_stat/admin/device_stat/active_list/active?type={$type}")}">{$v.device_num}</a></td>
+            
+          </tr>
+          {foreachelse}
+          <tr><td colspan="{if $member_info.res_name != 'business_hall'}10{else}7{/if}">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}
+
+<script>
+var isVersionEdit = false;
+
+$(function () {
+  $('#title').autocomplete({
+    source: "/business_hall/admin/ajax/get_title_field",
+  });
+  
+  $('#searchData').on('click',function() {
+    $('#subForm').submit();
+    //refershUrl();
+  });
+
+  $('.phone_info_submit').on('click', function () {
+    var el = $(this).closest('.js_nickname');
+    var newValue = el.find('div input').val();
+    
+    if (!newValue) {
+      alert('值不能为空');return false;
+    }
+    
+    el.find('span').text(newValue);
+    el.find('div').toggleClass('hidden');
+    el.find('span').toggleClass('hidden');
+    
+    var type = el.data('type');
+    var imei = el.attr('data-imei');
+
+    $.post(siteUrl+'/screen/admin/ajax/update_nickname', { new_nickname:newValue, type:type, imei:imei }, function (res) {
+      if (res.info != 'ok') {
+        alert(res.msg);
+      }
+    }, 'json');
+  });
+});
+
+//排序
+$('.order_type').on('click', function () {
+
+  if ($(this).hasClass('glyphicon-arrow-up')) {
+    var order_dir = 'asc';
+  } else {
+    var order_dir = 'desc';
+  }
+  
+  window.location.href = window.location.href + '&order_dir=' + order_dir + '&order_field=' + $(this).attr('order_field');
+
+});
+
+function refershUrl(){
+  var $params           = { };
+  $params.start_date    = $('#start_time').val();
+  $params.end_date      = $('#end_time').val();
+
+  $a = 1;
+  var urlParam = '';
+  for (var i in $params) {
+    if ($params[i]) {
+      if ($a == 1) {
+        urlParam += '?';
+      } else {
+        urlParam += '&';
+      }
+      
+      urlParam += 'search_filter['+ i + ']=' + $params[i];
+    }
+    
+    $a += 1;
+  }
+
+  var url = siteUrl+'/screen/admin/device'+urlParam;
+  window.location.href = url;
+
+}
+</script>

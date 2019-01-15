@@ -1,0 +1,18 @@
+<ul id="nav1" class="nav1 left js_nav1List">
+<!--
+{if $module == 'opponent_analysis'}
+    {foreach $result as $v}
+        <li>
+            <a href="{$smarty.const.SITE_URL}/opponent_analysis/article/user_count&weibo_id={$v.opponent_id}">{$v.opponent_name}</a>
+        </li>
+    {/foreach}
+{/if}
+-->
+{foreach $app_list as $app}
+  {if $app_id == $app.id}
+    <li><a href='{AnUrl("$module/admin?app_id={$app.id}")}' title="{$app.title}" {if $action == 'timing'}class='normal'{else}class="active"{/if}>{sub_arrstr($app.title,7,'')}</a></li>
+  {else}
+    <li><a href='{AnUrl("$module/admin?app_id={$app.id}")}' title="{$app.title}" class="normal">{sub_arrstr($app.title,7,'')}</a></li>
+  {/if}
+{/foreach}
+</ul>

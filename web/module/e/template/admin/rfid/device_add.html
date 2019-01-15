@@ -1,0 +1,807 @@
+  <!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta name="format-detection" content="telephone=no">
+<meta name="keywords" content="">
+<meta name="description" content="">
+<title>RFID管理-设备添加</title>
+<link href="{$smarty.const.STATIC_URL}/css/base.css" rel="stylesheet" type="text/css">
+<link href="{$smarty.const.STATIC_URL}/css/admin2/m-admin.css" rel="stylesheet" type="text/css">
+<link href="{$smarty.const.STATIC_URL}/css/phone-form.css" rel="stylesheet" type="text/css">
+<script>var siteUrl = "{$smarty.const.SITE_URL}"</script>
+<script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/jquery-2.1.1.min.js"></script>
+<!-- 微信的扫一扫 -->
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<!-- 封装的js -->
+<script src="{$smarty.const.STATIC_URL}/js/wx/scan.js?id={time()}"></script>
+<script>
+      var htmlElm = document.getElementsByTagName('html')[0];
+      htmlElm.style.opacity = '0';
+      ! function (a, b) {
+        function c() {
+          var c, b = f.getBoundingClientRect().width;
+          b / i > 540 && (b = 540 * i), c = b / 10, f.style.fontSize = c + "px", k.rem = a.rem = c
+        }
+        var d, l, m, n, o, p, q, r, s, t, e = a.document,
+          f = e.documentElement,
+          g = e.querySelector('meta[name="viewport"]'),
+          h = e.querySelector('meta[name="flexible"]'),
+          i = 0,
+          j = 0,
+          k = b.flexible || (b.flexible = {});
+        g ? (l = g.getAttribute("content").match(/initial\-scale=([\d\.]+)/), l && (j = parseFloat(l[1]), i = parseInt(1 / j))) : h && (m = h.getAttribute("content"), m && (n = m.match(/initial\-dpr=([\d\.]+)/), o = m.match(/maximum\-dpr=([\d\.]+)/), n && (i = parseFloat(n[1]), j = parseFloat((1 / i).toFixed(2))), o && (i = parseFloat(o[1]), j = parseFloat((1 / i).toFixed(2))))), i || j || (p = a.navigator.userAgent, !!p.match(/android/gi), q = !!p.match(/iphone/gi), r = q && !!p.match(/OS 9_3/), s = a.devicePixelRatio, i = q && !r ? s >= 3 && (!i || i >= 3) ? 3 : s >= 2 && (!i || i >= 2) ? 2 : 1 : 1, j = 1 / i), f.setAttribute("data-dpr", i), g || (g = e.createElement("meta"), g.setAttribute("name", "viewport"), g.setAttribute("content", "initial-scale=" + j + ", maximum-scale=" + j + ", minimum-scale=" + j + ", user-scalable=no"), f.firstElementChild ? f.firstElementChild.appendChild(g) : (t = e.createElement("div"), t.appendChild(g), e.write(t.innerHTML))), a.addEventListener("resize", function () {
+          clearTimeout(d), d = setTimeout(c, 300)
+        }, !1), a.addEventListener("pageshow", function (a) {
+          a.persisted && (clearTimeout(d), d = setTimeout(c, 300))
+        }, !1), "complete" === e.readyState ? e.body.style.fontSize = 12 * i + "px" : e.addEventListener("DOMContentLoaded", function () {
+          e.body.style.fontSize = 12 * i + "px"
+        }, !1), c(), k.dpr = a.dpr = i, k.refreshRem = c, k.rem2px = function (a) {
+          var b = parseFloat(a) * this.rem;
+          return "string" == typeof a && a.match(/rem$/) && (b += "px"), b
+        }, k.px2rem = function (a) {
+          var b = parseFloat(a) / this.rem;
+          return "string" == typeof a && a.match(/px$/) && (b += "rem"), b
+        }
+      }(window, window.lib || (window.lib = {}));
+      window.onload = function () {
+        htmlElm.style.opacity = '1';
+      }
+    </script>
+</head>
+
+<body>
+<div class="wrap">
+  <header class="header header-guitai-add">
+    <a href="javascript:void(0);" class="btn-back2 back-list"><em></em>设备列表</a>
+    <a href="javascript:void(0);" class="btn-center2">{member_helper::get_title_info($member_info.id)}</a>
+    <div class="icon-guitai"></div>
+  {if $is_shoppe}
+        <p class="btn-add shoppe"><a href="javascript:;">{if !$shoppe_name} 请先选择柜台 {else} {$shoppe_name} {/if}<em></em></a></p>
+    {else}
+        <p class="btn-add shoppe shoppe-add"><a href="javascript:;">请先添加柜台<em></em></a></p>
+    {/if}
+  </header>
+  </header>
+  <section class="container">
+    <div class="phone-form">
+      <div class="line-wrapper ">
+        <div class="inner flex flex-pack-justify flex-align-center">
+          <div class="wrapper-left">标签ID</div>
+          <div class="wrapper-right">
+            {if !$id}<a href="javascript:void(0);" class="btn-code js_scan">扫一扫</a>{/if}
+            <input type="text" value="{$label_id}" class="scan" {if $id} disabled="disabled"{/if} resid="{$id}" name='label' id='label_id' placeholder="请扫描设备背面二维码或手工输入">
+          </div>
+        </div>
+      </div>
+      <div class="line-wrapper ">
+        <div class="inner flex flex-pack-justify flex-align-center">
+          <div class="wrapper-left">手机品牌</div>
+          <div class="wrapper-right" id='brand'>
+            <div class="select select-brand" value="">请选择手机品牌</div>
+            <span class="btn-choose brand-choose" >{if $rfid_info} {$rfid_info.name} {else}请选择手机品牌{/if}</span>
+          </div>
+        </div>
+      </div>
+      <div class="line-wrapper ">
+        <div class="inner flex flex-pack-justify flex-align-center">
+          <div class="wrapper-left">型号</div>
+          <div class="wrapper-right"  id='version'>
+            <div class="select select-brand" value="">请选择手机型号</div>
+            <span class="btn-choose version-choose">{if $rfid_info} {$rfid_info.version} {else}请选择手机型号{/if}</span>
+          </div>
+        </div>
+      </div>
+      <div class="line-wrapper ">
+        <div class="inner flex flex-pack-justify flex-align-center">
+          <div class="wrapper-left">颜色</div>
+          <div class="wrapper-right" id='color'>
+            <div class="select select-brand" value="">请选择手机颜色</div>
+            <span class="btn-choose color-choose" >{if $rfid_info} {$rfid_info.color} {else}请选择手机颜色{/if}</span>
+          </div>
+        </div>
+      </div>
+      <div class="line-wrapper">
+        <div class="inner flex flex-pack-justify flex-align-center">
+          <div class="wrapper-left">IMEI末六位</div>
+          <div class="wrapper-right">
+            <input type="number" value="{$rfid_info.imei}" id='imei' name='imei' placeholder="请输入IMEI末六位">
+          </div>
+        </div>
+      </div>
+      <div class="tip">注：IMEI(缩写)是国际移动设备身份码，由15位数字组成。请您输入末6位数字，如没有可填写6个0。</div>
+    </div>
+  </section>
+  {if !$id}
+   <footer class="footer-btn clearfix">
+      <button type="submit" class="btn1 left phone_save save_tip">保存</button>
+      <button type="submit" class="btn2 right phone_save">+继续添加</button>
+   </footer>
+  {else}
+      <footer class="footer-btn2 clearfix">
+          <button type="submit" class="btn3 phone_save save_tip">保存</button>
+      </footer>
+  {/if}
+  
+</div>
+<!-- 集团的提示 -->
+{if !$id}
+    {if $member_info.id == 1 || $member_info.res_name == 'group'}
+        <div class="info  popup">
+            <div class="inner">提示：集团管理员目前不能添加</div>
+        </div>
+    {/if}
+{/if}
+
+<!-- 成功失败提示 -->
+<div class="info  error-tips ">
+        <!-- <div class="inner none">错误提示：标签ID已存在</div>
+          <div class="inner">
+            请添加柜台
+      </div> -->
+</div>
+
+<!--start:手机品牌弹层-->
+<div class="phone-type brand-type hidden">
+  <header class="header ">
+      <a href="javascript:void(0);" class="btn-back2 brand-back"><em></em>手机品牌</a>
+      <a href="javascript:void(0);" class="btn-center"><span>{member_helper::get_title_info($member_id)}</span><img src="{$smarty.const.STATIC_URL}/images/m-num-map/icon-user.png"></a>
+    </header>
+    <section class="container-detail ">
+        <dl class="phone-list">
+          <dt class="myself-brand"><a href="javascript:void(0);">自定义品牌<em></em></a></dt>
+          {$name_info= rfid_helper::get_phone_field_info('name', '' , '')}
+              {foreach $name_info as $k => $v}
+                  <dd class='tip-brand'><label><input class='brand-select' type="radio" {if $rfid_info.name == $v} checked="checked"{/if} name="brand" value="{$v}"><span>{$v}</span></label></dd>
+              {/foreach}
+        </dl>
+    </section>
+    <div class="pop-phone pop-brand hidden">
+      <header class="header clearfix">
+        <a href="javascript:void(0);" class="btn-concel brand-cancel left">取消</a>
+        <a href="javascript:void(0);" class="btn-sure right brand-sure">确定</a>
+      </header>
+      <div class="con">
+        <input type="text" class="myself-input-brand" value='' placeholder="输入品牌名称">
+        <a href="javascript:void(0);" class="btn-del brand-btn-del"></a>
+      </div>
+    </div>
+</div>
+<!--end:手机品牌弹层-->
+<!--start:手机型号弹层-->
+<div class="phone-type version-type hidden">
+  <header class="header ">
+      <a href="javascript:void(0);" class="btn-back2 version-back"><em></em>手机型号</a>
+      <a href="javascript:void(0);" class="btn-center"><span>{member_helper::get_title_info($member_id)}</span><img src="{$smarty.const.STATIC_URL}/images/m-num-map/icon-user.png"></a>
+    </header>
+    <section class="container-detail">
+    <div class="tips-danger  danger-version hidden"></div>
+        <dl class="phone-list version-list" >
+        {if $rfid_info}
+            <dt><a class='myself-version' href='javascript:void(0);'>自定义型号<em></em></a></dt>
+            {$version_info = rfid_helper::get_phone_field_info('version' , $rfid_info.name , '')}
+                   {foreach $version_info as  $k => $v}
+                  <dd class='tip-version'><label><input class='version-select' type="radio" {if $rfid_info.version == $v} checked="checked"{/if} name="version" value="{$v}"><span>{$v}</span></label></dd>
+                   {/foreach}
+        {/if}
+        </dl>
+    </section>
+    <div class="pop-phone pop-version hidden">
+      <header class="header clearfix">
+        <a href="javascript:void(0);" class="btn-concel version-cancel left">取消</a>
+        <a href="javascript:void(0);" class="btn-sure right version-sure">确定</a>
+      </header>
+      <div class="con">
+        <input type="text" class="myself-input-version" value='' placeholder="输入型号名称">
+        <a href="javascript:void(0);" class="btn-del version-btn-del"></a>
+      </div>
+    </div>
+</div>
+<!--end:手机品牌弹层-->
+<!--start:手机型号弹层-->
+<div class="phone-type color-type hidden">
+  <header class="header ">
+      <a href="javascript:void(0);" class="btn-back2 color-back"><em></em>手机颜色</a>
+      <a href="javascript:void(0);" class="btn-center"><span>{member_helper::get_title_info($member_id)}</span><img src="{$smarty.const.STATIC_URL}/images/m-num-map/icon-user.png"></a>
+    </header>
+    <section class="container-detail">
+    <div class="tips-danger  danger-color hidden"></div>
+        <dl class="phone-list color-list" >
+        {if $rfid_info}
+            <dt><a class='myself-color' href='javascript:void(0);'>自定义颜色<em></em></a></dt>
+          {$color_info= rfid_helper::get_phone_field_info('color' , $rfid_info.name  ,  $rfid_info.version)}
+          {foreach $color_info as $k => $v}
+            <dd class='tip-color'><label><input class='color-select' type="radio" {if $rfid_info.color == $v} checked="checked"{/if} name="color" value="{$v}"><span>{$v}</span></label></dd>
+          {/foreach}
+        {/if}
+        </dl>
+    </section>
+    <div class="pop-phone pop-color hidden">
+      <header class="header clearfix">
+        <a href="javascript:void(0);" class="btn-concel color-cancel left">取消</a>
+        <a href="javascript:void(0);" class="btn-sure right color-sure">确定</a>
+      </header>
+      <div class="con">
+        <input type="text" class="myself-input-color" value='' placeholder="输入颜色">
+        <a href="javascript:void(0);" class="btn-del color-btn-del"></a>
+      </div>
+    </div>
+</div>
+<!--end:手机品牌弹层-->
+<!-- 表单验证 -->
+<!-- <script src="{$smarty.const.STATIC_URL}/js/rfid/form_check.js?v=99981"></script> -->
+
+<!--  页面自带js -->
+<script>
+var rfid_id = "{$rfid_info.id}";
+//点击保存锁
+var lock = false;
+
+//标签ID
+var label_id = "{$label_id}";
+//柜台ID
+var shoppe_id = "{$guitai_id}";
+
+//手机信息初始值
+var phone_name    = '';
+var phone_version = '';
+var phone_color   = '';
+
+//本地取存储数据
+var data = '';
+//本地存缓存数据对象
+var rfidInfo = {};
+
+////////////////////////////////////微信扫一扫start
+$(function(){
+    init().success(function(){
+        $('.js_scan').removeClass('disable');
+    }).error(function(msg){
+        //alert(msg);
+    })
+
+    $('.js_scan').click(function(){
+        handleLocalSave(function(){
+            scan().success(function(text){
+                var urlArr = new Array();
+                urlArr = text.split("/");
+                var checkKey = urlArr.length - 2;
+    
+                if ('add' != urlArr[checkKey]) {
+                    alert('请扫描设备二维码');
+                    return ;
+                }
+    
+                window.location.href = text+'?shoppe_id='+shoppe_id;
+                //直接跳转
+            }).error(function(msg){
+                //alert(msg);
+            });
+    })
+    });
+});
+
+function log(msg)
+{
+    if ( typeof(msg) == 'object' ) {
+        for ( var k in msg ) {
+            if ( typeof(msg[k]) == 'object' ) {
+                log(msg[k]);
+            } else if ( typeof(msg[k]) == 'function' ) {
+                create_p('function '+ k);
+            } else {
+                create_p(typeof(msg[k]) + ' '+ msg[k]);
+            }
+        }
+    } else if ( typeof(msg) == 'function' ) {
+        create_p('function '+ msg);
+    } else {
+        create_p(typeof(msg) + ' '+ msg);
+    }
+}
+
+function create_p(info)
+{
+    var body = document.querySelector('body');
+    var p    = document.createElement('p');
+
+    p.innerHTML = info;
+    body.appendChild(p);
+}
+////////////////////////////////////微信扫一扫end
+////////////////////////////////////本地存储start
+var localSave = function(dataid)
+{
+    this.dataid=dataid;
+    return this;
+};
+
+localSave.prototype={
+    add:function(dataval){
+        this.dataval=dataval || [];
+       localStorage.setItem(this.dataid,JSON.stringify(this.dataval));
+    },
+    get:function(){
+       return JSON.parse(localStorage.getItem(this.dataid));
+    },
+    remove:function(){
+       localStorage.removeItem(this.dataid);
+    },
+    clear:function(){
+       localStorage.clear();
+    }
+};
+
+var localDate = new localSave("abc");
+
+function handleLocalSave(callback)
+{
+    rfidInfo.resId     = $('#label_id').attr('resId');
+    rfidInfo.shoppe_id = shoppe_id;
+    rfidInfo.label_id  = $('#label_id').val();
+    rfidInfo.name      = phone_name;
+    rfidInfo.version   = phone_version;
+    rfidInfo.color     = phone_color;
+    rfidInfo.imei      = $('#imei').val();
+
+    localDate.add(rfidInfo);
+    callback();
+}
+
+
+////////////////////////////////////本地存储end
+//退出清缓存
+$('.back-list').on('click', function(){
+    //清除本地存储
+    localDate.clear();
+    window.location.href = "{AnUrl('e/admin/rfid/device')}";
+})
+//选择添加柜台
+$('.shoppe').on('click', function(){
+
+	var _this = $(this);
+    handleLocalSave(function(){
+        //有是保存
+        if (!_this.hasClass('shoppe-add')) {
+        	
+            window.location.href ="{AnUrl("e/admin/rfid/shoppe/bind_shoppe?id={$id}&from=rfid_add")}";
+        } else {
+            window.location.href ="{AnUrl("e/admin/rfid/shoppe/add?id={$id}&from=rfid_add")}";
+        }
+    });
+})
+//获取值填入
+if (!rfid_id) {
+    data =localDate.get();
+}
+
+/* 
+ //遍历数据输出
+ $.each(data,function(key, val){
+    console.log(val);
+})
+*/
+
+if (data) {
+    if (parseInt(data.resId)) {
+        $('#label_id').attr('resid',data.resId);
+    }
+
+    /* if(parseInt(data.shoppe_id)) {
+        shoppe_id = data.shoppe_id;
+    } */
+
+
+    if (!label_id && data.label_id) {
+        $('#label_id').val(data.label_id);
+    }
+
+     if (data.name) {
+        $('.brand-choose').html('').append(data.name);
+        //字体颜色
+        $('.brand-choose').addClass('btn-choosed');
+        phone_name = data.name;
+        //调一次ajax
+        phoneVersion(phone_name, phone_version);
+    }
+    if (data.version) {
+        $('.version-choose').html('').append(data.version);
+        //字体颜色
+        $('.version-choose').addClass('btn-choosed');
+        phone_version = data.version;
+        //调一次ajax
+        phoneColor(phone_name, phone_version, phone_color);
+    }
+
+    if (data.color) {
+        $('.color-choose').html('').append(data.color);
+        //字体颜色
+        $('.color-choose').addClass('btn-choosed');
+        phone_color = data.color;
+    }
+
+    if (data.imei) {
+        $('#imei').val(data.imei);
+    } 
+}
+
+//本地存储end
+
+if (rfid_id) {
+    phone_name    = "{$rfid_info.name}";
+    phone_version = "{$rfid_info.version}";
+    phone_color   = "{$rfid_info.color}";
+}
+
+
+var click_able    = true;
+/**
+ * 改变的初始化
+ */
+function initPhone(obj)
+{
+    if (obj =='brand') {
+        phone_version = '';
+        phone_color   = '';
+
+        $('.version-choose').html('').append('请选择型号');
+        $('.color-choose').html('').append('请选择颜色');
+
+        $('.version-choose').removeClass('btn-choosed');
+        $('.color-choose').removeClass('btn-choosed');
+
+        $('.version-list').html('')
+        $('.color-list').html('');
+
+        $('.version-select').removeAttr("checked"); 
+        $('.color-select').removeAttr("checked");
+
+    } else if (obj== 'version') {
+        phone_color   = '';
+        $('.color-choose').html('').append('请选择颜色');
+
+        $('.color-choose').removeClass('btn-choosed');
+        $('.color-list').html('');
+
+        $('.color-select').removeAttr("checked");
+    }
+}
+
+//手机信息循环操作
+var objArr = ['brand' , 'version', 'color'];
+
+for(var i = 0;i < objArr.length; i++) {
+    //
+    operation(objArr[i]);
+}
+
+function operation(obj)
+{
+    //返回<
+    $('.'+obj+'-back').on('click',function(){
+        $('.'+obj+'-type').addClass('hidden');
+    })
+
+    //自定义取消
+    $(document).on('click', '.'+obj+'-cancel', function(){
+        $('.pop-'+obj).addClass('hidden');
+    })
+
+    //自定义 点击输入框
+    $(document).on('click', '.myself-'+obj, function(){
+        //$('.phone-type').addClass('hidden');
+        $('.pop-'+obj).removeClass('hidden');
+    })
+
+    //手机信息选择
+    $('#'+obj).on('click',function(){
+        console.log(obj);
+        $('.'+obj+'-type').removeClass('hidden');
+
+        if (obj == 'version') {
+            if (!phone_name) {
+                 $('.danger-'+obj).removeClass('hidden');
+                var html = '<span>请选择手机品牌</span>';
+                $('.danger-'+obj).html('').append(html);
+               
+            } else {
+                $('.danger-'+obj).addClass('hidden');
+            }
+        } else if (obj == 'color') {
+            if (!phone_name) {
+                var html = '<span>请先选择手机品牌（型号）</span>';
+                $('.danger-'+obj).html('').append(html);
+                $('.danger-'+obj).removeClass('hidden');
+            } else {
+                 if (!phone_version) {
+                     var html = '<span>请先选择手机型号</span>';
+                     $('.danger-'+obj).html('').append(html);
+                     $('.danger-'+obj).removeClass('hidden');
+                 } else {
+                     $('.danger-'+obj).addClass('hidden');
+                 }
+            } 
+        }
+    })
+
+    //手机信息获取值 追加到下拉菜单
+    $(document).on('click', '.'+obj+'-select', function(){
+        var select_val = $(this).val();
+
+        if (obj == 'brand') {
+            if (phone_name && phone_name != select_val) {
+                initPhone(obj);
+            }
+            //赋值
+            phone_name = $(this).val();
+            //rfidInfo.name = phone_name;
+            //localDate.add(rfidInfo.name);
+            //调用获取手机型号的方法
+            phoneVersion(phone_name, '');
+            //隐藏
+        } else if (obj == 'version') {
+            if (phone_version && phone_version != select_val) {
+                initPhone(obj);
+            }
+            //赋值
+            phone_version = $(this).val();
+            //调用获取手机颜色的方法
+            phoneColor(phone_name, phone_version, '')
+        } else if (obj == 'color') {
+            phone_color = select_val;
+        }
+
+        //追加点击选择的值
+        $('.'+obj+'-choose').html('').append(select_val);
+        //字体颜色
+        $('.'+obj+'-choose').addClass('btn-choosed');
+        //隐藏弹层
+        $('.'+obj+'-type').addClass('hidden');
+    })
+
+    //自定义删除已有值
+    $(document).on('click', '.'+obj+'-btn-del', function(){
+        $('.myself-input-'+obj).val('');
+    })
+
+    //自定义确定
+    $(document).on('click', '.'+obj+'-sure', function(){
+        var myself_val = $('.myself-input-'+obj).val();
+        if (myself_val) {
+            if (obj == 'brand' && phone_name && phone_name != myself_val) {
+                initPhone(obj);
+            }
+            if (obj == 'version' && phone_version && phone_version != myself_val) {
+                initPhone(obj);
+            }
+            //追加点击选择的值
+            $('.'+obj+'-choose').html('').append(myself_val);
+          //字体颜色
+            $('.'+obj+'-choose').addClass('btn-choosed');
+        } else {
+            alert('请输入自定义信息');
+            return '';
+        }
+
+        if (obj =='brand') {
+            //赋值
+            phone_name = myself_val;
+            //调用自定义的方法
+            userDefine('version');
+        } else if (obj =='version') {
+            //赋值
+            phone_version = myself_val;
+            //调用自定义的方法
+            userDefine('color');
+        } else if (obj =='color') {
+            //赋值
+            phone_color = myself_val;
+        }
+
+        //隐藏弹层
+        $('.'+obj+'-type').addClass('hidden');
+        $('.pop-'+obj).addClass('hidden');
+
+        //把值清空
+        $('.myself-input-'+obj).val('');
+        //清除radio的选中效果
+        $('.'+obj+'-select').removeAttr("checked"); 
+    })
+}
+
+
+/*
+ * 自定义了品牌就要全部自定义了
+ */
+function userDefine(obj)
+{
+    var tip_str = '';
+
+    if (obj =='version') {
+        tip_str = '型号';
+    } else if (obj== 'color') {
+        tip_str = '颜色';
+    }
+
+    var html    = "<dt><a class='myself-"+obj+"' href='javascript:void(0);'>自定义"+tip_str+"<em></em></a></dt>";
+
+    $('.'+obj+'-list').html('').append(html);
+}
+
+//手机型号
+function phoneVersion(phoneName, phoneVersion)
+{
+    $.post( siteUrl + '/rfid/admin/ajax/get_phone_version' , { phone_name:phoneName } ,function(json){
+        var html    = "<dt><a class='myself-version' href='javascript:void(0);'>自定义型号<em></em></a></dt>";
+        if (json.msg == 'ok') {
+            var jsonnum = eval(json.version_info);
+
+            for(var i = 0; i < jsonnum.length; i ++){
+                html += "<dd class='tip-version'><label><input class='version-select' type='radio'";
+                if (jsonnum[i] == phoneVersion) {
+                    html += 'checked="checked"';
+                }
+                
+                html += "name='version' value='"+jsonnum[i]+"'><span>"+jsonnum[i]+"</span></label></dd>";
+            }
+        }
+        $('.version-list').html('').append(html);
+    },'json')
+
+}
+//手机颜色
+function phoneColor(phoneName, phoneVersion, phoneColor)
+{
+    $.post( siteUrl + '/rfid/admin/ajax/get_phone_color' , { phone_name:phoneName,phone_version:phoneVersion } ,function(json){
+        if (json.msg == 'ok') {
+            var jsonnum = eval(json.color_info);
+
+            var html    = "<dt><a class='myself-color' href='javascript:void(0);'>自定义颜色<em></em></a></dt>";
+            for(var i = 0; i < jsonnum.length; i ++){
+                html += "<dd class='tip-color'><label><input class='color-select' type='radio' ";
+                if (jsonnum[i] == phoneColor) {
+                    html += 'checked="checked"';
+                }
+                html += "name='color' value="+jsonnum[i]+"><span>"+jsonnum[i]+"</span></label></dd>";
+            }
+
+        }
+
+        $('.color-list').html('').append(html);
+    },'json')
+
+}
+
+function cancelTipMsg(obj, callback)
+{
+   if (!click_able) {
+      return false;
+   }
+
+   click_able = false;
+
+   setTimeout(function(){
+        $('.error-tips').removeClass('popup').html('');
+        click_able = true;
+        //点击保存加锁
+        lock = false;
+
+        if (obj && callback) {
+            //回调
+            callback(obj);
+        }
+    },1200);
+}
+
+function tipMsg(tip)
+{
+    $('.error-tips').addClass('popup').html('').html('<div class="inner">'+tip+'</div>');
+}
+
+$('.phone_save').on('click',function(){
+    if (lock)  return;
+
+    lock = true ;
+    var obj = $(this);
+    record(obj);
+  //清除本地存储
+  localDate.clear();
+})
+
+function record(obj)
+{
+    var info = {};
+    info.resId     = $('#label_id').attr('resid');
+    info.shoppe_id = shoppe_id;
+    info.label_id  = $('#label_id').val();
+    info.name      = phone_name;
+    info.version   = phone_version;
+    info.color     = phone_color;
+    info.imei      = $('#imei').val();
+
+    if (!parseInt(info.shoppe_id)) {
+        tipMsg('提示：请完善柜台信息');
+        cancelTipMsg();
+        return false;
+    }
+
+    if (!info.label_id) {
+       tipMsg('提示：标签ID未填写（未扫描）');
+       cancelTipMsg();
+       return false;
+    }
+
+    if (!info.name) {
+       tipMsg('提示：请选择手机品牌');
+       cancelTipMsg();
+       return false;
+    }
+
+    if (!info.version) {
+       tipMsg('提示：请选择手机型号');
+       cancelTipMsg();
+       return false;
+    }
+
+    if (!info.color) {
+       tipMsg('提示：请选择手机颜色');
+       cancelTipMsg();
+       return false;
+    }
+
+    if (!info.imei) {
+       tipMsg('提示：请填写imei');
+       cancelTipMsg();
+       return false;
+    }
+
+    if (info.imei !='000000' && info.imei.toString().length != 6) {
+       tipMsg('提示：请填写正确的imei');
+       cancelTipMsg();
+       return false;
+    }
+
+    $.post(siteUrl + '/e/admin/rfid/ajax/phone_save' , info ,function(json) {
+        if (json.msg =='ok') {
+            if (!parseInt(info.resid)) {
+                $('.error-tips').addClass('popup').append('<div class="inner"><img src="'+siteUrl+'/images/succ.png" alt="">保存成功</div>');
+                //清除提示
+                 cancelTipMsg(obj,function(obj){
+                    //有是保存
+                     if (!obj.hasClass('save_tip')) {
+                         window.location.href = siteUrl + '/e/admin/rfid/add';
+                     } else {
+                         window.location.href = siteUrl + '/e/admin/rfid/device';
+                     }
+                 });
+
+            } else {
+                $('.error-tips').addClass('popup').append('<div class="inner"><img src="'+siteUrl+'/images/succ.png" alt="">编辑成功</div>');
+                //清除提示
+                cancelTipMsg(obj,function(obj){
+                    window.location.href = siteUrl + '/e/admin/rfid/device';
+                });
+            }
+            
+        } else {
+            $('.error-tips').addClass('popup').append('<div class="inner">提示：'+json.data+'</div>');
+            //清除提示
+            cancelTipMsg();
+        }
+    },'json')
+
+
+}
+//////////////
+$(function(){
+    $('.js_btnHeader').on('click', function(){
+        $('.js_headerNav').toggle();
+    });
+});
+</script>
+
+</body>
+</html>

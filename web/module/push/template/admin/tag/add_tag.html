@@ -1,0 +1,340 @@
+{include_www file="admin/lib/header_new.html" title="添加标签类型信息"}
+<style>
+    .pic-upload { width:250px;height:133px; }
+    .btn-upload{ width:106px; height: 33px; }
+    .btn-upload a{ display: block;position:relative;width: 104px;height: 33px;line-height: 18px;padding: 6px 0;text-align: center;color: #4c4c4c;background: #fff;border: 1px solid #eee;}
+    .btn-upload input{ width:106px; height:33px; position:relative; left:0px; top:-32px; z-index:1;filter:alpha(opacity=0);-moz-opacity:0;opacity:0; cursor:pointer;}
+    .js_upFileBox{ margin-left:0px;margin-top:30px;}
+</style> 
+      <!--start:右侧-->
+      <div class="main mian2 ">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('push/admin')}"><i class="iconfont iconfont-logo2"></i>标签管理</a>
+            &gt;
+            <span>标签类型添加</span>
+            <a href="{AnUrl('push/admin')}" class="btn btn-primary btn-sm pull-right">返回标签列表</a>
+          </div>
+
+          <div class="clearfix">
+            <div class="form-add pull-left" style="width:80%">
+            <form class="form-horizontal" action='{AnUrl("push/admin/save")}' method="post">
+    
+                 <div class="form-group">
+                  <label class="col-sm-3 control-label">标签类型</label>
+                  <div class="col-sm-7">
+                    <a class='less-box'>
+                    {AnForm type="select" name="tag_type" options=push_config::$tag_type  validate="required"  filter="filter_string" class="form-control" id = "selectType"}
+                    </a>
+                  </div>
+                </div>
+                
+              <div style='display:none;' id="tag_type">
+                <div class="form-group js_urlLink" >
+                  <label class="col-sm-3 control-label ">类型名称</label>
+                  <div class="col-sm-7">
+                    <a class='less-box'>
+                    <input type="text" name="tag[res_name]"  class="form-control js_urlInput"  filter="filter_string" placeholder="请输入标签类型" />
+                    </a>
+                  </div>
+                </div>
+                
+                  <div class="form-group js_urlLink" >
+                  <label class="col-sm-3 control-label ">类型标题</label>
+                  <div class="col-sm-7">
+                    <a class='less-box'>
+                    <input type="text" name="res_title"  class="form-control js_urlInput"  filter="filter_string" placeholder="请输入标签类型" />
+                    </a>
+                  </div>
+                </div>
+                
+                <div class="form-group js_urlLink" >
+                  <label class="col-sm-3 control-label ">标签值</label>
+                  <div class="col-sm-7">
+                    <a class='less-box'>
+                    <input type="text" name="tag[res_id]"  class="form-control js_urlInput"  filter="filter_string" placeholder="请输入标签类型" />
+                    </a>
+                  </div>
+                </div>   
+            </div> 
+            
+            <div style='display:none;' id="tag_type2">  
+             <div class="form-group " >
+                  <label class="col-sm-3 control-label">选择类型</label>
+                  <div class="col-sm-7">
+                    <a class='less-box'>
+                            <select class="form-control input-sm pull-left form-control"  style="width:120px" name="tag[res_name_select]"  id='res_name_type'>
+                                      <option value="0">请选择标签类型</option>
+                                      {$res_name = push_helper::get_res_name_list()}
+                                     {foreach  $res_name as $k=>$v}
+                                       <option value="{$v['res_name']}" >{$v['res_title']}</option>
+                                     {/foreach}
+                          </select>
+                    </a>
+                  </div>
+               </div>
+                
+                <div class="form-group" style='display:none;' id="business_id">
+                        
+                        <label class="col-sm-3 control-label">标签值</label>
+                        <div class="col-sm-7">
+                            <a class="less-box">
+                                <span>
+                 	                     <input type="text"  style="width:120px;" name='tag[res_id_select]' class="form-control input-sm pull-left  business_id tag_value"  placeholder="请输入标签值"> 
+                                            <p class="tips" style="display:none;" id='cat'>友情提示：请输入营业厅对应标签值</p>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                   <div class="form-group" style='display:none;' id="city_id">
+                        <label class="col-sm-3 control-label">标签值</label>
+                        <div class="col-sm-7">
+                            <a class="less-box">
+                                <span>
+                                    <input type="text" name="tag[res_id_select]" class="form-control  city_id " placeholder="请输入标签值">
+                                    <p class="tips" style="display:none;" id='cat3'>友情提示：请输入市对应标签值</p>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style='display:none;' id="area_id">
+                        <label class="col-sm-3 control-label">标签值</label>
+                        <div class="col-sm-7">
+                            <a class="less-box">
+                                <span>
+                                    <input type="text" name="tag[res_id_select]" class="form-control  area_id " placeholder="请输入标签值">
+                                    <p class="tips" style="display:none;" id='cat1'>友情提示：请输入区对应标签值</p>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group hidden"  id="others_id">
+                        <label class="col-sm-3 control-label">标签值</label>
+                        <div class="col-sm-7">
+                            <a class="less-box">
+                                <span>
+                                    <input type="text" name="tag[res_id_select]" class="form-control others_id " placeholder="请输入标签值">
+                                    <p class="tips" style="display:none;" id='cat2'>友情提示：请输入自定义标签值</p>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                 
+                    
+                    
+                     <div class="form-group hidden"  id="other_id">
+                        <label class="col-sm-3 control-label">标签标题</label>
+                        <div class="col-sm-7">
+                            <a class="less-box">
+                                <span>
+                                    <input type="text" name="res_title_select"  value="" class="form-control required res_title "  readonly>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+               <input type="hidden" name="tag[res_id_select]"  class="selectId"> 
+               <input type="hidden" name="flag_type"  class="flag_type" value=''> 
+               
+                <br>
+                 <div class="form-group btn_box">
+                  <div class="col-sm-offset-3 col-sm-10">
+                     <button type="submit" class="btn btn-sm btn-success "><span style='display: inline-block;width: 95px;' class='Sub'>保存</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+         
+                    <a type="button" class="btn btn-sm btn-warning" href="{AnUrl('push/admin')}">&nbsp;&nbsp;取消&nbsp;&nbsp;</a>
+                  </div>
+                </div>
+                
+             </form>
+            </div>
+          </div>
+        </div>
+    <script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/jqueryui/1.8.11/jquery-ui.js"></script>
+
+
+<script>
+
+
+$('.pull-right').click(function () {
+});
+$(function(){
+  
+  $('#selectType').on('change', function () {
+    type = $(this).val();
+    if (!type) {
+      showMsg("请选择类型！");
+      return;
+    }
+    
+    $(".js_urlInput").val("");
+    if (type == 1) {
+        $(".js_urlTitle").text("类型名称");
+        $('#tag_type').show();
+        $('#tag_type2').hide();
+         if($(".flag_type").val()==''){
+                $(".flag_type").val('0');
+            }
+    } else {
+        $(".js_urlTitle").text("选择标签");
+        $('#tag_type').hide();
+        $('#tag_type2').show();
+        if($(".flag_type").val()==''){
+            $(".flag_type").val('1');
+        }
+         $('.tag_value').focus(function(){
+             $('#cat').show();
+             sysSecond = 5 ;
+                var djs = setInterval(function(){
+                    sysSecond = sysSecond - 1 ;
+                    if (sysSecond <  1) {
+                        clearInterval(djs);
+                        $('#cat').hide();
+                    }
+                 },1000);
+            })
+            
+            $('.city_id').focus(function(){
+             $('#cat3').show();
+             sysSecond = 5 ;
+                var djs = setInterval(function(){
+                    sysSecond = sysSecond - 1 ;
+                    if (sysSecond <  1) {
+                        clearInterval(djs);
+                        $('#cat3').hide();
+                    }
+                 },1000);
+            })
+            
+            $('.area_id').focus(function(){
+             $('#cat1').show();
+             sysSecond = 5 ;
+                var djs = setInterval(function(){
+                    sysSecond = sysSecond - 1 ;
+                    if (sysSecond <  1) {
+                        clearInterval(djs);
+                        $('#cat1').hide();
+                    }
+                 },1000);
+            })
+            
+             $('.others_id').focus(function(){
+             $('#cat2').show();
+             sysSecond = 5 ;
+                var djs = setInterval(function(){
+                    sysSecond = sysSecond - 1 ;
+                    if (sysSecond <  1) {
+                        clearInterval(djs);
+                        $('#cat2').hide();
+                    }
+                 },1000);
+            })
+    }
+   
+  });
+  
+  
+  $('#res_name_type').on('change', function () {
+        type = $(this).val();
+        res_title=$("#res_name_type  option:selected").text();
+        if (type==0) {
+          showMsg("请选择标签类型！");
+          return;
+        }
+        if($(".selectId").length==0){
+                $(".btn_box").before('<input type="hidden" name="tag[res_id_select]"  class="selectId"> ');
+        }
+        if(type=='business_hall'){
+            $('#business_id').show();
+            $('#city_id').hide();
+            $('#area_id').hide();
+            $('#other_id').addClass('hidden');
+            $('#others_id').addClass('hidden');
+            
+        } else if(type=='city'){
+            $('#city_id').show();
+            $('#business_id').hide();
+            $('#area_id').hide();
+            $('#other_id').addClass('hidden');
+            $('#others_id').addClass('hidden');
+        } else if(type=='area'){
+            $('#area_id').show();
+            $('#business_id').hide();
+            $('#city_id').hide();
+            $('#other_id').addClass('hidden');
+            $('#others_id').addClass('hidden');
+        }else{
+            $('#others_id').removeClass('hidden');
+            $('#other_id').removeClass('hidden');
+            $('#business_id').hide();
+            $('#city_id').hide();
+            $('#area_id').hide();
+            $('.selectId').remove();
+            $('.res_title').val(res_title);
+            
+        }
+
+  });
+});
+
+
+         $('.business_id').autocomplete({ 
+             // 静态的数据源，根据label属性进行显示或模糊匹配，当给输入框设置value属性值
+             source: "/business_hall/admin/ajax/get_info_by_title",
+            
+            //选择
+            select: function(event, ui){
+              
+              $(this).val(ui.item.label);
+              //隐藏域
+              $('.selectId').val(ui.item.id);
+              // 必须阻止事件的默认行为，否则autocomplete默认会把ui.item.value设为输入框的value值
+              event.preventDefault();
+              
+            }
+          })
+          
+          
+           $('.city_id').autocomplete({ 
+             // 静态的数据源，根据label属性进行显示或模糊匹配，当给输入框设置value属性值
+             source: "/push/admin/ajax/get_info_by_cityname",
+            
+            //选择
+            select: function(event, ui){
+              
+              $(this).val(ui.item.label);
+              //隐藏域
+              $('.selectId').val(ui.item.id);
+              // 必须阻止事件的默认行为，否则autocomplete默认会把ui.item.value设为输入框的value值
+              event.preventDefault();
+              
+            }
+          })
+          
+            $('.area_id').autocomplete({ 
+             // 静态的数据源，根据label属性进行显示或模糊匹配，当给输入框设置value属性值
+             source: "/push/admin/ajax/get_info_by_areaname",
+            
+            //选择
+            select: function(event, ui){
+              
+              $(this).val(ui.item.label);
+              //隐藏域
+              $('.selectId').val(ui.item.id);
+              // 必须阻止事件的默认行为，否则autocomplete默认会把ui.item.value设为输入框的value值
+              event.preventDefault();
+              
+            }
+          })
+          
+        
+            
+    
+    
+     
+
+    
+</script>
+{include_www file="admin/lib/footer_new.html"}

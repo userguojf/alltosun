@@ -1,0 +1,75 @@
+{include_www file="admin/lib/header_new.html" title="企业微信通讯录管理"}
+<!--start:右侧-->
+<div class="main mian2 ">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('wework/admin/department')}"><i class="iconfont iconfont-logo2"></i>{$wework}</a>
+      &gt;
+      <span>{if !$department_info.id}部门添加{else}通讯录编辑{/if}</span>
+      <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回部门列表</a>
+    </div>
+    <div class="clearfix">
+      <div class="form-add pull-left" style="width:80%;">
+        <form class='form-horizontal' action="{AnUrl('wework/admin/department/save')}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="department_info[id]" value="{$department_info.id}">
+
+        {*added*}
+        <div class="form-group alone_add">
+          <label class="col-sm-3 control-label">部门名称：</label>
+          <div class="col-sm-6">
+               <input type="text" name="department_info[name]" value="{$department_info.name}"  class="form-control"  filter="filter_string"  placeholder="请输入部门名称" >
+          </div>
+        </div>
+        <br>
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-10">
+            <button type="submit" class="btn btn-sm btn-success" id="btn"><span style='display: inline-block;width: 95px;' class='Sub'>保存</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a type="button" class="btn btn-sm btn-warning" href="javascript:history.go(-1);">&nbsp;&nbsp;返回上一页&nbsp;&nbsp;</a>
+          </div> 
+        </div> 
+       </div>
+   </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$('.JS_siteType').click(function(){
+      var type = $(this).val();
+        if ( 2 == parseInt(type)) {
+            $('.together_add').show();
+            $('.alone_add').hide();
+        } else {
+            $('.together_add').hide();
+            $('.alone_add').show();
+        }
+    })
+    
+    
+   
+$('.user_mobile').blur(function(){
+    var phone = $(this).val();
+    var bool = checkPhone(phone);
+    alert(bool);
+    if(!bool){
+        $('.link_show').removeClass('hidden');
+        return false;
+    }
+    $('.link_show').addClass('hidden');
+});
+
+//验证phone
+function checkPhone(phone) {  
+      var strReg = "/^1(3|4|5|7|8)\d{9}$/";
+      var re = new RegExp(strReg);  
+      if(!re.test(url)) {  
+    	  alert(1);
+          return false;  
+      } else {  
+    	  alert(2);
+          return true;  
+      }  
+  }
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

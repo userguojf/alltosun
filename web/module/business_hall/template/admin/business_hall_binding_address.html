@@ -1,0 +1,65 @@
+{include_www file="admin/lib/header_new.html" title="营业厅申请管理"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    .btn-top{
+        margin-top:5px;
+    }
+    </style>
+<!-- 主内容 start -->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('business_hall/admin/business_hall_binding/binding_address')}"><i class="iconfont iconfont-logo2"></i>设备绑定提交信息管理</a>
+             &gt;
+            <span>设备绑定提交信息列表</span>
+        </div>
+        <div class="form-search clearfix">
+             <div class="pull-left">
+                 <form action="{AnUrl('business_hall/admin/business_hall_binding/binding_address')}" method='get'>
+                   {* 公共分权限搜索模块 *}
+                   {widget model='business_hall' func='get_search_by_member' file='get_search_by_member.html' member_info="{$member_info}"}
+                   <input type="text"  style="width:200px;"  name="search_filter[business_hall_title]" value="{$search_filter.business_hall_title}" class="form-control input-sm pull-left js_search"  placeholder="按营业厅名称搜索">
+                   <button type="submit" class="btn-search pull-left">搜索</button>
+                 </form>
+            </div>
+            <div class="pull-right"> 
+                <a href="{AnUrl('business_hall/admin/business_hall_binding/address_export',"?business_hall_title={$search_filter.business_hall_title}&province_id={$search_filter.province}&area_id={$search_filter.city}&area_id={$search_filter.area}")}" class="btn btn-sm btn-success">导出</a>
+            </div>
+        </div>
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th width="30%">营业厅名称</th>
+                    <th width="15%">省</th>
+                    <th width="15%">市</th>
+                    <th width="15%">区</th>
+                    <th width="30%">详细地址</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $info_list as $k=>$v}
+                    <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                    <td>{$v.business_hall_title}</td>
+                    <td>{focus_helper::get_field_info($v.province_id, 'province', 'name')}</td>
+                    <td>{focus_helper::get_field_info($v.city_id, 'city', 'name')}</td>
+                    <td>{focus_helper::get_field_info($v.area_id, 'area', 'name')}</td>
+                    <td>{$v.address}</td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="5">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+</div>
+<script>
+ 
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

@@ -1,0 +1,101 @@
+{include_www file="admin/lib/header_new.html" title="门店改造申请"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('screen_stat/admin/experience_stat/stat_day')}"><i class="iconfont iconfont-logo2"></i>门店改造申请</a>
+      &gt;
+      <span>统计</span>
+      <span>({if $count}{$count}{else}0{/if})
+        
+      </span>
+      <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+    </div>
+
+    <div class="tabs1">
+      <ul class="clearfix">
+        <li {if $search_type == 'file'}class="curr"{/if}>
+          <a href="{AnUrl('?search_type=file')}">集团文件</a>
+        </li>
+        <li {if $search_type == 'apply'}class="curr"{/if}>
+          <a href="{AnUrl('file_apply/admin/apply?search_type=apply')}">门店改造申请</a>
+        </li>
+      </ul>
+    </div>
+    
+    <div class="form-search clearfix">
+            <div class="pull-right">
+              <a href="{AnUrl('file_apply/admin/apply/add')}" class="btn btn-sm btn-success">提交申请</a>
+            </div>
+          </div>
+    
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+          {if $res_name == 'province'}
+              <th>申请区域</th>
+           {/if}
+              <th>申请人</th>
+              <th>门店数量</th>
+              <th>申请时间</th>
+              <th>申请状态</th>
+              <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $list as $k=>$v}
+          <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+<!--           <td>{*business_hall_helper::get_info_name('province' , $v.province_id ,'name')*}</td>
+ -->          
+            {if $res_name == 'province'}  
+            <td>{_uri('province', $v.province_id, 'name')}</td>
+            {/if}
+            <td>{file_apply_helper::get_user_by_memberid($v.member_id)}</td>
+            <td>{$v.business_number}</td>
+            <td>{substr($v.add_time, 0, 10)}</td>
+<!--             审批状态 0 未提交  1省待审批 2省审批中 3省审批结束 4集团待审批 5集团审批中 6集团审批结束
+ -->         
+            {if $res_name == 'city'}
+                <td>{if $v.status == 0}未提交
+                 {else if $v.status == 1}待审批
+                 {else if $v.status == 2 || $v.status == 3 || $v.status == 4 || $v.status == 5}审批中
+                 {else if $v.status == 6}审批结束
+                 {/if}
+              </td>
+            {/if}
+            
+            {if $res_name == 'province'}
+                <td>{if $v.status == 0}未提交
+                 {else if $v.status == 4}待审批
+                 {else if $v.status == 5}审批中
+                 {else if $v.status == 6}审批结束
+                 {/if}
+               </td>
+            
+            {/if}
+            <td>
+           
+            </td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="{if $res_name != 'city'}6{else}5{/if}">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+<script>
+$(function () {
+  
+});
+
+
+</script>
+{include_www file="admin/lib/footer_new.html"}

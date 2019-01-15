@@ -1,0 +1,124 @@
+{include_www file="admin/lib/header_new.html" title="营业厅申请管理"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    .btn-top{
+        margin-top:5px;
+    }
+    </style>
+<!-- 主内容 start -->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('business_hall/admin/business_hall_binding')}"><i class="iconfont iconfont-logo2"></i>申请审核管理</a>
+             &gt;
+            <span>申请人员列表</span>
+        </div>
+        <div class="form-search clearfix">
+             <div class="pull-left">
+                 <form action="{AnUrl('business_hall/admin/business_hall_binding')}" method='get'>
+                   <input type="text"  style="width:200px;"  name="search_filter[user_number]" value="{$search_filter.user_number}" class="form-control input-sm pull-left js_search"  placeholder="按MAC地址搜索">
+                   <input type="text"  style="width:200px;"  name="search_filter[user_name]" value="{$search_filter.user_name}" class="form-control input-sm pull-left js_search"  placeholder="按联系人搜索">
+                   <input type="text"  style="width:200px;"  name="search_filter[user_phone]" value="{$search_filter.user_phone}" class="form-control input-sm pull-left js_search"  placeholder="按手机号搜索">
+                   <button type="submit" class="btn-search pull-left">搜索</button>
+                 </form>
+            </div>
+            <div class="pull-right">
+                <a href="{AnUrl('business_hall/admin/business_hall_binding/apply_export',"?user_number={$search_filter.user_number}&user_name={$search_filter.user_name}&user_phone={$search_filter.user_phone}")}" class="btn btn-sm btn-success">导出</a>
+            </div>
+        </div>
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th width="25%">MAC地址</th>
+                    <th width="15%">联系人</th>
+                    <th width="20%">手机号</th>
+                    <th width="20%">申请时间</th>
+                    <th width="20%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $k=>$v}
+                    <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                    <td>{$v.user_number}</td>
+                    <td>{$v.user_name}</td>
+                    <td>{$v.user_phone}</td>
+                    <td>{$v.add_time}</td>
+                    <td class="txtleft " resId={$v.id} user_phone="{$v.user_phone}" user_number="{$v.user_number}">
+                        {if !$v.status}
+                            <a class="btn btn-xs btn-top btn-info up_del" data="{$v.id}" href="javascript:">未审核</a>
+                        {else}
+                            <a class="btn btn-xs btn-top btn-danger down_del" data="{$v.id}" href="javascript:">已审核</a>
+                        {/if}
+                    </td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="13">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+</div>
+<script>
+ var updateStatus = {
+     _id:'',
+     _msg :'操作失败',
+     _url:"{AnUrl('business_hall/admin/ajax/update_apply_status')}",
+     update:function(obj,status){
+         this._id          = $(obj).parent().attr('resId');
+         this._user_number = $(obj).parent().attr('user_number');
+         this._user_phone  = $(obj).parent().attr('user_phone');
+         $.post(this._url,{ id:this._id, status:status ,user_number:this._user_number , user_phone:this._user_phone},function(json){
+             if (json.info == 'ok') {
+                 if (status == 0) {
+                     updateStatus.updateHtmlDown(obj);
+                 } else if (status == 1) {
+                     updateStatus.updateHtmlUp(obj);
+                 } else if (status == 2) {
+                     updateStatus.deleteHtml(obj);
+                 }
+             } else {
+                 alert(json.info);
+             }
+         },'json')
+     },
+     updateHtmlDown:function(obj){
+         $(obj).html('未审核');
+         $(obj).removeClass('btn-danger');
+         $(obj).removeClass('down_del');
+
+         $(obj).addClass('btn-info');
+         $(obj).addClass('up_del');
+        
+     },
+     updateHtmlUp:function(obj){
+         $(obj).html('已审核');
+         $(obj).addClass('btn-danger');
+         $(obj).addClass('down_del');
+
+         $(obj).removeClass('btn-info');
+         $(obj).removeClass('up_del');
+     }
+ };
+
+ $('.down_del').live('click',function(event){
+     event.preventDefault();
+     var result = confirm(' 确认取消已审核？');
+     if (result) {
+       updateStatus.update(this,0);
+     }
+     return false;
+ })
+
+$('.up_del').live('click',function(event){
+     event.preventDefault();
+     updateStatus.update(this,1);
+ })
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

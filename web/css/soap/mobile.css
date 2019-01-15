@@ -1,0 +1,19 @@
+html, body{height:100%;width:100%;margin:0;padding:0;color:#8d9dba;font-stretch:ultra-condensed;-webkit-transform:translateZ(0)}
+a{color:white;text-decoration:none;cursor:pointer;color:#333;border:0;margin:0;outline:0;}
+body{background:#fff;}
+ol, ul,dl,p,dd,section {list-style:none;padding:0;margin:0;}
+img{border:0;vertical-align:top;}
+input:-moz-placeholder{color:#aaaaaa;font:11px Verdana;}
+
+#main{width:100%;height:100%;position:relative;overflow:hidden;opacity:0;max-width:410px;margin:0 auto;}
+.stage{background:#fff;width:100%;height:100%;position:absolute;left:0;top:0;overflow:hidden;}
+.demo{ text-align:center; line-height:100%;height:100%; font-size:20px; padding-top:50%;}
+.scroll{position:absolute;bottom:0;left:0;z-index:6;width:13.28%;height:0;padding-bottom:9.37%;left:43.28%; background:#ccc; opacity:0;}
+.stage1{ background:#fff url(/images/soap/bg1.png) left bottom no-repeat; background-size:100% auto;}
+.stage2{ background:#fff url(/images/soap/bg2.jpg) left bottom no-repeat; background-size:100% auto;}
+.stage3{ background:#fff url(/images/soap/bg3.jpg) left bottom no-repeat; background-size:100% auto;}
+.stage4{ background:#fff url(/images/soap/bg4.jpg) left bottom no-repeat; background-size:100% auto;}
+.stage5{ background:#ffd5e3 url(/images/soap/bg5.jpg) left bottom no-repeat; background-size:100% auto;}
+.btnbox{width:100%;padding-bottom:40.55%; position:absolute;left:0;bottom:0;}
+.btn{width:85.31%;padding-top:13%;height:0;display:block; background:#ccc;margin:0 auto; opacity:0;}
+.logo{width:46.56%; position:absolute;top:0;right:0;}

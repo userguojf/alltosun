@@ -1,0 +1,617 @@
+{include file="admin/lib/header.html"}
+        <!--start:主内容-->
+        <div class="inner main">
+            <div class="bread"><a href='{AnUrl("file_apply/admin/apply")}'>改造申请&gt;</a>
+                    <span class="curr">
+                        <span class="curr">{_uri('province', $convert_info.province_id, 'name')}</span>
+                    </span>
+            </div>
+            <div class="apply-infos">
+                <span class="tag">申请区域：{_uri('province', $convert_info.province_id, 'name')}</span>
+                {$apply_user = file_apply_helper::get_user_by_memberid($apply_info.member_id)}
+                <span class="tag">申请人：{$apply_user}</span>
+                {$phone = file_apply_helper::get_apper_phone($apply_info.member_id)}
+                <span class="tag">电话：{if $apply_user == 'FJxm_YYT'}18801235362{else}13301163580{/if}</span>
+                <span class="tag">申请门店数量：{$convert_info.business_number}</span>
+                <span class="tag">申请时间：{$apply_info.create_time}</span>
+            </div>
+            <div class="apply-tabs clearfix">
+                <!--                     审核状态 0 未审核 1 省审核通过 2省审核不通过 3集团通过 4集团不通过-->
+                {foreach $apply_list as $k => $v}
+                     <div class="item div_change {if $apply_info.id == $v.id }active{/if}">
+                      {$rescord_info = file_apply_helper::get_check_status_by_apply_id($v.id)}
+                        <a href='{AnUrl("file_apply/admin/apply/detail_apply?apply_id={$v.id}&cid={$convert_info.id}")}' class=" change_a {if $rescord_info.rescord_status == '待审核'} status-ing {else} status-end {/if}">
+                                {$k+1}.{$v.business_title} ({if $rescord_info}{$rescord_info.rescord_status}{/if})
+                        </a>
+                   </div>
+                {/foreach}
+                
+                <div class="btn-more right">
+                    <div class="default">更多&gt;&gt;</div>
+                    <div class="more-list">
+                        {foreach $apply_list as $k => $v}
+                        {$rescord_info = file_apply_helper::get_check_status_by_apply_id($v.id)}
+                             <p>
+                                <a href='{AnUrl("file_apply/admin/apply/detail_apply?apply_id={$v.id}&cid={$convert_info.id}")}' class="{if !$check_status} status-ing {else} status-end {/if}">
+                                        {$k+1}.{$v.business_title} ({if $rescord_info}{$rescord_info.rescord_status}{/if})
+                                </a>
+                           </p>
+                         {/foreach}
+                    </div>
+                </div>
+            </div>
+            <div class="apply-tabs-content">
+                <div class="apply-detail clearfix">
+                    <div class="con left">
+                        <p class="info">
+                            {_uri('province', $apply_info.province_id, 'name')}-
+                            {_uri('city', $apply_info.city_id, 'name')}-
+                            {_uri('area', $apply_info.area_id, 'name')}
+                        </p>
+                        <p class="name">{_uri('business_hall', $apply_info.business_id, 'title')}</p>
+                        <p class="desc">
+                         {$phone = file_apply_helper::get_apper_phone($apply_info.member_id,$apply_info.business_id)}
+                            <span class="tag"><em class="icon-tel"></em>{if $phone}{$phone}{else}无{/if}</span>
+                            <span class="tag"><em class="icon-level"></em>
+                                 {foreach file_apply_config::$store_type as $k => $v}
+                                            {if $k == $apply_info.store_type}{$v}{/if}
+                                 {/foreach}
+                            </span>
+                            <span class="tag"><em class="icon-house"></em>{$apply_info.business_area}m2</span>
+                        </p>
+                        <p class="desc"><em class="icon-money"></em>移动月均新增{$apply_info.mobile_add}户；宽带月均新增{$apply_info.wide_add}户；终端月均销售{$apply_info.pc_add}台；月均业务新增收入{$apply_info.work_add}万</p>
+                    </div>
+                     <!-- 审核状态 0 未审核 1 省审核通过 2省审核不通过 3集团通过 4集团不通过-->
+                    {$rescord_info = file_apply_helper::get_check_status_by_apply_id($apply_info.id)}
+                    {if $res_name == 'city'}
+                          {if $apply_info.status == 13 && $rescord_info.rescord_status == '待审核'}
+                                <div class="status right">
+                                    <p class="name txt-success">待审批</p>
+                                     <p class="rescord"><a href="javascript:;" class="txt-disabled"><em class="icon-mark rescord"></em>查看审批记录</a></p>
+                                </div>
+                          {/if}
+                          {if $rescord_info.check_status == 1}
+                                 <div class="status right">
+                                    <p class="name txt-success">审批中</p>
+                                     <p class="rescord"><a href="javascript:;" class="txt-disabled"><em class="icon-mark rescord"></em>查看审批记录</a></p>
+                                </div>
+                          {else if $rescord_info.check_status == 3}
+                                <div class="status right">
+                                    <p class="name txt-success">审批通过</p>
+                                     <p class="rescord"><a href="javascript:;" class="txt-disabled"><em class="icon-mark"></em>查看审批记录</a></p>
+                                </div>
+                           {else if $rescord_info.check_status == 2 || $rescord_info.check_status == 4}
+                               <div class="status right">
+                                    <p class="name txt-danger">审批不通过</p>
+                                    <p class="rescord_no"><a href="javascript:;" class="txt-disabled"><em class="icon-mark"></em>查看审批记录</a></p>
+                                </div>
+                         {/if}
+                     {/if}
+                     
+                     {if $res_name == 'province'}
+                     <!--$apply_info.status == 13 市申请  14 省申请  -->
+                        {if $apply_info.status == 13 && ($rescord_info.check_status == 0  || !$rescord_info.check_status)} 
+                        <div class="right">
+                            <a href='javascript:;' class="btn-primary fast_check">立即审核</a>
+                        </div>
+                        {else if $apply_info.status == 14 && $rescord_info.rescord_status == '待审核'} 
+                              <div class="status right">
+                                    <p class="name txt-danger">集团待审批</p>
+                                    <p class="rescord"><a href="javascript:;" class="txt-disabled"><em class="icon-mark rescord"></em>查看审批记录</a></p>
+                                </div>
+                          {else if $rescord_info.check_status == 1 }
+                                 <div class="status right">
+                                    <p class="name txt-success">审批中</p>
+                                     <p class="rescord"><a href="javascript:;" class="txt-disabled"><em class="icon-mark"></em>查看审批记录</a></p>
+                                </div>
+                          {else if  $rescord_info.check_status == 3}
+                                 <div class="status right">
+                                    <p class="name txt-success">审批通过</p>
+                                     <p class="rescord"><a href="javascript:;" class="txt-disabled"><em class="icon-mark"></em>查看审批记录</a></p>
+                                </div>
+                           {else if $rescord_info.check_status == 2 || $rescord_info.check_status == 4}
+                               <div class="status right">
+                                    <p class="name txt-danger">审批不通过</p>
+                                    <p class="rescord_no"><a href="javascript:;" class="txt-disabled"><em class="icon-mark"></em>查看审批记录</a></p>
+                                </div>
+                         {/if}
+                     {/if}
+                     {if $res_name == 'group'}
+                        {if $rescord_info.check_status == 1 || !$rescord_info.check_status} 
+                        <div class="right">
+                            <a href='javascript:;' class="btn-primary fast_check">立即审核</a>
+                        </div>
+                          {else if $rescord_info.check_status == 3}
+                                <div class="status right">
+                                    <p class="name txt-success">审批通过</p>
+                                    <p class="rescord"<a href="javascript:;" class="txt-disabled"><em class="icon-mark"></em>查看审批记录</a></p>
+                                </div>
+                           {else if $rescord_info.check_status == 4}
+                               <div class="status right">
+                                    <p class="name txt-danger">审批不通过</p>
+                                    <p class="rescord_no"><a href="javascript:;" class="txt-disabled"><em class="icon-mark"></em>查看审批记录</a></p>
+                                </div>
+                         {/if}
+                     {/if}
+                    
+                </div>
+                <div class="apply-detail-intro">
+                    <p>改造预算 ：{$apply_info.budget}</p>
+                    <p>上次改造时间 ：{substr($apply_info.last_time, 0, 10)}</p>
+                    <p>本次改造时间 ：{substr($apply_info.change_begin, 0, 10)}  ——  {substr($apply_info.change_end, 0, 10)}</p>
+                    {if $apply_info.remark}
+                        <p>备注：{$apply_info.remark}</p>
+                    {else}
+                        <p>备注：无</p>
+                    {/if}
+                </div>
+                <div id="introTabs" class="apply-detail-tabs clearfix">
+                    <a href="javascript:void(0);"  class="active tag_szy" tagcon = "0">整体平面图</a>
+                {foreach $plan_type as $k=>$v}
+                    <a href="javascript:void(0);"  class="tag_szy" tagcon = "{$k+1}">
+                            {if $v == 0}门头
+                            {else if $v== 1}入门区
+                            {else if $v== 2}业务办理区
+                            {else if $v== 3}终端体验
+                            {else if $v== 4}交付区
+                            {/if}
+                    </a>
+                 {/foreach}
+                </div>
+                <div id="introTabsCon0" class="apply-detail-tabs-conent">
+                    <img src="{_image($apply_info.link)}">
+                </div>
+                {if $plan_res_list.mentou}
+                    <div  class="apply-detail-tabs-conent" style="display: none">
+                        <img src="{_image($plan_res_list.mentou.link)}">
+                    </div>
+                {/if}
+                {if $plan_res_list.rumen}
+                    <div  class="apply-detail-tabs-conent" style="display: none">
+                        <img src="{_image($plan_res_list.rumen.link)}">
+                    </div>
+                {/if}
+                 {if $plan_res_list.yewu} 
+                    <div class="apply-detail-tabs-conent" style="display: none">
+                        <img src="{_image($plan_res_list.yewu.link)}">
+                    </div>
+                  {/if}
+                  
+                   {if $plan_res_list.zhongduan} 
+                    <div  class="apply-detail-tabs-conent" style="display: none">
+                        <img src="{_image($plan_res_list.zhongduan.link)}">
+                    </div>
+                  {/if}
+                  
+                  {if $plan_res_list.jiaofu} 
+                    <div class="apply-detail-tabs-conent" style="display: none">
+                        <img src="{_image($plan_res_list.jiaofu.link)}">
+                    </div>
+                  {/if}
+                  
+                <div class="apply-detail-intro">
+                    <p>设计对接人： {$apply_info.take}     {$apply_info.take_phone}</p>
+                    <p>设计公司：    {$apply_info.design_company}</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$apply_info.designer}     {$apply_info.designer_phone}</p>
+                </div>
+            </div>
+        </div>
+        <!--end:主内容-->
+    </div>
+
+    <!--start:审批弹层-->
+    <div class="pop-bg fast_pop hidden">
+        <div class="pop-approval">
+            <div class="pop-close"><i class="icon-close"></i></div>
+            <div class="title"> {$apply_info.business_title}</div>
+            <ul class="steps">
+                <li class="steps-item clearfix">
+                    <div class="point left"></div>
+                    <div class="con left">
+                        <p>{$apply_info.create_time}</p>
+                        <p class="info">提交申请</p>
+                        <p><span class="tag">申请人：{$apply_user}</span><span class="tag">电话：{if $apply_user == 'FJxm_YYT'}18801235362{else}13301163580{/if}</span></p>
+                    </div>
+                </li>
+            </ul>
+            {if $res_name == 'group' && $apply_info.status == 13}
+            {$checker_info = file_apply_helper::get_checker_by_apply_id($apply_info.id)}
+            <!-- 市申请有两步 -->
+                <ul class="steps">
+                    <li class="steps-item clearfix">
+                        <div class="point left"></div>
+                        <div class="con left">
+                            <p>{$checker_info.province_time}</p>
+                            <p class="info">审批通过</p>
+                            <p><span class="tag">审批人：{$checker_info.province_checker}</span><span class="tag">电话：13301163580</span></p>
+                        </div>
+                    </li>
+                </ul>
+            {/if}
+            <div class="steps-item clearfix">
+                <div class="point point-primary left"></div>
+                <div class="con left">
+                    <p class="txt-primary">待审批</p>
+                </div>
+            </div>
+            <div class="btn-area">
+                <button type="button" class="btn-primary fast_sure" aid="{$apply_info.id}" cid = "{$apply_info.cid}"  res_name = "{$res_name}" member_id = "{$member_id}">审批通过</button>
+                <button type="button" class="btn-default fast_no" >审批不通过</button>
+            </div>
+        </div>
+    </div>
+    <!--end:审批弹层-->
+    <!--start:不通过审批弹层-->
+    <div class="pop-bg fast_no_pop hidden">
+        <div class="pop-approval">
+            <div class="pop-close"><i class="icon-close"></i></div>
+            <div class="title">{$apply_info.business_title}</div>
+            <ul class="steps">
+                <li class="steps-item clearfix">
+                    <div class="point left"></div>
+                    <div class="con left">
+                        <p>{$apply_info.create_time}</p>
+                        <p class="info">提交申请</p>
+                        <p><span class="tag">申请人：{$apply_user}</span><span class="tag">电话：{if $apply_user == 'FJxm_YYT'}18801235362{else}13301163580{/if}</span></p>
+                    </div>
+                </li>
+            </ul>
+            <div class="steps-item clearfix">
+                <div class="point point-primary left"></div>
+                <div class="con left">
+                    <p class="txt-primary">待审批</p>
+                    <p><span class="tag">申请人：{$apply_user}</span><span class="tag">电话：{if $apply_user == 'FJxm_YYT'}13301163580{else}18801235362{/if}</span></p>
+                    <div class="text">
+                        <textarea placeholder="请填写审批不通过原因" name="cause" class="cause"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="btn-area">
+                <button type="button" class="btn-primary sure_fast_no" aid="{$apply_info.id}" cid = "{$apply_info.cid}"  res_name = "{$res_name}" member_id = "{$member_id}" >确定</button>
+                <button type="button" class="btn-default caneral">取消</button>
+            </div>
+        </div>
+    </div>
+    <!--end:审批弹层-->
+    <!--start:审批通过弹层-->
+    <div class="pop-bg hidden rescord_pop">
+        <div class="pop-approval">
+            <div class="pop-close"><i class="icon-close"></i></div>
+            <div class="title">{$apply_info.business_title}</div>
+            <ul class="steps">
+                <li class="steps-item clearfix">
+                    <div class="point left"></div>
+                    <div class="con left">
+                        <p>{$apply_info.create_time}</p>
+                        <p class="info">提交申请</p>
+                        <p><span class="tag">申请人：{$apply_user}</span><span class="tag">电话：{if $apply_user == 'FJxm_YYT'}18801235362{else}13301163580{/if}</span></p>
+                    </div>
+                </li>
+            </ul>
+            {$checker_info = file_apply_helper::get_checker_by_apply_id($apply_info.id)}
+             {if $apply_info.status == 13 }
+                {if $checker_info.province_checker && !$checker_info.group_checker}
+            <!-- 市申请有两步 -->
+                <ul class="steps">
+                    <li class="steps-item clearfix">
+                        <div class="point {if !$checker_info.group_checker}point-success{/if} left"></div>
+                        <div class="con left">
+                            <p>{$checker_info.province_time}</p>
+                            <p class="info">审批通过</p>
+                            <p><span class="tag">审批人：{$checker_info.province_checker}</span><span class="tag">电话:13301163580</span></p>
+                        </div>
+                    </li>
+                </ul>
+                 <!-- 待审批人 -->
+                <ul class="steps">
+                    <li class="steps-item clearfix">
+                        <div class="point {if !$checker_info.group_checker}point-success{/if} left"></div>
+                        <div class="con left">
+                            <p><span class="tag">待审批人：admin</span><span class="tag">电话：15311861908</span></p>
+                        </div>
+                    </li>
+                </ul>
+               {else if !$checker_info.province_checker }
+                 <!-- 待审批人 -->
+                 {$province_user = file_apply_helper::get_province_member_user($apply_info.province_id)}
+                <ul class="steps">
+                    <li class="steps-item clearfix">
+                        <div class="point {if !$checker_info.group_checker}point-success{/if} left"></div>
+                        <div class="con left">
+                            <p><span class="tag">待审批人：{$province_user}</span><span class="tag">电话：13301163580</span></p>
+                        </div>
+                    </li>
+                </ul>
+                {else if $checker_info.province_checker && $checker_info.group_checker}
+                 {$province_user = file_apply_helper::get_province_member_user($apply_info.province_id)}
+                 <ul class="steps">
+                    <li class="steps-item clearfix">
+                        <div class="point {if !$checker_info.group_checker}point-success{/if} left"></div>
+                        <div class="con left">
+                            <p>{$checker_info.province_time}</p>
+                            <p class="info">审批通过</p>
+                            <p><span class="tag">审批人：{$checker_info.province_checker}</span><span class="tag">电话：13301163580</span></p>
+                        </div>
+                    </li>
+                </ul>
+               {/if}
+            {/if}
+            
+            {if $apply_info.status == 14 }
+                {if !$checker_info.group_checker }
+                 <!-- 待审批人 -->
+                <ul class="steps">
+                    <li class="steps-item clearfix">
+                        <div class="point {if !$checker_info.group_checker}point-success{/if} left"></div>
+                        <div class="con left">
+                            <p><span class="tag">待审批人：admin</span><span class="tag">电话：15311861908</span></p>
+                        </div>
+                    </li>
+                </ul>
+               {/if}
+           
+            {/if}
+            
+            {if $checker_info.group_checker}
+            <div class="steps-item clearfix">
+                <div class="point point-success left"></div>
+                <div class="con left">
+                    <p>{$checker_info.group_time}</p>
+                    <p class="txt-success">审批通过</p>
+                    <p><span class="tag">审批人：{$checker_info.group_checker}</span><span class="tag">电话：15311861908</span></p>
+                </div>
+            </div>
+            {/if}
+        </div>
+    </div>
+    <!--end:审批通过弹层-->   
+    <!--start:审批不通过弹层-->
+    <div class="pop-bg hidden rescord_no_pop">
+    {$checker_info = file_apply_helper::get_checker_by_apply_id($apply_info.id)}
+        <div class="pop-approval">
+            <div class="pop-close"><i class="icon-close"></i></div>
+            <div class="title">{$apply_info.business_title}</div>
+            <ul class="steps">
+                <li class="steps-item clearfix">
+                    <div class="point left"></div>
+                    <div class="con left">
+                        <p>{$apply_info.create_time}</p>
+                        <p class="info">提交申请</p>
+                        <p><span class="tag">申请人：{$apply_user}</span><span class="tag">电话：{if $apply_user == 'FJxm_YYT'}18801235362{else}13301163580{/if}</span></p>
+                    </div>
+                </li>
+            </ul>
+            
+            <!-- 市申请有两步 -->
+            <!-- 省审核 省通过 集团不通过-->
+            {if $apply_info.status == 13}
+              {if $checker_info.province_checker && $checker_info.group_checker}
+            
+                <ul class="steps">
+                    <li class="steps-item clearfix">
+                        <div class="point {if !$checker_info.group_checker}point-success{/if} left"></div>
+                        <div class="con left">
+                            <p>{$checker_info.province_time}</p>
+                            <p class="info">审批通过</p>
+                            <p><span class="tag">审批人：{$checker_info.province_checker}</span><span class="tag">电话：13301163580</span></p>
+                        </div>
+                    </li>
+                </ul>
+                    <div class="steps-item clearfix">
+                    <div class="point point-danger left"></div>
+                    <div class="con left">
+                        <p>{$checker_info.group_time}</p>
+                        <p class="info">
+                            <span class="txt-danger">审批不通过</span><br>
+                            原因： {$checker_info.cause}
+                        </p>
+    
+                        <p><span class="tag">审核人：{$checker_info.group_checker}</span><span class="tag">电话：13301163580</span></p>
+                    </div>
+                </div>
+                {else if $checker_info.province_checker && !$checker_info.group_checker}
+                     <div class="steps-item clearfix">
+                        <div class="point point-danger left"></div>
+                        <div class="con left">
+                            <p>{$checker_info.province_time}</p>
+                            <p class="info">
+                                <span class="txt-danger">审批不通过</span><br>
+                                原因： {$checker_info.cause}
+                            </p>
+        
+                            <p><span class="tag">审核人：{$checker_info.province_checker}</span><span class="tag">电话：13301163580</span></p>
+                        </div>
+                    </div>
+               {/if}
+            {/if}
+            
+            
+            <!-- 省提交 -->
+            {if $apply_info.status == 14}
+              {if $checker_info.group_checker}
+                    <div class="steps-item clearfix">
+                    <div class="point point-danger left"></div>
+                    <div class="con left">
+                        <p>{$checker_info.group_time}</p>
+                        <p class="info">
+                            <span class="txt-danger">审批不通过</span><br>
+                            原因： {$checker_info.cause}
+                        </p>
+                        <p><span class="tag">审核人：{$checker_info.group_checker}</span><span class="tag">电话：15311861908</span></p>
+                    </div>
+                </div>
+               {/if}
+            {/if}
+        </div>
+    </div>
+    <!--end:审批不通过弹层-->  
+
+<!--star:发布结果弹层-->
+<div class="pop-bg apply_success hidden" >
+    <div class="pop-publish">
+    <span class="success_cid hidden"></span>
+        <div class="pop-close" id="upload-success-x"><i class="icon-close"></i></div>
+        <div class="title">审核结束</div>
+        <div class="title-info">是否短信通知申请人</div>
+        <div class="default">
+             <!-- <textarea placeholder="" id="upload-success-text">本权限下该申请已全部审核，是否通知申请人</textarea> --> 
+        </div>
+        <div class="btn-area">
+            <button type="button" class="btn-primary" id="upload-success-noti">通知</button>
+            <button type="button" class="btn-default" id="upload-success-no">不用了</button>
+        </div>
+    </div>
+</div>
+<!--end:发布结果弹层-->
+<!-- star:提醒弹窗 -->
+<div class="short-tips" id="alert_noti" style="display: none;z-index: 100000;">短信已发送至门店申请人</div>
+<!-- end:提醒弹窗 -->
+    <script type="text/javascript">
+    var res_name = "{$res_name}";
+
+        $(function(){
+            $('.tag_szy').on('click',function(){
+                $('.tag_szy').removeClass('active');
+                $(this).addClass('active');
+
+                //获取自定义属性
+                var x = $(this).attr('tagcon');
+                //设置所有的div默认隐藏
+                $('.apply-detail-tabs-conent').css('display','none');
+                //让指定的div显示
+                $('.flag').css('display','block');
+                $('.apply-detail-tabs-conent:eq('+x+')').css('display','block');
+
+            });
+            
+            
+            //头部点击跳转
+             $('.div_change').click(function(){
+                var obj = $(this).find('.change_a');
+                change_heard(obj);
+                
+            }); 
+
+        });
+        function change_heard(obj){
+            $(obj).each(function(){ 
+                this.click();
+          });
+        }
+        //审批弹层
+        $('.fast_check').on('click',function(){
+            $('.fast_pop').removeClass('hidden');
+        });
+        //弹层关闭
+        $('.icon-close').on('click',function(){
+            $(this).closest('.pop-bg').addClass('hidden');
+        });
+        
+        $('.caneral').on('click',function(){
+            $(this).closest('.pop-bg').addClass('hidden');
+        });
+        
+        //不通知
+        $('#upload-success-no').on('click',function () {
+            $(this).closest('.pop-bg').addClass('hidden');
+            var cid = $('.success_cid').html();
+            window.location.reload();
+        });
+        
+        //通知 
+        $('#upload-success-noti').on('click',function () {
+            var cid = $('.success_cid').html();
+            get_sms_template(cid,res_name);
+            $(this).closest('.pop-bg').addClass('hidden');
+            window.location.reload();
+        });
+        
+        //审批成功
+        $('.fast_sure').on('click',function(){
+            var apply_id = $(this).attr('aid');
+            var member_id = $(this).attr('member_id');
+            var res_id = $(this).attr('res_id');
+            var cid = $(this).attr('cid');
+            var res_name = $(this).attr('res_name');
+            console.log(apply_id,res_name,res_id);
+            var url ="{AnUrl('file_apply/admin/ajax/approval_sure')}";
+            $.post(url,{ 'apply_id':apply_id,'res_name':res_name,'member_id':member_id,'cid':cid,'res_name':res_name},function(json){
+            	if (json.info == 'ok') {
+            		window.location.reload();
+                }else if (json.info == 'success') {
+                    $('.success_cid').html(cid);
+                    $('.fast_pop').addClass('hidden');
+                    $('.apply_success').removeClass('hidden');
+                }
+            },'json');
+        });
+        
+        
+        //发送通知短信
+        function get_sms_template(cid,res_name){
+        	var url ="{AnUrl('file_apply/admin/ajax/get_sms_template')}";
+        	$.post(url,{ 'cid':cid,'res_name':res_name},function(json){
+                if (json.msg == 'ok') {
+                	var msg ='短信已发至门店申请人';
+                	msg_pop(msg);
+                }
+            },'json');
+        }
+        
+     // 弹窗信息更换
+        function msg_pop(msg)
+        {
+            $('#alert_noti').html('');
+            $('#alert_noti').html(msg);
+            $('#alert_noti').css('display','block');
+            msg_hidden();
+        }
+        function msg_hidden()
+        {
+            setTimeout(function () {
+                $('#alert_noti').fadeOut();
+            },500);
+        }
+        
+        //审批失败弹层
+        $('.fast_no').on('click',function(){
+            $('.fast_no_pop').removeClass('hidden');
+            $(this).closest('.pop-bg').addClass('hidden');
+        });
+        
+      //审批失败
+        $('.sure_fast_no').on('click',function(){
+             var apply_id = $(this).attr('aid');
+             var member_id = $(this).attr('member_id');
+             var res_id = $(this).attr('res_id');
+             var cid = $(this).attr('cid');
+             var res_name = $(this).attr('res_name');
+             var cause = $('.cause').val();
+             var url ="{AnUrl('file_apply/admin/ajax/approval_no')}";
+             $.post(url,{ 'apply_id':apply_id,'res_name':res_name,'member_id':member_id,'cid':cid,'res_name':res_name,'cause':cause},function(json){
+                 if (json.info == 'ok') {
+                	 window.location.reload();
+                 }else if (json.info == 'success') {
+                     $('.success_cid').html(cid);
+                     $('.fast_pop').addClass('hidden');
+                     $('.fast_no_pop').addClass('hidden');
+                     $('.apply_success').removeClass('hidden');
+                 }
+             },'json'); 
+        });
+        
+      
+      //审批失败
+        $('.rescord_no').on('click',function(){
+            $('.rescord_no_pop').removeClass('hidden');
+        });
+      
+      
+      //审批通过
+        $('.rescord').on('click',function(){
+            $('.rescord_pop').removeClass('hidden');
+        });
+        
+    </script>
+</body>
+</html>

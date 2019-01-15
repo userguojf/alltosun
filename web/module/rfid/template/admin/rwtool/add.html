@@ -1,0 +1,104 @@
+{include_www file="admin/lib/header_new.html" title="RFID管理"}
+<!--start:右侧-->
+<div class="main mian2 ">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('rfid/admin/rwtool')}"><i class="iconfont iconfont-logo2"></i>读写器管理</a>
+      &gt;
+      <span>读写器添加</span>
+    </div>
+
+    <div class="clearfix">
+      <div class="form-add pull-left" style="width:80%;">
+        {AnForm class='form-horizontal' action="{AnUrl('rfid/admin/rwtool/save')}" method="post" enctype="multipart/form-data"}
+          <input type="hidden"  name="id"  value="{$rwtool_info.id}">
+          {if !$rwtool_info.id && $member_info['res_name'] == 'group'}
+            <div class="form-group form-inline" {if $id}style="display:none;"{/if}>
+                <label class="col-sm-3 control-label coupon-card">添加方式</label>
+                <div class="col-sm-9">
+                  <div class="checkbox col-sm-5">
+                      <label>
+                          <input type="radio" name="rwtool_info[type]" value="1" checked="checked" class='JS_siteType'>&nbsp;单独添加
+                      </label>
+                  </div>
+                  <div class="checkbox col-sm-5">
+                      <label>
+                          <input type="radio" name="rwtool_info[type]" value="2" class='JS_siteType'>&nbsp;批量添加
+                      </label>
+                  </div>
+                </div>
+            </div>
+         
+          {*线*}
+          <div class="form-line" {if $rwtool_info.id}style="display:none;"{/if}><em></em></div>
+           <!--导入-->
+          <div class="form-group together_add " style="display:none;">
+              <label class="col-sm-3 control-label coupon-num">导入</label>
+              <div class="col-sm-3">
+                  <input type="file" name="phone_data">
+              </div>
+              
+              <div class="col-sm-3">
+                  <a type="button" class="btn btn-sm btn-warning" href="{AnUrl('rfid/admin/rwtool/load_instruction')}">&nbsp;下载手机信息导入模板</a>
+              </div>
+          </div>
+         {/if}
+         <div class="form-group alone_add">
+              <label class="col-sm-3 control-label coupon-num">营业厅</label>
+              <div class="col-sm-6">
+                  <input type="text"  name="business_hall_title"  value="{$business_info.title}" class="form-control selectBusiness" {if $rwtool_info.id}disabled{/if} placeholder="请输入营业厅名称">
+                  <input type="hidden"  name="rwtool_info[business_id]"  value="{$business_info.id}" class="selectBusinessId">
+              </div>
+          </div>
+          <div class="form-group alone_add">
+              <label class="col-sm-3 control-label coupon-num">标签数</label>
+              <div class="col-sm-6">
+                  <input type="number"  name="rwtool_info[label_num]"  value="{$rwtool_info.label_num}" class="form-control" placeholder="请输入读写器对应的标签个数">
+              </div>
+          </div>
+	      
+          <br>
+          <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-10">
+              <button type="submit" class="btn btn-sm btn-success" id="btn"><span style='display: inline-block;width: 95px;' class='Sub'>保存</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+              <a type="button" class="btn btn-sm btn-warning" href="{AnUrl('rfid/admin/rwtool')}">&nbsp;&nbsp;返回&nbsp;&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;
+            </div> 
+          </div> 
+        {AnForm}
+      </div>
+
+    </div>
+  </div>
+</div>
+<script>
+$(function () {
+  $('.JS_siteType').click(function(){
+    var type = $(this).val();
+      if ( 2 == parseInt(type)) {
+          $('.together_add').show();
+          $('.alone_add').hide();
+      } else {
+          $('.together_add').hide();
+          $('.alone_add').show();
+      }
+  })
+  
+  //自动完成功能
+  $('.selectBusiness').autocomplete({ 
+    // 静态的数据源，根据label属性进行显示或模糊匹配，当给输入框设置value属性值
+    source: siteUrl+"/business_hall/admin/ajax/get_info_by_title",
+    
+    //选择
+    select: function(event, ui){
+      
+      $(this).val(ui.item.label);
+      //隐藏域
+      $('.selectBusinessId').val(ui.item.id);
+      // 必须阻止事件的默认行为，否则autocomplete默认会把ui.item.value设为输入框的value值
+      event.preventDefault();
+    }
+  });
+});
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

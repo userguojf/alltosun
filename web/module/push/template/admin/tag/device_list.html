@@ -1,0 +1,158 @@
+{include_www file="admin/lib/header_new.html" title="标签管理"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('push/admin')}"><i class="iconfont iconfont-logo2"></i>推送管理</a>
+      &gt;
+     
+      <span>设备列表</span>
+        <a href="{AnUrl("push/admin")}" class="btn btn-success btn-sm pull-right" >返回标签列表</a>
+       
+    </div>
+    <br />
+
+    <div class="form-search clearfix">
+    <div class="pull-left" style="float:left">            
+      </div> 
+      <div class="" style="float:left; margin-left:820px;">
+          <a href="{AnUrl("push/admin/add_device?tag_id={$tag_id}")}" class="btn btn-primary btn-sm pull-right">绑定设备</a>&nbsp;&nbsp;&nbsp;
+            
+      </div> 
+    </div>
+
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            {if $member_info.res_name != 'business_hall'}
+              <th width="8%">省</th>
+              <th width="8%">市</th>
+              <th width="19%">营业厅</th>
+            {/if}
+            <th width="10%">品牌</th>
+            <th width="13%">型号</th>
+            <th width="10%">标识ID</th>
+            <th width="10%">IMEI</th>
+            <th width="5%">版本</th>
+            <th width="12%">添加时间</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          {foreach $device_list as $k=>$v}
+          <tr id="dataList{$k}">
+            {if $member_info.res_name != 'business_hall'}
+              <td>{_uri('province', $v.province_id, 'name')}</td>
+              <td>{_uri('city', $v.city_id, 'name')}</td>
+              <td>{_uri('business_hall', $v.business_id, 'title')}</td>
+            {/if}
+            {if $v.phone_name_nickname}{$phone_name = $v.phone_name_nickname}{else}{$phone_name = $v.phone_name}{/if}
+            <td class="js_nickname" data-type="name" data-unique="{$v.device_unique_id}">
+                <div class="hidden">
+                    <input type="" value="{$phone_name}" style="width:80px">
+                    <button type="button" class="btn btn-success btn-sm phone_info_submit">确认</button>
+                </div>
+                <span>{$phone_name}</span>
+            </td>
+            {if $v.phone_version_nickname}{$phone_version = $v.phone_version_nickname}{else}{$phone_version = $v.phone_version}{/if}
+            <td class="js_nickname" data-type="version" data-unique="{$v.device_unique_id}">
+                <div class="hidden">
+                    <input type="text" value="{$phone_version}" style="width:80px">
+                    <button type="button" class="btn btn-success btn-sm phone_info_submit">确认</button>
+                </div>
+                <span>{$phone_version}</span>
+            </td>
+            <td shoppe_id="{$v.shoppe_id}">{$v.device_unique_id}</td>
+            <td>{if $v.imei}{$v.imei} {else}手机无imei{/if}</td>
+            <td>{if $v.version_no}{$v.version_no}{else}--{/if}</td>
+             <td>{substr($v.add_time, 0, 10)}</td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="{if $member_info.res_name != 'business_hall'}10{else}7{/if}">暂无相关信息</td></tr>
+          {/foreach}
+    
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}
+
+<script>
+var isVersionEdit = false;
+
+$(function () {
+  $('#title').autocomplete({
+    source: "/business_hall/admin/ajax/get_title_field",
+  });
+  
+  $('#searchData').on('click',function() {
+    $('#subForm').submit();
+    //refershUrl();
+  });
+  
+  $('.js_nickname span').on('click', function () {
+    
+    isVersionEdit = true;
+    $(this).closest('td').find('div').toggleClass('hidden');
+    $(this).toggleClass('hidden');
+    return false;
+  });
+  
+  
+  
+  $('.phone_info_submit').on('click', function () {
+    var el = $(this).closest('.js_nickname');
+    var newValue = el.find('div input').val();
+    
+    if (!newValue) {
+      alert('值不能为空');return false;
+    }
+    
+    el.find('span').text(newValue);
+    el.find('div').toggleClass('hidden');
+    el.find('span').toggleClass('hidden');
+    
+    var type = el.data('type');
+    var device_unique_id = el.attr('data-unique');
+
+    $.post(siteUrl+'/screen/admin/ajax/update_nickname', { new_nickname:newValue, type:type, device_unique_id:device_unique_id }, function (res) {
+      if (res.info != 'ok') {
+        alert(res.msg);
+      }
+    }, 'json');
+  });
+});
+
+function refershUrl(){
+  var $params           = { };
+  $params.start_date    = $('#start_time').val();
+  $params.end_date      = $('#end_time').val();
+
+  $a = 1;
+  var urlParam = '';
+  for (var i in $params) {
+    if ($params[i]) {
+      if ($a == 1) {
+        urlParam += '?';
+      } else {
+        urlParam += '&';
+      }
+      
+      urlParam += 'search_filter['+ i + ']=' + $params[i];
+    }
+    
+    $a += 1;
+  }
+
+  var url = siteUrl+'/screen/admin/device'+urlParam;
+  window.location.href = url;
+
+}
+</script>

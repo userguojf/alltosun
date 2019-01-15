@@ -1,0 +1,164 @@
+{include_www file="admin/lib/header_new.html" title="详情记录"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{$action_res_url}"><i class="iconfont iconfont-logo2"></i>RFID统计</a>
+      &gt;RFID记录
+      <span>({if $business_title}{$business_title}{else}暂无此厅信息{/if})
+        
+      </span>
+      <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+    </div>
+
+    <br />
+    
+    {* 时间判断 *}
+    <div class="form-search row clearfix">
+      <div class="tabs2">
+        <div class="form-group" style="float:left;">
+          <form id="form_data" action="{AnUrl('rfid/admin/stat/record')}" method="get">
+          <select style="width:80px;" id="search_type" name="search_type">
+            <option value="" {if !$search_type}selected{/if}>全部</option>
+            <option value="phone_name" {if $search_type == 'phone_name'}selected{/if}>品牌</option>
+            <option value="phone_version" {if $search_type == 'phone_version'}selected{/if}>型号</option>
+            <option value="label_id" {if $search_type == 'label_id'}selected{/if}>标签ID</option>
+          </select>
+          <input id="search_label_id" type="hidden" name="search_filter[label_id]" value="{$search_filter.label_id}">
+          <input id="search_phone_version" type="hidden" name="search_filter[phone_version]" value="{$search_filter.phone_version}">
+          <input id="search_phone_color" type="hidden" name="search_filter[phone_color]" value="{$search_filter.phone_color}">
+          <input id="search_phone_name" type="hidden" name="search_filter[phone_name]" value="{$search_filter.phone_name}">
+          <input id="search_start_date" type="hidden" name="search_filter[start_date]" value="{$search_filter.start_date}">
+          <input id="search_end_date" type="hidden" name="search_filter[end_date]" value="{$search_filter.end_date}">
+          <input id="business_id" type="hidden" name="business_id" value="{$business_id}">
+          <input id="order_field" type="hidden" name="order_field" value="{$order_field}">
+          <input id="order_dir" type="hidden" name="order_dir" value="{$order_dir}">
+          <input id="search_text" type='text' style="width:150px;" name='search_text' value="{$search_text}" text-align:center;" placeholder="请输入搜索内容" />
+          </form>
+        </div>
+        
+        <div class="col-sm-8">
+          <div class="form-inline" id="dateSelectBox" >
+            <div class="form-group">
+              <label for="exampleInputName2">时间：</label>
+              <input type="text" class="form-control" style="width:100px; text-align:center;" name="start_date" id="start_time" value="{$search_filter.start_date}" />
+            </div>
+            <div class="form-group">
+              <label for="exampleInputName2">至</label>
+              <input type="text" class="form-control" style="width:100px; text-align:center;" name="end_date" id="end_time" value="{$search_filter.end_date}" />
+            </div>
+            <button type="button" class="btn btn-success btn-sm" id="searchData" >搜索</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>省</th>
+            <th>市</th>
+            <th>区</th>
+            <th>厅</th>
+            <th>标签ID</th>
+            <th>品牌</th>
+            <th>型号</th>
+            <th>颜色</th>
+            <th>时长
+                {if $order_dir == 'asc' && $order_field == 'remain_time'}
+                    <span class="glyphicon  glyphicon-arrow-down order_type" aria-hidden="true" order_field="remain_time" order_dir='asc' "></span>
+                {else}
+                    <span class="glyphicon glyphicon-arrow-up order_type" aria-hidden="true" order_field="remain_time" order_dir='desc' ></span>
+                {/if}
+                <br>
+                共计:({rfid_helper::format_timestamp_text($remain_time_count)})
+            </th>
+            <th>开始时间
+                {if $order_dir == 'asc' && $order_field == 'id'}
+                    <span class="glyphicon  glyphicon-arrow-down order_type" aria-hidden="true" order_field="id" order_dir='asc' "></span>
+                {else}
+                    <span class="glyphicon glyphicon-arrow-up order_type" aria-hidden="true" order_field="id" order_dir='desc' ></span>
+                {/if}
+                
+            </th>
+            <th>结束时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $record_list as $k=>$v}
+          <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+            <td>{_uri('province', $v.province_id, 'name')}</td>
+            <td>{_uri('city', $v.city_id, 'name')}</td>
+            <td>{_uri('area', $v.area_id, 'name')}</td>
+            <td>{_uri('business_hall', $v.business_id, 'title')}</td>
+            <td>{$v.label_id}</td>
+            <td>{$v.phone_name}</td>
+            <td>{$v.phone_version}</td>
+            <td>{$v.phone_color}</td>
+            <td>{rfid_helper::format_timestamp_text($v.remain_time)}</td>
+            <td>{date('Y-m-d H:i:s', $v.start_timestamp)}</td>
+            <td>{date('Y-m-d H:i:s', $v.end_timestamp)}</td>
+            <td>
+                {*此处查询太耗时， 暂时不用*}
+                {$is_probe_user = rfid_helper::is_probe_user($v.id)}
+                {if $is_probe_user}
+                  <a class="btn btn-xs btn-success" href="{AnUrl("rfid/admin/stat/record_passenger_flow?detail_id={$v.id}")}">客流详情</a>
+                {else}
+                    --
+                {/if}
+            </td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="12">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+<script>
+$(function () {
+  //搜索
+  $('#searchData').on('click',function() {
+    $('#search_start_date').val($('#start_time').val());
+    $('#search_end_date').val($('#end_time').val());
+    $('#form_data').submit();
+  });
+  
+  //排序
+  $('.order_type').on('click', function () {
+    
+    
+    if ($(this).hasClass('glyphicon-arrow-up')) {
+      var order_dir = 'asc';
+    } else {
+      var order_dir = 'desc';
+    }
+    
+    $('#order_field').val($(this).attr('order_field'));
+    $('#order_dir').val(order_dir);
+   
+    $('#search_start_date').val($('#start_time').val());
+    $('#search_end_date').val($('#end_time').val());
+    $('#form_data').submit();
+  });
+  
+  //下拉
+  $('#search_type').on('change', function () {
+    $('#search_label_id').val('');
+    $('#search_phone_name').val('');
+    $('#search_phone_color').val('');
+    $('#search_phone_version').val('');
+  });
+});
+
+
+</script>
+{include_www file="admin/lib/footer_new.html"}

@@ -1,0 +1,75 @@
+{include_www file="admin/lib/header_new.html" title="弹出列表"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen_content/admin/content_meal')}"><i class="iconfont iconfont-logo2"></i>套餐管理</a>
+            &gt;
+
+            <span>{if $field == 'run_time'}打开时间{else}{if $type == 1}弹出量{else}点击量{/if}{/if}统计</span>
+            <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+          </div>
+          <div class="form-search row clearfix">
+            <div class="tabs2">
+                <ul class=" col-sm-4">
+                    <li class="dateType {if $search_filter.date_type==1}curr{/if}" ><a href="{AnUrl("screen_content/admin/content_meal_stat/pop_stat?res_id={$res_id}&search_filter[date_type]=1")}" >今日</a></li>
+                    <li class="dateType {if $search_filter.date_type==2}curr{/if}" ><a href="{AnUrl("screen_content/admin/content_meal_stat/pop_stat?res_id={$res_id}&search_filter[date_type]=2")}" >近7天</a></li>
+                    <li class="dateType {if $search_filter.date_type==3}curr{/if}" ><a href="{AnUrl("screen_content/admin/content_meal_stat/pop_stat?res_id={$res_id}&search_filter[date_type]=3")}" >近30天</a></li>
+                </ul>
+
+                <div class="col-sm-8">
+                    <div class="form-inline" id="dateSelectBox" >
+                        <div class="form-group">
+                            <label for="exampleInputName2">时间：</label>
+                            <input type="text" class="form-control" style="width:100px; text-align:center;" name="start_date" id="start_time" value="{$search_filter.start_time}" />
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputName2">至</label>
+                            <input type="text" class="form-control" style="width:100px; text-align:center;" name="end_date" id="end_time" value="{$search_filter.end_time}" />
+                        </div>
+                        <button type="button" class="btn btn-success btn-sm" id="searchData">搜索</button>
+                    </div>
+                </div>
+            </div>
+        </div> 
+          <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="text-align:center">时间</th>
+                  <th style="text-align:center">门店量</th>
+                  <th style="text-align:center">设备量</th>
+                  <th style="text-align:center">{if $field == 'run_time'}打开时间{else}{if $type == 1}弹出量{else}点击量{/if}{/if}</th>
+                </tr>
+              </thead>
+              <tbody>
+              {foreach $new_list as $k => $v}
+                <tr>
+                    <td style="text-align:center">{$k}</td>
+                    <td style="text-align:center"><a href="{AnUrl('screen_content/admin/content_meal_stat/business',"?res_id={$res_id}&search_filter[date_type]={$search_filter.date_type}&date={$k}&search_filter[start_time]={$search_filter.start_time}&search_filter[end_time]={$search_filter.end_time}&type={$type}&run_time={$run_time}")}">{count($v.business_id)}</a></td>
+                    <td style="text-align:center"><a href="{AnUrl('screen_content/admin/content_meal_stat/stat_device',"?res_id={$res_id}&search_filter[date_type]={$search_filter.date_type}&date={$k}&search_filter[start_time]={$search_filter.start_time}&search_filter[end_time]={$search_filter.end_time}&type={$type}&run_time={$run_time}")}">{count($v.device_unique_id)}</a></td>
+                    <td style="text-align:center"><a href="{AnUrl('screen_content/admin/content_meal_stat/stat_record',"?res_id={$res_id}&search_filter[date_type]={$search_filter.date_type}&date={$k}&search_filter[start_time]={$search_filter.start_time}&search_filter[end_time]={$search_filter.end_time}&type={$type}&run_time={$run_time}")}">{if $run_time == 'run_time'}{screen_helper::format_timestamp_text(array_sum($v.pop_num))}{else}{array_sum($v.pop_num)}{/if}</a></td>
+                </tr>
+              {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        </div>
+<script>
+    $(function () {
+        var url        = siteUrl + "/screen_content/admin/content_meal_stat/pop_stat";
+        var content_id = "{$res_id}";
+
+        $('#searchData').on('click', function () {
+            var startTime = $('#start_time').val();
+            var endTime   = $('#end_time').val();
+
+            window.location.href = url + '?res_id='+ content_id +'&search_filter[start_time]=' + startTime + '&search_filter[end_time]=' + endTime;
+        });
+    });
+</script>
+{include_www file="admin/lib/footer_new.html"}

@@ -1,0 +1,102 @@
+{include_www file="admin/lib/header.html" title="商家列表"}
+{include_www file="admin/lib/sidebar.html"}   
+<!-- 主内容 start -->
+<div id="content" class="span10">
+  <!-- 标题 start -->
+  <div class="pageTit page-header">
+    <h1>营业厅管理 <small>在这里你可以对营业厅管理</small></h1>
+    <div class="opt">
+      <a class="btn btn-info" href="{AnUrl('business_hall/admin/add')}">添加营业厅</a> 
+    </div>
+  </div>
+  <!-- 标题 end -->
+  
+   <!-- 搜索区块 start -->
+   <!--    
+  <div class="search">
+    <form class="well form-search" action="{AnUrl('seller/admin')}" method="get">
+      <input type="hidden" value="seller/admin" name="url" />
+      <span>&nbsp;&nbsp;&nbsp;优惠券码：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="text" name="search_filter[code]" value="{if $search_filter['code']}{$search_filter['code']}{/if}" class="input-medium">
+      </span>
+      
+      <br />
+      <span>&nbsp;&nbsp;&nbsp;管理员id：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="text" name="search_filter[admin_id]" value="{if $search_filter['admin_id']}{$search_filter['admin_id']}{/if}" class="input-medium">
+      </span>
+
+      <br />
+      <span>&nbsp;&nbsp;&nbsp;是否领取：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="text" name="search_filter[status]" value="{if $search_filter['status']}{$search_filter['status']}{/if}" class="input-medium">
+      </span>
+      
+      <br />
+      <span>&nbsp;&nbsp;&nbsp;有效时间：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="text" id="start_time" name="search_filter[start_time]" value="{$search_filter['start_time']}" class="input-medium"> --
+        <input type="text" id="end_time" name="search_filter[end_time]" value="{$search_filter['end_time']}" class="input-medium">
+      </span>
+      
+      <br />
+      <button type="submit" class="btn">搜索</button>
+      <input type="reset" class="btn" value="重置" />
+      <input type="submit" class="btn" value="导出" name="is_excel" />
+    </form>
+  </div>
+   -->
+   
+ {*<div class="roleFilter">
+  <table class="table">
+      <tr>
+        <td class="td60">查看选择：</td>
+        <td>
+          <a {if $type == 'all'}class="label label-info"{/if} href="{AnUrl('seller/admin/index?type=all')}">全部</a>&nbsp;&nbsp;
+          <a {if $type == 'hot'}class="label label-info"{/if} href="{AnUrl('seller/admin/index?type=hot')}">热门</a>&nbsp;&nbsp;
+          <a {if $type == 'general'}class="label label-info"{/if} href="{AnUrl('seller/admin/index?type=general')}">普通</a>&nbsp;&nbsp;
+          
+        </td>
+      </tr>
+  </table>
+  </div>*}
+  <!-- 内容区块 start -->
+  <div class="dataBox">
+    <table class="table table-bordered table-striped center">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>渠道号</th>
+          <th>名称</th>
+          <th>电话</th>
+          <th>经度</th>
+          <th>纬度</th>
+          <th>地址</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {foreach $list as $k=>$v}
+          <tr id="dataList{$v.id}">
+            <td>{$v.id}</td>
+            <td>{$v.channel}</td>
+            <td>{$v.title}</td>
+            <td>{$v.tel}</td>
+            <td>{$v.lng}</td>
+            <td>{$v.lat}</td>
+            <td>{$v.address}</td>
+            <td class="txtcenter">
+                <!-- <a title="编辑" class=" btn btn-mini btn-info" href="{AnUrl("business_hall/admin/edit?id={$v.id}")}">编辑</a>
+                <a title="删除" class=" deleteOne btn btn-mini btn-danger" href="{AnUrl("business_hall/admin/delete?id={$v.id}")}">删除</a>  -->
+            </td>
+          </tr>
+        {foreachelse}
+          <tr><td colspan="5">暂无相关信息</td></tr>
+        {/foreach}
+      </tbody>
+    </table>
+  </div>
+  <!-- 内容区块 end -->
+  <!-- 分页 start -->
+  {include_www file="admin/lib/pager.html"}
+  <!-- 分页 end -->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer.html"}

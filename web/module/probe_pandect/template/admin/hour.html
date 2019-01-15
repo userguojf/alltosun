@@ -1,0 +1,37 @@
+{include file="admin/lib.html"}
+        <div class="list">
+            <table class="table table-bordered table-striped center table_co_td">
+                <thead>
+                <tr>
+                    <th>日期（{$date}）</th>
+                    {foreach $devs as $k => $v}
+                        <th>设备 {$k}</th>
+                    {/foreach}
+                    <th>总计（室外：<span style="color: red;">{$oudoor}</span> 室内：<span style="color: red;">{$indoor}</span>）</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $data as $k => $v}
+                <tr hour="{$k}" date="{$date}">
+                    <td>{$k}:00--{$k}:59</td>
+                    {foreach $devs as $key => $val}
+                        <td dev="{$key}">
+                            <span>室外：<a type="all" class="em_num" href="javascript:;">{$v['dev']['oudoor'][$key]}</a></span>
+                            <span>室内：<a type="in" class="em_num" href="javascript:;">{$v['dev']['indoor'][$key]}</a></span>
+                        </td>
+                    {/foreach}
+                    <td dev="0">
+                        <span>室外：<a type="all" class="em_num" href="javascript:;">{$v['oudoor']}</a></span>
+                        <span>室内：<a type="in" class="em_num"  href="javascript:;">{$v['indoor']}</a></span>
+                    </td>
+                </tr>
+                {foreachelse}
+                    <tr><td colspan="9">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>            
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+</div>
+{include_www file="admin/lib/footer_new.html"}

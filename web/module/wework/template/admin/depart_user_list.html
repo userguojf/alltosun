@@ -1,0 +1,108 @@
+{include_www file="admin/lib/header_new.html" title="企业微信通讯录请管理"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    .btn-top{
+        margin-top:5px;
+    }
+    </style>
+<!-- 主内容 start -->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl("wework/admin/depart_user?id={$id}")}"><i class="iconfont iconfont-logo2"></i>{$info.name}</a>
+             &gt;
+            <span>总数：{$count}</span>
+          <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+        </div>
+        <div class="form-search clearfix">
+             <div class="pull-left">
+                 <form action="{AnUrl('wework/admin/depart_user')}" method='get'>
+                 <input type='hidden' name='id' value="{$id}">
+                   <input type="text"  style="width:150px;"  name="search_filter[name]" value="{$search_filter.name}" class="form-control input-sm pull-left js_search"  placeholder="联系人搜索">
+                   <input type="text"  style="width:150px;"  name="search_filter[mobile]" value="{$search_filter.mobile}" class="form-control input-sm pull-left js_search"  placeholder="手机号搜索">
+                   <input type="text"  style="width:150px;"  name="search_filter[user_id]" value="{$search_filter.user_id}" class="form-control input-sm pull-left js_search"  placeholder="企业账号搜索">
+                   <input type="text"  style="width:150px;"  name="search_filter[account]" value="{$search_filter.account}" class="form-control input-sm pull-left js_search"  placeholder="平台账号搜索">
+                   <button type="submit" class="btn-search pull-left">搜索</button>
+                 </form>
+            </div>
+            <div class="pull-right">
+            <a href="{AnUrl('wework/admin/user/add')}" class="btn btn-sm btn-success">添加</a>
+                {*<a href="{AnUrl('wework/admin/user',"?account={$search_filter.account}&name={$search_filter.name}&mobile={$search_filter.mobile}")}" class="btn btn-sm btn-success">导出</a>*}
+            </div>
+        </div>
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th width="12%">联系人</th>
+                    <th width="12%">手机号</th>
+                    <th width="12%">企业账号</th>
+                    <th width="14%">平台账号</th>
+                    <th width="12%">营业厅名称</th>
+                    <th width="16%">邮箱</th>
+                    <th width="10%">添加时间</th>
+                    <th width="10%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $k=>$v}
+                    <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                    <td>{$v.name}</td>
+                    <td>{$v.mobile}</td>
+                    <td>{$v.user_id}</td>
+                    <td>{$v.account}</td>
+                    <td>{if $v.t_name} {$v.t_name} {else} -- {/if}</td>
+                    <td>{if $v.email} {$v.email} {else} -- {/if}</td>
+                    <td>{substr($v.add_time, 0, 10)}</td>
+                    <td class="txtleft " resId="{$v.id}">
+                      <a class="btn btn-xs btn-success" href="{AnUrl("wework/admin/user/add?id={$v.id}")}">编辑</a>
+                      <a class="btn btn-xs btn-danger delete_hot" user_id={$v.id} href="javascript:;">删除</a>
+                    </td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="13">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+</div>
+<script>
+var updateStatus = {
+    _msg :'操作失败',
+    _url:"{AnUrl('wework/admin/ajax/delete_user')}",
+    update:function(obj,id){
+        $.post(this._url,{ id:id },function(json){
+            if (json.info == 'ok') {
+                    updateStatus.deleteHtml(obj);
+            } else {
+                alert(json.info);
+            }
+        },'json')
+    },
+    deleteHtml:function(obj){
+   	 $(obj).closest("tr").fadeOut(function(){
+           $(this).remove();
+           interLineColor();
+       });
+       return false;
+    },
+};
+
+
+$('.delete_hot').live('click',function(event){
+    event.preventDefault();
+    event.stopPropagation();
+    var id = $(this).attr('user_id');
+    if (!confirm("确定要删除该条记录吗？")) {
+      return false;
+    }
+    updateStatus.update(this,id);
+})
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

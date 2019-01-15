@@ -1,0 +1,127 @@
+{include_www file="admin/lib/header_new.html" title="数据管理"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    .btn-top{
+        margin-top:5px;
+    }
+    .error_count{
+        color:red;
+    }
+</style>
+<!-- 主内容 start -->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position data_title">
+            <a href="{AnUrl('data/admin/')}"><i class="iconfont iconfont-logo2"></i>数据管理</a>
+            &gt;
+            正在更新
+            <span class="display_data_update">
+                {$is_update = 0}
+                
+                {if $data_update && $data_update.status == 0}
+                    {$is_update = 1}
+                    &nbsp;（源数据）：{$data_update.page} 页
+                {/if}
+             </span>
+             
+             <span class="display_business_update"> 
+                {if $business_update && $business_update.status == 0}
+                    {$is_update = 1}
+                    &nbsp;（生产数据）：{$business_update.page} 页
+                {/if}
+             </span>
+             <span class="display_none_update">  
+                {if !$is_update}
+                    （无）
+                {/if}
+             </span>
+            <a href="javascript:void(0);" class="btn btn-sm btn-success renovate">刷新页码</a>
+        </div>
+        <div class="form-search clearfix">
+            <div class="pull-left">
+                <a href="{AnUrl('data/update_data/update_source_data')}" target="_blank" class="btn btn-sm btn-success">更新源数据</a>
+                <a href="{AnUrl('data/update_data/update_business_data')}" target="_blank" class="btn btn-sm btn-success">更新生产数据</a>
+            </div>
+        </div>
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th width="13%">更新类型</th>
+                    <th width="8%">页码</th>
+                    <th width="8%">更新</th>
+                    <th width="8%">新增</th>
+                    <th width="8%">member新增</th>
+                    <th width="13%">group_user新增</th>
+                    <th width="13%">状态</th>
+                    <th width="13%">版本号</th>
+                    <th width="5%">错误</th>
+                    <th width="8%">更新时间</th>
+                    <th width="8%">结束时间</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {foreach $list as $k=>$v}
+
+                <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                    <td>{data_config::$update_record_type[$v.type]}</td>
+                    <td>{$v.page}</td>
+                    <td>{$v.update_count}</td>
+                    <td>{$v.add_count}</td>
+                    <td>{$v.add_member_count}</td>
+                    <td>{$v.add_group_user_count}</td>
+                    <td>{data_config::$update_record_status[$v.status]}</td>
+                    <td>{$v.version}</td>
+                    {$error_count = data_helper::count_error($v.id)}
+                    <td><a class="{if $error_count}error_count{/if}" href="{AnUrl("data/admin/error_info?record_id={$v.id}")}">{$error_count}</a></td>
+                    <td>{$v.add_time}</td>
+                    <td>{$v.stop_time}</td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="13">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+</div>
+<script>
+$(function () {
+  //刷新页码
+  $('.renovate').on('click', function () {
+    $.post("{AnUrl('data/admin/ajax/renovate_cache_page')}", { }, function (data) {
+      if (data.info == 'fail') {
+        $(".data_title .display_data_update").html('');
+        $(".data_title .display_business_update").html('');
+        $(".data_title .display_none_update").html('（无）');
+      }
+      
+      if (data.hasOwnProperty('data_update')){
+        
+        $(".data_title .display_data_update").html(' &nbsp; （源数据）：'+data.data_update+'页');
+      } else {
+        $(".data_title .display_data_update").html('');
+      }
+      
+      if (data.hasOwnProperty('business_update')){
+        $(".data_title .display_business_update").html(' &nbsp;（生产数据）：'+data.business_update+'页');
+      } else {
+        $(".data_title .display_business_update").html('');
+      }
+      
+    }, 'json');
+  })
+  
+  //
+  
+});
+
+
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

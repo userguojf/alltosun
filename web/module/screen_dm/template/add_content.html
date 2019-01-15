@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <title>添加投放内容</title>
+    <link rel="stylesheet" type="text/css" href="{$smarty.const.STATIC_URL}/css/m-zhongduan.css">
+    <link rel="stylesheet" href="{$smarty.const.STATIC_URL}/js/iosselect/iosSelect.css">
+        <style>
+.hidden {
+  display: none;
+}
+</style>
+    <script>
+      var htmlElm = document.getElementsByTagName('html')[0];
+      htmlElm.style.opacity = '0';
+      ! function (a, b) {
+        function c() {
+          var c, b = f.getBoundingClientRect().width;
+          b / i > 540 && (b = 540 * i), c = b / 10, f.style.fontSize = c + "px", k.rem = a.rem = c
+        }
+        var d, l, m, n, o, p, q, r, s, t, e = a.document,
+          f = e.documentElement,
+          g = e.querySelector('meta[name="viewport"]'),
+          h = e.querySelector('meta[name="flexible"]'),
+          i = 0,
+          j = 0,
+          k = b.flexible || (b.flexible = {});
+        g ? (l = g.getAttribute("content").match(/initial\-scale=([\d\.]+)/), l && (j = parseFloat(l[1]), i = parseInt(1 / j))) : h && (m = h.getAttribute("content"), m && (n = m.match(/initial\-dpr=([\d\.]+)/), o = m.match(/maximum\-dpr=([\d\.]+)/), n && (i = parseFloat(n[1]), j = parseFloat((1 / i).toFixed(2))), o && (i = parseFloat(o[1]), j = parseFloat((1 / i).toFixed(2))))), i || j || (p = a.navigator.userAgent, !!p.match(/android/gi), q = !!p.match(/iphone/gi), r = q && !!p.match(/OS 9_3/), s = a.devicePixelRatio, i = q && !r ? s >= 3 && (!i || i >= 3) ? 3 : s >= 2 && (!i || i >= 2) ? 2 : 1 : 1, j = 1 / i), f.setAttribute("data-dpr", i), g || (g = e.createElement("meta"), g.setAttribute("name", "viewport"), g.setAttribute("content", "initial-scale=" + j + ", maximum-scale=" + j + ", minimum-scale=" + j + ", user-scalable=no"), f.firstElementChild ? f.firstElementChild.appendChild(g) : (t = e.createElement("div"), t.appendChild(g), e.write(t.innerHTML))), a.addEventListener("resize", function () {
+          clearTimeout(d), d = setTimeout(c, 300)
+        }, !1), a.addEventListener("pageshow", function (a) {
+          a.persisted && (clearTimeout(d), d = setTimeout(c, 300))
+        }, !1), "complete" === e.readyState ? e.body.style.fontSize = 12 * i + "px" : e.addEventListener("DOMContentLoaded", function () {
+          e.body.style.fontSize = 12 * i + "px"
+        }, !1), c(), k.dpr = a.dpr = i, k.refreshRem = c, k.rem2px = function (a) {
+          var b = parseFloat(a) * this.rem;
+          return "string" == typeof a && a.match(/rem$/) && (b += "px"), b
+        }, k.px2rem = function (a) {
+          var b = parseFloat(a) / this.rem;
+          return "string" == typeof a && a.match(/px$/) && (b += "rem"), b
+        }
+      }(window, window.lib || (window.lib = {}));
+      window.onload = function () {
+        htmlElm.style.opacity = '1';
+      }
+    </script>
+</head>
+<body>
+    <div class="wrap addmine">
+        <header class="header">
+            <a href="{AnUrl('screen_dm/screen_content')}" class="btn-back"><i class="icon-arrow-left"></i>首页</a>
+            <h1>添加投放内容</h1>
+        </header>
+        <section class="container">
+            <div class="add-form">
+                <form class='form-horizontal' action="{AnUrl('screen_dm/save')}" method="post" enctype="multipart/form-data" id="ufrm">
+                      <input type ="hidden" name="anu" value="screen_dm/save">
+                      <input type ="hidden" name="id" value="{$content_info.id}">
+                      <input type ="hidden" name="search_type" value="{$search_type}">
+                       <input type="hidden" class="js_timeStart" name="content[start_time]" value="{$content_info['start_time']}">
+                       <input type="hidden" class="js_endStart" name="content[end_time]" value="{$content_info['end_time']}">
+                    <div class="con">
+                        <div class="item1">
+                            <label>标题</label>
+                            <span class="input"><input type="text" class = 'con_title' placeholder="请输入标题" name="content[title]" value="{$content_info['title']}"></span>
+                        </div>
+                        <div class="item1">
+                            <label>类型</label>
+                            <div class="btn-choose choose_type">
+                                    <span class="default put_type_default">请选择</span>
+                                    <i class="icon-arrow-right"></i>
+                                    <input name="content[type]" type="hidden"  value="" class="put_type_hidden">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="con">
+                    {*图片开始*}
+                    <div class="hidden uploadImg">
+                        <div class="item1  ">
+                            <label>图片内容</label>
+                            <div class="upload">
+                               <div class="js_perUpOuter" >
+                                    <div class="btn-upload btn-pic txt js_perUpAdd js_perUpArea {if $content_info.link && ($content_info.type == 1 || $content_info.type == 4)}hidden{/if}"">
+                                        {if $content_info.link && ($content_info.type == 1 || $content_info.type == 4)}
+                                            <img src="{_image($content_info.link)}" class="js_upload_image" style="width:250px;"/>
+                                        {/if}
+                                    </div>
+                                </div>
+                            </div>
+                            {if !$content_info}
+                            {AnForm type="file" name="img_link" class='js_perUpFile hidden'}
+                            {else}
+                             {AnForm type="file" name="img_link" class='js_perUpFile hidden'}
+                            {/if}
+                        </div>
+                     </div>
+                     {*图片结束*}
+                     
+                     {*套餐图开始*}
+                    <div class="selectSetMealImg {if $content_info.type != 5}hidden{/if}">
+                        <div class="item1  ">
+                            <label>套餐底图</label>
+                            <div class="upload">
+                               <div class="js_perUpWrap" >
+                               {foreach screen_content_config::$content_set_meal_img as $k => $v}
+                                    <div class="btn-upload btn-pic txt">
+                                            <img src="{$v}" style="width:2.72rem; height:2.72rem;"/>
+                                        <input name="set_meal" type="hidden" value={$v}>
+                                    </div>
+                                {/foreach}
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+                     {*套餐图结束*}
+                     
+                     {*视频 START*}
+                       <div class="hidden uploadVideo {if $content_info.type != 2}hidden{/if}">
+                            <div class="item1  ">
+                                <label>视频内容</label>
+                                <div class="upload js_perUpOuter" data-show-id="content_img">
+                                    <div class="btn-upload btn-video txt js_perUpAdd js_perUpArea">
+                                        {if $content_info.link && $content_info.type ==2}
+                                            {$content_info.link}
+                                        {/if}
+                                    </div>
+                                </div>
+                                 <input type="file" name="video_link" class='js_perUpFile hidden'>
+                            </div>
+                       </div>
+                    {*视频 END*}
+                    
+                     {*字体颜色 START*}
+                        <div class="jsColorType {if $content_info.type != 4}hidden{/if}">
+                            <div class="item1">
+                                <label>字体颜色</label>
+                                <div class="btn-choose">
+                                    <span class="default color_default">请选择</span>
+                                    <i class="icon-arrow-right"></i>
+                                   <input name="content[font_color_type]" type="hidden"  value="" class="color_hidden">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        
+                    {*字体颜色 END*}
+                    
+                    {*宣传价格 START*}
+                        <div class="jsPriceType hidden">
+                            <div class="item1 {if $content_info.type != 4}hidden{/if}">
+                                <label>宣传价格</label>
+                                    <span class="input">
+                                        <input type="number" value="{if $content_info.price}{$content_info.price}{else} {/if}" name="content[price]" placeholder="可选填">
+                                    </span>
+                          </div>
+                        </div>
+                    {*宣传价格 END*}
+                    
+                    {*是否为专属机型 START*}
+                    <div class="jsIsSpecify hidden">
+                      <div class="item1 {if $content_info.type != 4}hidden{/if}">
+                      <label>专属机型</label>
+                        <div class="btn-choose">
+                                    <span class="default phone_default">请选择</span>
+                                    <i class="icon-arrow-right"></i>
+                           <input name="content[is_specify]" type="hidden"  value="" class="phone_hidden">
+                        </div>
+                      </div>
+                    </div>
+                {*是否为专属机型 END*}
+                
+                    {*链接开始*}
+                    <div class="link hidden">
+                        <div class="item1 {if $content_info.type != 3}hidden{/if}">
+                            <label>链接</label>
+                            <span class="input">
+                            <input type="text" value="{if $content_info.type == 3}{$content_info['link']}{/if}" name="content[link]" placeholder="请输入H5链接" class= "link_chk">
+                            </span>
+                        </div>
+                    </div>
+                    {*链接结束*}
+                    
+                     {*轮播间隔 START*}
+                        <div class="jiange_time hidden">
+                            <div class=" hidden item1">
+                                <label>轮播间隔</label>
+                                <span class="input"><input type="text" value="{if $content_info}{$content_info['roll_interval']}{else}10{/if}" name="content[roll_interval]" {if !$content_info || $content_info.is_roll_interval_disabled}disabled="disabled"{/if} class="form-control js_roll_interval" placeholder="请输入轮播间隔"></span>
+                            </div>
+                        </div>
+                      {*end*}
+                        {*轮播次数 START*}
+                        <div class="jiange_num hidden">
+                            <div class="item1">
+                                <label>轮播间隔</label>
+                                <span class="input">
+                                    <input type="number" name="content[roll_num]" value="{if $content_info}{$content_info['roll_num']}{else}1{/if}" class="form-control js_roll_num" {if !$content_info || $content_info.is_roll_num_disabled}disabled="disabled"{/if} placeholder="请输入轮播次数">
+                                </span>
+                            </div>
+                        </div>
+                    {*轮播次数 END*}
+                     </div>
+                {*上下线时间 START*}
+                    <div class="con">
+                        <div class="item1">
+                            <label>上线时间</label>
+                            <div class="date" id="selectDateBegin">
+                                <div class="input-date">
+                                        <input type="date" class ="js_dateTime time_start">
+                                        <span class="default statr_time">请选择</span>
+                                </div>
+                                <i class="icon-arrow-right"></i>
+                            </div>
+                        </div>
+                        <div class="item1">
+                            <label>下线时间</label>
+                            <div class="date" id="selectDateEnd">
+                                <div class="input-date">
+                                    <input type="date" class ="js_dateTime time_end" >
+                                    <span class="default end_time">请选择</span>
+                                </div>
+                                <i class="icon-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                {*上下线时间 END*}
+                {*套餐信息导入  START*}
+                 <div class="con js_import_set_meal {if $content_info ||  $content_info.type != 5 }hidden{/if}">
+                        <div>
+                            <div class="item1">
+                                <label>下载模板</label>
+                                <div class="btn-choose">
+                                    <a href="{AnUrl('screen_content/admin/load_set_meal_template')}"><span class="default">&nbsp;下载模板并录入</span></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="js_import_set_meal {if $content_info ||  $content_info.type != 5 }hidden{/if}">
+                            <div class="item1">
+                                <label>支持机型</label>
+                                <div class="btn-choose">
+                                    <a href="{AnUrl('screen_content/admin/load_device_model_template')}" ><span class="default">&nbsp;可支持机型列表</span></a>
+                                </div>
+                            </div>
+                        </div>
+                   </div>
+                   {*套餐上传  START*}
+                   <div class="con set_meal_data_js {if $content_info ||  $content_info.type != 5 }hidden{/if}">
+                       <div>
+                        <div class="item1">
+                          <label>套餐上传</label>
+                          <div class="btn-choose">
+                                <span class="default "><input class="default " type="file" name="set_meal_data"></span>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                {*套餐上传  END*}
+                  {*投放机型 START*}
+                    <div class="con putPhone ">
+                      <div class="item1">
+                      <label>投放机型</label>
+                        <div class="btn-choose">
+                                    <span class="default put_phone_default">全部机型</span>
+                                    <i class="icon-arrow-right"></i>
+                                    <div class="append_version"></div>
+                                    <div class="append_name"></div>
+                                    <div class="append_all"></div>
+                        </div>
+                      </div>
+                    </div>
+                {*投放机型 END*}
+                <button type="button" class="btn-submit  final_btn disabled">确认</button>
+            </form>
+            </div>
+        </section>
+    </div>
+    <!-- 添加颜色弹层 -->
+    <div class="wrap color_select hidden">
+    <header class="header">
+        <a href="javascript:void(0);" class="btn-back go_back"><i class="icon-arrow-left back"></i>返回</a>
+        <h1>添加投放内容—选择颜色</h1>
+    </header>
+        <section class="container">
+            <div class="add-form">
+               <div class="color-list jsColorSelect">
+                  <ul>
+                    <li>
+                        <label>
+                            <input name="content[font_color_type]" type="radio"  {if $smarty.get.color_type == 1}checked {/if} value="1"><span>黑色</span>
+                        </label>
+                    </li>
+                    <li>
+                         <label>
+                            <input type="radio"  name="content[font_color_type]" {if $smarty.get.color_type == 2 || $smarty.get.color_type == 0}checked{/if} value="2"><span>白色</span>
+                         </label>
+                    </li>
+                  </ul>
+              </div>
+              <div class="tips">这是修改价格生成图片价格字体颜色，注意与背景图的颜色差异！</div><button type="button" class="btn-submit btn_color">确认</button>
+        </div>
+        </section>
+</div>
+    <!-- 添加颜色弹层结束 -->
+     <!-- 专属机型弹层开始 -->
+    <div class="wrap phone_version hidden">
+        <header class="header">
+            <a href="javascript:void(0);" class="btn-back go_back"><i class="icon-arrow-left back"></i>返回</a>
+            <h1>添加投放内容—专属机型</h1>
+        </header>
+        <section class="container">
+            <div class="add-form">
+               <div class="color-list jsPhoneSelect">
+                  <ul>
+                    <li>
+                        <label>
+                           <input name="content[is_specify]" type="radio" {if $content_info.is_specify == 1 || !$content_info}checked{/if} {if $content_info}disabled="disabled"{/if} value="1"><span>是</span>
+                        </label>
+                    </li>
+                    <li>
+                         <label>
+                            <input name="content[is_specify]" type="radio"  {if $content_info && $content_info.is_specify == 0}checked{/if} {if $content_info}disabled="disabled"{/if} value="0"><span>否</span>
+                         </label>
+                    </li>
+                  </ul>
+              </div>
+              <div class="tips">上传的机型图如果存在机型信息，请选择是！</div><button type="button" class="btn-submit btn_phone">确认</button>
+        </div>
+        </section>   
+     </div>
+      <!-- 专属机型色弹层结束 -->
+      
+        <!-- 投放类型结束开始 -->
+    <div class="wrap put_type hidden">
+        <header class="header">
+            <a href="javascript:void(0);" class="btn-back go_back"><i class="icon-arrow-left back"></i>返回</a>
+            <h1>添加投放内容—投放类型</h1>
+        </header>
+        <section class="container">
+            <div class="add-form">
+               <div class="color-list jsPuttypeSelect">
+               {$content_type = screen_dm_config::$content_type}
+               {if $curr_member_ranks != 1}
+                   {$content_type = $content_type|array_diff_key:([4]|array_flip)}
+               {/if}
+                  <ul>
+                  {foreach $content_type as $k => $v}
+                    <li>
+                        <label>
+                           <input name="content[type]" type="radio"  value="{$k}"><span>{$v}</span>
+                        </label>
+                    </li>
+                   {/foreach}
+                  </ul>
+              </div>
+              <div class="tips">请选择上传类型！</div><button type="button" class="btn-submit btn_put_type">确认</button>
+        </div>
+        </section>
+</div>
+<!-- 投放类型结束 -->
+      
+      
+       <!-- 投放机型弹层开始 -->
+     <div class="wrap put_phone_version_model hidden">
+        <header class="header">
+            <a href="javascript:void(0);" class="btn-back go_back"><i class="icon-arrow-left back"></i>返回</a>
+            <h1>添加投放内容—选择机型</h1>
+        </header>
+        <section class="container">
+            <div class="add-form">
+                    <div class="phone-list">
+                        <ul>
+                            <li>
+                                {if $phone_version_list}
+                                <label><input type="checkbox" value=0 class='selectInputBusinessHall selectversionAll'checked ><span>全部机型</span></label>
+                                <ul>
+                                    {foreach $phone_version_list as $k => $v}
+                                    <li>
+                                        <label><input type="checkbox" checked  class='selectInputversion' name="phone_version" value = '{$v.phone_version}'>
+                                                <span>{if $v.phone_name_nickname} {$v.phone_name_nickname} {else}{$v.phone_name}{/if}  &nbsp;&nbsp;
+                                                {if $v.phone_version_nickname} {$v.phone_version_nickname} {else}{$v.phone_version}{/if}</span>
+                                            <input type="checkbox" checked name="phone_name" class='selectInputname' value ={$v.phone_name} style='display:none;'>
+                                        </label>
+                                    </li>
+                                    {/foreach}
+                                </ul>
+                               {else}
+                               <label><span>暂无机型</span></label>
+                                {/if}
+                            </li>
+                        </ul>
+                    </div>
+                    <button type="button" class="btn-submit put_btn_phone">确认</button>
+            </div>
+            
+        </section>
+    </div>
+     <!-- 投放机型弹层结束 -->
+    <script src="{$smarty.const.STATIC_URL}/js/jquery-2.1.1.min.js"></script>
+    <script src="{$smarty.const.STATIC_URL}/js/jquery-1.7.1.min.js"></script>
+    <script src="{$smarty.const.STATIC_URL}/js/iosselect/iosSelect.js"></script>
+    <script src="{$smarty.const.STATIC_URL}/js/common.js"></script>
+    <script src="{$smarty.const.STATIC_URL}/js/jquery.base64.min.js"></script>
+    <script type="text/javascript">
+    var siteUrl = "{$smarty.const.STATIC_URL}";
+    var color_type  = '{$content_info.font_color_type}';
+    var version_list = [];
+    var name_list = [];
+    var lock     = false;
+    $(function(){
+        var html = '';
+        var startTime, endTime;
+         var is_checked = $('.selectInputBusinessHall').attr('checked');
+         if (is_checked == 'checked') {
+             html +='<input type ="hidden" name="is_all" value="1">';
+             $('.append_all').append(html);
+         }else{
+             html +='<input type ="hidden" name="is_all" value="0">';
+             $('.append_all').append(html);
+         }         
+
+        
+          $('#selectDateBegin input').change(function(e){
+        
+            startTime = e.target.value;
+            $('.js_timeStart').val(startTime);
+            $('.statr_time').html(startTime);
+            var tital = $('.con_title').val();
+            //开始时间
+            var start_time = $('.statr_time').html();
+            //结束时间
+            var end_time = $('.end_time').html();
+            //投放类型
+            var put_type  = $('.put_type_default').html();
+            $(this).siblings('span').css({ opacity: 1 })
+           // $(this).css({ opacity:1 })
+            if(tital != '' && start_time != "请选择" && end_time !="请选择" && put_type != "请选择"){
+                $('.final_btn').removeClass('disabled');
+            }
+           
+          })
+                 
+            $('#selectDateEnd input').change(function(e){
+        
+            endTime = e.target.value
+            $('.js_endStart').val(endTime);
+            $('.end_time').html(endTime);
+            $(this).siblings('span').css({ opacity: 1 })
+            //$(this).css({ opacity:1 })
+            setTimeout(function(){
+                if(startTime>endTime) alert("结束时间必须大于开始时间")
+            },300)
+            
+            var tital = $('.con_title').val();
+            //开始时间
+            var start_time = $('.statr_time').html();
+            //结束时间
+            var end_time = $('.end_time').html();
+            //投放类型
+            var put_type  = $('.put_type_default').html();
+            $(this).siblings('span').css({ opacity: 1 })
+           // $(this).css({ opacity:1 })
+            if(tital != '' && start_time != "请选择" && end_time !="请选择" && put_type != "请选择"){
+                $('.final_btn').removeClass('disabled');
+            }
+          })
+    });
+    
+    $('.put_btn_phone').on('click',function(){
+        //初始化
+        $('.append_version').html('');
+        $('.append_name').html('');
+        $('.append_all').html('');
+        
+        //手机型号列表
+        var is_checked = $('.selectInputBusinessHall').attr('checked');
+        var phone_version_list = $('.selectInputversion:checked');
+        var phone_name_list = $('.selectInputname:checked');
+        var length = $('.selectInputversion:checked').length;
+        var html4 = '';
+        if (phone_version_list.length == 0) {
+            alert('无投放机型！');
+            return false;
+        }
+        var html = '';
+        var html2 = '';
+        var html3 = '';
+        if (is_checked == 'checked') {
+            html +='<input type ="hidden" name="is_all" value="1">';
+            $('.put_phone_default').html('全部机型');
+            $('.append_all').append(html);
+        }else{
+        //append_version
+        $.each( phone_version_list, function(i, n){
+            version_list[i] = $(n).val();
+            html +='<input type ="hidden" name="phone['+i+'][version]" value="'+version_list[i]+'">';
+            });
+           $('.append_version').append(html);
+           
+           $.each( phone_name_list, function(i, n){
+               name_list[i] = $(n).val();
+               html2 +='<input type ="checked"  name="phone['+i+'][name]" value="'+name_list[i]+'" style="display:none;">';
+               });
+              $('.append_name').append(html2); 
+         //区分
+              html3 +='<input type ="hidden" name="is_all" value="0">';
+              $('.append_all').append(html3);
+              html4 = length+'种机型';
+              $('.put_phone_default').html(html4);
+        }
+    });
+    
+  
+    
+   ///////////////////////////////////////////////////////////// 
+   ////////////////////宣传图颜色////////////////////////////////
+    //机型宣传图选择颜色页面显示
+    $(".jsColorType").click(function(){
+        $('.addmine').addClass('hidden');
+        $('.color_select').removeClass('hidden');
+   })
+   //颜色选择成功后添加主界面显示
+   $('.btn_color').click(function(){
+        var color_type = $('.jsColorSelect ul li input[type=radio]:checked').val();
+        $('.color_hidden').val(color_type);
+        if(color_type == 2){
+            $('.color_default').html('白色');
+        }else{
+            $('.color_default').html('黑色');
+        }
+        $('.addmine').removeClass('hidden');
+        $('.color_select').addClass('hidden');
+    });
+   ///////////////////////////////////////////////////////////////
+   
+   ///////////////////////////////////////////////////////////// 
+   ////////////////////宣传图专属机型////////////////////////////////
+    //机型宣传图选择颜色页面显示
+    $(".jsIsSpecify").click(function(){
+        $('.addmine').addClass('hidden');
+        $('.phone_version').removeClass('hidden');
+   })
+   //颜色选择成功后添加主界面显示
+   $('.btn_phone').click(function(){
+        //var color_type = $('.jsColorSelect ul li input[type=radio]:checked').val();
+       var phone_type = $('.jsPhoneSelect ul li input[type=radio]:checked').val();
+       $('.phone_hidden').val(phone_type);
+       if(phone_type == 1){
+           $('.phone_default').html('是');
+       }else{
+           $('.phone_default').html('否');
+       }
+        $('.addmine').removeClass('hidden');
+        $('.phone_version').addClass('hidden');
+    });
+   ///////////////////////////////////////////////////////////////
+    ////////////////////关闭弹层////////////////////////////////
+  
+   $('.go_back').on('click',function(){
+       $(this).parent().parent().addClass('hidden');
+       $('.addmine').removeClass('hidden');
+   });
+  
+   ///////////////////////////////////////////////////////////////
+   
+   
+   ////////////////////投放机型////////////////////////////////
+   //机型宣传图选择颜色页面显示
+   $(".put_phone_default").click(function(){
+       $('.addmine').addClass('hidden');
+       $('.put_phone_version_model').removeClass('hidden');
+           var isChecked = $('.selectversionAll').attr('checked');
+           if (isChecked == 'checked') {
+               $('.selectInputversion').attr('checked','checked');
+               $('.selectInputname').attr('checked','checked');
+               $('.selectInputversion').attr('disabled','disabled');
+           }
+  })
+  //颜色选择成功后添加主界面显示
+  $('.put_btn_phone').click(function(){
+      
+       $('.addmine').removeClass('hidden');
+       $('.put_phone_version_model').addClass('hidden');
+   });
+  ///////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////
+       //全选反选
+  $('.selectversionAll').on('click',function(){ 
+            var isChecked = $(this).attr('checked');
+            if (isChecked == 'checked') {
+                $('.selectInputversion').attr('checked','checked');
+                $('.selectInputname').attr('checked','checked');
+                $('.selectInputversion').attr('disabled','disabled');
+            } else {
+                $('.selectInputversion').removeAttr('checked');
+                $('.selectInputname').removeAttr('checked');
+                $('.selectInputversion').removeAttr('disabled');
+
+            }
+        });
+  
+  $('.selectInputversion').on('click',function(){ 
+      var isChecked = $(this).attr('checked');
+      var length = $('.selectInputversion:checked').length;
+      var all_length =$('.put_phone_version_model').find('.selectInputversion').length;
+      if(length == all_length){
+          $('.selectversionAll').attr('checked','checked'); 
+      }
+      if (isChecked == 'checked') {
+          $('.append_name').html('');
+          $(this).attr("checked", 'checked');
+          $(this).parent().parent().find(".selectInputname").attr("checked", 'checked');
+      } else {
+          $('.append_name').html('');
+          $(this).removeAttr('checked');
+          $(this).parent().parent().find(".selectInputname").removeAttr("checked");
+      }
+  });
+///////////////////////////////////////////////
+    </script>
+    <script>
+    var contentId = '{$content_info.id}';
+    $(function(){
+
+      var oldImgLink = "{$content_info.type}" == 1 ? "{$content_info.link}" : '';
+      var oldVideoLink = "{$content_info.type}" == 2 ? "{$content_info.link}" : '';
+      
+      var content_info_type = "{$content_info.type}";
+      
+      $('.choose_type').on('click',function(){
+          $('.addmine').addClass('hidden');
+          $('.put_type').removeClass('hidden');
+             
+      });
+   //类型选择成功后添加主界面显示
+   $('.btn_put_type').click(function(){
+       var type = $('.jsPuttypeSelect ul li input[type=radio]:checked').val();
+       $('.put_type_hidden').val(type);
+       if(type == 1){
+           $('.put_type_default').html('图片');
+       }else if(type == 2){
+           $('.put_type_default').html('视频');
+       }else if(type == 3){
+           $('.put_type_default').html('链接');
+       }else if(type == 4){
+           $('.put_type_default').html('机型宣传图');
+       }else{
+           $('.put_type_default').html('套餐图');
+       }
+        Chosetype(type);
+        $('.addmine').removeClass('hidden');
+        $('.put_type').addClass('hidden');
+    });
+   
+      function Chosetype(type){
+        
+        //视频初始化
+        initVideo();
+        //url初始化
+        initUrl();
+        //宣传图初始化
+        initType4();
+        //图片初始化
+        initImage();
+      //套餐图初始化
+        initSetMealImg();
+        //图片
+        if (type == 1 || !type) {
+          //图片初始化
+          $('.uploadImg').removeClass('hidden');
+          $('.uploadImg').removeAttr('style');
+          $('.uploadImg .js_perUpAdd').removeClass('hidden');
+          $('.putPhone').removeClass('hidden');
+          
+          
+        //视频
+        } else if (type == 2) {
+          //视频初始化
+          $('.uploadVideo').removeClass('hidden');
+          $('.uploadVideo').removeAttr('style');
+          $('.jiange_time').addClass('hidden');
+          $('.jiange_num').removeClass('hidden');
+          $('.putPhone').removeClass('hidden');
+          //$('.uploadVideo .js_perUpAdd').html('');
+        //链接
+        } else  if (type == 3) {
+          
+          //url初始化
+          $('.js_urlLink input[type="text"]').val('');
+          $('.js_urlLink').removeClass('hidden');
+          $('.link').removeClass('hidden');
+          $('.jiange_num').addClass('hidden');
+          $('.jiange_time').removeClass('hidden');
+          $('.putPhone').removeClass('hidden');
+        //宣传图
+        } else if (type == 4) {
+          
+          //宣传图初始化
+          $('.uploadImg').removeClass('hidden');
+          $('.uploadImg .js_perUpAdd').removeClass('hidden');
+          $('.jsPriceType').removeClass('hidden');
+          $('.jsColorType').removeClass('hidden');
+          $('.jsIsSpecify').removeClass('hidden');
+          $('.putPhone').removeClass('hidden');
+
+        }else if (type == 5) {
+            $('.selectSetMealImg').removeClass('hidden');
+            $('.jsColorType').removeClass('hidden');
+            $('.jiange_num').addClass('hidden');
+            $('.jiange_time').removeClass('hidden');
+            $('.js_import_set_meal').removeClass('hidden');
+            $('.set_meal_data_js').removeClass('hidden');
+            $('.putPhone').addClass('hidden');
+            
+           // $('input:hidden[name="set_meal"]').val('');
+        }
+        //解除轮播参数的禁止编辑
+        removeDisabled(type);
+      };
+      
+     
+      //图片初始化
+      function initImage() {
+        //图片初始化
+        $('.uploadImg').addClass('hidden');
+        $('.link').addClass('hidden');
+        $('.jsPriceType').addClass('hidden');
+        $('.uploadVideo').addClass('hidden');
+        $('.jiange_time').addClass('hidden');
+        $('.jiange_num').addClass('hidden');
+        $('.uploadImg .js_perUpOuter img').remove();
+        $('.uploadImg .js_perUpAdd').css('display', '');
+        $('.uploadImg input[type="file"]').val('');
+        $('.putPhone').removeClass('hidden');
+      }
+      
+      //视频初始化
+      function initVideo() {
+        //视频初始化
+        $('.uploadVideo').removeClass('hidden');
+        $('.link').addClass('hidden');
+        $('.jiange_time').addClass('hidden');
+        $('.jiange_num').removeClass('hidden');
+        $('.uploadVideo .js_perUpAdd').html('');
+        $('.uploadVideo input[type="file"]').val('');
+        $('.putPhone').removeClass('hidden');
+      }
+      
+      //url初始化
+      function initUrl()
+      {
+        //url初始化
+        $('.js_urlLink input[type="text"]').val('');
+        $('.js_urlLink').addClass('hidden');
+        $('.jiange_time').removeClass('hidden');
+        $('.jiange_num').addClass('hidden');
+        $('.putPhone').removeClass('hidden');
+      }
+      
+      //宣传图初始化
+      function initType4(){
+        //宣传图初始化
+        $('.jsColorType').addClass('hidden');
+        $('.jsIsSpecify').addClass('hidden');
+        $('.putPhone').removeClass('hidden');
+      }
+      
+    //套餐图初始化
+      function initSetMealImg() {
+      
+        $('.selectSetMealImg').addClass('hidden');
+        $('.jsColorType').addClass('hidden');
+        $('.jiange_time').removeClass('hidden');
+        $('.jiange_num').addClass('hidden');
+        $('.js_import_set_meal').addClass('hidden');
+        $('.set_meal_data_js').addClass('hidden');
+        $('.putPhone').addClass('hidden');
+
+      }
+      //轮播次数禁止编辑的解除和添加
+      function removeDisabled(type)
+      {
+        //未选择
+        if (!type || type == 1 || type == 4) {
+          //禁止编辑
+           $('.js_roll_interval').attr('disabled', 'disabled');
+           $('.js_roll_num').attr('disabled', 'disabled');
+        //视频
+        } else if (type == 2) {
+          //禁止轮播时长编辑
+          $('.js_roll_interval').val(0);
+          $('.js_roll_interval').attr('disabled', true);
+          //开放轮播次数编辑
+          $('.js_roll_num').val(1);
+          $('.js_roll_num').attr('disabled', false);
+
+        //链接
+        }else  if (type == 3 || type == 5) {
+            //开启轮播时长编辑
+            $('.js_roll_interval').val(10);
+            $('.js_roll_interval').attr('disabled', false);
+            //禁止轮播次数编辑
+            $('.js_roll_num').val(1);
+            $('.js_roll_num').attr('disabled', true);
+          } 
+      }
+      
+      
+     
+      
+        // 上传文件的预览
+         $(".js_perUpOuter").on('click','.js_perUpArea', function(){
+            $(this).closest('.item1').find('.js_perUpFile').trigger('click');
+            
+          });
+       
+     
+        $(".js_perUpFile").each(function(i){
+          $(this).css({ 'position':'absolute', 'left':'-2000px' })
+          $(this).change(function(e){
+            var type = $('.put_type_hidden').val();
+            if (type == 1 || type == 4) {
+              handleFileSelect($(this), function (data) {
+                //判断是否为动图
+                var is = isAnimatedGif(data);
+                //动图
+                if (is === true) {
+                  //禁止轮播时长编辑
+                  $('.jiange_num').removeClass('hidden');
+                  $('.js_roll_interval').val(0);
+                  $('.js_roll_interval').attr('disabled', true);
+                  //开放轮播次数编辑
+                  $('.js_roll_num').val(1);
+                  $('.js_roll_num').attr('disabled', false);
+                //静图
+                } else if (is === false) {
+                    $('.jiange_time').removeClass('hidden');
+                  //开启轮播时长编辑
+                  $('.js_roll_interval').val(10);
+                  $('.js_roll_interval').attr('disabled', false);
+                  //禁止轮播次数编辑
+                  $('.js_roll_num').val(1);
+                  $('.js_roll_num').attr('disabled', true);
+                //未知
+                } else {
+                  alert(is);
+                }
+              });
+
+            } else {
+              //$('.uploadVideo .js_perUpAdd').text($('.uploadVideo input[type="file"]').val());
+              $('.uploadVideo .js_perUpAdd').html('<img src="{$smarty.const.SITE_URL}/images/m-zhongduan/video.png" style="width:2.72rem; height:2.72rem;">');
+            }
+          });
+        });
+        /////////////////////////////////////
+    });
+    //上传图片到服务器
+    function isAnimatedGif(imgData){
+      if (!imgData) {
+        return '图片上传失败';
+      }
+      var start = imgData.indexOf(';base64,');
+      if (start < 0) {
+        return '图片验证失败';
+      }
+
+      var not = imgData.slice(0, start+8);
+      var imgData = imgData.replace(not, '');
+      var newData =  $.base64.decode(imgData);
+      if (newData.indexOf('NETSCAPE2.0') > -1) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    //图片上传预览    IE是用了滤镜。
+
+    function previewImage(file,obj,pic,width,height)
+    {
+        var MAXWIDTH  = width;
+        var MAXHEIGHT = height;
+
+        //var div = document.getElementById('preview');
+        var div = obj;
+
+        if (file.files && file.files[0])
+        {
+            div.innerHTML ='<img id='+pic+' width="375px;">';
+            var img = document.getElementById(pic);
+            //console.log(img);
+            img.onload = function(){
+                var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
+                img.width  =  rect.width;
+                img.height =  rect.height;
+
+            };
+
+            var reader = new FileReader();
+            reader.onload = function(evt){ img.src = evt.target.result; };
+            //console.log(file.files[0]);
+            reader.readAsDataURL(file.files[0]);
+        }
+        else //兼容IE
+        {
+            var sFilter='filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale,src="';
+            file.select();
+            var src = document.selection.createRange().text;
+            div.innerHTML = '<img id=imghead>';
+            var img = document.getElementById('imghead');
+            img.filters.item('DXImageTransform.Microsoft.AlphaImageLoader').src = src;
+            var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
+            status =('rect:'+rect.top+','+rect.left+','+rect.width+','+rect.height);                        //"+rect.top+"
+            div.innerHTML = "<div id=divhead style='width:"+rect.width+"px;height:"+rect.height+"px;margin-top:0px;"+sFilter+src+"\"'></div>";
+
+        }
+    }
+
+    function clacImgZoomParam( maxWidth, maxHeight, width, height ){
+        var param = { top:0, left:0, width:width, height:height };
+        if( width>maxWidth || height>maxHeight )
+        {
+            rateWidth = width / maxWidth;
+            rateHeight = height / maxHeight;
+             
+            if( rateWidth > rateHeight )
+            {
+                param.width =  maxWidth;
+                param.height = Math.round(height / rateWidth);
+            }else
+            {
+                param.width = Math.round(width / rateHeight);
+                param.height = maxHeight;
+            }
+        }
+
+        param.left = Math.round((maxWidth - param.width) / 2);
+        param.top = Math.round((maxHeight - param.height) / 2);
+        return param;
+    }
+
+   
+
+    </script>     
+    
+    <script type="text/javascript">
+  
+    function handleFileSelect(obj, callback)
+    {
+      //alert(FileReader)
+      if (typeof FileReader == "undefined") {
+        return false;
+      }
+      var thisClosest = obj.closest('.item1');
+      var thisOuter = thisClosest.find('.js_perUpOuter');
+      if (typeof thisClosest.length == "undefined" || typeof thisOuter.length == "undefined") {
+        return;
+      }
+      
+      var files = obj[0].files;
+      var f = files[0];
+      if (!isAllowFile(f.name)) {
+        showMsg("请上传常规格式的图片,如：jpg, png等");
+        return false;
+      }
+      
+      // 如果浏览器支持html5 FileReader
+      if (typeof FileReader != 'undefined') {
+        var reader = new FileReader();
+        reader.onload = (function(theFile){
+            return function (e) {
+              var tmpSrc = e.target.result;
+              if (tmpSrc.lastIndexOf('data:base64') != -1) {
+                tmpSrc = tmpSrc.replace('data:base64', 'data:image/jpeg;base64');
+              } else if (tmpSrc.lastIndexOf('data:,') != -1) {
+                tmpSrc = tmpSrc.replace('data:,', 'data:image/jpeg;base64,');
+              }
+              
+              doFileSelected(tmpSrc, thisOuter, callback);
+            };
+        })(f)
+        reader.readAsDataURL(f);
+        //alert('可以的')
+      } else {
+        //alert('不可以');
+        var tmpSrc = siteUrl+"/images/admin2/pic_select_defalut.png";
+        doFileSelected(tmpSrc, thisOuter, callback);
+      }
+    }
+
+    // 选择图片后的操作
+    function doFileSelected(tmpSrc, thisOuter, callback)
+    {
+      var img = '<img src="'+tmpSrc+'" style="width:2.72rem; height:2.72rem;"  class="js_perUpArea"/>';
+      
+      thisOuter.find('.js_perUpAdd').hide();
+      thisOuter.find('img').remove();
+      thisOuter.prepend(img);
+      
+      var showId = thisOuter.attr('data-show-id');
+      if (showId) {
+        if ($("#"+showId).length >= 1) {
+          $("#"+showId).find('img').attr('src', tmpSrc);
+          
+        } else if ($("."+showId).length >= 1) {
+          $("."+showId).each(function(i){
+            $(this).html(img);
+          });
+        }
+      }
+      if (typeof(callback) != 'undefined') {
+        callback(tmpSrc);
+      }
+    }
+
+    //取得文件名的后缀
+    function getFileExt(fileName)
+    {
+      if (!fileName) {
+        return '';
+      }
+      
+      var _index = fileName.lastIndexOf('.');
+      if (_index < 1) {
+        return '';
+      }
+      
+      return fileName.substr(_index+1);
+    }
+
+    //是合格的文件名
+    function isAllowFile(fileName, allowType)
+    {
+      var fileExt = getFileExt(fileName).toLowerCase();
+      if (!allowType) {
+        allowType = ['jpg', 'jpeg', 'png', 'gif'];
+      }
+      
+      if ($.inArray(fileExt, allowType) != -1) {
+        return true;
+      }
+      
+      return false;
+    }
+
+    </script>
+    <script>
+    //判断是否微信登陆
+    function isWeiXin() {
+        var ua = window.navigator.userAgent.toLowerCase();
+        console.log(ua); //mozilla/5.0 (iphone; cpu iphone os 9_1 like mac os x) applewebkit/601.1.46 (khtml, like gecko)version/9.0 mobile/13b143 safari/601.1
+        if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    if (isWeiXin()) {
+        console.log(" 是来自微信内置浏览器")
+        $('.header').addClass('hidden');
+    } else {
+        console.log("不是来自微信内置浏览器")
+    }
+  
+    </script>
+    <script type="text/javascript">
+    //表单验证 
+    
+     $('.final_btn').click(function(){
+         //1 为专属
+         var is_specify = $('.phone_hidden').val();
+         //4为机型
+         var put_type = $('.put_type_hidden').val();
+          
+         var length = $('.selectInputversion:checked').length;
+         
+         var type = $('.jsPuttypeSelect ul li input[type=radio]:checked').val();
+         //标题
+         var tital = $('.con_title').val();
+         //开始时间
+         var start_time = $('.statr_time').html();
+         //结束时间
+         var end_time = $('.end_time').html();
+         //投放类型
+         var put_type  = $('.put_type_default').html();
+         
+         if(is_specify == 1 && put_type == 4){
+             if(length == 1){
+                 $("#ufrm").submit();
+                
+             }else{
+                 alert('请选择专属机型');
+                 return false;
+             }
+         }
+         
+         if(!tital){
+        	 alert('请添加标题');
+             return false;
+         }
+         
+         if(type == 1 || type == 4){
+        	 checkImg();
+         }
+         
+         if(type == 2){
+        	 checkVideo();
+         }
+         if(type == 4){
+        	//机型颜色
+             var color  = $('.color_default').html();
+        	//机型类型
+             var phone_default  = $('.phone_default').html();
+        	if(color == '请选择' || phone_default == '请选择' ){
+        		alert('请选择机型信息');
+        		$('.final_btn').addClass('disabled');
+        		return false;
+        	}
+         }
+         if(start_time == '请选择' || end_time == '请选择' || put_type == '请选择'){
+             alert('请填写完整信息');
+             return false;
+         }
+      
+         $("#ufrm").submit();
+         
+     });
+     
+    //检查标题
+     $('.con_title').keyup(function(){
+    	 var tital = $(this).val();
+
+    	 //开始时间
+         var start_time = $('.statr_time').html();
+         //结束时间
+         var end_time = $('.end_time').html();
+         //投放类型
+         var put_type  = $('.put_type_default').html();
+    	 if(!tital){
+    		 alert('请输入标题');
+    		 $('.final_btn').addClass('disabled');
+    		 return false;
+    	 }
+
+    	 if(start_time != "请选择" && end_time !="请选择" && put_type != "请选择"){
+    		 $('.final_btn').removeClass('disabled');
+    	 }
+     });
+     //检查投放类型
+     $('.put_type_default').click(function(){
+    	 var html = $(this).html();
+    	 var type = $('.jsPuttypeSelect ul li input[type=radio]:checked').val();
+    	 var tital = $('.con_title').val();
+         //开始时间
+         var start_time = $('.statr_time').html();
+         //结束时间
+         var end_time = $('.end_time').html();
+         //投放类型
+         var put_type  = $('.put_type_default').html();
+         
+    	 if(tital != '' && start_time != "请选择" && end_time !="请选择" && put_type != "请选择"){
+    		 $('.final_btn').removeClass('disabled');
+    	 }
+     });
+    //检查上传图片内容
+     function checkImg() {
+    	if($( ".js_perUpOuter:has(img)" ).length==0){
+    		alert('请上传图片内容');
+            return false;
+    	}else{
+    		return true;
+    	}
+    	
+     }
+    
+    $('.js_roll_interval').keyup(function(){
+    	var tital = $('.con_title').val();
+        var roll =$(this).val();
+        
+        //开始时间
+        var start_time = $('.statr_time').html();
+        //结束时间
+        var end_time = $('.end_time').html();
+        //投放类型
+        var put_type  = $('.put_type_default').html();
+        if(!roll){
+            alert('请输入轮播间隔');
+            $('.final_btn').addClass('disabled');
+            return false;
+        }
+
+        if(start_time != "请选择" && end_time !="请选择" && put_type != "请选择" && tital){
+            $('.final_btn').removeClass('disabled');
+        }
+    });
+    
+    $('.link_chk').keyup(function(){
+        var tital = $('.con_title').val();
+        var roll =$('.js_roll_interval').val();
+        var link =$(this).val();
+        //开始时间
+        var start_time = $('.statr_time').html();
+        //结束时间
+        var end_time = $('.end_time').html();
+        //投放类型
+        var put_type  = $('.put_type_default').html();
+        if(!link){
+            alert('请输入链接');
+            $('.final_btn').addClass('disabled');
+            return false;
+        }
+
+        if(start_time != "请选择" && end_time !="请选择" && put_type != "请选择" && tital){
+            $('.final_btn').removeClass('disabled');
+        }
+    });
+   //检查上传视频内容
+     function checkVideo() {
+         if($( ".btn-video:has(img)" ).length==0){
+             alert('请上传视频内容');
+             return false;
+         }else{
+             return true;
+         }
+         
+      }
+    
+    </script>
+</body>
+</html>

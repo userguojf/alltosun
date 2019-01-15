@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <title>消息列表</title>
+    <link rel='Shortcut Icon' type='image/x-icon' href='{$smarty.const.SITE_URL}/images/win10/windows.ico'>
+    <script type="text/javascript" src="{$smarty.const.SITE_URL}/js/win/jquery-2.2.4.min.js"></script>
+    <link href="{$smarty.const.SITE_URL}/css/win/animate.css" rel="stylesheet">
+    <script type="text/javascript" src="{$smarty.const.SITE_URL}/component/layer-v3.0.3/layer/layer.js"></script>
+    <link rel="stylesheet" href="{$smarty.const.SITE_URL}/component/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link href="{$smarty.const.SITE_URL}/css/win/default.css" rel="stylesheet">
+    <script type="text/javascript" src="{$smarty.const.SITE_URL}/js/win/win10.js"></script>
+    <script type="text/javascript" src="{$smarty.const.SITE_URL}/js/win/win10.child.js"></script>
+    <script src="{$smarty.const.SITE_URL}/js/layDate-v5.0.9/laydate/laydate.js"></script> <!-- 时间 -->
+    <base href="{$smarty.const.SITE_URL}/"></base>
+     <link href="{$smarty.const.SITE_URL}/js/jqueryui/1.8.11/themes/base/jquery-ui.css"/>
+     <link href="{$smarty.const.SITE_URL}/js/tipsy/tipsy.css" rel="stylesheet" type="text/css">
+     <link rel="stylesheet" href="{$smarty.const.SITE_URL}/css/layui/css/layui.css"  media="all">
+     
+    <style>
+        * {
+            font-family: "Microsoft YaHei", 微软雅黑, "MicrosoftJhengHei", 华文细黑, STHeiti, MingLiu
+        }
+    </style>
+</head>
+<body>
+
+      
+<div class="site-text site-block" style="margin-top: 50px;">
+      
+      <form class="layui-form" action="{AnUrl('win/admin/save')}" lay-filter="component-form-group">
+                    {AnForm type="hidden" name="id" value="{$info.id}"}
+        <input type='hidden' name='id' value={$info.id}> 
+          <div class="layui-form-item">
+            <label class="layui-form-label">接收者</label>
+            <div class="layui-input-inline">
+              <input type="text" name="info[username]"  value="{$info.username}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+         
+          <div class="layui-form-item">
+            <label class="layui-form-label">发送者</label>
+            <div class="layui-input-inline">
+              <input type="text" name="info[message_from]"  value="{$info.message_from}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+        
+          <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">内容</label>
+            <div class="layui-input-block">
+              <textarea name="info[message]" placeholder="请输入内容"  lay-verify="required" class="layui-textarea">{$info.message}</textarea>
+            </div>
+          </div> 
+          <div class="layui-form-item">
+                <div class="layui-inline">
+                  <label class="layui-form-label">时间</label>
+                  <div class="layui-input-inline">
+                    <input type="text" name="info[time]" id="test1" value="{$info.time}"   lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="on" class="layui-input" lay-key="1">
+                  
+                  </div>
+                </div>
+            </div>
+          <div class="layui-form-item layui-layout-admin">
+            <div class="layui-input-block">
+              <div class="layui-footer" style="left: 0;">
+                <button class="layui-btn" lay-submit="submit" lay-filter="component-form-demo1">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                <button class="layui-btn layui-btn-primary" onclick="Win10_child.close();" >取消</button>
+              </div>
+            </div>
+          </div>
+        </form>
+</div>
+<script type="text/javascript">
+
+laydate.render({
+  elem: '#test1' //指定元素
+});
+
+        
+
+</script>
+</body>
+</html>

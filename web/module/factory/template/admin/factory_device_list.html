@@ -1,0 +1,176 @@
+{include_www file="admin/lib/header_new.html" title="设备列表"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<style>
+    .pop-bg p .w_url{
+       word-wrap: break-word;
+    }
+    .btn_msg{
+       cursor:pointer;
+    }
+    .btn_msg:hover{
+        color:#23527c;
+    }
+</style>
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen_content/admin')}"><i class="iconfont iconfont-logo2"></i>工厂</a>
+            &gt;
+            <span>设备管理（{$count}）</span>
+          </div>
+          <div class="tabs1">
+            <ul class="clearfix">
+              <li {if $search_filter['put_type'] == 1}class="curr"{/if}><a href="{AnUrl('factory/admin?search_filter[put_type]=1')}">全部</a></li>
+              <li {if $search_filter['put_type'] == 2}class="curr"{/if}><a href="{AnUrl('factory/admin?search_filter[put_type]=2')}">待发货</a></li>
+              <li {if $search_filter['put_type'] == 3}class="curr"{/if}><a href="{AnUrl('factory/admin?search_filter[put_type]=3')}">已发货</a></li>
+<!--               <li {if $search_filter['put_type'] == 4}class="curr"{/if}><a href="{AnUrl('factory/admin?search_filter[put_type]=4')}">已拒绝</a></li>
+ -->            </ul>
+          </div>
+          <div class="form-search clearfix">
+            <div class="pull-left">
+              <form action="{AnUrl('factory/admin')}" methhod='get'>
+                <input type="hidden" class="search_type" name="search_filter[search_type]" value="{$search_filter.search_type}">
+                <input type="hidden" class="put_type" name="search_filter[put_type]" value="{$search_filter.put_type}">
+                    <select class="form-control input-sm pull-left js_province" id='province' style="width:120px" name="search_filter[province]" >
+                        <option value="">请选择省</option>
+                    </select>
+                    <select class="form-control input-sm pull-left js_city" id="city" style="width:120px" name="search_filter[city]">
+                        <option value="">请选择市</option>
+                    </select>
+                    <select class="form-control input-sm pull-left js_area" id="area" style="width:120px" name="search_filter[area]">
+                        <option value="">请选择区</option>
+                    </select>
+                <button type="submit" class="btn-search pull-left">搜索</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="tabs2">
+            <ul class="clearfix">
+            {foreach factory_config::$search_type as $k => $v}
+              <li {if $search_filter['search_type'] == $k}class=" curr"{/if}><a  href="{compile_url($search_filter,'search_type',$k,'factory/admin')}">{$v}</a></li>
+            {/foreach}
+            </ul>
+          </div>
+
+          <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                 <tr>
+                    <th style="text-align:center" >设备类型</th>
+                    <th style="text-align:center" >省</th>
+                    <th style="text-align:center" >市</th>
+                    <th style="text-align:center" >地区</th>
+                    <th style="text-align:center" >营业厅</th>
+                    <th style="text-align:center" >收获地址</th>
+                    <th style="text-align:center" >联系人</th>
+                    <th style="text-align:center" >电话</th>
+                    <th style="text-align:center" >设备数量</th>
+                    <th style="text-align:center" >备注</th>
+                    <th style="text-align:center" >操作</th>
+                </tr>
+              </thead>
+              
+              <tbody>
+                {foreach $content_list as $k=>$v}
+                {* 基本信息 *}
+                <tr view_id = "{$v.id}" class="view_id">
+                   <td style="text-align:center">{$v.device_type}</td>
+                   <td style="text-align:center">{business_hall_helper::get_info_name('province', $v.province_id, 'name')}</td>
+                   <td style="text-align:center">{business_hall_helper::get_info_name('city', $v.city_id, 'name')}</td>
+                   <td style="text-align:center">{business_hall_helper::get_info_name('area', $v.area_id, 'name')}</td>
+                   <td style="text-align:center">{business_hall_helper::get_info_name('business_hall', $v.business_id, 'title')}</td>
+                   <td style="text-align:center">{$v.address}</td>
+                   <td style="text-align:center">{$v.linkman}</td>
+                   <td style="text-align:center">{$v.phone}</td>
+                   <td style="text-align:center">{$v.device_num}</td>
+                   <td>{$v.remark}</td>
+                   {if $v.order_status == 1}
+                    <td class="txtleft" resId={$v.id}>
+                        <a class="btn btn-xs btn-info " href='{AnUrl("factory/admin/send_goods?id={$v.id}")}'>发货</a>
+<!--                         <a class="btn btn-xs btn-danger no_agree" href="javascript:;">拒绝</a>
+ -->                   </td>
+                   {else}
+                    <td class="txtleft" resId={$v.id}>
+                        <a href="javascript:;">已发货</a>
+                   </td>
+                   {/if}
+                </tr>
+                {foreachelse}
+                    <tr><td class="txtleft" colspan="11">暂无数据</td></tr>
+                {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        <!--end:列表-->
+<!-- 主内容 end -->
+      </div>
+<script src="{$smarty.const.SITE_URL}/js/region_func.js"></script>
+<script>
+var updateOrderStatus = {
+   _id:'',
+   _msg :'操作失败',
+   _url:"{AnUrl('factory/admin/ajax/change_order_status')}",
+   update:function(obj,order_status){
+       this._id = $(obj).parent().attr('resId');
+       $.post(this._url,{ id:this._id, order_status:order_status },function(json){
+           if (json.info == 'ok') {
+        	   updateOrderStatus.deleteHtml(obj);
+           } else {
+               alert(json.info);
+           }
+       },'json')
+   },
+   deleteHtml:function(obj){
+       $(obj).closest("tr").fadeOut(function(){
+          $(this).remove();
+          interLineColor();
+      });
+      return false;
+   }
+};
+
+$(function() {
+	$('.no_agree').on('click',function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        if (!confirm("确定拒绝该批设备？")) {
+          return false;
+        }
+        updateOrderStatus.update(this,3);
+    });
+
+    {if $search_filter.province}
+        var p_id = {$search_filter.province};
+    {else}
+        var p_id = 0;
+    {/if}
+
+    {if $search_filter.city}
+        var c_id = {$search_filter.city};
+    {else}
+        var c_id = 0;
+    {/if}
+
+    {if $search_filter.area}
+        var a_id = {$search_filter.area};
+    {else}
+        var a_id = 0;
+    {/if}
+
+    /**
+     * 省市区多级联动
+     *
+     * @author  wangl
+     */
+    region(p_id, c_id, a_id);
+});
+</script>
+<!-- 主内容 end -->
+<!-- 引入弹层 -->
+{include_www file="admin/lib/pop.html"}
+{include_www file="admin/lib/footer_new.html"}

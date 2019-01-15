@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Awifi--admin登录</title>
+{load_css file="css/admin2/bootstrap.min.css"}
+{load_css file="css/admin2/admin.css"}
+<script>
+var url = "{AnUrl('liangliang/ajax/login_auth')}";
+var captchaUrl = "{AnUrl('captcha')}";
+</script>
+</head>
+<body>
+<div class="wrap-login">
+  <div class="wrap">
+    <div class="login">
+       <form  action="{AnUrl('liangliang/login_auth')}" method="post">
+        <p class="text-danger uname done" style="display:none" >*您输入的用户名错误，请重新输入～</p>
+        <p class="text-danger ename empty" style="display:none" >*用户名不能为空～</p>
+        <p class="text-danger locked" style="display:none" ></p>
+        <div class="form-group">
+             <input type="text" class="" placeholder="用户名" name="username" id="username" autocomplete="off">
+        </div>
+         <p class="text-danger upass done" style="display:none">*您输入的密码错误，请重新输入～</p>
+         <p class="text-danger epass empty" style="display:none">*密码不能为空～</p>
+        <div class="form-group">
+             <input type="password" class="" placeholder="密码" name="password" id="password" autocomplete="off">
+        </div>
+        <p class="text-danger ucode done" style="display:none">*您输入的验证码错误，请重新输入～</p>
+        <p class="text-danger ecode empty" style="display:none">*验证码不能为空～</p>
+        <div class="form-group clearfix">
+             <input type="text" class="yanzheng pull-left" placeholder="验证码" name="vcode" id="vcode" autocomplete="off">
+          <div class="yanzheng-box pull-right">
+             <img width='135px' height='50px' class="captchaImage" src="{AnUrl('captcha')}" alt="">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">点击登录</button>
+    </form>
+    </div>
+  </div>
+</div>
+<script src="{$smarty.const.STATIC_URL}/js/jquery-1.7.1.min.js"></script>
+<script src="{$smarty.const.STATIC_URL}/js/jquery.base64.js"></script>
+<script src="{$smarty.const.STATIC_URL}/js/common.js"></script>
+<script src="{$smarty.const.STATIC_URL}/js/min/login.js"></script>
+</body>
+</html>

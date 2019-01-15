@@ -1,0 +1,83 @@
+ <div class="pop-bg" id="details_show" style="display:none;">
+          <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+    <div class="list ">
+      <table class="table table-bordered ">
+        <thead>
+          <tr>
+            <th style="text-align:center" width="15%">设备类型</th>
+            <th style="text-align:center" width="10%">省份</th>
+            <th style="text-align:center" width="10%">地市</th>
+            <th style="text-align:center" width="10%">地区</th>
+            <th style="text-align:center" width="10%">渠道视图编码</th>
+            <th style="text-align:center" width="20%">厅店名称</th>
+            <th style="text-align:center" width="15%">详细地址</th>
+            <th style="text-align:center" width="15%">联系人</th>
+            <th style="text-align:center" width="30%">电话</th>
+            <th style="text-align:center" width="30%">设备数量</th>
+            <th style="text-align:center" width="30%">厅店等级</th>
+            <th style="text-align:center" width="30%">备注</th>
+          </tr>
+        </thead>
+        <tbody>
+       {foreach $list as $k=>$v}
+      
+      <tr> 
+
+           <td style="text-align:center">{$v.device_type}</td>
+           <td style="text-align:center">{business_hall_helper::get_info_name('province', $v.province_id, 'name')}</td>
+           <td style="text-align:center">{business_hall_helper::get_info_name('city', $v.city_id, 'name')}</td>
+           <td style="text-align:center">{business_hall_helper::get_info_name('area', $v.area_id, 'name')}</td>
+           <td style="text-align:center">{$v.user_number}</td>
+           <td style="text-align:center">{business_hall_helper::get_info_name('business_hall', $v.business_id, 'title')}</td>
+           <td style="text-align:center">{$v.address}</td>
+           <td style="text-align:center">{$v.linkman}</td>
+           <td style="text-align:center">{$v.phone}</td>
+           <td style="text-align:center">{$v.device_num}</td>
+           <td>{probe_pandect_config::$business_level[$v.business_level]}</td>
+           <td>{$v.remark}</td>
+      </tr>
+      {foreachelse}
+        <tr><td class="txtleft" colspan="13">暂无数据</td></tr>
+   {/foreach} 
+            </tbody>
+          </table>
+           {include_www file="admin/lib/pager_new.html"}
+        </div>
+         <div>
+                    <a href="javascript:void(0);" class="btn btn-warning btn-lg btn_close_details" style="margin-left:250px;margin-bottom:10px;">关闭</a>
+         </div>
+        </div></div></div></div>
+ <script src="{$smarty.const.SITE_URL}/js/region_func.js"></script>
+<script>
+$(function(){
+{if $search_filter.province}
+     var p_id = {$search_filter.province};
+ {else}
+     var p_id = 0;
+ {/if}
+
+ {if $search_filter.city}
+     var c_id = {$search_filter.city};
+ {else}
+     var c_id = 0;
+ {/if}
+
+ {if $search_filter.area}
+     var a_id = {$search_filter.area};
+ {else}
+     var a_id = 0;
+ {/if}
+
+ /**
+  * 省市区多级联动
+  *
+  * @author  wangl
+  */
+ region(p_id, c_id, a_id);
+});
+
+
+
+</script>

@@ -1,0 +1,92 @@
+{include_www file="admin/lib/header_new.html" title="体验统计"}
+{include_www file="admin/lib/sidebar_new.html"}
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('screen/m')}"><i class="iconfont iconfont-logo2"></i>下载扫描统计</a>
+            &gt;
+            <span>{$search_filter['source']}</span>
+            <span>({if $count}{$count}{else}0{/if})</span>
+            <!--<a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>-->
+        </div>
+
+
+        <form action="{AnUrl('screen/m/record_list')}" id="form_data" method="get">
+            <input type="hidden" name="search_filter[type]" value="{$search_filter.type}">
+            <input type="hidden" name="search_filter[source]" value="{$search_filter.source}">
+            {* 时间判断 *}
+            <div class="form-search row clearfix">
+                <div class="tabs2">
+                    <div class="col-sm-8">
+                        <div class="form-inline" id="dateSelectBox" >
+                            <div class="form-group">
+                                <label for="exampleInputName2">时间：</label>
+                                <input type="text" class="form-control" style="width:100px; text-align:center;" name="search_filter[start_date]" id="start_time" value="{$search_filter.start_date}" />
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputName2">至</label>
+                                <input type="text" class="form-control" style="width:100px; text-align:center;" name="search_filter[end_date]" id="end_time" value="{$search_filter.end_date}" />
+                            </div>
+                            <button type="button" class="btn btn-success btn-sm" id="searchData">搜索</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>渠道</th>
+                    <th>类型</th>
+                    <th>添加时间</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $record_list as $v}
+                <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+
+                    <td>{$v.source}</td>
+                    <td>{if $v.type==1}扫描{elseif $v.type==2}下载{/if}</td>
+                    <td>{$v.add_time}</td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="{if $search_type == 'business'}8{else}11{/if}">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+<script>
+    $(function () {
+        //搜索
+        $('#searchData').on('click',function() {
+            $('#search_start_date').val($('#start_time').val());
+            $('#search_end_date').val($('#end_time').val());
+            $('#form_data').submit();
+        });
+
+        //排序
+        $('.order_type').on('click', function () {
+
+            if ($(this).hasClass('glyphicon-arrow-up')) {
+                var order_dir = 'asc';
+            } else {
+                var order_dir = 'desc';
+            }
+
+            window.location.href = window.location.href + '&order_dir=' + order_dir + '&order_field=' + $(this).attr('order_field');
+
+        });
+
+    });
+
+
+</script>
+{include_www file="admin/lib/footer_new.html"}

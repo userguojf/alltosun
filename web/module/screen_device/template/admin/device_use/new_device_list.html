@@ -1,0 +1,184 @@
+{include_www file="admin/lib/header_new.html" title="亮屏设备统计"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('screen_stat/admin/device_stat')}"><i class="iconfont iconfont-logo2"></i>亮屏统计</a>
+
+      <a href="{AnUrl('screen_device/admin/device_use')}" class="btn btn-primary btn-sm pull-right">返回</a>
+      <!-- <a style="margin-right:10px;" href="{AnUrl("screen_stat/admin/device_stat/device_list/device_list{$search_filter_str}&is_export=1&search_filter[date_type]={$search_filter.date_type}&search_filter[region_id]={$region_id}&search_filter[region_type]={$region_type}&hall_title={$hall_title}&device_unique_id={$device_unique_id}")}" class="btn btn-primary btn-sm pull-right">导出</a> -->
+      <!-- <a style="margin-right:10px;" href="{AnUrl("screen_device/admin/device_use_num/device_num_list{$search_filter_str}&is_export=1&search_filter[active_status]={$search_filter.active_status}&search_filter[online_status]={$search_filter.online_status}&search_filter[province_id]={$search_filter.province_id}&search_filter[city_id]={$search_filter.city_id}&search_filter[area_id]={$search_filter.area_id}&search_filter[date_type]={$search_filter.date_type}&search_filter[region_id]={$region_id}&search_filter[region_type]={$region_type}&phone_name={$phone_name}&phone_version={$phone_version}&device_unique_id={$device_unique_id}")}" class="btn btn-primary btn-sm pull-right">导出</a>-->
+    </div>
+    <br />
+    {$url = AnUrl("screen_stat/admin/device_stat/device_list/device{$search_filter_str}&search_filter[date_type]={$search_filter.date_type}&search_filter[region_id]={$search_filter.region_id}&search_filter[region_type]={$search_filter.region_type}")}
+
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            {if $member_info.res_name != 'business_hall'}
+<!-- 
+              <th width="5%">省</th>
+              <th width="5%">市</th> -->
+
+              <th width="8%">厅</th>
+            {/if}
+            <th width="10%">渠道编码</th>
+            <th width="6%">品牌</th>
+            <th width="10%">型号</th>
+            <th width="10%">IMEI</th>
+
+            <th width="5%">活跃天数</th>
+            <th width="6%">离线天数</th>
+            <th width="10%">添加时间</th>
+            <th width="10%">最后活跃时间</th>
+
+            <th width="5%">在线状态</th>
+            <th width="5%">活跃状态</th>
+            
+            <th width="15%">
+            体验时长
+            {if !$phone_name || !$phone_version}/
+            {screen_helper::format_timestamp_text($count_experience_time)}
+            
+            {if $order_dir == 'asc' && $order_field == 'experience_times'}
+              <span class="glyphicon  glyphicon-arrow-down order_type" aria-hidden="true" order_field="experience_times" order_dir='asc' "></span>
+            {else}
+              <span class="glyphicon glyphicon-arrow-up order_type" aria-hidden="true" order_field="experience_times" order_dir='desc' ></span>
+            {/if}
+            {/if}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $list as $k=>$v}
+          <tr id="dataList{$k}">
+            {if $member_info.res_name != 'business_hall'}
+            {if $is_group == 1}
+              <td>{_uri('province', $v.province_id, 'name')}</td>
+              <td>{_uri('city', $v.city_id, 'name')}</td>
+            {/if}
+              <td>{_uri('business_hall', $v.business_id, 'title')}</td>
+            {/if}
+              <td>{_uri('business_hall', $v.business_id, 'user_number')}</td>
+            {if $v.phone_name_nickname}{$phone_name = $v.phone_name_nickname}{else}{$phone_name = $v.phone_name}{/if}
+            <td class="js_nickname" data-type="name" >
+                <div class="hidden">
+                    <input type="" value="{$phone_name}" style="width:80px">
+                    <button type="button" class="btn btn-success btn-sm phone_info_submit">确认</button>
+                </div>
+                <span>{$phone_name}</span>
+            </td>
+            {if $v.phone_version_nickname}{$phone_version = $v.phone_version_nickname}{else}{$phone_version = $v.phone_version}{/if}
+            <td class="js_nickname" data-type="version" >
+                <div class="hidden">
+                    <input type="text" value="{$phone_version}" style="width:80px">
+                    <button type="button" class="btn btn-success btn-sm phone_info_submit">确认</button>
+                </div>
+                <span>{$phone_version}</span>
+            </td>
+            <td>{if $v.imei}{$v.imei}{else}0{/if}</td>
+            
+            {$online_status = screen_helper::get_online_status($v.device_unique_id)}
+            
+
+            <td>{if $v.active_day}{$v.active_day}{else}0{/if}天</td>
+            <td>{if $v.unonline_day}{$v.unonline_day}{else}0{/if}天</td>
+            <td>{date("Y-m-d H:i", strtotime($v.add_time))}</td>
+            <td>{if $v.last_active}{date("Y-m-d H:i", strtotime($v.last_active))} {else} -- {/if}</td>
+            
+            <td>{if $online_status}<span class="label label-info">在线</span>{else}<span class="label label-warning">离线</span>{/if}</td>
+            <td>{if $v.active_status}<span class="label label-info">活跃</span>{else}<span class="label label-warning">不活跃</span>{/if}</td>
+            
+            <td><a href="{AnUrl("screen_stat/admin/device_stat/experience_list/experience_list?phone_name={$v.phone_name}&phone_version={$v.phone_version}&search_filter[start_date]={$search_filter.start_date}&search_filter[end_date]={$search_filter.end_date}&device_unique_id={$v.device_unique_id}&type=2")}">{screen_helper::format_timestamp_text($v.experience_time)}</a></td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="{if $member_info.res_name != 'business_hall'}14{else}14{/if}">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}
+
+<script>
+var isVersionEdit = false;
+
+$(function () {
+  $('#title').autocomplete({
+    source: "/business_hall/admin/ajax/get_title_field",
+  });
+  
+  $('#searchData').on('click',function() {
+    $('#subForm').submit();
+    //refershUrl();
+  });
+
+  $('.phone_info_submit').on('click', function () {
+    var el = $(this).closest('.js_nickname');
+    var newValue = el.find('div input').val();
+    
+    if (!newValue) {
+      alert('值不能为空');return false;
+    }
+    
+    el.find('span').text(newValue);
+    el.find('div').toggleClass('hidden');
+    el.find('span').toggleClass('hidden');
+    
+    var type = el.data('type');
+    var imei = el.attr('data-imei');
+
+    $.post(siteUrl+'/screen/admin/ajax/update_nickname', { new_nickname:newValue, type:type, imei:imei }, function (res) {
+      if (res.info != 'ok') {
+        alert(res.msg);
+      }
+    }, 'json');
+  });
+});
+
+//排序
+$('.order_type').on('click', function () {
+
+  if ($(this).hasClass('glyphicon-arrow-up')) {
+    var order_dir = 'asc';
+  } else {
+    var order_dir = 'desc';
+  }
+  
+  window.location.href = window.location.href + '&order_dir=' + order_dir + '&order_field=' + $(this).attr('order_field');
+
+});
+
+function refershUrl(){
+  var $params           = { };
+  $params.start_date    = $('#start_time').val();
+  $params.end_date      = $('#end_time').val();
+
+  $a = 1;
+  var urlParam = '';
+  for (var i in $params) {
+    if ($params[i]) {
+      if ($a == 1) {
+        urlParam += '?';
+      } else {
+        urlParam += '&';
+      }
+      
+      urlParam += 'search_filter['+ i + ']=' + $params[i];
+    }
+    
+    $a += 1;
+  }
+
+  var url = siteUrl+'/screen/admin/device'+urlParam;
+  window.location.href = url;
+
+}
+</script>

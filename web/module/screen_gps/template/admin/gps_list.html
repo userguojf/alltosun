@@ -1,0 +1,92 @@
+{include_www file="admin/lib/header_new.html" title="亮屏管理"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('screen_device/admin/device')}"><i class="iconfont iconfont-logo2"></i>亮屏管理</a>
+      &gt;
+      {if $business_hall_title}<span>{$business_hall_title}</span>&gt;{/if}
+      
+      <span>gps上报（合计：{if $count}{$count}{else}0{/if}/条）</span>
+    </div>
+    <br />
+
+    <div class="form-search clearfix">
+      <div class="pull-left">
+        <form action="{AnUrl('screen_gps/admin/')}" id="subForm" method='get'>
+          {if $member_res_name != 'business_hall'}
+            {* 公共分权限搜索模块 *}
+            {widget model='screen' func='get_search_by_member' file='get_search_by_member.html' member_info="{$member_info}"}
+          {/if}
+          
+          <input type="text" style="width: 120px;" name="device_unique_id" value="{$device_unique_id}" class="form-control input-sm pull-left " placeholder="按设备标识ID搜索">
+          <div class="form-group " style="float:left;">
+              <label for="exampleInputName2" style="float:left;">&nbsp;时间：</label>
+              <input type="text" class="form-control" style="float:left; width:85px; text-align:center;" name="search_filter[start_date]" id="start_time" value="{$search_filter.start_date}" />
+         </div>
+                    
+        <div class="form-group"  style="float:left;">
+              <label for="exampleInputName2" style="float:left;">&nbsp;至：</label>
+              <input type="text" class="form-control" style="float:left; width:85px; text-align:center;" name="search_filter[end_date]" id="end_time" value="{$search_filter.end_date}" />
+         </div>
+          <button type="button" class="btn-search pull-left" id="searchData" data-url="{AnUrl('screen_gps/admin/')}" >搜索</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            {if $member_info.res_name != 'business_hall'}
+              <th width="5%">省</th>
+              <th width="5%">市</th>
+              <th width="5%">区</th>
+              <th width="10%">营业厅</th>
+            {/if}
+            <th width="15%">设备标识</th>
+            <th width="8%">纬度</th>
+            <th width="8%">经度</th>
+            <th width="12%">上报时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $gps_list as $k=>$v}
+          <tr id="dataList{$k}">
+            {if $member_info.res_name != 'business_hall'}
+              <td>{_uri('province', $v.province_id, 'name')}</td>
+              <td>{_uri('city', $v.city_id, 'name')}</td>
+              <td>{_uri('area', $v.area_id, 'name')}</td>
+              <td>{_uri('business_hall', $v.business_id, 'title')}</td>
+            {/if}
+            <td>{$v.device_unique_id}</td>
+            <td>{$v.lat}</td>
+            <td>{$v.lng}</td>
+            <td>{$v.date}</td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="{if $member_info.res_name != 'business_hall'}13{else}10{/if}">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}
+
+<script>
+$(function () {
+  $('#title').autocomplete({
+    source: "/business_hall/admin/ajax/get_title_field",
+  });
+  
+  $('#searchData').on('click',function() {
+    $('#subForm').submit();
+  });
+});
+</script>

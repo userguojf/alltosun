@@ -1,0 +1,76 @@
+{include_www file="admin/lib/header_new.html" title="消息记录"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen_msg/admin',"?type=$type")}"><i class="iconfont iconfont-logo2"></i>企业号消息管理</a>
+            &gt;
+            <span>{if $type}点击消息记录{else}下发消息记录{/if}</span>
+            <a href="{AnUrl('screen_msg/admin',"?type=1")}" class="btn btn-primary btn-sm pull-right">点击记录</a>
+          </div>
+          <br>
+          
+          <div class="form-search clearfix">
+              <div class="pull-left">
+                <form action="{AnUrl('screen_msg/admin')}" method='get'>
+                <input type="hidden" name="type" value="{$type}">
+                    <label class="pull-left" for="exampleInputName2">时间&nbsp;&nbsp;</label>
+                    <input type="text" class="form-control input-sm pull-left" style="width:100px; text-align:center;"  placeholder="{date('Y-m-d')}" name="search_filter[date]" id="start_time" value="{$search_filter.date}" />
+
+                  <label class="pull-left" for="exampleInputName2">&nbsp;&nbsp;&nbsp;类型&nbsp;&nbsp;</label>
+                  <select name="search_filter[res_name]" style="width:100px" class="form-control input-sm pull-left ">
+                    <option value=''>全部</option>
+                    {$msg_type = screen_msg_config::$msg_type}
+                    {foreach $msg_type as $k=>$v}
+                    <option value="{$k}" {if $search_filter.res_name == $k}selected{/if}>{$v}</option>
+                    {/foreach}
+                  </select>
+
+                  <label class="pull-left" for="exampleInputName2">&nbsp;&nbsp;&nbsp;营业厅&nbsp;&nbsp;</label>
+                  <input type="text" id="title" style="width: 200px;" name="search_filter[business_hall_title]" value="{$search_filter.business_hall_title}" class="form-control input-sm pull-left js_search ui-autocomplete-input" placeholder="按营业厅名称搜索" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
+                  <button type="submit" class="btn-search pull-left">搜索</button>
+                </form>
+              </div>
+              <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+         </div>
+
+         <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="text-align:center">时间</th>
+                  <th style="text-align:center">省</th>
+                  <th style="text-align:center">市</th>
+                  <th style="text-align:center">地区</th>
+                  <th style="text-align:center">营业厅</th>
+                  <th style="text-align:center">类型</th>
+                </tr>
+              </thead>
+              <tbody>
+                {foreach $list as $k=>$v}
+                <tr>
+                    <td style="text-align:center">{$v.date}</td>
+                    {$business_hall_info = business_hall_helper::get_info_name('business_hall', $v.business_hall_id)}
+                    <td style="text-align:center">{business_hall_helper::get_info_name('province', $business_hall_info.province_id, 'name')}</td>
+                    <td style="text-align:center">{business_hall_helper::get_info_name('city', $business_hall_info.city_id, 'name')}</td>
+                    <td style="text-align:center">{business_hall_helper::get_info_name('area', $business_hall_info.area_id, 'name')}</td>
+                    <td style="text-align:center">{$business_hall_info.title}</td>
+                    <td style="text-align:center">{screen_msg_config::$msg_type[$v.res_name]}</td> 
+                </tr>
+                {foreachelse}
+                <tr><td colspan="5">暂无相关信息</td></tr>
+                {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        </div>
+<script>
+$('#title').autocomplete({
+    source: "/business_hall/admin/ajax/get_title_field",
+});
+</script>
+{include_www file="admin/lib/footer_new.html"}

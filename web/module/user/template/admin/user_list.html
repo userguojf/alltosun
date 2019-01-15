@@ -1,0 +1,86 @@
+{include_www file="admin/lib/header_new.html" title="用户列表"}
+{include_www file="admin/lib/sidebar_new.html"}
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('user/admin')}"><i class="iconfont iconfont-logo2"></i>用户管理</a>
+      &gt;
+      <span>用户列表 {if $count}<i style='color: red; font-size: 12px;'>（总计用户数{$count}个）</i>{/if}</span>
+      
+    </div>
+    <!--
+    <div class="tabs1">
+      <ul class="clearfix">
+        <li class="curr"><a href="###">全国投放列表</a></li>
+        <li class=""><a href="###">各省投放列表</a></li>
+      </ul>
+    </div>
+    -->
+    <div class="form-search clearfix">
+      <div class="pull-left">
+        <form action="{AnUrl('user/admin')}" method="get">
+            <input type="hidden" name="type" value="{$type}" />
+            <input type="text" name="search_filter[phone]" placeholder="按手机号搜索" value="{if $search_filter['phone']}{$search_filter['phone']}{/if}" class="form-control input-sm pull-left">
+            {if $type != 'new_user'}
+                <input type="text" name="search_filter[add_time]" placeholder="按注册时间" value="{if $search_filter['add_time']}{$search_filter['add_time']}{/if}" class="form-control input-sm pull-left " id="end_time">
+                <input type="text" name="search_filter[last_login_time]" placeholder="按最后一次登录时间" value="{if $search_filter['last_login_time']}{$search_filter['last_login_time']}{/if}" class="form-control input-sm pull-left " id="start_time">
+            {/if}
+            <button type="submit" class="btn-search pull-left">搜索</button>
+      </form>
+      </div>
+      <div class="pull-right">
+        <!-- <span class="tips">*还可添加8个用户 </span> -->
+        <!--<a href="{AnUrl('focus/admin/add')}" class="btn btn-sm btn-success">添加用户</a>-->
+      </div>
+    </div>
+  {*
+    <div class="tabs2">
+      <ul class="clearfix">
+        {foreach focus_config::$search_type as $k => $v}
+        <li {if $search_filter['search_type'] == $k}class=" curr"{/if}><a  href="{compile_url($search_filter,'search_type',$k,'focus/admin')}">{$v}</a></li>
+        {/foreach}
+      </ul>
+    </div>
+    *}
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>账号</th>
+          <!-- <th>登录IP</th> -->
+          <th>营业厅</th>
+          <th>登录系统</th>
+          <th>登陆时间</th>
+          <th>添加时间</th>
+          {if $type != 'new_user'}<th>操作</th>{/if}
+        </tr>
+        </thead>
+        <tbody>
+        {foreach $list as $k=>$v}
+          <tr id="dataList{$v.id}">
+            <td>{$v.id}</td>
+            <td>{replace_phone_number($v.phone)}</td>
+            {$user_record_info = user_helper::get_user_login_record($v.id)}
+            <!--<td>{* $user_record_info.ip *}</td> -->
+            <td>{focus_helper::get_field_info($v.business_hall_id, 'business_hall', 'title')}</td>
+            <td>{$user_record_info.terminal_type}</td>
+            <td>{$v.last_login_time}</td>
+            <td>{$v.add_time}</td>
+            {if $type != 'new_user'}<td><a class=" btn btn-xs btn-info" href='{AnUrl("user/admin/login_record/{$v.id}")}'>登录信息</a></td>{/if}
+          </tr>
+        {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+  <!-- 内容区块 end -->
+  <!-- 分页 start -->
+
+  <!-- 分页 end -->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

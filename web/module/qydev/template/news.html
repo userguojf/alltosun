@@ -1,0 +1,174 @@
+{include file="news/header.html" title="电信智慧门店运营"}
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script>
+var siteUrl = "{$smarty.const.SITE_URL}";
+//诸多-------------------------- 静态数据
+    var staticProperty={};
+    var shareId = "{$info.id}";
+    staticProperty.debug=false;
+    
+    //-------------------------------------------------------------------------------------请求数据类型 地址
+    //分享展示的图片地址
+    var imgurl = siteUrl + "/upload{$news_share_info.img_link}";
+
+    staticProperty.shareData={
+        title : "{$news_share_info.title}",  // 分享的标题
+        desc  : "{$news_share_info.summary}", // 分享的摘要
+        link  : '',
+        imgUrl: imgurl,    //分享图片地址,
+        shareOk : null
+    }
+</script>
+<script src="{$smarty.const.STATIC_URL}/js/qy/wx_share.js?id={time()}"></script>
+
+<section class="container">
+            <div class="article">
+                <div class="title"><h2>{$info.title}</h2></div> 
+                <div class="desc" style="font-size: 17px;">{$info.date} <a href="javascript:;">作者   {$info.author}</a></div>
+                <div class="text">
+                {$info.content}
+                </div>
+                <div class="comments-count">
+                    <div style="font-size: 17px;">
+                        {if $info.link}<a href="{$info.link}">阅读原文</a>{/if}
+         <!-- 是微信并且是授权成功 -->
+                        <span>阅读 {$info.reading_num}</span>&nbsp;&nbsp;
+                        <span class="btn-zan-artitle" type=1><i class="icon-zan  {if $zan}had{/if}"></i><span>{$info.zan_num}</span></span>
+                    </div>
+                    <!-- 注释 -->
+                    <!-- <div>投诉</div> -->
+                </div>
+         <!-- 是微信并且是授权成功 -->
+            {if is_weixin() && $content_auth}
+                <div class="comments-content">
+                    <div class="title"><span>精选留言</span></div>
+                    <div class="txtright">
+                        <a href="{Anurl("qydev/news/content?id=$id")}" class="go-edit">写留言<i class="icon-edit"></i></a>
+                    </div>
+                    {if $content_list}
+                    <div class="comments-list">
+                        <ul>
+                        {foreach $content_list as $k => $v}
+                            <li>
+                                <div class="avatar"><img src="{$v.avatar}"></div>
+                                <div class="con">
+                                    <div class="names">
+                                        <span class="name">{$v.user_name}</span>
+                                        {$content_zan = qydev_news_helper::content_zan($v.id, 2)}
+                                        <span type=2 resId="{$v.id}" class="num btn-zan-content"><i class="icon-zan {if $content_zan}had{/if}"></i><span>{$v.zan_num}</span></span>
+                                    </div>
+                                    <div class="text">{$v.content}</div>
+                                    <div class="time">{date("n月j月", strtotime($v.add_time))}</div>
+                                    {if $content_answer_info}
+                                    <div class="reply">
+                                        <div class="names">
+                                            <span class="name"><i class="arrow"></i>作者回复</span>
+                                            <span class="num btn-zan-answer"><i class="icon-zan"></i><span>4</span></span>
+                                        </div>
+                                        <div class="text">赶紧和朋友一起玩吧</div>
+                                        <div class="time">3月19日</div>
+                                    </div>
+                                    {/if}
+                                </div>
+                            </li>
+                            {/foreach}
+                        </ul>
+                    </div>
+                    {/if}
+                </div>
+                {/if}
+                <!--end:评论-->
+            </div>
+        </section>
+ <script>
+ $(function(){
+	 var zan_wc = false;
+     var click_num = 0;
+     var type = 0;
+     var res_id = 0;
+        $('.btn-zan-artitle, .btn-zan-content, .btn-zan-answer').on('click',function(event){
+            event.preventDefault();
+            
+            if ( zan_wc ) {
+            	return '';
+            }
+
+            zan_wc = true;
+
+            var opereate = $(this).find('i').hasClass('had');
+
+            type = $(this).attr('type');
+
+            if ( Number(type) == 1 ) {
+                res_id ="{$info.id}";
+            } else {
+                res_id = $(this).attr('resId');
+            }
+console.log(res_id)
+            click_num = click_num + 1;
+            if ( click_num > 21) {
+                return '';
+            }
+
+            updateZan.update(this, res_id, opereate);
+        });
+
+        var updateZan = {
+                _type  : type,
+                _opereate: '',
+                _msg : '操作失败',
+                _url : "{AnUrl('qydev/ajax/zan')}",
+                update:function(obj, res_id, opereate){
+                    this._type= $(obj).attr('type');
+                    if ( opereate ) {
+                        _opereate = 'cut';
+                    } else {
+                        _opereate = 'add';
+                    }
+console.log(_opereate)
+                    $.post(this._url,{ 'type' : this._type, 'res_id' : res_id, opereate :_opereate },function(json){
+                        if (json.info == 'ok') {
+                            if ( opereate ) {
+                                updateZan.cutHtml(obj);
+                                console.log('-1');
+                            } else {
+                                console.log('+1');
+                                updateZan.addHtml(obj);
+                            }
+                            zan_wc = false;
+console.log(_opereate)    
+                        }
+
+                    },'json')
+                },
+                addHtml:function(obj){
+                    var num_tmp = $(obj).find('span').html();
+                    console.log(num_tmp)
+
+                    var num =(Number(num_tmp));
+                    $(obj).find('span').html(num+1);
+
+                    var num_tmp = $(obj).find('i').addClass('had');
+
+                    return true;
+                },
+                cutHtml:function(obj){
+                    var num_tmp = $(obj).find('span').html();
+
+                    var num =(Number(num_tmp));
+                    var zan = num - 1;
+
+                    if(zan <= 0){
+                        zan = 0;
+                    }
+
+                    var num_tmp = $(obj).find('i').removeClass('had');
+
+                    $(obj).find('span').html(zan);
+                    return true;
+                },
+            };
+    });
+
+ </script>
+{include file="news/footer.html"}

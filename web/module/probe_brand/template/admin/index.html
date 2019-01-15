@@ -1,0 +1,149 @@
+{include_www file="admin/lib/header_new.html" title="{$action_res_name}"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    #main{
+        height:500px;
+        border:1px solid #ccc;
+        margin: 10px;
+        padding:10px;
+    }
+    .js_num{
+        cursor: pointer;
+    }
+</style>
+
+<script src="{$smarty.const.STATIC_URL}/js/echarts-2.2.7/echarts-all.js"></script>
+
+{* 主内容START *}
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('probe_brand/admin')}"><i class="iconfont iconfont-logo2"></i>探针管理</a>
+            &gt;
+            <span>品牌统计</span>
+            <span style="color: red;">（{$b_info.title}）</span>
+        </div>
+
+        <div class="tabs1">
+            <ul class="clearfix">
+                <li class="{if $type == 'in'}curr{/if}">
+                    <a href='{AnUrl("probe_brand/admin?type=in")}'>室内</a>
+                </li>
+                <li class="{if $type == 'out'}curr{/if}">
+                    <a href='{AnUrl("probe_brand/admin?type=out")}'>室外</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="form-search row clearfix">
+            <div class="tabs2">
+                <div class="col-sm-8">
+                    <div class="form-group" style="float:left;">
+                        <select id="business">
+                            {foreach $b_ids as $k => $v}
+                                <option {if $v == $b_info.id} selected {/if} value="{$v}">{get_resource_info('business_hall', $v, 'title')}</option>
+                            {foreachelse}
+                                <option value="0">请选择</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    
+
+                    <div class="form-inline" id="dateSelectBox" >
+                        <div class="form-group">
+                            <label for="exampleInputName2">时间：</label>
+                            <input type="text" class="form-control" style="width:100px; text-align:center;" name="date" id="start_time" value="{$date}" />
+                        </div>
+                        <button type="button" class="btn btn-success btn-sm" id="search">搜索</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="main"></div>
+
+        <div class="list">
+            <table class="table table-bordered table-striped center table_co_td">
+                <thead>
+                    <tr>
+                        <th>时间</th>
+                        <th>mac地址（总数：{count($list)}）</th>
+                        <th>手机型号</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {foreach $list as $k=>$v}
+                        <tr>
+                            <td>{$v.date}</td>
+                            <td>{probe_helper::mac_encode($v.mac)}</td>
+                            <td>{probe_helper::get_brand($v.mac)}</td>
+                            <td><a class="btn btn-xs btn-info" href='{AnUrl("probe_brand/admin/record?mac={$v.mac}&b_id={$b_info.id}")}'>查看历史记录</a></td>
+                        </tr>
+                    {foreachelse}
+                        <tr><td colspan="9">暂无相关信息</td></tr>
+                    {/foreach}
+                </tbody>
+            </table>
+<script>
+    var myChart  = echarts.init(document.getElementById('main'));
+
+    myChart.setOption({
+    	title : {
+    		// text: '手机品牌分布'
+    	},
+    	tooltip : { 
+    		trigger: 'item',
+    		{literal}
+            formatter: "{b} : {c} ({d}%)"
+            {/literal}
+        },
+    	legend : {
+    		data: [
+    		    {foreach $brands as $k => $v}
+                    { name : "{$k}" },
+                {/foreach}
+    	    ]
+    	},
+    	{*toolbox: {
+            show : true,
+            feature : {
+                magicType : { show: true, type: ['pie', 'bar'] },
+            }
+        },*}
+        series : [
+    	    {
+    	        name: '手机品牌分布',
+    	        type: 'pie',
+    	        radius : '55%',
+                center: ['50%', '50%'],
+    	        data:[
+                    {foreach $brands as $k => $v}
+                        { value : {$v}, name : "{$k}" },
+                    {/foreach}
+    	        ],
+    	        roseType: 'angle',
+    	    }
+    	]
+    });
+
+    $('#search').click(function(){
+    	var business = $('#business').val();
+    	var date     = $('#start_time').val();
+    	var type     = '{$type}';
+
+    	if ( !business ) {
+    		business = 0;
+    	}
+    	if ( !date ) {
+    		date = '';
+    	}
+    	window.location.href = siteUrl + '/probe_brand/admin?b_id='+ business + '&date='+ date+ '&type='+ type;
+    });
+</script>
+{include_www file="admin/lib/pager_new.html"}
+</div>
+</div>
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

@@ -1,0 +1,123 @@
+{include_www file="admin/lib/header_new.html" title="RFID设备体验详情"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{$action_res_url}"><i class="iconfont iconfont-logo2"></i>RFID统计</a>
+      &gt;统计详情
+      <span>{$action_res_name}
+            {if $date_type}
+          （
+              {if $date_type == 'hour'}
+                {$start_date} {$date}:00
+              {else}
+                {$start_date}至{$end_date}
+              {/if}
+           ）
+         {/if}
+         （{$count}）
+      </span>
+      <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+    </div>
+    <br />
+    {* 时间判断 *}
+    <div class="form-search row clearfix ">
+      <div class="tabs2">
+        <div class="col-sm-8">
+          <div class="form-inline" id="dateSelectBox" >
+            <div class="form-group">
+              <label for="exampleInputName2">时间：</label>
+              <input type="text" class="form-control" style="width:100px; text-align:center;" name="search_filter[start_date]" id="start_time" value="{$search_filter.start_date}" />
+            </div>
+            <div class="form-group">
+              <label for="exampleInputName2">至</label>
+              <input type="text" class="form-control" style="width:100px; text-align:center;" name="search_filter[end_date]" id="end_time" value="{$search_filter.end_date}" />
+            </div>
+            <button type="button" class="btn btn-success btn-sm" id="searchData" data-url="{AnUrl("rfid/admin/stat/detail{$search_filter_str}")}" >搜索</button>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>省</th>
+            <th>市</th>
+            <th>区</th>
+            <th>厅</th>
+            <th>标签ID</th>
+            <th>品牌</th>
+            <th>型号</th>
+            <th>颜色</th>
+            <th>累计时长（共计：{rfid_helper::format_timestamp_text($experience_time_count)}）</th>
+            <th>详情</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $record_list as $k=>$v}
+          <tr id="dataList{$k}">
+            <td>{$v.province_name}</td>
+            <td>{$v.city_name}</td>
+            <td>{$v.area_name}</td>
+            <td>{$v.business_name}</td>
+            <td>{$v.label_id}</td>
+            <td>{$v.phone_name}</td>
+            <td>{$v.phone_version}</td>
+            <td>{$v.phone_color}</td>
+            <td>{rfid_helper::format_timestamp_text($v.experience_time)}</td>
+            <td>
+              <a class="btn btn-xs btn-success" href="{AnUrl("rfid/admin/stat/record{$search_filter_str}&search_filter[phone_name]={$v.phone_name}&search_filter[phone_version]={rfid_helper::url_params_encode($v.phone_version)}&search_filter[phone_color]={$v.phone_color}&search_filter[label_id]={$v.label_id}&search_filter[business_id]={$v.business_id}")}">查看详细记录</a>
+            </td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="11">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}
+
+<script>
+$(function () {
+  $('#searchData').on('click',function() {
+    refershUrl();
+  });
+});
+
+function refershUrl(){
+  var $params           = { };
+  $params.start_date    = $('#start_time').val();
+  $params.end_date      = $('#end_time').val();
+
+  $a = 1;
+  var urlParam = '';
+  for (var i in $params) {
+    if ($params[i]) {
+      if ($a == 1) {
+        urlParam += '?';
+      } else {
+        urlParam += '&';
+      }
+      
+      urlParam += 'search_filter['+ i + ']=' + $params[i];
+    }
+    
+    $a += 1;
+  }
+
+  var url = siteUrl+'/rfid/admin/stat/detail'+urlParam;
+  window.location.href = url;
+
+}
+</script>

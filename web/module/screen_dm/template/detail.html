@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta name="format-detection" content="telephone=no">
+<meta name="keywords" content="">
+<meta name="description" content="">
+<title>{$title}</title>
+<link href="{$smarty.const.STATIC_URL}/css/base.css" rel="stylesheet" type="text/css">
+<link href="{$smarty.const.STATIC_URL}/css/m-num-map.css" rel="stylesheet" type="text/css">
+</head>
+<script>
+      var htmlElm = document.getElementsByTagName('html')[0];
+      htmlElm.style.opacity = '0';
+      ! function (a, b) {
+        function c() {
+          var c, b = f.getBoundingClientRect().width;
+          b / i > 540 && (b = 540 * i), c = b / 10, f.style.fontSize = c + "px", k.rem = a.rem = c
+        }
+        var d, l, m, n, o, p, q, r, s, t, e = a.document,
+          f = e.documentElement,
+          g = e.querySelector('meta[name="viewport"]'),
+          h = e.querySelector('meta[name="flexible"]'),
+          i = 0,
+          j = 0,
+          k = b.flexible || (b.flexible = {});
+        g ? (l = g.getAttribute("content").match(/initial\-scale=([\d\.]+)/), l && (j = parseFloat(l[1]), i = parseInt(1 / j))) : h && (m = h.getAttribute("content"), m && (n = m.match(/initial\-dpr=([\d\.]+)/), o = m.match(/maximum\-dpr=([\d\.]+)/), n && (i = parseFloat(n[1]), j = parseFloat((1 / i).toFixed(2))), o && (i = parseFloat(o[1]), j = parseFloat((1 / i).toFixed(2))))), i || j || (p = a.navigator.userAgent, !!p.match(/android/gi), q = !!p.match(/iphone/gi), r = q && !!p.match(/OS 9_3/), s = a.devicePixelRatio, i = q && !r ? s >= 3 && (!i || i >= 3) ? 3 : s >= 2 && (!i || i >= 2) ? 2 : 1 : 1, j = 1 / i), f.setAttribute("data-dpr", i), g || (g = e.createElement("meta"), g.setAttribute("name", "viewport"), g.setAttribute("content", "initial-scale=" + j + ", maximum-scale=" + j + ", minimum-scale=" + j + ", user-scalable=no"), f.firstElementChild ? f.firstElementChild.appendChild(g) : (t = e.createElement("div"), t.appendChild(g), e.write(t.innerHTML))), a.addEventListener("resize", function () {
+          clearTimeout(d), d = setTimeout(c, 300)
+        }, !1), a.addEventListener("pageshow", function (a) {
+          a.persisted && (clearTimeout(d), d = setTimeout(c, 300))
+        }, !1), "complete" === e.readyState ? e.body.style.fontSize = 12 * i + "px" : e.addEventListener("DOMContentLoaded", function () {
+          e.body.style.fontSize = 12 * i + "px"
+        }, !1), c(), k.dpr = a.dpr = i, k.refreshRem = c, k.rem2px = function (a) {
+          var b = parseFloat(a) * this.rem;
+          return "string" == typeof a && a.match(/rem$/) && (b += "px"), b
+        }, k.px2rem = function (a) {
+          var b = parseFloat(a) / this.rem;
+          return "string" == typeof a && a.match(/px$/) && (b += "rem"), b
+        }
+      }(window, window.lib || (window.lib = {}));
+      window.onload = function () {
+        htmlElm.style.opacity = '1';
+      }
+    </script>
+<script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/jquery-2.1.1.min.js"></script>
+<script>
+var siteUrl = "{$smarty.const.SITE_URL}";
+</script>
+<body>
+<div class="wrap">
+      <header class="header">
+<!--           <a href="{AnUrl('screen_dm')}" class="btn-back2"><em></em>数据分析</a>-->
+            <a href="{AnUrl('screen_dm/index2')}" class="btn-back2"><em></em>数据分析</a>
+          <h3>终端体验详情</h3>
+      </header>
+    <section class="container-detail">
+        <div class="detail-intro">
+            <div class="con">
+                <div id="js_dataType" class="item1">
+                    <div class="text"><span class="name">{{screen_helper::by_device_unique_id_get_imei($device_unique_id)}}</span><img src="{$smarty.const.STATIC_URL}/images/m-num-map/icon-edit.png" width="12"></div>
+                    <select>
+                        <option>{{screen_helper::by_device_unique_id_get_imei($device_unique_id)}}</option>
+                    </select>
+                </div>
+                
+                {if $everyday}
+	                <div id="js_dataDate" class="item2">
+	                    <span>{$everyday}</span>
+	                    <input type="date" value="">
+	                </div>
+                {else}
+                <div class="date">
+                    <div id="" class="item2">
+	                    <span>{$start_date}</span>
+	                    <!-- <input type="date" value=""> -->
+	                </div>
+                   <span class="text">——</span>
+                    <div id="" class="item2">
+                       <span>{$end_date}</span>
+                       <!-- <input type="date" value=""> -->
+                    </div>
+                 </div>
+                {/if}
+            </div>
+            <div class="time">{$time}</div>
+        </div>
+        <div class="detail-list">
+            <div class="line"></div>
+            <ul>
+            {foreach $list as $k => $v}
+                <li>
+                    <em class="point"></em>
+                    <div class="con">
+                        <p>开始：{$v.add_time}</p>
+                        <p>结束：{$v.update_time}</p>
+                    </div>
+                    <div class="time">{screen_helper::format_timestamp_text($v['experience_time'])}</div>
+                </li>
+            {foreachelse}
+               <div class="loading-more">暂无数据</div>
+           {/foreach}
+            </ul>
+        </div>
+    </section>
+</div>
+<script type="text/javascript">
+    $(function(){
+        var deviceName = "{$imei}";
+        var deviceTime = "{$date}";
+
+        $('#js_dataType select').change(function(e){
+            //$('#js_dataType .name').text(e.target.value)
+            //设备状态赋值
+            //deviceName = e.target.value;
+            //console.log(e.target.value);
+            //重新加载数据
+            //window.location.href = siteUrl + '/screen/dm/detail?imei=' + deviceName + '&date='+ deviceTime;
+            
+        })
+        /*
+        $('#js_dataDate input').change(function(e){
+            $(this).siblings('span').css({ opacity: 0 })
+            $(this).css({ opacity:1 })
+            //设备搜索时间赋值
+            deviceTime         = e.target.value;
+            console.log(deviceTime);
+            //alert(123);
+            //重新加载数据
+            //window.location.href = siteUrl + '/screen/dm/detail?imei=' + deviceName + '&date='+ deviceTime;
+        })
+        */
+        //重新加载数据
+        if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
+            var selectEvent = 'blur';
+        } else {
+            var selectEvent = 'change';
+        }
+
+        $('#js_dataDate input').on(selectEvent,function(e){
+            e.preventDefault();
+            deviceTime           = e.target.value;
+            window.location.href = siteUrl + '/screen_dm/detail?imei=' + deviceName + '&date='+ deviceTime; 
+            
+        })
+    })
+</script>
+</body>
+</html>

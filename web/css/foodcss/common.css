@@ -1,0 +1,79 @@
+*{ padding:0;  margin:0}
+
+html, body {position: relative;height: 100%; overflow:hidden;}
+
+table,td,tr,th{ padding:0; margin:0; border:0}
+
+.horizontal{
+	position: absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background:url(../images/horizontal.jpg);
+	background-size: cover;
+	background-position: 50% 50%;
+	display: none;
+	z-index: 99999;
+}
+
+.vertical{
+	position: absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background:url(../images/vertical.jpg);
+	background-size: cover;
+	background-position: 50% 50%;
+	display: none;
+	z-index: 99999;
+}
+
+#man{
+	position:absolute;
+	width:112px;
+	height:170px;
+	top:10px;
+	left:30%;
+	background:url(../images/man.png);
+	-webkit-background-size:auto 170px;
+	background-position:0px 0;
+	
+	-webkit-animation: man 1s steps(4, start) 0ms infinite normal backwards;
+}
+
+@-webkit-keyframes man{
+	0%{
+		background-position:0 0;	
+	}
+	100%{
+		background-position:-448px 0;
+	}
+}
+
+
+.anim{
+	position:absolute;
+	width:100px;
+	height:100px;
+	background:#0F6;
+	left:100px;
+	top:200px;
+	-webkit-animation: skyset 10s infinite linear;
+}
+
+@-webkit-keyframes skyset{
+	0%{background:#0F0}
+	20%{background:#F00}
+	40%{background:#9C0}
+	60%{background:#30F}
+	80%{background:#FF0}
+	100%{background:#96F}	
+}
+
+
+
+
+
+

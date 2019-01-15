@@ -1,0 +1,85 @@
+{include_www file="admin/lib/header_new.html" title="亮屏管理"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="javascript:;"><i class="iconfont iconfont-logo2"></i>下柜统计</a>
+      &gt;
+      <span>列表（合计：{if $count}{$count}{else}0{/if}/台）</span>
+    </div>
+    <br />
+
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            {if $member_info.res_name != 'business_hall'}
+              <th width="5%">省</th>
+              <th width="5%">市</th>
+              <th width="10%">营业厅</th>
+            {/if}
+            <th width="5%">品牌</th>
+            <th width="8%">型号</th>
+            <th width="10%">标识ID</th>
+            <th width="10%">IMEI</th>
+            <th width="7%">版本</th>
+            <th width="10%">
+                                    安装时间
+           <!--  {if $order_dir=='desc' && $order_field == 'add_num'}
+                <span class="glyphicon  glyphicon-arrow-down order_stat" aria-hidden="true" style="cursor:pointer" order_field="add_num" order_dir='asc' id="sortUrl"></span>
+            {else}
+                <span class="glyphicon glyphicon-arrow-up order_stat" aria-hidden="true" style="cursor:pointer"  order_field="add_num" order_dir='desc' id="sortUrl"></span>
+            {/if} -->
+            </th>
+            <th width="5%">补丁版本</th>
+            <th width="12%">补丁安装时间</th>
+            <th width="5%">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $list as $k=>$v}
+          <tr id="dataList{$k}">
+            {if $member_info.res_name != 'business_hall'}
+              <td>{_uri('province', $v.province_id, 'name')}</td>
+              <td>{_uri('city', $v.city_id, 'name')}</td>
+              <td>{_uri('business_hall', $v.business_id, 'title')}</td>
+            {/if}
+            {if $v.phone_name_nickname}{$phone_name = $v.phone_name_nickname}{else}{$phone_name = $v.phone_name}{/if}
+            <td>{$phone_name}</td>
+            {if $v.phone_version_nickname}{$phone_version = $v.phone_version_nickname}{else}{$phone_version = $v.phone_version}{/if}
+            <td>{$phone_version}</td>
+            <td shoppe_id="{$v.shoppe_id}">{$v.device_unique_id}</td>
+            <td>{if $v.imei}{$v.imei} {else}手机无imei{/if}</td>
+            <td>{if $v.version_no}{$v.version_no}{else}--{/if}<br/>{if $v.type == 1}(TV){/if}</td>
+            <td>{$v.day}</td>
+            {$last_version_info = screen_device_helper::get_last_update_version($v.device_unique_id, array('handle_patch_version', 'add_time'))}
+            <td>{if $last_version_info.handle_patch_version !== ''}{$last_version_info.handle_patch_version}{else}--{/if}</td>
+            <td>{if $last_version_info.add_time}{substr($last_version_info.add_time, 0, 10)}{else}--{/if}</td>
+            {$online_status = screen_helper::get_online_status($v.device_unique_id)}
+
+              <td>
+                <span class="js_Status">
+                  {if $v.status == 1}
+                    <a href="javascript:void(0);" data-id="{$v.id}" class="btn btn-danger btn-xs js_delete"><i class="icon-trash icon-white"></i>设备下架</a>
+                  {else}
+                    已下架
+                  {/if}
+                </span>
+                <a href="{AnUrl("screen_content/admin/content_analysis/device_roll?device_unique_id={$v.device_unique_id}")}" class="label label-info">当前轮播</a>
+              </td>
+           
+          </tr>
+          {foreachelse}
+          <tr><td colspan="{if $member_info.res_name != 'business_hall'}13{else}10{/if}">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

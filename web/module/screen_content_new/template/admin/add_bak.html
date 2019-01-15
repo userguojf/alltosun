@@ -1,0 +1,304 @@
+{include_www file="admin/lib/header_new.html" title="添加编辑内容信息"}
+<style>
+    .pic-upload { width:250px;height:133px; }
+    .btn-upload{ width:106px; height: 33px; }
+    .btn-upload a{ display: block;position:relative;width: 104px;height: 33px;line-height: 18px;padding: 6px 0;text-align: center;color: #4c4c4c;background: #fff;border: 1px solid #eee;}
+    .btn-upload input{ width:106px; height:33px; position:relative; left:0px; top:-32px; z-index:1;filter:alpha(opacity=0);-moz-opacity:0;opacity:0; cursor:pointer;}
+    .js_upFileBox{ margin-left:0px;margin-top:30px;}
+    .form-add .tips {  color: green; }
+</style>
+      <!--start:右侧-->
+      <div class="main mian2 ">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen_content/admin')}"><i class="iconfont iconfont-logo2"></i>内容管理</a>
+            &gt;
+            <span>内容添加</span>
+            <a href="{AnUrl('screen_content/admin')}" class="btn btn-primary btn-sm pull-right">返回内容列表</a>
+          </div>
+
+          <div class="clearfix">
+            <div class="form-add pull-left" style="width:80%">
+              {AnForm class='form-horizontal' action="{AnUrl('screen_content/admin/save')}" method="post" enctype="multipart/form-data"}
+              {AnForm type='hidden' name='anu' value='screen_content/admin/save'}
+              {AnForm type="hidden" name="id" value="{$content_info.id}"}
+              {AnForm type="hidden" name="search_type" value="{$search_type}"}
+                {*标题 START*}
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">标题</label>
+                  <div class="col-sm-7">
+                    <a class='less-box'>
+                    {AnForm type="text" name="content[title]" value="{$content_info['title']}" class="form-control" validate="required" filter="filter_string" placeholder="请输入标题"}
+                    </a>
+                  </div>
+                </div>
+                {*标题 END*}
+                
+                {*类型 START*}
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">类型</label>
+                  <div class="col-sm-7">
+                    <a class='less-box'>
+                      {$content_type = screen_content_config::$content_type}
+                      {if $curr_member_ranks != 1}
+                        {$content_type = $content_type|array_diff_key:([4]|array_flip)}
+                      {/if}
+                      <span>
+                        <select name="content[type]" class="form-control selectType required" {if $content_info}disabled="disabled"{/if}>
+                          <option value="">请选择</option>
+                          {foreach $content_type as $k => $v}
+                            <option value="{$k}" {if $k == $content_info.type}selected="selected"{/if}>{$v}</option>
+                          {/foreach}
+                        </select>
+                      </span>
+                    </a>
+                  </div>
+                  {if $content_info}
+                    <input type="hidden" name="content[type]" value="{$content_info.type}">
+                  {/if}
+                </div>
+                {*类型 END*}
+                
+                {*图片和宣传图 START*}
+                <div class="form-group uploadImg {if $content_info.type != 1 && $content_info.type != 4}hidden{/if}">
+                  <label class="col-sm-3 control-label contentTitle">图片内容</label>
+                  <div class="col-sm-9 js_perUpWrap">
+                    <div class="pic-upload js_perUpOuter js_upload_image" data-show-id="content_img" style="width:150px;height:250px">
+                      {if $content_info.link && ($content_info.type == 1 || $content_info.type == 4)}
+                        
+                        <img src="{_image($content_info.link)}" class="js_upload_image" style="width:150px;"/>
+                      {/if}
+                      <div class="txt js_perUpAdd js_perUpArea {if $content_info.link && ($content_info.type == 1 || $content_info.type == 4)}hidden{/if}">
+                        <em>+</em>
+                        从本地选择
+                      </div>
+                      <div class="btn-control js_perUpChange js_perUpArea">重新设置</div>
+                    </div>
+                    <p class="tips">格式：jpg／gif／png&nbsp;&nbsp; 大小：不得超过4MB</p>
+                    {if !$content_info}
+                        {AnForm type="file" name="img_link" class='js_perUpFile hidden'}
+                    {else}
+                        {AnForm type="file" name="img_link" class='js_perUpFile hidden'}
+                    {/if}
+                  </div>
+                </div>
+                {*图片和宣传图 END*}
+                
+                {*视频 START*}
+                <div class="form-group uploadVideo {if $content_info.type != 2}hidden{/if}">
+                  <label class="col-sm-3 control-label contentTitle">视频内容</label>
+                  <div class="col-sm-9 js_perUpWrap">
+                    <div class="pic-upload js_perUpOuter" data-show-id="content_img">
+                        <div class="txt js_perUpAdd js_perUpArea">
+                         {if $content_info.link && $content_info.type ==2}
+                            {$content_info.link}
+                         {else}
+                            <em>+</em>
+                            从本地选择
+                         {/if}
+                        </div>
+                        
+                        <div class="btn-control js_perUpChange js_perUpArea {if !$content_info.link}hidden{/if}">重新设置</div>
+                    </div>
+                    <input type="file" name="video_link"  class='js_perUpFile hidden'>
+                    <p class="tips">格式：flv/wmv/rmvb/mp4'；大小：50M以内</p>
+                  </div>
+                </div>
+                {*视频 END*}
+                
+                {*链接 START*}
+                <div class="form-group js_urlLink {if $content_info.type != 3}hidden{/if}">
+                  <label class="col-sm-3 control-label">链接</label>
+                  <div class="col-sm-7">
+                    <a class='less-box'>
+                    {AnForm type="text" name="content[link]" value="{if $content_info.type == 3}{$content_info['link']}{/if}" class="form-control"  filter="filter_string" placeholder="请输入H5链接"}
+                    </a>
+                  </div>
+                </div>
+                {*链接类型 END*}
+                
+                {*套餐图 START*}
+                <div class="form-group selectSetMealImg {if $content_info.type != 5}hidden{/if}">
+                  <label class="col-sm-3 control-label contentTitle">选择套餐底图</label>
+                  <div class="col-sm-9 js_perUpWrap">
+                    {foreach screen_content_config::$content_set_meal_img as $k => $v}
+                      <div class="pic-upload pull-left" style="width:150px;height:250px">
+                        <label>
+                          <img src="{$v}" style="width:150px;"/>
+                          <div class="btn-control"><input name="set_meal" type="radio" {if $content_info.link == $v}checked{/if} value="{$v}"></div>
+                        </label>
+                      </div>
+                    {/foreach}
+                  </div>
+                </div>
+                {*图片和宣传图 END*}
+                
+                {*字体颜色 START*}
+                <div class="form-group jsColorType {if $content_info.type != 4}hidden{/if}">
+                  <label class="col-sm-3 control-label">字体颜色</label>
+                  <div class="col-sm-7">
+                    <a class='less-box'>
+                        <label><input name="content[font_color_type]" type="radio" {if $content_info.font_color_type == 2 || $content_info.font_color_type == 0}checked{/if} value="2">白色</label>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <label><input name="content[font_color_type]" type="radio"  {if $content_info.font_color_type == 1}checked {/if} value="1">黑色</label>
+                    </a>
+                    <p class='tips'>友情提示：这是修改价格生成图片价格字体颜色，注意与背景图的颜色差异！</p>
+                  </div>
+                </div>
+                {*字体颜色 END*}
+                
+                {*宣传价格 START*}
+                <div class="form-group jsPrice {if $content_info.type != 4}hidden{/if}">
+                  <label class="col-sm-3 control-label">宣传价格</label>
+                  <div class="col-sm-7">
+                     {AnForm type="number" name="content[price]"  value="{if $content_info.price}{$content_info.price}{else} {/if}" class="form-control" filter="filter_string" placeholder="请输入宣传价格（可选）" }
+                  </div>
+                </div>
+                {*宣传价格 END*}
+                
+                {*是否为专属机型 START*}
+                <div class="form-group jsIsSpecify {if $content_info.type != 4}hidden{/if}">
+                  <label class="col-sm-3 control-label">是否为专属机型</label>
+                  <div class="col-sm-7">
+                    <a class='less-box'>
+                        <label><input name="content[is_specify]" type="radio" {if $content_info.is_specify == 1 || !$content_info}checked{/if} {if $content_info}disabled="disabled"{/if} value="1">是</label>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <label><input name="content[is_specify]" type="radio"  {if $content_info && $content_info.is_specify == 0}checked{/if} {if $content_info}disabled="disabled"{/if} value="0">否</label>
+                    </a>
+                    <p class='tips'>注：上传的机型底图如果存在机型信息，请选择 “是”</p>
+                  </div>
+                </div>
+                {*是否为专属机型 END*}
+                
+                {*上下线时间 START*}
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">上线时间</label>
+                  <div class="col-sm-7">
+                    {AnForm type="text" name="content[start_time]"  value="{$content_info['start_time']}" class="begin_time form-control" validate="required"  filter="filter_string" placeholder="请选择上线时间"}
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">下线时间</label>
+                  <div class="col-sm-7">
+                    {AnForm type="text" name="content[end_time]"  value="{$content_info['end_time']}" class="begin_time form-control" validate="required"  filter="filter_string" placeholder="请选择下线时间"}
+                  </div>
+                </div>
+                {*上下线时间 END*}
+                
+                {*轮播间隔 START*}
+                <div class="form-group ">
+                  <label class="col-sm-3 control-label">轮播间隔</label>
+                  <div class="col-sm-7">
+                    <span>
+                        <input type="number" name="content[roll_interval]" value="{if $content_info}{$content_info['roll_interval']}{else}0{/if}" {if !$content_info || $content_info.is_roll_interval_disabled}disabled="disabled"{/if} class="form-control js_roll_interval" placeholder="请输入轮播间隔">
+                    </span>
+                    <p class='tips'>*友情提示：轮播间隔时间单位为秒</p>
+                  </div>
+                </div>
+                {*轮播间隔 END*}
+                
+                {*轮播次数 START*}
+                <div class="form-group ">
+                  <label class="col-sm-3 control-label">轮播次数</label>
+                  <div class="col-sm-7">
+                    <span>
+                      <input type="number" name="content[roll_num]" value="{if $content_info}{$content_info['roll_num']}{else}1{/if}" class="form-control js_roll_num" {if !$content_info || $content_info.is_roll_num_disabled}disabled="disabled"{/if} placeholder="请输入轮播次数">
+                    </span>
+                    <!-- <p class='tips'>*友情提示：轮播间隔时间单位为秒, 类型为视频或者GIF图时此间隔无效</p> -->
+                  </div>
+                </div>
+                {*轮播次数 END*}
+                
+                {*套餐信息录入 START*}
+                <div class="form-group js_import_set_meal {if ($content_info && $content_info.type != 5) || !$content_info }hidden{/if}">
+                  <label class="col-sm-3 control-label">套餐信息录入</label>
+                  <div class="col-sm-7 set_meal_add" style="min-height:150px; padding-top:50px; background-color:#eee">
+                    <div style="margin:0 auto;width:50px;height:150px;">
+                      <!-- 加载中弹层 wangjf add -->
+                      <img style="width:50px; height:50px;" src="{$smarty_const.STATIC_URL}/images/loading2.gif">
+                    </div>
+                  </div>
+                </div>
+                {*套餐信息导入 END*}
+                <div class="form-group form-inline js_put_range {if $content_info.type == 5}hidden{/if}">
+                  <label class="col-sm-3 control-label">投放范围</label>
+                  <div class="col-sm-9">
+                  
+                    {if $content_info}
+                      <div style="margin-top:5px;">
+                      <input type="hidden"  name='put_type' value="{if $content_info.type == 5}1{else}0{/if}" />
+                      {widget model="screen_content.put" file="res_put_list.html" func="get_list" res='screen_content_res' field='content_id' value=$content_info.id}
+                      </div>
+                    {else}
+                    
+                      {foreach screen_content_config::$put_type[$member_info.ranks] as $k=>$v}
+                      <div class="checkbox col-sm-4">
+                       
+                        {if $k == 1}
+                            {if $member_info.res_name == 'group'}
+                                {$msg_title = '投放到全国的所有营<br/>业厅'}
+                            {else if $member_info.res_name == 'province'}
+                                {$msg_title = "投放到{business_hall_helper::get_info_name('province', $member_info.res_id, 'name')}（省）的所有营<br/>业厅"}
+                            {else if $member_info.res_name == 'city'}
+                                {$msg_title = "投放到{business_hall_helper::get_info_name('city', $member_info.res_id, 'name')}（市）的所有营<br/>业厅"}
+                            {else if $member_info.res_name == 'area'}
+                                {$msg_title = "投放到{business_hall_helper::get_info_name('area', $member_info.res_id, 'name')}（地区）的所以营<br/>业厅"}
+                            {else if $member_info.res_name == 'business_hall'}
+                                {$msg_title = "投放到本营业厅<br>&nbsp;"}
+                            {/if}
+                        {*{$msg_title = '投放到此帐号管辖下的全部营<br/>业厅'}*}
+                        {else if $k == 2}
+                        {$msg_title = '选中后进入下一步可选择需要<br/>投放的营业厅'}
+                        {else}
+                        {$msg_title = '保存在库中，但不发布上线<br/>&nbsp;'}
+                        {/if}
+                        <label class="cicon-tipsy" original-title="{$msg_title}">
+                          <input type="radio"  name='put_type' class='putTypeBut' value="{$k}" {if $k== 1}checked{/if}>&nbsp;{$v}
+                        </label>
+                      </div>
+                      {/foreach}
+                    {/if}
+                  </div>
+                </div>
+                <br>
+                {*发布按钮区*}
+                <div class="form-group">
+                  <div class="col-sm-offset-3 col-sm-10">
+                    {if $content_info}
+                     <button type="submit" class="btn btn-sm btn-success js_saveBtn"><span style='display: inline-block;width: 95px;' class='Sub'>{if $content_info.type == 5}投放本归属地{else}修改并保存{/if}</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+                      {if $curr_member_ranks != 5}
+                      <a type="button" class="btn btn-sm btn-info js_saveAndPutArea" href="javascript:void(0);">&nbsp;&nbsp;修改投放范围&nbsp;&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                      {/if}
+                    {else}
+                      <button type="submit" class="btn btn-sm btn-success"><span style='display: inline-block;width: 95px;' class='Sub js_subBtn'>保存并发布</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    {/if}
+                    <a type="button" class="btn btn-sm btn-warning" href="{AnUrl('screen_content/admin')}">&nbsp;&nbsp;取消&nbsp;&nbsp;</a>
+                  </div>
+                </div>
+              {AnForm}
+            </div>
+          </div>
+        </div>
+      </div>
+
+<div class="pop-bg hidden" id="putLoading">
+  <div class="modal-dialog" style=" width:300px; margin:0 auto;top: 25%;">
+    <div style="margin:0 auto;width:100px;"><img style="width:100px;" src="{$smarty.const.STATIC_URL}/images/loading.gif"></div>
+    <div style="margin:0 auto;width:250px;font-size:25px; color:#fee" class="pop-msg">数据上传中...</div>
+  </div>
+</div>
+<script>
+var contentId = '{$content_info.id}';
+var oldImgLink = "{$content_info.type}" == 1 ? "{$content_info.link}" : '';
+var oldVideoLink = "{$content_info.type}" == 2 ? "{$content_info.link}" : '';
+var error_list     = '{json_encode($error_list)}';
+if ("{$content_info.type}") {
+  defaultType = "{$content_info.type}";
+} else {
+  defaultType = "{$content_info.type}";
+}
+</script>
+{* 加载jquery.base64文件 *}
+{load_js file="jquery.base64.min.js"}
+{load_js file="screen_content/admin_add.js?v={time()}"}
+{include_www file="admin/lib/footer_new.html"}

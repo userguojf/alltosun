@@ -1,0 +1,23 @@
+{include file="news/header.html" title="电信智慧门店运营"}
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script src="{$smarty.const.STATIC_URL}/js/qy/wx_share.js?id={time()}"></script>
+        <section class="container">
+            <div class="article">
+                <div class="title">
+                    <p>{$info.title}</p>
+                </div>
+                 <form action="{AnUrl('qydev/news/save_repal')}" method="post">
+                    <input type ="hidden" name="info[pid]" value="{$pid}"/>
+                    <input type ="hidden" name="info[res_id]" value="{$res_id}"/>
+                    <div class="comments-pulish">
+                        <div class="text">
+                            <textarea placeholder="留言将由公众号筛选后显示，对所有人可见" name="info[content]"></textarea>
+                        </div>
+                        <div class="options">
+                        </div>
+                        <button type="submit" class="btn-sure">提交</button>
+                    </div>
+                   </form>
+            </div>
+        </section>
+{include file="news/footer.html"}

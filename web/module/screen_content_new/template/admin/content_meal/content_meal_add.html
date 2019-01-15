@@ -1,0 +1,373 @@
+
+{include_www file="admin/lib/header_new.html" title="添加编辑内容信息"}
+<style>
+    .pic-upload { width:250px;height:133px; }
+    .btn-upload{ width:106px; height: 33px; }
+    .btn-upload a{ display: block;position:relative;width: 104px;height: 33px;line-height: 18px;padding: 6px 0;text-align: center;color: #4c4c4c;background: #fff;border: 1px solid #eee;}
+    .btn-upload input{ width:106px; height:33px; position:relative; left:0px; top:-32px; z-index:1;filter:alpha(opacity=0);-moz-opacity:0;opacity:0; cursor:pointer;}
+    .js_upFileBox{ margin-left:0px;margin-top:30px;}
+</style>
+      <!--start:右侧-->
+      <div class="main mian2 ">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen_content/admin/content_meal')}"><i class="iconfont iconfont-logo2"></i>套餐管理</a>
+            &gt;
+            <span>套餐添加</span>
+            <a href="{AnUrl('screen_content/admin/content_meal')}" class="btn btn-primary btn-sm pull-right">返回套餐列表</a>
+          </div>
+
+          <div class="clearfix">
+            <div class="form-add pull-left" style="width:80%">
+              {AnForm class='form-horizontal' action="{AnUrl('screen_content/admin/content_meal/save')}" method="post" enctype="multipart/form-data"}
+              {AnForm type='hidden' name='anu' value='screen_content/admin/content_meal/save'}
+              {AnForm type="hidden" name="id" value="{$content_info.id}"}
+              {AnForm type="hidden" name="search_type" value="{$search_type}"}
+                {*标题 START*}
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">标题</label>
+                  <div class="col-sm-7">
+                    <a class='less-box'>
+                    {AnForm type="text" name="content[title]" value="{$content_info['title']}" class="form-control" validate="required" filter="filter_string" placeholder="请输入标题"}
+                    </a>
+                  </div>
+                </div>
+                
+                {*标题 END*}
+                
+                {*类型 START*}
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">类型</label>
+                  <div class="col-sm-7">
+                    <a class='less-box'>
+                    {$content_type = screen_content_config::$content_meal_type}
+
+                    {AnForm type="select" name="content[type]" options=$content_type selected="{if $content_info['type']}{$content_info['type']}{/if}" validate="required"  filter="filter_string" class="form-control  js_siteType selectType"}
+                    
+                    </a>
+                  </div>
+                </div>
+                {*类型 END*}
+                
+                {*内容 START*}
+                <div class="form-group" id="faq_answer" {if $content_info.content }style="display:block;"{else}style="display:none;"{/if}><!--0站外 1 站内-->
+                    <label class="col-sm-3 control-label">描述</label>
+                    <div class="col-sm-6" style="z-index:1;">
+                        {AnForm type="textarea" id="answer" name="content[content]" value="{$content_info.content}" id="answer" class="answer" }
+                    </div>
+               </div>
+              {*内容 END*}
+                
+                {*链接 START*}
+                  <div class="form-group" id="faq_link" {if $content_info.ext_link || $add == 'add'}style='display:block;'{else}style='display:none;'{/if}>
+                      <label class="col-sm-3 control-label coupon-num">链接地址</label>
+                      <div class="col-sm-6">
+                          <input type="text"  id="link" name="content[ext_link]" value="{$content_info.ext_link}" class="form-control" placeholder="请输入外部链接地址">
+                      </div>
+                  </div>
+                {*链接类型 END*}
+                
+                {*上下线时间 START*}
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">上线时间</label>
+                  <div class="col-sm-7">
+                    {AnForm type="text" name="content[start_time]"  value="{$content_info['start_time']}" class="begin_time form-control" validate="required"  filter="filter_string" placeholder="请选择上线时间"}
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">下线时间</label>
+                  <div class="col-sm-7">
+                    {AnForm type="text" name="content[end_time]"  value="{$content_info['end_time']}" class="begin_time form-control" validate="required"  filter="filter_string" placeholder="请选择下线时间"}
+                  </div>
+                </div>
+                {*上下线时间 END*}
+
+                <div class="form-group form-inline">
+                  <label class="col-sm-3 control-label">投放范围</label>
+                  <div class="col-sm-9">
+                  
+                    {if $content_info}
+                      <div style="margin-top:5px;">
+                      <input type="hidden"  name='put_type' value="0" />
+                      {widget model="screen_content.meal_put" file="res_put_list.html" func="get_list" res='screen_meal_res' field='content_id' value=$content_info.id}
+                      </div>
+                    {else}
+                    
+                      {foreach screen_content_config::$put_meal_type[$member_info.ranks] as $k=>$v}
+                      <div class="checkbox col-sm-4">
+                       
+                        {if $k == 1}
+                            {if $member_info.res_name == 'group'}
+                                {$msg_title = '投放到全国的所有营<br/>业厅'}
+                            {else if $member_info.res_name == 'province'}
+                                {$msg_title = "投放到{business_hall_helper::get_info_name('province', $member_info.res_id, 'name')}（省）的所有营<br/>业厅"}
+                            {else if $member_info.res_name == 'city'}
+                                {$msg_title = "投放到{business_hall_helper::get_info_name('city', $member_info.res_id, 'name')}（市）的所有营<br/>业厅"}
+                            {else if $member_info.res_name == 'area'}
+                                {$msg_title = "投放到{business_hall_helper::get_info_name('area', $member_info.res_id, 'name')}（地区）的所以营<br/>业厅"}
+                            {else if $member_info.res_name == 'business_hall'}
+                                {$msg_title = "投放到本营业厅<br>&nbsp;"}
+                            {/if}
+                        {*{$msg_title = '投放到此帐号管辖下的全部营<br/>业厅'}*}
+                        {else if $k == 2}
+                        {$msg_title = '选中后进入下一步可选择需要<br/>投放的营业厅'}
+                        {else}
+                        {$msg_title = '保存在库中，但不发布上线<br/>&nbsp;'}
+                        {/if}
+                        <label class="cicon-tipsy" original-title="{$msg_title}">
+                          <input type="radio"  name='put_type' class='putTypeBut' value="{$k}" {if $k== 1}checked{/if}>&nbsp;{$v}
+                        </label>
+                      </div>
+                      {/foreach}
+                    {/if}
+                  </div>
+                </div>
+                <br>
+                <div class="form-group">
+                  <div class="col-sm-offset-3 col-sm-10">
+                    {if $content_info}
+                     <button type="submit" class="btn btn-sm btn-success js_saveBtn"><span style='display: inline-block;width: 95px;' class='Sub'>修改并保存</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+                      {if $curr_member_ranks != 5}
+                      <a type="button" class="btn btn-sm btn-info js_saveAndPutArea" href="javascript:void(0);">&nbsp;&nbsp;修改投放范围&nbsp;&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                      {/if}
+                    {else}
+                      <button type="submit" class="btn btn-sm btn-success"><span style='display: inline-block;width: 95px;' class='Sub'>保存并发布</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    {/if}
+                    <a type="button" class="btn btn-sm btn-warning" href="{AnUrl('screen_content/admin/content_meal')}">&nbsp;&nbsp;取消&nbsp;&nbsp;</a>
+                  </div>
+                </div>
+              {AnForm}
+            </div>
+          </div>
+        </div>
+      </div>
+      {* 加载jquery.base64文件 *}
+      {load_js file="jquery.base64.min.js"}
+      
+      {load_js file='ueditor1_2_6_1/ueditor.config.js'}
+     {load_js file='ueditor1_2_6_1/ueditor.all.min.js'}
+
+<script>
+
+var contentId = '{$content_info.id}';
+$(function(){
+
+  var oldImgLink = "{$content_info.type}" == 1 ? "{$content_info.link}" : '';
+  var oldVideoLink = "{$content_info.type}" == 2 ? "{$content_info.link}" : '';
+  
+	//选择的对象
+	$('.js_siteType').on('change',function(){
+		var $this = $(this);
+		var $val  = $this.val();
+		//判断
+		if ($val == 1) {
+			$('#faq_link').hide();
+			$('#faq_answer').show();
+			$('#faq_line').show();
+		} else {
+			$('#faq_link').show();
+			$('#faq_answer').hide();
+			$('#faq_line').hide();
+		}
+	})
+  
+  //url初始化
+  function initUrl()
+  {
+    //url初始化
+    $('.js_urlLink input[type="text"]').val('');
+    $('.js_urlLink').addClass('hidden');
+  }
+  
+
+  ////////////////////
+  // 修改投放范围
+  $(".js_saveAndPutArea").click(function(e){
+    e.preventDefault();
+    
+    $(":input[name='put_type']").val(2);
+    $(".js_saveBtn").trigger('click');
+  });
+  ////////////////////
+  
+    var tip = ['温馨提示：此处封面最佳上传尺寸：362＊391px', '温馨提示：此处封面最佳上传尺寸：356＊224', '温馨提示：此处封面最佳上传尺寸：729＊340px',  '温馨提示：此处封面最佳上传尺寸：320＊149px'];
+    $('#selectResName').change(function(){
+        var selectResName = $('#selectResName option:selected').val();
+        var txt = '';
+
+        if (selectResName == 'home') {
+            txt = tip[0];
+        } else if (selectResName == 'dressing') {
+            txt = tip[1];
+        } else if (selectResName == 'mall') {
+            txt = tip[2];
+        } else if (selectResName == 'mobile-index') {
+               txt = tip[3];
+           }
+        $('#selectResName').parent().next().text(txt);
+    });
+
+    $('.putTypeBut').live('click',function() {
+            var putTypeCiock = $(this).val();
+            if (putTypeCiock >= 1) {
+                if (putTypeCiock == 2) {
+                  $('.Sub').text('下一步');
+                } else {
+                  $('.Sub').text('保存并发布');
+                }
+            } else {
+                $('.Sub').text('保存');
+            } 
+    });
+    
+    /////////////////////////////////////
+    // 上传文件的预览
+    $(".js_perUpArea").click(function(){
+      
+      $(this).closest('.js_perUpWrap').find('.js_perUpFile').trigger('click');
+      
+    });
+    $(".js_perUpFile").each(function(i){
+      $(this).css({ 'position':'absolute', 'left':'-2000px' })
+      $(this).change(function(e){
+        var type = $('.selectType').val();
+        if (type == 1 || type == 4) {
+          handleFileSelect($(this), function (data) {
+            //判断是否为动图
+            var is = isAnimatedGif(data);
+            //动图
+            if (is === true) {
+              //禁止轮播时长编辑
+              $('.js_roll_interval').val(0);
+              $('.js_roll_interval').attr('disabled', true);
+              //开放轮播次数编辑
+              $('.js_roll_num').val(1);
+              $('.js_roll_num').attr('disabled', false);
+            //静图
+            } else if (is === false) {
+              //开启轮播时长编辑
+              $('.js_roll_interval').val(10);
+              $('.js_roll_interval').attr('disabled', false);
+              //禁止轮播次数编辑
+              $('.js_roll_num').val(1);
+              $('.js_roll_num').attr('disabled', true);
+            //未知
+            } else {
+              alert(is);
+            }
+          });
+
+        } else {
+          $('.uploadVideo .js_perUpAdd').text($('.uploadVideo input[type="file"]').val());
+          $('.uploadVideo .js_perUpChange').removeClass('hidden');
+        }
+      });
+    });
+    /////////////////////////////////////
+});
+//上传图片到服务器
+function isAnimatedGif(imgData){
+  if (!imgData) {
+    return '图片上传失败';
+  }
+  var start = imgData.indexOf(';base64,');
+  if (start < 0) {
+    return '图片验证失败';
+  }
+
+  var not = imgData.slice(0, start+8);
+  var imgData = imgData.replace(not, '');
+  var newData =  $.base64.decode(imgData);
+  if (newData.indexOf('NETSCAPE2.0') > -1) {
+    return true;
+  } else {
+    return false;
+  }
+}
+//图片上传预览    IE是用了滤镜。
+
+function previewImage(file,obj,pic,width,height)
+{
+    var MAXWIDTH  = width;
+    var MAXHEIGHT = height;
+
+    //var div = document.getElementById('preview');
+    var div = obj;
+
+    if (file.files && file.files[0])
+    {
+        div.innerHTML ='<img id='+pic+' width="375px;">';
+        var img = document.getElementById(pic);
+        //console.log(img);
+        img.onload = function(){
+            var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
+            img.width  =  rect.width;
+            img.height =  rect.height;
+
+        };
+
+        var reader = new FileReader();
+        reader.onload = function(evt){ img.src = evt.target.result; };
+        //console.log(file.files[0]);
+        reader.readAsDataURL(file.files[0]);
+    }
+    else //兼容IE
+    {
+        var sFilter='filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale,src="';
+        file.select();
+        var src = document.selection.createRange().text;
+        div.innerHTML = '<img id=imghead>';
+        var img = document.getElementById('imghead');
+        img.filters.item('DXImageTransform.Microsoft.AlphaImageLoader').src = src;
+        var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
+        status =('rect:'+rect.top+','+rect.left+','+rect.width+','+rect.height);                        //"+rect.top+"
+        div.innerHTML = "<div id=divhead style='width:"+rect.width+"px;height:"+rect.height+"px;margin-top:0px;"+sFilter+src+"\"'></div>";
+
+    }
+}
+
+function clacImgZoomParam( maxWidth, maxHeight, width, height ){
+    var param = { top:0, left:0, width:width, height:height };
+    if( width>maxWidth || height>maxHeight )
+    {
+        rateWidth = width / maxWidth;
+        rateHeight = height / maxHeight;
+         
+        if( rateWidth > rateHeight )
+        {
+            param.width =  maxWidth;
+            param.height = Math.round(height / rateWidth);
+        }else
+        {
+            param.width = Math.round(width / rateHeight);
+            param.height = maxHeight;
+        }
+    }
+
+    param.left = Math.round((maxWidth - param.width) / 2);
+    param.top = Math.round((maxHeight - param.height) / 2);
+    return param;
+}
+
+$('.inputImgBtn').live('change',function() {
+    //previewImage(this);
+    var content_img = document.getElementById('content_img');
+    previewImage(this,content_img,'content','250','133');
+});
+
+var editor = new UE.ui.Editor({
+    imagePath:"",                     //图片修正地址，引用了fixedImagePath,如有特殊需求，可自行配置
+    imageFieldName:"Filedata",
+    initialFrameWidth:400,
+    initialFrameHeight:285,
+    elementPathEnabled:false,
+    autoHeightEnabled: false,
+    autoFloatEnabled: false,
+    wordCount: false,
+    toolbars:[['source',"justifyleft","justifycenter","justifyright","justifyjustify","bold","italic","underline","fontsize","forecolor","insertimage"],[]]
+});
+
+editor.render("answer");
+
+</script>     
+{include_www file="admin/lib/footer_new.html"}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>{$file_info['content']}</title>
+    <link href="{$smarty.const.SITE_URL}/css/admin2/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <script src="{$smarty.const.SITE_URL}/js/jquery.min.js"></script>
+    <script src="{$smarty.const.SITE_URL}/js/jquery.media.js"></script>
+
+    <script type="text/javascript">
+        $(function() {
+            $('a.media').media({ width:1000, height:800 });
+        });
+    </script>
+</head>
+<body>
+<center>
+    <div class="panel panel-primary">
+        <div class="panel-heading" align="center">
+            <h2>{$file_info['content']}</h2>
+        </div>
+        <a class="media" href="{$pdf_url}"></a>
+    </div>
+</center>
+
+</body>
+</html>

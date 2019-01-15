@@ -1,0 +1,166 @@
+{include_www file="admin/lib/header_new.html" title="终端体验统计"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('rfid/admin/terminal_stat')}"><i class="iconfont iconfont-logo2"></i>终端体验统计</a>
+            &gt;
+            <span>
+            {if $region_type == 'province'}
+              各省排名
+            {else if $region_type == 'city'}
+              各市排名
+            {else if $region_type == 'business_hall'}
+              各厅排名
+            {else}
+              未知
+            {/if}
+            </span>
+          </div>
+
+          <br>
+          <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th width='10%'>
+                    {if $region_type == 'province'}
+                      省份
+                    {else if $region_type == 'city'}
+                      城市
+                    {else if $region_type == 'business_hall'}
+                      营业厅
+                    {/if}
+                  </th>
+                  <th width='10%'>品牌</th>
+                  {if $type != 1}
+                    <th width='10%'>型号</th>
+                    {if $type == 3}
+                      <th width='10%'>颜色</th>
+                      <th width='10%'>标签ID</th>
+                    {/if}
+                  {/if}
+                  <th width='10%'>设备量</th>
+                  <th width='10%'>体验时长</th>
+                  <th width='10%'>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {foreach $stat_list as $k=>$v}
+                <tr id="dataList{$k}">
+                  {*区域名称字段*}
+                  {if $region_type == 'business_hall'}{$field='business_id'}{$name='title'}{else}{$field = $region_type|cat:'_id'}{$name='name'}{/if}
+                  <td>{business_hall_helper::get_info_name($region_type , $v[$field] ,$name)}</td>
+                  <td>{$v.phone_name}</td>
+                  {if $type != 1}
+                    <td>{$v.phone_version}</td>
+                    {if $type == 3}
+                      <td>{$v.phone_color}</td>
+                      <td>{$v.label_id}</td>
+                    {/if}
+                  {/if}
+                  <td>{$v.terminal_count}</td>
+                  <td>{rfid_helper::format_timestamp_text($v.experience_time_sum)}</td>
+                  <td>
+                    {if $region_type == 'business_hall'}
+                      <a class="btn btn-xs btn-success" href="{AnUrl("rfid/admin/terminal_stat/detail{$search_filter_str}&search_filter[business_id]={$v[$field]}")}">详细列表</a>
+                    {else}
+                      {if $region_type == 'province'}
+                        {$region_info='各城市排名'}
+                        {$new_region_type='city'}
+                      {else}
+                        {$region_info='各厅排名'}
+                        {$new_region_type='business_hall'}
+                      {/if}
+                      <a class="btn btn-xs btn-success" href="{AnUrl("rfid/admin/terminal_stat/region{$search_filter_str}&region_type={$new_region_type}")}">{$region_info}</a>
+                    {/if}
+                  </td>
+                </tr>
+                {foreachelse}
+                    <tr><td colspan="5">暂无终端体验</td></tr>
+                {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        <!--end:列表-->
+      </div>
+<script>
+$('.js_submit').on('click', function () {
+  var startDate = $.trim($('#start_time').val());
+  var endDate = $.trim($('#end_time').val());
+  
+  if (startDate && endDate) {
+    if (startDate > endDate){
+      alert('开始时间不能大于结束时间');return false;
+    }
+  }
+  
+  $(this).before('<input type="hidden" name="search_filter[start_date]" value="'+startDate+'">');
+  $(this).before('<input type="hidden" name="search_filter[end_date]" value="'+endDate+'">');
+  
+});
+//排序
+$(function() {
+	//三级联动
+		$('#province').change(function(){
+			 var province_id =  $(this).val();
+			 $.post("{AnUrl('business_hall/admin/ajax/get_city_name')}" , { province_id:province_id } ,function(json){
+				 if (json.msg=='ok') {
+					 var html = "<option selected='selected' value=''>请选择市</option>";
+					 var jsonnum = eval(json.city_info);
+				  for(var i=0; i< jsonnum.length; i++){
+					     html += "<option value= '"+jsonnum[i].id+"'>"+jsonnum[i].name+"</option>";
+					    }
+					    $('#city').html('').append(html);
+					    $('#city').trigger('change');
+					   }
+				 
+				 
+			 },'json')
+		 })
+		 
+	     $('#city').change(function(){
+	    	 var city_id =  $(this).val();
+	    	 $.post("{AnUrl('business_hall/admin/ajax/get_area_name')}" , { city_id:city_id } ,function(json){
+	    		 if (json.msg=='ok') {
+	    			 var html = "<option selected='selected' value=''>请选择地区</option>";
+	    			 var jsonnum = eval(json.area_info);
+	    		  for(var i=0; i< jsonnum.length; i++){
+	    			     html += "<option value= '"+jsonnum[i].id+"'>"+jsonnum[i].name+"</option>";
+	    			    }
+	    			    $('#area').html('').append(html);
+	    			   }else {
+	    				   var html = "<option selected='selected' value=''>请选择地区</option>";
+	    				   $('#area').html('').append(html);
+	    			   }
+	    	 },'json')
+	     })
+	     
+	
+    $( "#sortable" ).sortable({
+        update: function(event, ui){
+            resetViewOrder();
+          }
+        },
+        { cancel: '.show_option' }
+    );
+    $( "#sortable" ).disableSelection();
+});
+function resetViewOrder()
+{
+  var ids = [];
+  $.each($(".view_id"), function(k, v){
+     ids[k] = $(this).attr('view_id');
+  });
+
+  $.post("{AnUrl("focus/admin/view_order")}",{ data:ids },function(){});
+}
+</script>
+<!-- 主内容 end -->
+<!-- 引入弹层 -->
+{include_www file="admin/lib/pop.html"}
+{include_www file="admin/lib/footer_new.html"}

@@ -1,0 +1,86 @@
+{include_www file="admin/lib/header_new.html" title="{$b_info.title}"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    #main{
+        height:500px;
+        border:1px solid #ccc;
+        margin: 10px;
+        padding:10px;
+    }
+</style>
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('probe_dev/admin')}"><i class="iconfont iconfont-logo2"></i>探针管理</a>
+            &gt;
+            <span>探针统计</span>
+            <a href="javascript:window.history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+        </div>
+        <div class="form-search clearfix">
+            <div class="pull-left"> mac：{probe_helper::mac_encode($mac)}</div>
+        </div>
+        <div class="list">
+            <table class="table table-bordered table-striped center table_co_td">
+                <thead>
+                <tr>
+                    <th>时间</th>
+                    <th>信号</th>
+                </tr>
+                </thead>
+                <tbody class="js_table">
+                    
+                </tbody>
+            </table>
+            <div class="pages js_pages">
+  
+            </div>
+            <div class="pages hide">
+                <div class="pagination pagination-right">
+                    <ul>
+                        <li>
+                            <a class="js_prev" href="javascript:;">上一页</a>
+                        </li> 
+                        <li>
+                            <a class="js_next" href="javascript:;">下一页</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+<script src="{$smarty.const.SITE_URL}/js/probe/page.js?v={time()}"></script>
+<script>
+$(function(){
+    var list  = [];
+    var start = "{$start}";
+    var end   = "{$end}";
+
+    {if $time_line}
+        {$ary = explode(',', $time_line)}
+        {foreach $ary as $k => $v}
+            {$arr = explode(':', $v)}
+            list[{$k}] = ['{date("Y-m-d H:i:s", $arr[0])}', {$arr[1]}, {$arr[0]}];
+        {/foreach}
+    {/if}
+
+    var p = new page(list, 20, function(list){
+        var html = '';
+        for ( var i = 0; i < list.length; i ++ ) {
+        	if ( start && end ) {
+        		console.log(start, list[i][2]);
+        		if ( list[i][2] * 1 >= start * 1 && list[i][2] * 1 <= end * 1 + 30 ) {
+        			var curr = 'red';
+        		} else {
+        			var curr = '';
+        		}
+        	}
+            html += '<tr class="'+ curr +'"><td>'+ list[i][0] +'</td><td>'+ list[i][1] +'</td></tr>';
+        }
+        $('.js_table').html(html);
+    });
+});
+</script>
+{include_www file="admin/lib/footer_new.html"}

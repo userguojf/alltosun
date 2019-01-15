@@ -1,0 +1,201 @@
+{* 投放机型START *}
+<link rel="stylesheet" type="text/css" href="{$smarty.const.STATIC_URL}/css/admin/content_add.css">
+<div class="form-group">
+  <label class="col-sm-3 control-label">选择机型</label>
+  <div class="col-sm-9">
+      <span>
+        <select name="set_meal_info[nickname_id]" class="form-control deviceSelect" >
+          <option value="">全部品牌</option>
+          {foreach $device_nicknames as $k => $v}
+              <option value="{$v.id}">
+                {if !$v.name_nickname || !$v.version_nickname}
+                  暂不可选
+                {else}
+                  {$v.name_nickname} {$v.version_nickname}
+                {/if}
+              </option>
+          {/foreach}
+        </select>
+      </span>
+      
+      <label for="content[nickname_id]" generated="true" class="error hidden set_meal_nickname_id">请选择机型</label>
+      <p class='tips'>* 必选 至少选择一种机型</p>
+      <span>
+        <div class="tags deviceVersions">
+          {foreach $set_meal_info.phones as $v}
+            <div class="tag">
+              <input type="hidden" name="set_meal_info[phone_version][]]" value="{$v.device_nickname_id}">
+              <span>{$v.phone_name} {$v.phone_version}</span>
+              <em class="icon-del deviceVersionRemove"></em>
+            </div>
+          {/foreach}
+        </div>
+      </span>
+  </div>
+</div>
+
+{* 投放机型END *}
+
+{* 零售价START *}
+<div class="form-group ">
+  <label class="col-sm-3 control-label">零售价</label>
+  <div class="col-sm-9">
+    <span>
+        <input type="number" name="set_meal_info[retail_price]" value="{$set_meal_info.retail_price}" class="set_meal_input form-control" placeholder="请输入零售价">
+    </span>
+    <p class='tips'>* 必填 仅支持纯数字</p>
+  </div>
+</div>
+{* 零售价END *}
+
+{* 推荐套餐START *}
+<div class="form-group ">
+  <label class="col-sm-3 control-label">推荐套餐</label>
+  <div class="col-sm-9">
+    <span>
+        <input type="text" name="set_meal_info[recommended_position]" value="{$set_meal_info.recommended_position}" class="form-control" placeholder="请输入推荐套餐">
+    </span>
+    <p class='tips'>* 非必填 保持在5个中文汉字的宽度之内合图效果更佳</p>
+  </div>
+</div>
+{* 推荐套餐 *}
+
+{* 卖点 1 START *}
+<div class="form-group ">
+  <label class="col-sm-3 control-label">卖点1</label>
+  <div class="col-sm-9">
+    <span>
+        <input type="text" name="set_meal_info[selling_point_1]" value="{$set_meal_info.selling_point_1}" class="set_meal_input form-control" placeholder="请输入卖点">
+    </span>
+    <p class='tips'>* 必填 保持在5个中文汉字的宽度之内合图效果更佳</p>
+  </div>
+</div>
+{* 卖点 1 END *}
+
+{* 卖点 2 START *}
+<div class="form-group ">
+  <label class="col-sm-3 control-label">卖点2</label>
+  <div class="col-sm-9">
+    <span>
+        <input type="text" name="set_meal_info[selling_point_2]" value="{$set_meal_info.selling_point_2}" class="set_meal_input form-control" placeholder="请输入卖点">
+    </span>
+    <p class='tips'>* 必填 保持在5个中文汉字的宽度之内合图效果更佳</p>
+  </div>
+</div>
+{* 卖点 2 END *}
+
+{* 卖点 3 START *}
+<div class="form-group ">
+  <label class="col-sm-3 control-label">卖点3</label>
+  <div class="col-sm-9">
+    <span>
+        <input type="text" name="set_meal_info[selling_point_3]" value="{$set_meal_info.selling_point_3}" class="set_meal_input form-control" placeholder="请输入卖点">
+    </span>
+    <p class='tips'>* 必填 保持在5个中文汉字的宽度之内合图效果更佳</p>
+  </div>
+</div>
+{* 卖点 3 END *}
+
+{* 设备参数 1 START *}
+<div class="form-group ">
+  <label class="col-sm-3 control-label">设备参数1</label>
+  <div class="col-sm-9">
+    <span>
+        <input type="text" name="set_meal_info[param_1]" value="{$set_meal_info.param_1}" class="set_meal_input form-control" placeholder="请输入参数">
+    </span>
+    <p class='tips'>* 必填 保持在5个中文汉字的宽度之内合图效果更佳</p>
+  </div>
+</div>
+{* 设备参数 1 END *}
+
+{* 设备参数 2 START *}
+<div class="form-group ">
+  <label class="col-sm-3 control-label">设备参数2</label>
+  <div class="col-sm-9">
+    <span>
+        <input type="text" name="set_meal_info[param_2]" value="{$set_meal_info.param_2}" class="set_meal_input form-control" placeholder="请输入参数">
+    </span>
+    <p class='tips'>* 必填 保持在5个中文汉字的宽度之内合图效果更佳</p>
+  </div>
+</div>
+{* 设备参数 2 END *}
+
+
+{* 设备参数 3 START *}
+<div class="form-group ">
+  <label class="col-sm-3 control-label">设备参数3</label>
+  <div class="col-sm-9">
+    <span>
+        <input type="text" name="set_meal_info[param_3]" value="{$set_meal_info.param_3}" class="set_meal_input form-control" placeholder="请输入参数">
+    </span>
+    <p class='tips'>* 必填 保持在5个中文汉字的宽度之内合图效果更佳</p>
+  </div>
+</div>
+{* 设备参数 3 END *}
+
+
+{* 设备参数 4 START *}
+<div class="form-group ">
+  <label class="col-sm-3 control-label">设备参数4</label>
+  <div class="col-sm-9">
+    <span>
+        <input type="text" name="set_meal_info[param_4]" value="{$set_meal_info.param_4}" class="set_meal_input form-control" placeholder="请输入参数">
+    </span>
+    <p class='tips'>* 必填 保持在5个中文汉字的宽度之内合图效果更佳</p>
+  </div>
+</div>
+{* 设备参数 4 END *}
+
+
+{* 设备参数 5 START *}
+<div class="form-group ">
+  <label class="col-sm-3 control-label">设备参数5</label>
+  <div class="col-sm-9">
+    <span>
+        <input type="text" name="set_meal_info[param_5]" value="{$set_meal_info.param_5}" class="set_meal_input form-control" placeholder="请输入参数">
+    </span>
+    <p class='tips'>* 必填 保持在5个中文汉字的宽度之内合图效果更佳</p>
+  </div>
+</div>
+{* 设备参数 5 END *}
+
+{* 设备参数 6 START *}
+<div class="form-group ">
+  <label class="col-sm-3 control-label">设备参数6</label>
+  <div class="col-sm-9">
+    <span>
+        <input type="text" name="set_meal_info[param_6]" value="{$set_meal_info.param_6}" class="set_meal_input form-control" placeholder="请输入参数">
+    </span>
+    <p class='tips'>* 必填 保持在5个中文汉字的宽度之内合图效果更佳</p>
+  </div>
+</div>
+{* 设备参数 6 END *}
+<script>
+/******************************** 套餐图处理js ***************************************/
+
+$('.deviceSelect').on('change', function () {
+  var phoneTitle = $.trim($(this).find("option:selected").text());
+  var phoneValue = $(this).val();
+  console.log(phoneTitle);
+  var objs = $('input[value="'+ phoneValue +'"]');
+  if (objs.length > 0 && objs.attr('name') == 'set_meal_info[phone_version][]') {
+    //alert('此机型已被选择');
+    return false;
+  }
+  
+  if (phoneTitle && phoneValue ) {
+    $('.deviceVersions').append(
+        '<div class="tag">\
+          <input type="hidden" name="set_meal_info[phone_version][]" value="' + phoneValue + '">\
+          <span>' + phoneTitle + '</span>\
+          <em class="icon-del deviceVersionRemove"></em>\
+        </div>'
+    );
+  }
+});
+
+//清除已选择的设备型号
+$('.deviceVersions').on('click', '.deviceVersionRemove', function () {
+  $(this).closest('.tag').remove();
+});
+</script>

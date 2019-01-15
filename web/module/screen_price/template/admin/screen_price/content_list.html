@@ -1,0 +1,123 @@
+{include_www file="admin/lib/header_new.html" title="内容列表"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<style>
+    .pop-bg p .w_url{
+       word-wrap: break-word;
+    }
+    .btn_msg{
+       cursor:pointer;
+    }
+    .btn_msg:hover{
+        color:#23527c;
+    }
+</style>
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen_content/admin')}"><i class="iconfont iconfont-logo2"></i>亮屏管理</a>
+            &gt;
+            <span>设备价格修改统计</span>
+          </div>
+
+          <div class="form-search clearfix">
+          
+          </div>
+         <div class="form-search row clearfix">
+
+          <div class="tabs2">
+             <ul class="clearfix col-sm-4">
+                    <li class="dateType {if $search_filter.date_type==1}curr{/if}" ><a href="{AnUrl("screen_price/admin?search_filter[date_type]=1")}" >今日</a></li>
+                    <li class="dateType {if $search_filter.date_type==2}curr{/if}" ><a href="{AnUrl("screen_price/admin?search_filter[date_type]=2")}" >近7天</a></li>
+                    <li class="dateType {if $search_filter.date_type==3}curr{/if}" ><a href="{AnUrl("screen_price/admin?search_filter[date_type]=3")}" >近30天</a></li>
+                </ul>
+
+                <div class="clearfix col-sm-8">
+                    <div class="form-inline" id="dateSelectBox" >
+                        <div class="form-group">
+                            <label for="exampleInputName2">时间：</label>
+                            <input type="text" class="form-control" style="width:100px; text-align:center;" name="start_date" id="start_time" value="{$search_filter.start_time}" />
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputName2">至</label>
+                            <input type="text" class="form-control" style="width:100px; text-align:center;" name="end_date" id="end_time" value="{$search_filter.end_time}" />
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputName2"></label>
+                            <input type="text" style="width:180px;" name="device_unique_id" id = "device_unique_id" value="{$search_filter.device_unique_id}" placeholder="按设备唯一识别ID查询"/> 
+                        </div>
+                        <button type="button" class="btn btn-success btn-sm" id="searchData">搜索</button>
+                    </div>
+                </div>
+          </div>
+        </div>
+          <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th width='15%'>标题</th>
+                  <th width='8%'>内容</th>
+                  <th width='8%'>类型</th>
+                  <th width='7%'>创建者</th>
+                  <th width='10%'>时间</th>
+                  <th width='12%'>设备</th>
+                  <th width='7%'>修改次数</th>
+                </tr>
+              </thead>
+              <tbody>
+                {foreach $stat_list as $k=>$v}
+                 {$content = screen_price_helper::get_content_info($v.content_id)}
+                <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                  <td>{$content.title}</td>
+                  <td>
+                    
+                        {if $content.new_link}
+                        <a href="{_image($content.new_link)}" target='_blank'><img width="100" src="{_image($content.link)}"></a>
+                        {else}
+                         <a href="{_image($content.link)}" target='_blank'><img width="100" src="{_image($content.link)}"></a>
+                        {/if}
+                  </td>
+                  <td>{screen_content_config::$content_type[$content.type]}</td>
+                  <td>{member_helper::get_member_info($v.member_id,'member_user')}</td>
+                  <td class='btn_start'>{substr($v.date, 0, 10)}</td>
+                 <td>
+                     <a href="{AnUrl('screen_price/admin/index/device_info',"?device_unique_id={$v.device_unique_id}")}">{$v.device_unique_id}</a>
+                </td>
+                 <td class="txtleft ">
+                        <a href="{AnUrl('screen_price/admin/index/price_record',"?device_unique_id={$v.device_unique_id}")}">
+                            {$v.change_num}
+                        </a>
+                 
+                 </td>
+                </tr>
+                 {foreachelse}
+                <tr><td colspan="8">暂无相关信息</td></tr>
+                {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        <!--end:列表-->
+<!-- 主内容 end -->
+      </div>
+<script>
+$(function() {
+	 var url        = siteUrl + "/screen_price/admin/";
+
+	    $('#searchData').on('click', function () {
+	        var startTime = $('#start_time').val();
+	        var endTime   = $('#end_time').val();
+	        var device_unique_id   = $('#device_unique_id').val();
+
+	        window.location.href = url +'?search_filter[start_time]=' + startTime + '&search_filter[end_time]=' + endTime + '&search_filter[device_unique_id]=' + device_unique_id;
+	   });
+
+});
+
+</script>
+<!-- 主内容 end -->
+<!-- 引入弹层 -->
+{include_www file="admin/lib/pop.html"}
+{include_www file="admin/lib/footer_new.html"}

@@ -1,0 +1,140 @@
+  {include_www file="admin/lib/e_header.html" title="手机信息录入"}
+  <link href="{$smarty.const.STATIC_URL}/css/phone-form.css" rel="stylesheet" type="text/css">
+  <section class="container">
+    <div class="phone-form">
+      <div class="line-wrapper ">
+        <div class="inner flex flex-pack-justify flex-align-center">
+          <div class="wrapper-left">标签ID</div>
+          <div class="wrapper-right">
+            <input type="text" value="{$rfid_info.label_id}" {if $id} readonly="true" {/if} resId="{$id}" name='label' id='label_id' placeholder="请输入标签ID">
+          </div>
+        </div>
+      </div>
+      <div class="line-wrapper ">
+        <div class="inner flex flex-pack-justify flex-align-center">
+          <div class="wrapper-left">手机品牌</div>
+          <div class="wrapper-right">
+            <div class="select select-brand" value="{$rfid_info.name}">请选择手机品牌</div>
+            <select name="phone_name" id="brand" class="phone_name" prompt="请选择手机品牌" dir="rtl" >
+               {$name_info= rfid_helper::get_phone_field_info('name', '' , '')}
+               <option  value="0">请选择手机品牌</option>
+               {foreach  $name_info as $k=>$v}
+                   <option  {if $rfid_info.name == $v}  selected = "selected" {/if} value="{$v}">{$v}</option>
+               {/foreach}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="line-wrapper ">
+        <div class="inner flex flex-pack-justify flex-align-center">
+          <div class="wrapper-left">型号</div>
+          <div class="wrapper-right">
+            <div class="select select-type" value="{$rfid_info.version}">请选择型号</div>
+            <select name="version" id="type" class="phone_version" prompt="请选择手机品牌" dir="rtl">
+                 {if $rfid_info.id}
+                   {$version_info = rfid_helper::get_phone_field_info('version' , $rfid_info.name , '')}
+                     {foreach $version_info as  $k=>$v}
+                       <option {if $rfid_info.version == $v} selected = "selected"{/if}  value="{$v}"> {$v} </option>
+                     {/foreach}
+                  {else}
+                   <option  value="0">请选择手机型号</option>
+                  {/if}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="line-wrapper ">
+        <div class="inner flex flex-pack-justify flex-align-center">
+          <div class="wrapper-left">颜色</div>
+          <div class="wrapper-right">
+            <div class="select select-color" value="{$rfid_info.color}">请选择颜色</div>
+            <select name="color" id="color" class="phone_color" prompt="请选择手机颜色" dir="rtl">
+                 {if $rfid_info.id}
+                   {$color_info= rfid_helper::get_phone_field_info('color' , $rfid_info.name  ,  $rfid_info.version)}
+                   {foreach $color_info as $k=>$v}
+                     <option {if $rfid_info.color == $v}selected = "selected"{/if}  value="{$v}">{$v}</option>
+                   {/foreach}
+                 {else}
+                   <option  value="0">请选择手机颜色</option>
+                 {/if}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="line-wrapper">
+        <div class="inner flex flex-pack-justify flex-align-center">
+          <div class="wrapper-left">IMEI末六位</div>
+          <div class="wrapper-right">
+            <input type="number" value="{$rfid_info.imei}" id='imei' name='imei' placeholder="请输入IMEI末六位">
+          </div>
+        </div>
+      </div>
+      <div class="tip">注：IMEI(缩写)是国际移动设备身份码，由15位数字组成。请您输入末6位数字。</div>
+    </div>
+  </section>
+  <footer class="footer">
+    <div class="btn-container flex flex-align-center flex-pack-center">
+      <a href="javascript:;" class="btn flex-1 phone_save save_tip">保存</a>
+      {if !$id}
+          <a href="javascript:;" class="btn flex-1 phone_save">保存并继续</a>
+      {/if}
+      <!-- <a href="javascript:;" class="btn flex-1 phone_save">保存</a> -->
+      <!-- <a href="#" class="btn flex-1 ">保存并继续</a> -->
+    </div>
+    
+     <!--  <ul class="footer-nav clearfix">
+      <li><a href="###"><em class="icon-tongji"></em><span>统计</span></a></li>
+      <li><a href="###"><em class="icon-guanli"></em><span>管理</span></a></li>
+      <li><a href="###"><em class="icon-fankui"></em><span>反馈</span><i class="new-num">2</i></a></li>
+      <li class="curr"><a href="###"><em class="icon-bangzhu"></em><span>帮助</span></a></li>
+    </ul> -->
+  </footer>
+</div>
+<!-- 集团的提示 -->
+{if !$id}
+    {if $member_info.id == 1 || $member_info.res_name == 'group'}
+        <div class="info error-tips popup">
+            <div class="inner">提示：集团管理员目前不能添加</div>
+        </div>
+    {/if}
+{/if}
+
+<!-- 成功失败提示 -->
+<div class="info error-tips">
+
+</div>
+<!-- 表单验证 -->
+<script src="{$smarty.const.STATIC_URL}/js/rfid/form_check.js?v=99981"></script>
+
+<!--  页面自带js -->
+<script>
+$(function(){
+    $('.js_btnHeader').on('click', function(){
+        $('.js_headerNav').toggle();
+    });
+});
+</script>
+<script>
+  $.fn.extend({
+    selectType: function() {
+      var $this = $(this);
+      console.log($this.val());
+      if ($this.val() == "0") {
+        $this.addClass('grey');
+      }
+      $this.on("change", function () {
+        var $self = $(this);
+        if ($this.val() == "0") {
+          $self.addClass("grey");
+        } else {
+          $self.removeClass("grey");
+        }
+      })
+    }
+  })
+  $("select#brand").selectType();
+  $("select#type").selectType();
+  $("select#color").selectType();
+</script>
+</body>
+</html>

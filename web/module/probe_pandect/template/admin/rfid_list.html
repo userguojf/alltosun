@@ -1,0 +1,93 @@
+{include_www file="admin/lib/header_new.html" title="RFID管理"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('rfid/admin')}"><i class="iconfont iconfont-logo2"></i>RFID管理</a>
+            &gt;
+            <span>RFID列表（{$count}）</span>
+            <span>{if $member_info.res_name == 'group'}全国已覆盖营业厅{rfid_helper::get_business_bestrow($member_info)}个<br />{/if}</span>
+            {*<a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>*}
+          </div>
+          <div class="tabs1">
+            <ul class="clearfix">
+                <li {if $search_filter['put_type'] == 1}class="curr" {/if}><a href="{compile_url($search_filter,'put_type',1,'probe_pandect/admin/device_group')}">设备一览</a></li>
+                <li {if $search_filter['put_type'] == 2}class="curr"{/if}><a href="{compile_url($search_filter,'put_type',2,'probe_pandect/admin/device_group/approve_list')}">待审批设备</a></li>
+                <li {if $search_filter['put_type'] == 3}class="curr"{/if}><a href="{compile_url($search_filter,'put_type',3,'probe_pandect/admin/device_group/approve_list')}">已审批设备</a></li>
+            </ul>
+       </div>
+       <div class="tabs2">
+            <ul class="clearfix">
+                {foreach probe_pandect_config::$search_type as $k => $v}
+                <li {if $search_filter['search_type'] == $k}class="curr"{/if}><a  href="{compile_url($search_filter,'search_type',$k,'probe_pandect/admin/device_group')}">{$v}</a></li>
+                {/foreach}
+            </ul>
+        </div>
+          <div class="form-search clearfix">
+             <div class="pull-left">
+                 <form action="{AnUrl('probe_pandect/admin/device_group/rfid_list')}" method='get'>
+                     <input type="hidden"  name="search_filter[put_type]" value="{$search_filter.put_type}">
+                     <input type="hidden"  name="search_filter[search_type]" value="{$search_filter.search_type}">
+                   {if $member_res_name != 'business_hall'}
+                     {* 公共分权限搜索模块 *}
+                     {widget model='rfid' func='get_search_by_member' file='get_search_by_member.html' member_info="{$member_info}"}
+                     <input type="text" style="width:120px;"  name="search_filter[label_id]" value="{$search_filter.label_id}" class="form-control input-sm pull-left js_search"  placeholder="请按标签ID搜索">
+                     <button type="submit" class="btn-search pull-left">搜索</button>
+                   {/if}
+                 </form>
+            </div>
+        </div>
+          
+          <div class="list">
+            
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>省份</th>
+                  <th>地市</th>
+                  <th>地区</th>
+                  <th>厅店名称</th>
+                  <th style="width:%;">标签ID</th>
+                  <th style="width:%;">柜台</th>
+                  <th style="width:%;">手机品牌</th>
+                  <th style="width:%;">型号</th>
+                  <th style="width:%;">颜色</th>
+                  <th style="width:%;">IMEI</th>
+                  <th style="width:%;">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {foreach $rfid_list as $k=>$v}
+                <tr id="dataList{$v.id}" >
+                  <td>{business_hall_helper::get_info_name('province' , $v.province_id ,'name')}</td>
+                  <td>{business_hall_helper::get_info_name('city' , $v.city_id ,'name')}</td>
+                  <td>{business_hall_helper::get_info_name('area' , $v.area_id ,'name')}</td>
+                  <td>{business_hall_helper::get_info_name('business_hall', $v.business_hall_id, 'title')}</td>
+                  <td>{$v.label_id}</td>
+                  <td>{shoppe_helper::get_shoppe_info($v.shoppe_id, 'shoppe_name')}</td>
+                  <td>{$v.name}</td>
+                  <td>{$v.version}</td>
+                  <td>{$v.color}</td>
+                  <td>{$v.imei}</td>
+                  <td class="txtleft " resId={$v.id}>
+                        <a class="btn btn-xs  btn-top btn-success" href="{AnUrl("probe_pandect/admin/device_group/add_rfid?id={$v.id}")}">编辑</a>
+                        <a class="btn btn-xs btn-info" href="{AnUrl("probe_pandect/admin/device_group/stat?business_id={$v.business_hall_id}&search_filter[phone_name]={$v.name}&search_filter[phone_version]={rfid_helper::url_params_encode($v.version)}&search_filter[color]={$v.color}&search_filter[label_id]={$v.label_id}")}">查看统计</a>
+                        
+                        
+                        <a class="deleteOne btn btn-xs btn-top btn-danger" href="{AnUrl("probe_pandect/admin/device_group/delete_rfid?id={$v.id}")}">删除</a>
+                    </td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="9">暂无相关信息</td></tr>
+                {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        <!--end:列表-->
+      </div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

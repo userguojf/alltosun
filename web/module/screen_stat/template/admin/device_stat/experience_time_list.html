@@ -1,0 +1,91 @@
+{include_www file="admin/lib/header_new.html" title="体验时长统计"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('screen_stat/admin/device_stat')}"><i class="iconfont iconfont-logo2"></i>亮屏覆盖量统计</a>
+      &gt;体验时长详情{if $business_title} &gt;{$business_title}{/if}
+      </span>
+      <a href="{AnUrl('screen_stat/admin/device_stat')}" class="btn btn-primary btn-sm pull-right">返回</a>
+      <a style="margin-right:10px;" href="{AnUrl("screen_stat/admin/device_stat/experience_list/experience_list{$search_filter_str}&is_export=1&search_filter[business_id]={$business_id}&search_filter[region_id]={$region_id}&search_filter[region_type]={$region_type}&hall_title={$hall_title}&device_unique_id={$device_unique_id}&from=device_stat_business_hall_list")}" class="btn btn-primary btn-sm pull-right">导出</a>
+    </div>
+    <br />
+
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>省</th>
+            <th>市</th>
+            <!-- <th>区</th> -->
+            <th>厅</th>
+            <th>品牌</th>
+            <th>型号</th>
+            <th>IMEI</th>
+            <th>时长{screen_helper::format_timestamp_text($time_count)}</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $device_business_hall_list as $k=>$v}
+          <tr id="dataList{$k}">
+            <td>{_uri('province', $v.province_id, 'name')}</td>
+            <td>{_uri('city', $v.city_id, 'name')}</td>
+            <!-- <td>{_uri('area', $v.area_id, 'name')}</td> -->
+            <td>{_uri('business_hall', $v.business_id, 'title')}</td>
+            <td>{$v.phone_name}</td>
+            <td>{$v.phone_version}</td>
+            <td>{$v.device_unique_id}</td>
+            <td>{screen_helper::format_timestamp_text($v.experience_time)}</td>
+            <td>{$v.add_time}</td>
+            <td>{$v.update_time}</td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="10">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}
+
+<script>
+$(function () {
+  $('#searchData').on('click',function() {
+    refershUrl();
+  });
+});
+
+function refershUrl(){
+  var $params           = { };
+  $params.start_date    = $('#start_time').val();
+  $params.end_date      = $('#end_time').val();
+
+  $a = 1;
+  var urlParam = '';
+  for (var i in $params) {
+    if ($params[i]) {
+      if ($a == 1) {
+        urlParam += '?';
+      } else {
+        urlParam += '&';
+      }
+      
+      urlParam += 'search_filter['+ i + ']=' + $params[i];
+    }
+    
+    $a += 1;
+  }
+
+  var url = siteUrl+'/rfid/admin/stat/detail'+urlParam;
+  window.location.href = url;
+
+}
+</script>

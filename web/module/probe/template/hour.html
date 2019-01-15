@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>分时数据</title>
+        <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+        <script src="/js/highcharts.js"></script>
+        <script src="/js/highcharts-more.js"></script>
+    </head>
+<body>
+    <button class="button" href='{AnUrl("probe/min")}'>实时数据</button>
+    <button class="button" href='{AnUrl("probe/hour")}'>分时数据</button>
+    <div id="container" style="width: 90%; height: 500px; margin: 0 auto"></div>
+<script>
+var date = "{$date}";
+// 类型
+var type = 'hour';
+// 较近设备数
+var near = [{implode(",", $dates['near'])}];
+// 较远设备数
+var far  = [{implode(",", $dates['far'])}];
+// 中间设备数
+var mid  = [{implode(",", $dates['mid'])}];
+// 设备数据
+{if $data}
+var data = {$data};
+{else}
+var data = [];
+{/if}
+
+$('.button').click(function(){
+	window.location.href = $(this).attr('href');
+});
+</script>
+<script type="text/javascript" src="/js/probe.js?v={time()}"></script>
+</body>
+</html>

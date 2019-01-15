@@ -1,0 +1,94 @@
+{include_www file="admin/lib/header_new.html" title="{if $info}编辑{else}添加{/if}营业厅规则"}
+<style>
+    .pic-upload { width:250px;height:133px; }
+    .btn-upload{ width:106px; height: 33px; }
+    .btn-upload a{ display: block;position:relative;width: 104px;height: 33px;line-height: 18px;padding: 6px 0;text-align: center;color: #4c4c4c;background: #fff;border: 1px solid #eee;}
+    .btn-upload input{ width:106px; height:33px; position:relative; left:0px; top:-32px; z-index:1;filter:alpha(opacity=0);-moz-opacity:0;opacity:0; cursor:pointer;}
+    .js_upFileBox{ margin-left:0px;margin-top:30px;}
+</style>
+<!--start:右侧-->
+<div class="main mian2 ">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('probe_rule/admin/business')}"><i class="iconfont iconfont-logo2"></i>探针管理</a>
+            &gt;
+            <span>{if $info}编辑{else}添加{/if}营业厅规则</span>
+            <a href="{AnUrl('probe_rule/admin/business/index')}" class="btn btn-primary btn-sm pull-right">返回营业厅规则列表</a>
+        </div>
+
+        <div class="clearfix">
+            <div class="form-add pull-left">
+                <form class="form-horizontal" action='{AnUrl("probe_rule/admin/business/save")}' method="post">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"><em class="red">*</em>营业厅</label>
+                        <div class="col-sm-9">
+                            <span>
+                                <select name="business" class="form-control js_business">
+                                    {if $info}
+                                        <option value="{$info['id']}">{$info.title}</option>
+                                    {else}
+                                        {$b_ids = probe_new_helper::get_b_ids($member_info['res_name'], $member_info['res_id'])}
+                                        {foreach $b_ids as $k => $v}
+                                            <option value="{$v}">{get_resource_info('business_hall', $v, 'title')}</option>
+                                        {foreachelse}
+                                            <option value="0">暂无可添加的营业厅</option>
+                                        {/foreach}
+                                    {/if}
+                                </select>
+                            </span>
+                        </div>
+                    </div>
+
+                    {probe_rule_helper::rule_option( $info )}
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-10">
+                            <button type="submit" class="btn btn-sm btn-success selectSub">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;确定&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(function(){
+    $('.selectSub').click(function(e) {
+        e.preventDefault();
+
+        var business = $('.js_business').val();
+        var len      = $('.js_checkbox').length;
+
+        if ( business < 1 ) {
+        	return error('请选择营业厅');
+        }
+
+        for ( var i = 0; i < len; i ++ ) {
+        	var obj = $('.js_option').eq(i);
+
+        	if ( typeof(obj.find('.js_checkbox').attr("checked")) == 'undefined' ) {
+        		continue;
+        	}
+        	var length = obj.find('.js_option_text').length;
+        	for ( var n = 0; n < length; n ++ ) {
+        		var textObj = obj.find('.js_option_text').eq(n);
+        		var value   = textObj.val();
+        		if ( !value ) {
+        			return error('请输入规则'+ (i + 1)+ '的选项值');
+        		}
+        		if ( isNaN(value) || parseInt(value) != value ) {
+        			return error('规则'+ (i + 1)+ '的选项值只能为整数');
+        		}
+        	}
+        }
+
+        $('.form-horizontal').submit();
+    });
+});
+function error( msg )
+{
+    alert(msg);
+    return false;
+}
+</script>
+{include_www file="admin/lib/footer_new.html"}

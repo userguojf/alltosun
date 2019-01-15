@@ -1,0 +1,299 @@
+{include_www file="admin/lib/header3.html" title="内容列表"}
+{include_www file="admin/lib/sidebar3.html"} 
+<style>
+.pop-picture .picture-box img {
+    max-width: 300px;
+    max-height: 410px;
+}
+</style>
+
+<!--start:container-->
+<div class="container">
+  <div class="bread">
+    <a href="{AnUrl('screen_content_new/admin')}">亮屏管理</a>
+    <i class="icon-arrow-right"></i>
+    <a href="{AnUrl('screen_content_new/admin/xcpic')}" class="active">上传模板列表（{$count}）</a>
+  </div>
+
+<!-- end -->
+  <div class="liangping-content">
+    <form action="{AnUrl('screen_content_new/admin/xcpic')}" method="get">
+      <div class="reorder-box ">
+        <div class="clearfix">
+          <div class="item left">
+            <label class="left">亮屏标题</label>
+            <div class="input left">
+                <input type="text"  name="search_filter[title]" value="{$search_filter.title}" placeholder="按标题搜索">
+            </div>
+          </div>
+
+          <div class="item left" id="creator">
+            <label class="left">创建者</label>
+            <div class="select left">
+              {$creator = screen_content_config::$creator_list}
+              <div class="default" id="creator_title">{if !$search_filter.creator} 全部 {else} {$creator[$search_filter.creator]} {/if}</div>
+              <div class="select-list hidden">
+                <p class="creator_list {if !$search_filter.creator} active {/if}" value="0">全部</p>
+                {foreach $creator as $k => $v}
+                {if $k != $member_info.res_name}
+                <p class="creator_list {if $search_filter['creator'] == $k} active {/if}" value="{$k}">{$v}</p>
+                {/if}
+                {/foreach}
+                <input type="hidden" id="creator_input" name="search_filter[creator]" value="{$search_filter.creator}">
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="btn">
+          <button type="submit">搜索</button>
+        </div>
+      </div>
+    </form>
+    <div class="top-options clearfix">
+      <div class="reorder active right" id="shouqi">
+        <span>收起筛选</span><i class="icon-arrow-down"></i>
+      </div>
+      <div class="reorder right" style="display:none;" id="zhankai">
+        <span>展开筛选</span><i class="icon-arrow-down"></i>
+      </div>
+    </div>
+    <div class="liangping-list">
+      <table cellpadding="0" cellspacing="0">
+        <tr>
+          <th width="35%">信息</th>
+          <th width="20%">模板</th>
+          <th width="20%">使用次数</th>
+          <th width="25%">操作</th>
+        </tr>
+
+        {foreach $list as $k=>$v}
+        <tr>
+        <td>
+        <div class="detail clearfix">
+            <div class="con left">
+                <p>标题：{$v.title}</p>
+                <p>创建者：{$v.res_name}</p>
+                <p>创建时间：{$v.add_time}</p>
+            </div>
+        </div>
+        </td>
+         <td style="center:center;">
+            <div class="detail clearfix">
+            {$info.link}
+                <a href="{_image($v.link, 'middle')}" target="_blank">
+                    <div class="pic left"><img src="{_image($v.link, 'middle')}"></div>
+                </a>
+            </div>
+        </td>
+         <td class="txtcenter">
+            <p>{$v.use_num}次</p>
+        </td>
+          <td class="txtcenter" resId={$v.id}>
+            {if !$v.status}
+                <p><a class="link-primary up_del" href="javascript:;">立即发布</a></p>
+            {else}
+                <p><a class="link-danger down_del" href="javascript:;">手动下线</a></p>
+            {/if}
+
+            <p><a class="link-primary" href="{AnUrl("screen_content_new/admin/xcpic/add?id={$v.id}")}">编辑</a></p>
+            <p><a class="link-danger delete_hot" href="javascript:;">删除</a></p>
+
+          </td>
+        </tr>
+        {/foreach}
+      </table>
+    </div>
+  </div>
+  {include_www file="admin/lib/pager3.html"}
+</div>
+<!--end:container-->
+<input type="hidden" id="resId">
+<!--start:删除弹层-->
+<div class="pop-bg js_pop_confirm hidden">
+  <div class="pop-confirm ">
+    <div class="con">
+      <p class="txtcenter">确定删除吗？</p>
+    </div>
+    <div class="bottom">
+      <button type="button" class="btn-default js_btn_concel">取消</button>
+      <button type="button" class="btn-primary" id="del_sure">确定</button>
+    </div>
+  </div>
+</div>
+<!--end:删除弹层-->
+
+<!--start:下线弹层-->
+<div class="pop-bg hidden down_confirm">
+  <div class="pop-confirm ">
+    <div class="con">
+      <p class="txtcenter">下线后的内容将不会展示，确认下线？</p>
+    </div>
+    <div class="bottom">
+      <button type="button" class="btn-default js_btn_concel" id="down_no">取消</button>
+      <button type="button" class="btn-primary" id="down_sure">确定</button>
+    </div>
+  </div>
+</div>
+<!--end:下线弹层-->
+<script type="text/javascript">
+    $(function(){
+        // 删除弹窗弹起
+        $('.delete_hot').click(function(){
+            var resId = $(this).parents('td').attr('resId');
+            $('#resId').val(resId);
+            var outthis = '<span class="out_tr'+resId+'" style="display:none;"></span>';
+            $(this).parents('td').append(outthis);
+            $('.js_pop_confirm').removeClass('hidden');
+        });
+        // 删除弹窗隐藏
+        $('.js_btn_concel').click(function(){
+            var resId = $('#resId').val();
+            $('.out_tr'+resId).remove();
+            $('.js_pop_confirm').addClass('hidden')
+        });
+
+        // 收起筛选
+        $('#shouqi').on('click', function () {
+            $('.reorder-box').addClass('hidden');
+            $(this).css('display', 'none');
+            $('#zhankai').css('display','inline');
+        });
+
+        // 展开筛选
+        $('#zhankai').on('click', function () {
+            $('.reorder-box').removeClass('hidden');
+            $(this).css('display','none');
+            $('#shouqi').css('display','inline');
+        });
+
+        // 确定删除
+        $('#del_sure').on('click', function () {
+            $('.js_pop_confirm').addClass('hidden');
+            updateStatus.update(2);
+        });
+
+        // 手动下线弹窗展示
+        $('.txtcenter').on('click', '.down_del', function (e) {
+            e.preventDefault();
+            var resId = $(this).parents('td').attr('resId');
+            $('#resId').val(resId);
+            $(this).addClass('down'+resId);
+            $('.down_confirm').removeClass('hidden');
+        });
+        // 下线弹窗隐藏
+        $('#down_no').on('click', function () {
+            $('.down_confirm').addClass('hidden');
+        });
+        // 确认下线按钮
+        $('#down_sure').on('click', function () {
+            updateStatus.update(0);
+            $('.down_confirm').addClass('hidden');
+        });
+
+        // 发布按钮更新状态
+        $('.txtcenter').on('click', '.up_del', function (e) {
+            e.preventDefault();
+            var resId = $(this).parents('td').attr('resId');
+            $('#resId').val(resId);
+            $(this).addClass('up'+resId);
+            updateStatus.update(1);
+        });
+        // 更新状态
+        var updateStatus = {
+            _id : '',
+            _msg :'操作失败',
+            _url:"{AnUrl('screen_content_new/admin/ajax/update_make_pic_status')}",
+            update:function(status){
+                this._id = $('#resId').val();
+                $.post(this._url,{ id:this._id, status:status },function(json){
+                    if (json.info == 'ok') {
+                        if (status == 0) {
+                            updateStatus.updateHtmlDown();
+                        } else if (status == 1) {
+                            updateStatus.updateHtmlUp();
+                        } else if (status == 2) {
+                            updateStatus.deleteHtml();
+                        }
+                    } else {
+                        alert(json.info);
+                    }
+                },'json')
+            },
+            deleteHtml:function(){
+                $('.out_tr'+this._id).parents('tr').fadeOut();
+                $('.out_tr'+this._id).remove();
+            },
+            updateHtmlDown:function(){
+                $('.down'+this._id).html('立即发布');
+                $('.down'+this._id).removeClass('down_del');
+                $('.down'+this._id).removeClass('link-danger');
+
+                $('.down'+this._id).addClass('link-primary');
+                $('.down'+this._id).addClass('up_del');
+
+            },
+            updateHtmlUp:function(){
+                $('.up'+this._id).html('手动下线');
+                $('.up'+this._id).removeClass('link-primary');
+                $('.up'+this._id).removeClass('up_del');
+
+                $('.up'+this._id).addClass('link-danger');
+                $('.up'+this._id).addClass('down_del');
+            }
+        };
+
+        // 下拉框 移入移出 hidden效果
+        $('.select-list').hover(function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+            $(this).removeClass('hidden');
+        },function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+            $(this).addClass('hidden');
+        });
+
+        /*    $('.select').on('click', function (e) {
+                e.stopPropagation();
+               $('.select-list').each(function () {
+                   $(this).addClass('hidden');
+               })
+               $(this).find('.select-list').removeClass('hidden');
+            });
+    */
+        // 点击下拉框展示或隐藏
+        $('.select').on('click', function () {
+            $(this).find('.select-list').toggleClass('hidden');
+        });
+
+        // 亮屏状态下拉列表点击
+        $('#liang_status .status_list').on('click', function () {
+            var val = $(this).attr('value');
+            $('#status_input').val(val);
+            $('#status_title').html($(this).html());
+            $(this).addClass('active');
+            $(this).siblings().removeClass('active');
+        });
+
+        // 类型下拉列表点击
+        $('#content_type .content_type_list').on('click', function () {
+            var val = $(this).attr('value');
+            $('#content_type_input').val(val);
+            $('#content_type_title').html($(this).html());
+            $(this).addClass('active');
+            $(this).siblings().removeClass('active');
+        });
+
+        // 创建者下拉列表点击
+        $('#creator .creator_list').on('click', function () {
+            var val = $(this).attr('value');
+            $('#creator_input').val(val);
+            $('#creator_title').html($(this).html());
+            $(this).addClass('active');
+            $(this).siblings().removeClass('active');
+        });
+    });
+</script>
+</body>
+</html>

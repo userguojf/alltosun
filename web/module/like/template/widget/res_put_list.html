@@ -1,0 +1,6 @@
+{foreach $list as $k111=>$v111}
+    已投放&nbsp;{city_helper::get_area_path($v111.res_name , $v111.res_id)}
+    {*&nbsp;&nbsp;&nbsp;{$v111.add_time|date_format:'Y-m-d H:i'}*}{if isset($list[$kk111+1])}<br>{/if}
+{foreachelse}
+  尚未投放
+{/foreach}

@@ -1,0 +1,53 @@
+{include_www file="admin/lib/header_new.html" title="体验统计"}
+{include_www file="admin/lib/sidebar_new.html"}
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('screen/m')}"><i class="iconfont iconfont-logo2"></i>亮屏管理</a>
+            &gt;
+            <span>下载扫描统计</span>
+            <span>({if $count}{$count}{else}0{/if})</span>
+            <!--<a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>-->
+        </div>
+
+
+
+            <div class="form-search row clearfix">
+                <div class="tabs2">
+                    <div class="col-sm-8">
+
+                    </div>
+                </div>
+            </div>
+
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>渠道</th>
+                    <th>扫描</th>
+                    <th>下载</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $source_list as $v}
+                <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+
+                    <td>{$v}</td>
+                    <td><a href="{AnUrl("screen/m/record_list?search_filter[type]=1&search_filter[source]={$v}")}">{screen_helper::get_count_by_source($v, 1)}</a></td>
+                    <td><a href="{AnUrl("screen/m/record_list?search_filter[type]=2&search_filter[source]={$v}")}">{screen_helper::get_count_by_source($v, 2)}</a></td>
+                </tr>
+                {foreachelse}
+                <tr><td colspan="{if $search_type == 'business'}8{else}11{/if}">暂无相关信息</td></tr>
+                {/foreach}
+                </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

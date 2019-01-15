@@ -1,0 +1,190 @@
+{include_www file="admin/lib/header_new.html" title="设备发货"}
+<style>
+ .btn-add1 {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    text-align: center;
+    font-size: 18px;
+    color: #e9e9e9;
+    border: 1px solid #e9e9e9;
+    background: #fff;
+    border-radius: 2px;
+}
+</style>
+<!--start:右侧-->
+<div class="main mian2 ">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('factory/admin')}"><i class="iconfont iconfont-logo2"></i>设备列表</a>
+      &gt;
+      <span>发货</span>
+      <a href="{AnUrl('factory/admin')}" class="btn btn-primary btn-sm pull-right">返回设备列表</a>
+    </div>
+
+    <div class="clearfix">
+      <div class="form-add pull-left" style="width:80%;">
+        {AnForm class='form-horizontal' action="{AnUrl('factory/admin/index/goods_send')}" method="post" enctype="multipart/form-data"}
+         <input type='hidden' name='id' value="{$device_info.id}">
+         <input type='hidden' name='device_num' value="{$device_info.device_num}">
+         <div class="form-group" >
+              <label class="col-sm-3 control-label coupon-num"></label>
+              <div class="col-sm-9">
+                  <p  style = "color:red ; font-size:5px">温馨提示:需填写{$device_info.device_num}台设备的编码</p>
+             </div>
+          </div>
+          
+          <div class="form-group" id='num'>
+              <label class="col-sm-3 control-label coupon-num">快递公司</label>
+              {$company=factory_config::$company}
+                  <div class="col-sm-9">
+                    <select name="company" class="col-sm-9">
+                        <option value = '0'> 请选择</option>
+                        {foreach $company as $k=>$v}
+                            <option value = "{$k}" >{$v}</option>
+                        {/foreach}
+                    </select>
+                  </div>
+              
+          </div>
+          
+         <div class="form-group" id='num'>
+              <label class="col-sm-3 control-label coupon-num">快递单号</label>
+              <div class="col-sm-9">
+                  <input type="text"  name="order_code"  value = '' class="form-control" placeholder="请输入快递单号">
+              </div>
+          </div>
+          <div class="form-group">
+              <label class="col-sm-3 control-label coupon-num">订单地址</label>
+              <div class="col-sm-9">
+                  <input type="num"  name="info[address]" value = {$device_info.address} disabled class="form-control" placeholder="请输入快递单号">
+              </div>
+          </div>
+          
+          <div class="form-group">
+              <label class="col-sm-3 control-label coupon-num">收件人</label>
+              <div class="col-sm-9">
+                  <input type="text"  name="linkman[]" value = {$device_info.linkman}  class="form-control" placeholder="请输入收件人信息">
+                   <a href="javascript:void(0);" class="btn-add1">+</a>
+              </div>
+          </div>
+          
+          <div class="form-group">
+              <label class="col-sm-3 control-label coupon-num">联系电话</label>
+              <div class="col-sm-9">
+                  <input type="text"  name="phone[]" value = {$device_info.phone} class="form-control " placeholder="请输入收件人电话">
+                  <a href="javascript:void(0);" class="btn-add1">+</a>
+              </div>
+          </div>
+          
+          <div class="form-group">
+              <label class="col-sm-3 control-label coupon-num">邮箱</label>
+              <div class="col-sm-9">
+                  <input type="text"  name="email[]" value = {$device_info.email} class="form-control" placeholder="请输入收件人邮箱">
+                  <a href="javascript:void(0);" class="btn-add1">+</a>
+              </div>
+          </div>
+          
+          <div class="form-group" id ="mac">
+              <label class="col-sm-3 control-label coupon-num">设备mac(label_id)</label>
+              <div class="col-sm-9">
+                  <input type="text"  name="device_mac_label_id" class="form-control mac_s" placeholder="请输入设备编号">
+              </div>
+          </div>
+          
+          <div class="form-group hide tishi" >
+              <label class="col-sm-3 control-label coupon-num"></label>
+              <div class="col-sm-9">
+                <p  style = "color:red ; font-size:5px">温馨提示:编码用逗号（,） 分割！</p>
+             </div>
+          </div>
+         
+          
+         <div class="form-group ">
+          <label class="col-sm-3 control-label">设备mac(label_id)添加方式</label> 
+
+          <div class="col-sm-9">
+            {$add_code_info=factory_config::$device_add_code}
+            {foreach $add_code_info as $k=>$v}
+                <div class="checkbox">
+                    <label>
+                        <input type="radio" name="add_type" value="{$k}" class='way' {if $k==1}checked {/if}>&nbsp;{$v}
+                    </label>
+                </div>
+            {/foreach}
+          </div>
+        </div>
+       
+         <!--导入-->
+         
+        <div class="form-group hide" id='dao'>
+            <label class="col-sm-3 control-label coupon-export">导入</label>
+            <div class="col-sm-9">
+                <input type="file" name="export_data">
+            </div>
+            
+            <div class="col-sm-9">
+              <p  style = "color:red ; font-size:5px">温馨提示:上传只有一列mac(label_id)的Excel文件!</p>
+           </div>
+        </div>
+        
+      
+         <div class="form-group">
+           <div class="col-sm-offset-3 col-sm-10">
+             <button type="submit" class="btn btn-sm btn-success" id="btn"><span style='display: inline-block;width: 95px;' class='Sub'>确认</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+             
+             <a type="button" class="btn btn-sm btn-warning" href="{AnUrl('factory/admin')}">&nbsp;&nbsp;返回上一页&nbsp;&nbsp;</a>
+           </div> 
+         </div> 
+        {AnForm}
+      </div>
+
+    </div>
+  </div>
+</div>
+<script>
+//输入mac提示信息
+$('.mac_s').focus(function(){
+	$('.tishi').removeClass('hide');
+});
+
+$('.mac_s').blur(function(){
+    $('.tishi').addClass('hide');
+});
+//元素增减
+$(document).on('click', '.btn-add1', function(){
+  if ($.trim($(this).html()) == '-') {
+	  $(this).prev().remove();
+	  $(this).remove();
+	  return false;
+  }
+
+  var clone_obj = $(this).prev().clone(true,true,true);
+  clone_obj.find('input').val('');
+  var len = $(this).prevAll('input').length;
+  if(len>0){
+      $(this).before('<a href="javascript:void(0);" class="btn-add1">-</a>');
+  }
+  //$(this).html('-');
+  $(this).prev().after(clone_obj);
+  
+  return false;
+});
+
+    //导入
+    $('.way').click(function(){
+        var $v = $(this).val();
+        if ($v== 2) {
+            $('#dao').removeClass('hide');
+            $('#mac').addClass('hide');
+            $('#mac input').val('');
+            
+        } else　{
+            $('#dao').addClass('hide');
+            $('#mac').removeClass('hide');
+        }
+    })
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

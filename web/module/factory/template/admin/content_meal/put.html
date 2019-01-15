@@ -1,0 +1,395 @@
+{include_www file="admin/lib/header_new.html" title="套餐投放"}
+<div class="main mian2 ">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('screen_content/admin/content_meal')}"><i class="iconfont iconfont-logo2"></i>套餐管理</a>
+      &gt;
+      <span>内容投放</span>
+      <a href="{AnUrl('screen_content/admin/content_meal')}" class="btn btn-primary btn-sm pull-right">返回列表</a>
+    </div>
+    <!--end:position-->
+    <div class="clearfix">
+      <div class="form-add pull-left">
+        <form class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-4 control-label"><h4>选择投放区域</h4></label>
+          </div>
+          {* 投放品牌START *}
+          <div class="form-group">
+            <label class="col-sm-3 control-label"><em class="red">*</em>投放品牌</label>
+            <div class="col-sm-9">
+                <span>
+                  <select name="phone_name" class="form-control selectPhoneName required" >
+                    <option value="">全部品牌</option>
+                    {foreach $phone_names as $k => $v}
+                        <option value="{$v.phone_name}">{$v.phone_name}{if $v.phone_name_nickname}({$v.phone_name_nickname}){/if}</option>
+                    {/foreach}
+                  </select>
+                </span>
+            </div>
+          </div>
+          {* 投放品牌END *}
+          
+          {* 投放型号START *}
+          <div class="form-group">
+            <label class="col-sm-3 control-label"><em class="red">*</em>投放型号</label>
+            <div class="col-sm-9">
+                <span>
+                  <select name="phone_name" class="form-control selectPhoneVersion required" >
+                    <option value="">全部型号</option>
+                  </select>
+                </span>
+            </div>
+          </div>
+          {* 投放型号END *}
+          
+         <!-- 标题 -->
+         {if $member_info['res_name'] == 'group'}
+            <div class="form-group">
+                <label class="col-sm-3 control-label"><em class="red">*</em>投放省份</label>
+                <div class="col-sm-9">
+                {AnForm type="select"  default_text="全国(所有省份)" default_value=0 name="province_id" options=$province_list validate="required"   filter="filter_string" class="form-control selectProvince"}
+                </div>
+            </div>
+         {/if}
+
+         {* 城市按钮框START *}
+         {if $member_info['res_name'] == 'group' || $member_info['res_name'] == 'province'}
+             <div class="form-group">
+                 <label class="col-sm-3 control-label"><em class="red">*</em>投放城市</label>
+                 <div class="col-sm-9">
+                 {AnForm type="select" default_text="全部城市(省份下所有城市)" default_value=0 name="content[city]" options=$city_list selected="{if $content_info['type']}{$content_info['type']}{/if}" validate="required"   filter="filter_string" class="form-control selectCity"}
+                 </div>
+             </div>
+         {/if}
+        {* 城市按钮框END *}
+
+        {* 区县按钮框START *}
+        {if $member_info['res_name'] == 'city' || 
+        $member_info['res_name'] == 'province' || 
+        $member_info['res_name'] == 'group' }
+           <div class="form-group">
+            <label class="col-sm-3 control-label"><em class="red">*</em>投放区域</label>
+            <div class="col-sm-9">
+                {AnForm type="select" default_text="全部区县(城市下所有区县)" options=$area_list  default_value=0 name="content[area]" selected="{if $content_info['type']}{$content_info['type']}{/if}" validate="required"   filter="filter_string" class="form-control selectArea"}
+            </div>
+            </div>
+        {/if}
+        {* 区县按钮框END *}
+        
+        {if $member_info['res_name'] == 'area' || 
+            $member_info['res_name'] == 'city' || 
+            $member_info['res_name'] == 'province' || 
+            $member_info['res_name'] == 'group'
+        }
+        <div class="form-group form-inline">
+            <label class="col-sm-3 control-label"><em class="red">*</em>投放营业厅</label>
+            <div class="col-sm-9">
+            <label class="checkbox selectBusinessHall">
+                <input type="checkbox"  value=0 class='selectInputBusinessHall selectInputBusinessHallAll' checked> 全部营业厅(区县下所有营业厅)<br />
+                {if $business_hall_list}
+                    {foreach $business_hall_list as $v}
+                    <input type="checkbox"  value="{$v.id}" class='selectInputBusinessHall' checked>{$v.name}<br />
+                    {/foreach}
+                {/if}
+            </label>
+            </div>
+        </div>
+        {/if}
+
+        {if $member_info['res_name'] == 'business_hall'}
+            <div class="form-group form-inline">
+            <label class="col-sm-3 control-label"><em class="red">*</em>投放营业厅</label>
+            <div class="col-sm-9">
+                <label class="checkbox ">
+                  <input type="checkbox"  value="{$business_hall_info.id}" class='selectInputBusinessHall' checked>{$business_hall_info.title}<br />
+                </label>
+            </div>
+            </div>
+        {/if}
+
+          <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-10">
+              <button type="submit" class="btn btn-sm btn-success selectSub">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;立即投放&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              {* 机型宣传图不能返回上一页 *}
+              {if $content_info.type != 4}
+              <a href="{AnUrl('screen_content/admin/content_meal')}" class="btn btn-sm btn-warning">&nbsp;&nbsp;返回上一页&nbsp;&nbsp;</a>
+              {/if}
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="form-add-view pull-right">
+        <em class="arrow1"></em>
+        <h4>已投放区域</h4>
+        <table class="table table-bordered ">
+          <thead>
+            <tr>
+              <th>内容类型</th>
+              <th>位置</th>
+              <th>机型</th>
+              <th>投放时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+              {foreach $content_list as $k=>$v}
+                <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                  <td>{if $content_info.type == 1}内容{elseif $content_info.type ==2}链接{/if}</td>
+                  <td>{city_helper::get_area_path($v.res_name , $v.res_id)}</td>
+                  <td>
+                    {if $v.phone_name && $v.phone_version}
+                        {if $v.phone_name == 'all' && $v.phone_version == 'all'}
+                            全部机型
+                        {else}
+                            {$v.phone_name}->{$v.phone_version}
+                        {/if}
+                    {else if $v.phone_name}
+                        {$v.phone_name}
+                    {else}
+                        全部机型
+                    {/if}
+                   </td>
+                  <td>{$v.add_time|date_format:'Y-m-d H:i'}</td>
+                  <td class="txtleft" resId="{$v.id}">
+                      <a class="btn btn-xs btn-danger deleteHot" href="javascript:;">删除</a>
+                  </td>
+                 </tr>
+              {foreachelse}
+                <tr><td colspan="7">暂无相关信息</td></tr>
+              {/foreach}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 主内容 end -->
+<script>
+    var type = "{$content_info.type}";
+    var reSetProvince = function (type) {
+        if (type == 'province') {
+            $('.selectCity').html('<option value=0>全部城市(省份下所有城市)</option>');
+            $('.selectArea').html('<option value=0>全部区县(城市下所有区县)</option>');
+            $('.selectBusinessHall').html('<input type="checkbox" value=0 class="selectInputBusinessHall selectInputBusinessHallAll" checked> 全部营业厅(区县下所有营业厅)<br />');
+        } else if (type == 'city')  {
+            $('.selectArea').html('<option value=0>全部区县(城市下所有区县)</option>');
+            $('.selectBusinessHall').html('<input type="checkbox" value=0 class="selectInputBusinessHall selectInputBusinessHallAll" checked> 全部营业厅(区县下所有营业厅)<br />');
+        } else if (type == 'area') {
+            $('.selectBusinessHall').html('<input type="checkbox" value=0 class="selectInputBusinessHall selectInputBusinessHallAll" checked> 全部营业厅(区县下所有营业厅)<br />'); 
+        } else if (type == 'phone_name') {
+          $('.selectPhoneVersion').html('<option value="">全部型号</option>');
+        }
+    }
+
+    $(function(){
+     var content_id    = "{$content_id}"
+        var province_id = "{$province_id}";
+        var city_id = "{$city_id}";
+        var area_id = "{$area_id}";
+        var business_hall_id = [];
+        var phoneName = "";
+        var phoneVersion = "";
+        var lock     = false;
+
+        $('.selectProvince').change(function() {
+            province_id = $(this).val();
+
+            if (province_id == 0) {
+                reSetProvince('province');
+            }
+
+            reSetProvince('city');
+
+            $.post("{AnUrl('city/admin/ajax/get_city_list')}" , { province_id:province_id } , function(json){
+                if (json.info == 'ok') {
+                    var html = '<option value=0>全部城市(省份下所有城市)</option>';
+                    var data = json.data;
+                    for(var i=0;i<data.length;i++) {
+                        html += '<option value="'+data[i]['id']+'"> '+data[i]['name']+'</option>';
+                    }
+                }
+
+                $('.selectCity').html(html);
+            }, 'json');
+        })
+
+        $('.selectCity').change(function() { 
+            city_id = $(this).val();
+
+            if (city_id == 0) {
+                reSetProvince('city');
+            }
+
+            reSetProvince('area');
+
+            $.post("{AnUrl('city/admin/ajax/get_area_list')}" , { city_id:city_id } , function(json){
+                if (json.info == 'ok') {
+                    var html = '<option value=0>全部区县(城市下所有区县)</option>';
+                    var data = json.data;
+                    for(var i=0;i<data.length;i++) {
+                        html += '<option value="'+data[i]['id']+'"> '+data[i]['name']+'</option>';
+                    }
+                }
+
+                $('.selectArea').html(html);
+            }, 'json');
+        })
+        
+        $('.selectArea').change(function(){
+            area_id = $(this).val();
+
+            if (area_id == 0) {
+                reSetProvince('area');
+            }
+            
+            $.post("{AnUrl('city/admin/ajax/get_business_hall_list')}" , { area_id:area_id } , function(json){
+                if (json.info == 'ok') {
+                    var html = '<input type="checkbox" value=0 class="selectInputBusinessHall selectInputBusinessHallAll" checked> 全部营业厅(区县下所有营业厅)<br />';
+                    var data = json.data;
+                    for(var i=0;i<data.length;i++) {
+                        html += '<input type="checkbox" class="selectInputBusinessHall" value='+ data[i]['id'] +' checked> '+ data[i]['title'] +'<br />';
+                    }
+                }
+
+                $('.selectBusinessHall').html(html);
+            }, 'json');
+        })
+        
+        //手机型号
+        $('.selectPhoneName').change(function(){
+          reSetProvince('phone_name');
+          
+          phoneName = $(this).val();
+          if (phoneName == '') {
+              return false;
+          }
+          
+          $.post("{AnUrl('screen/admin/ajax/get_version_list')}" , { phone_name: phoneName} , function(json){
+            if (json.info == 'ok') {
+              var html = '<option value="">全部型号</option>';
+              var data = json.result;
+              for(var i=0;i<data.length;i++) {
+                  var version = data[i]['phone_version'];
+                  version += data[i]['phone_version_nickname'] ? '('+data[i]['phone_version_nickname']+')' : '';
+                  
+                  html += '<option value="'+data[i]['phone_version']+'"> '+version+'</option>';
+              }
+            }
+
+            $('.selectPhoneVersion').html(html);
+          }, 'json');
+          
+          
+          $('.selectPhoneVersion').on('change', function () {
+            phoneVersion = $(this).val();
+          });
+          
+      })
+
+        $('.selectSub').click(function(e) {
+            e.preventDefault();
+        
+             //营业厅id列表
+            var business_hall_list = $('.selectInputBusinessHall:checked');
+            
+            if (business_hall_list.length == 0) {
+                alert('请选择营业厅！');
+                return false;
+            }
+            
+            if (phoneVersion == '') {
+              phoneVersion = $('.selectPhoneVersion').val();
+            }
+            
+            if (phoneName == '') {
+              phoneName = $('.selectPhoneName').val();
+            }
+            
+            if (type == 4 && !phoneName && !phoneVersion) {
+              phoneName = 'all';
+              phoneVersion = 'all';
+            }
+
+            if (area_id == 0) {
+                area_id          = $('.selectArea').val();
+            }
+
+            if (city_id == 0) {
+                city_id          = $('.selectCity').val();
+            }
+            
+            if (province_id == 0) {
+                province_id      = $('.selectProvince').val();
+            }
+
+            $.each( business_hall_list, function(i, n){
+                    business_hall_id[i] = $(n).val();
+            });
+
+            if (lock) {
+                return false;
+            }
+
+            lock = true;
+
+            $.post("{AnUrl('screen_content/admin/ajax/add_meal_res')}", { content_id:content_id,business_hall_id:business_hall_id,province_id:province_id,city_id:city_id,area_id:area_id, phone_name:phoneName, phone_version:phoneVersion } ,function(json) {
+                if (json.info == 'ok') {
+                    alert('发布成功');
+                    window.location.reload();
+                } else {
+                    alert(json.info);
+                }
+ 
+                lock = false;
+            },'json')
+            
+        })
+        
+        $('.selectInputBusinessHallAll').live('click',function(){ 
+            var isChecked = $(this).attr('checked');
+
+            if (isChecked == 'checked') {
+                $('.selectInputBusinessHall').attr('checked','checked');
+            } else {
+                $('.selectInputBusinessHall').removeAttr('checked');
+            }
+        })
+    });
+</script>
+<script>
+ var updateStatus = {
+     _id:'',
+     _msg :'操作失败',
+     _url:"{AnUrl('screen_content/admin/ajax/delete_meal_res')}",
+     _table: 'screen_meal_res',
+     update:function(obj){
+         this._id = $(obj).parent().attr('resId');
+
+         $.post(this._url,{ id:this._id,table:this._table },function(json){
+             if (json.info == 'ok') {
+                 $(obj).closest("tr").hide(function(){
+                     $(this).remove();
+                 });
+             } else {
+                 alert(json.info);
+             }
+         },'json')
+     }
+};
+
+ $('.deleteHot').live('click',function(event){
+     event.preventDefault();
+     event.stopPropagation();
+
+     if (!confirm("确定要删除该条记录吗？")) {
+       return false;
+     }
+
+     updateStatus.update(this);
+ })
+</script>
+
+{include_www file="admin/lib/footer_new.html"}
+

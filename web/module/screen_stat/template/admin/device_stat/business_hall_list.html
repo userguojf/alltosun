@@ -1,0 +1,181 @@
+{include_www file="admin/lib/header_new.html" title="亮屏营业厅统计"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    .btn-top{
+        margin-top:5px;
+    }
+    </style>
+<!-- 主内容 start -->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            
+            <a href="{AnUrl('screen_stat/admin/device_stat')}"><i class="iconfont iconfont-logo2"></i>亮屏覆盖量统计</a>
+            &gt;
+            <span>营业厅列表（共{$count}条）</span>
+           
+           <a href="{AnUrl('screen_stat/admin/device_stat')}" class="btn btn-primary btn-sm pull-right">返回</a>
+           
+           <a style="margin-right:10px;" href="{AnUrl("screen_stat/admin/device_stat/business_hall_list/is_export?is_export=1")}" class="btn btn-primary btn-sm pull-right">导出</a>
+           
+        </div>
+       
+        <div class="form-search clearfix">
+             <div class="pull-left">
+                 <form action="{AnUrl('screen_stat/admin/device_stat/business_hall_list/business_hall_list')}" method='get'>
+                    <input type="hidden" name="search_filter[region_id]" value="{$search_filter.region_id}">
+                    <input type="hidden" name="search_filter[region_type]" value="{$search_filter.region_type}">
+                    <input type="hidden" name="search_filter[date_type]" value="{$search_filter.date_type}">
+                   {* 公共分权限搜索模块 *}
+                   {widget model='business_hall' func='get_search_by_member' file='get_search_by_member.html' member_info="{$member_info}"}
+
+                   {* 营业厅名称 *}
+                   <input type="text" id="title" style="width:120px;" name="search_filter[search_type_value][title]" value="{$search_filter.search_type_value.title}" class="form-control input-sm pull-left js_search"  placeholder="按营业厅名称搜索">
+                   <button type="submit" class="btn-search pull-left">搜索</button>
+                 </form>
+            </div>
+<!--             <div class="pull-right">
+                <a href="javascript:void(0);" class="btn btn-sm btn-success csv_export">导出</a>
+                <a href="{AnUrl('business_hall/admin/add')}" class="btn btn-sm btn-success">添加营业厅</a>
+            </div> -->
+        </div>
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th width="8%">省</th>
+                    <th width="8%">市</th>
+                    <th width="8%">区</th>
+                    <th width="10%">渠道编码</th>
+                    <th width="15%">营业厅名称</th>
+                    
+                    {if $date_type == 2 && $member_info.res_name == 'group'}
+                      <th width="8%">
+                        在线数量({$online_num})
+                        {if $order_dir == 'asc' && $order_field == 'online'}
+                          <span class="glyphicon  glyphicon-arrow-down order_type" aria-hidden="true" order_field="online" order_dir='asc' "></span>
+                        {else}
+                          <span class="glyphicon glyphicon-arrow-up order_type" aria-hidden="true" order_field="online" order_dir='desc' ></span>
+                        {/if}
+                      </th>
+                    {/if}
+                    
+                    {*if !$type*}
+                    <th width="8%">
+                    设备数量({$device_sum})
+                    {if $order_dir == 'asc' && $order_field == 'device'}
+                      <span class="glyphicon  glyphicon-arrow-down order_type" aria-hidden="true" order_field="device" order_dir='asc' "></span>
+                    {else}
+                      <span class="glyphicon glyphicon-arrow-up order_type" aria-hidden="true" order_field="device" order_dir='desc' ></span>
+                    {/if}
+                    </th>
+                    <th  width="8%">
+                      活跃数量({$active_sum})
+                    {if $order_dir == 'asc' && $order_field == 'active'}
+                      <span class="glyphicon  glyphicon-arrow-down order_type" aria-hidden="true" order_field="active" order_dir='asc' "></span>
+                    {else}
+                      <span class="glyphicon glyphicon-arrow-up order_type" aria-hidden="true" order_field="active" order_dir='desc' ></span>
+                    {/if}
+                    </th>
+                    {if $member_info.res_name == 'group'}
+                      <th width="8%">
+                          体验时长({screen_helper::format_timestamp_text($experience_sum)})
+                      {if $order_dir == 'asc' && $order_field == 'experience_times'}
+                        <span class="glyphicon  glyphicon-arrow-down order_type" aria-hidden="true" order_field="experience_times" order_dir='asc' "></span>
+                      {else}
+                        <span class="glyphicon glyphicon-arrow-up order_type" aria-hidden="true" order_field="experience_times" order_dir='desc' ></span>
+                      {/if}
+                      </th>
+                    {/if}
+  
+<!--                     {*else*}
+                      {*if $type == 1*}
+                        <th width="8%">体验时长({screen_helper::format_timestamp_text($experience_sum)})</th>
+                      {*else if $type == 2*}
+                        <th  width="8%">活跃数量({$active_sum})</th>
+                      {*else if $type == 4*}
+                        <th width="8%">设备数量({$device_sum})</th>
+                      {*/if*}
+                    {*/if*} -->
+                </tr>
+                </thead>
+                
+                <tbody>
+                  {foreach $business_hall_list as $k=>$v}
+                  <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                      <td>{$v.province}</td>
+                      <td>{$v.city}</td>
+                      <td>{$v.area}</td>
+                      <td>{$v.user_number}</td>
+                      <td>{$v.business_hall}</td>
+                      
+                      {if $date_type == 2 && $member_info.res_name == 'group'}
+                        <td><a href="{AnUrl("screen_stat/admin/device_stat/device_list/device{$search_filter_str}  &search_filter[business_id]={$v.business_id}&search_filter[date_type]={$search_filter.date_type}&search_filter[region_id]={$search_filter.region_id}&search_filter[region_type]={$search_filter.region_type}&type=3")}">{$v.online_num}</a></td>
+                      {/if}
+                      {*if !$type*}
+                      <td><a href="{AnUrl("screen_stat/admin/device_stat/device_list/device{$search_filter_str}&search_filter[business_id]={$v.business_id}&search_filter[region_id]={$search_filter.region_id}&search_filter[region_type]={$search_filter.region_type}&from=device_stat_business_hall_list")}">{$v.device_num}</a></td>
+                      <td><a href="{AnUrl("screen_stat/admin/device_stat/device_list/device{$search_filter_str}&search_filter[date_type]={$search_filter.date_type}&search_filter[business_id]={$v.business_id}&search_filter[region_id]={$v.province_id}&search_filter[region_type]={$region_type}&is_active=1&type=2&is_group={$is_group}")}">{$v.active_num}</a></td>
+                      {if $member_info.res_name == 'group'}
+                        <td><a href="{AnUrl("screen_stat/admin/device_stat/device_list/device{$search_filter_str}&search_filter[business_id]={$v.business_id}&search_filter[region_id]={$search_filter.region_id}&search_filter[region_type]={$search_filter.region_type}&from=device_stat_business_hall_list")}">{screen_helper::format_timestamp_text($v.experience_time)}</a></td>
+                      {/if}
+<!--                       {*else*}
+                        {*if $type == 1*}
+                          <td><a href="{AnUrl("screen_stat/admin/device_stat/experience_list/experience_list{$search_filter_str}&search_filter[business_id]={$v.business_id}&search_filter[region_id]={$search_filter.region_id}&search_filter[region_type]={$search_filter.region_type}&from=device_stat_business_hall_list")}">{screen_helper::format_timestamp_text($v.experience_time)}</a></td>
+                        {*else if $type == 2*}
+                          <td><a href="{AnUrl("screen_stat/admin/device_stat/active_list/active_list{$search_filter_str}&search_filter[business_id]={$v.business_id}&search_filter[region_id]={$search_filter.region_id}&search_filter[region_type]={$search_filter.region_type}&from=device_stat_business_hall_list")}">{$v.active_num}</a></td>
+                        {*else if $type == 4*}
+                          <td><a href="{AnUrl("screen_stat/admin/device_stat/device_list/device_list?search_filter[business_id]={$v.business_id}&search_filter[region_id]={$search_filter.region_id}&search_filter[region_type]={$search_filter.region_type}&from=device_stat_business_hall_list")}">{$v.device_num}</a></td>
+                        {*/if*}
+                      
+                      {*/if*} -->
+                  </tr>
+                  {foreachelse}
+                  <tr><td colspan="{if $member_info.res_name == 'group'}9{else}7{/if}">暂无相关信息</td></tr>
+                  {/foreach}
+                </tbody>
+            </table>
+
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+</div>
+<script>
+$(function(){
+  $('#title').autocomplete({
+    source: "/business_hall/admin/ajax/get_title_field",
+  });
+
+  //王敬飞
+  //营业厅数据导出  
+  $(".csv_export").click(function(e){
+    e.preventDefault();
+    var thisObj = $(this);
+    //添加导出标识
+    thisObj.closest('.form-search').find('form').append("<input type='hidden' name='if_export' value='1'>");
+    //提交
+    $('botton').trigger('click');
+    $('form').submit();
+    //移除标识
+    thisObj.closest('.form-search').find('form').find('input[type="hidden"]').remove();
+  });
+  
+  //排序
+  $('.order_type').on('click', function () {
+
+    if ($(this).hasClass('glyphicon-arrow-up')) {
+      var order_dir = 'asc';
+    } else {
+      var order_dir = 'desc';
+    }
+    
+    window.location.href = window.location.href + '&order_dir=' + order_dir + '&order_field=' + $(this).attr('order_field');
+
+  });
+  
+})
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

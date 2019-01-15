@@ -1,0 +1,155 @@
+{include_www file="admin/lib/header_new.html" title="营业厅管理"}
+<!--start:右侧-->
+<div class="main mian2 ">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl('business_hall/admin')}"><i class="iconfont iconfont-logo2"></i>营业厅管理</a>
+      &gt;
+      <span>{if $business_hall_info.id}营业厅编辑{else}营业厅添加{/if}</span>
+      <a href="{AnUrl('business_hall/admin')}" class="btn btn-primary btn-sm pull-right">返回营业厅管理</a>
+    </div>
+    <div class="clearfix">
+      <div class="form-add pull-left" style="width:80%;">
+        {AnForm class='form-horizontal' action="{AnUrl('business_hall/admin/save')}" method="post"}
+        {AnForm type="hidden" name="id" id='btn' value="{$id}"}
+        <div class="form-group">
+          <label class="col-sm-3 control-label">营业厅名称：</label>
+          <div class="col-sm-6">
+               {AnForm type="text" name="business_hall_info[title]" value="{$business_hall_info.title}"  class="form-control"  filter="filter_string" placeholder="请输入营业厅名称" }
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-3 control-label">视图编码：</label>
+          <div class="col-sm-6">
+               {AnForm type="text" name="business_hall_info[user_number]" value="{$business_hall_info.user_number}"  class="form-control"  filter="filter_string" placeholder="请输入视图编码" }
+          </div>
+        </div>
+        <div class="form-group ">
+          <label class="col-sm-3 control-label">类型：</label>
+           <div class="col-sm-6">
+           <select class="form-control" name="business_hall_info[type]" >
+                   <option value="">请选择所类型</option>
+                   {$type = business_hall_config::$type}
+                  {foreach  $type as $k=>$v}
+                    <option value="{$k}" {if $business_hall_info.type == $k}selected = "selected"{/if} >{$v}</option>
+                  {/foreach}
+            </select>
+          </div>
+        </div>
+        <div class="form-group ">
+          <label class="col-sm-3 control-label">所属省：</label>
+           <div class="col-sm-6">
+           <select class="form-control" id='province' name="business_hall_info[province_id]" >
+                   <option value="">请选择所属省</option>
+                   {$info = business_hall_helper::get_info('province','')}
+                  {foreach  $info as $k=>$v}
+                    <option value="{$v.id}" {if $business_hall_info.province_id == $v.id}selected = "selected"{/if} >{$v['name']}</option>
+                  {/foreach}
+            </select>
+          </div>
+        </div>
+        <div class="form-group ">
+          <label class="col-sm-3 control-label">所属市：</label>
+           <div class="col-sm-6">
+           {$pro_info= business_hall_helper::get_info('city' ,$where1)}
+          <select  class="form-control" id="city" name="business_hall_info[city_id]]" >
+          <option selected='selected' value='-1'>请选择所属市</option>
+                   {if $business_hall_info.id}
+                     {foreach $pro_info as  $k=>$v}
+                       <option {if $business_hall_info.city_id == $v.id} selected = "selected" {/if}  value="{$v.id}"> {$v.name} </option>
+                     {/foreach}
+                   {/if}
+            </select>
+          </div>
+        </div>
+        <div class="form-group ">
+          <label class="col-sm-3 control-label">所属地区：</label>
+           <div class="col-sm-6">
+           {$city_info= business_hall_helper::get_info('area' ,$where2)}
+          <select class="form-control" id="area" name="business_hall_info[area_id]" >
+          <option selected='selected' value='-1'>请选择所属地区</option>
+             {if $business_hall_info.id}
+               {foreach $city_info as $k=>$v}
+                 <option {if $business_hall_info.area_id ==$v.id}selected = "selected"{/if}  value="{$v.id}">{$v.name}</option>
+               {/foreach}
+             {/if}            
+          </select>
+          </div>
+        </div>
+        
+        <div class="form-group ">
+          <label class="col-sm-3 control-label">联系人：</label>
+           <div class="col-sm-6">
+                {AnForm type="text" name="business_hall_info[contact]"  value="{$business_hall_info.contact}" class="form-control" filter="filter_string" placeholder="请填写联系人"}
+          </div>
+        </div>
+        <div class="form-group ">
+          <label class="col-sm-3 control-label">联系方式：</label>
+           <div class="col-sm-6">
+               {AnForm type="text" name="business_hall_info[contact_way]" value="{$business_hall_info.contact_way}"  class="form-control"  filter="filter_string" placeholder="请填写联系方式"}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-3 control-label">营业厅地址：</label>
+          <div class="col-sm-6">
+            {Anform type="text" name="business_hall_info[address]" class="form-control" placeholder="请填写营业厅地址" value="{$business_hall_info.address}"}
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-10">
+            <button type="submit" class="btn btn-sm btn-success" id="btn"><span style='display: inline-block;width: 95px;' class='Sub'>保存信息</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a type="button" class="btn btn-sm btn-warning" href="{AnUrl('business_hall/admin')}">&nbsp;&nbsp;返回上一页&nbsp;&nbsp;</a>
+          </div> 
+        </div> 
+   {AnForm}
+      </div>
+
+    </div>
+  </div>
+</div>
+<script>
+
+$(function(){
+	
+	
+	 $('#province').change(function(){
+		 var province_id =  $(this).val();
+		 $.post("{AnUrl('business_hall/admin/ajax/get_city_name')}" , { province_id:province_id } ,function(json){
+			 if (json.msg=='ok') {
+				 var html = "<option selected='selected' value=''>请选择所属市</option>";
+				 var jsonnum = eval(json.city_info);
+			  for(var i=0; i< jsonnum.length; i++){
+				     html += "<option value= '"+jsonnum[i].id+"'>"+jsonnum[i].name+"</option>";
+				    }
+				    $('#city').html('').append(html);
+				    $('#city').trigger('change');
+				   }
+			 
+			 
+		 },'json')
+	 })
+	 
+     $('#city').change(function(){
+    	 var city_id =  $(this).val();
+    	 $.post("{AnUrl('business_hall/admin/ajax/get_area_name')}" , { city_id:city_id } ,function(json){
+    		 if (json.msg=='ok') {
+    			 var html = "<option selected='selected' value=''>请选择所属地区</option>";
+    			 var jsonnum = eval(json.area_info);
+    		  for(var i=0; i< jsonnum.length; i++){
+    			     html += "<option value= '"+jsonnum[i].id+"'>"+jsonnum[i].name+"</option>";
+    			    }
+    			    $('#area').html('').append(html);
+    			   }else {
+    				   var html = "<option selected='selected' value='-1'>请选择所属地区</option>";
+    				   $('#area').html('').append(html);
+    			   }
+    	 },'json')
+     })
+     
+     
+})
+ 
+
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

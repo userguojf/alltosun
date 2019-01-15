@@ -1,0 +1,138 @@
+{include_www file="admin/lib/header_new.html" title="添加版本"}
+<style>
+    .pic-upload { width:250px;height:133px; }
+    .btn-upload{ width:106px; height: 33px; }
+    .btn-upload a{ display: block;position:relative;width: 104px;height: 33px;line-height: 18px;padding: 6px 0;text-align: center;color: #4c4c4c;background: #fff;border: 1px solid #eee;}
+    .btn-upload input{ width:106px; height:33px; position:relative; left:0px; top:-32px; z-index:1;filter:alpha(opacity=0);-moz-opacity:0;opacity:0; cursor:pointer;}
+    .js_upFileBox{ margin-left:0px;margin-top:30px;}
+</style>
+      <!--start:右侧-->
+      <div class="main mian2 ">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen/admin/version')}"><i class="iconfont iconfont-logo2"></i>探针管理</a>
+            &gt;
+            <span>固件添加</span>
+            <a href="{AnUrl('probe_dev/admin/rom')}" class="btn btn-primary btn-sm pull-right">返回固件列表</a>
+          </div>
+
+          <div class="clearfix">
+            <div class="form-add pull-left" style="width:80%">
+              {AnForm class='form-horizontal' action="{AnUrl('probe_dev/admin/rom/save')}" method="post" enctype="multipart/form-data"}
+              {AnForm type="hidden" name="id" value="{$info.id}"}
+              {AnForm type="hidden" name="status" class="js_status" value=""}
+               <div class="form-group uploadImg {if $content_info.type == 2}hidden{/if}">
+                  <label class="col-sm-3 control-label contentTitle">选择固件</label>
+                  <div class="col-sm-9 js_perUpWrap">
+                    <div class="pic-upload js_perUpOuter" data-show-id="content_img">
+
+                      <div class="txt js_perUpAdd js_perUpArea {if $content_info.path}hidden{/if}">
+                      {if $info.path}
+                        {$info.path}
+                      {else}
+                      <em>+</em>
+                        从本地选择
+                      {/if}
+                        
+                      </div>
+                      <div class="btn-control js_perUpChange js_perUpArea">重新设置</div>
+                    </div>
+                    <p class="tips">格式：.zip&nbsp;&nbsp;</p>
+                    {if !$info}
+                        {AnForm type="file" name="path" validate="required" class='js_perUpFile hidden js_rom'}
+                    {else}
+                        {AnForm type="file" name="path" value="{$info.path}" class='js_perUpFile hidden js_rom'}
+                    {/if}
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">版本号</label>
+                  <div class="col-sm-5">
+                    <a class='less-box'>
+                    {AnForm type="text" name="version" value="{$info['version']}" class="form-control" validate="required" filter="filter_string" placeholder="请输入版本号"}
+                    </a>
+                    <p class='tips'>提示：版本号一般为固件包名末尾的数字位</p>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">AES_KEY</label>
+                  <div class="col-sm-7 input-append">
+                    <a class='less-box'>
+                    {AnForm type="text" name="aes_key" value="{$info['aes_key']}" class="span2 col-sm-7 aes_key" validate="required" filter="filter_string" placeholder="请输入AES_KEY"}
+                     <a class="btn  btn-small btn-info random_btn" href="javascript:;">生成</a>
+                    </a>
+                    <p class='tips'>提示：用于硬件设备传输加密</p>
+                  </div>
+                </div>
+
+               <div class="form-group">
+                  <label class="col-sm-3 control-label">简介</label>
+                  <div class="col-sm-5">
+                    <textarea name="content" class="form-control" style="width:350px; height:190px;" validate="required" filter="filter_string" placeholder="请输入简介">{$info.intro}</textarea>
+                  </div>
+                </div>
+                
+                <br>
+                <div class="form-group">
+                  <div class="col-sm-offset-3 col-sm-10">
+                  
+                    <button type="submit" class="btn btn-sm btn-success"><span style='display: inline-block;width: 95px;' class='Sub js_SaveSoon'>保存并发布</span></button>&nbsp;&nbsp;&nbsp;&nbsp; 
+                    {if $info}
+                     <button type="submit" class="btn btn-sm btn-success js_saveBtn"><span style='display: inline-block;width: 95px;' class='Sub'>修改并保存</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+
+                    {else}
+                      <button type="submit" class="btn btn-sm btn-success"><span style='display: inline-block;width: 95px;' class='Sub'>保存</span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    {/if}
+                    <a type="button" class="btn btn-sm btn-warning" href="{AnUrl('screen/admin/version')}">&nbsp;&nbsp;取消&nbsp;&nbsp;</a>
+                  </div>
+                </div>
+              {AnForm}
+            </div>
+          </div>
+        </div>
+      </div>
+
+<script>
+// 上传文件的预览
+$(".js_perUpArea").click(function(){
+  
+  $(this).closest('.js_perUpWrap').find('.js_perUpFile').trigger('click');
+  
+});
+
+$('.js_uploadApk').change(function(e){
+
+    $('.js_perUpAdd').text($('.js_uploadApk').val());
+    $('.js_perUpChange').removeClass('hidden');
+
+});
+
+$(".js_SaveSoon").click(function(){
+  $(".js_status").val(2);
+  
+  $(".form-horizontal").submit();
+})
+
+function randomString(len) {
+    len = len || 32;
+    var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
+    var maxPos = $chars.length;
+    var pwd = '';
+    for (i = 0; i < len; i++) {
+        pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+    }
+    return pwd;
+}
+
+$('.js_rom').change(function(){
+    alert(1);
+})
+$('.random_btn').click(function() {
+    var random_str = randomString(16);
+
+    $('.aes_key').val(random_str);
+})
+</script>
+{include_www file="admin/lib/footer_new.html"}

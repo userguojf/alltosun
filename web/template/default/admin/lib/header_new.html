@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>管理中心{if $title}-{$title}{/if}</title>
+        <link href="{$smarty.const.SITE_URL}/css/admin2/bootstrap.min.css" rel="stylesheet" type="text/css">
+        <link href="{$smarty.const.SITE_URL}/css/admin2/admin.css?v={time()}" rel="stylesheet" type="text/css">
+        <base href="{$smarty.const.SITE_URL}/"></base>
+        <link href="{$smarty.const.SITE_URL}/js/jqueryui/1.8.11/themes/base/jquery-ui.css"/>
+        <link href="{$smarty.const.SITE_URL}/js/tipsy/tipsy.css" rel="stylesheet" type="text/css">
+
+        {* 跳转的url *}
+        {if $meta_redirect}{$meta_redirect}{/if}
+
+        {* 加载项目自己css *}
+        {load_css file="css/admin/jquery.bigcolorpicker.css"}
+        {load_css file="css/admin/common.css"}
+
+        {* 加载jquery *}
+        {load_js file='jquery-1.7.1.min.js'}
+
+        <script>
+            var siteUrl = "{$smarty.const.SITE_URL}";
+            var uploadUrl = "{$smarty.const.UPLOAD_URL}";
+        </script>
+    
+        {* 加载bootstrapjs *}
+        {load_js file='bootstrap-2.3.1/js/bootstrap.min.js'}
+    
+
+        {* jquery ui 1.8.11 *}
+        {load_js lib='jquery-ui'}
+    
+        {* 插件区 *}
+        {load_js file="validate/jquery.validate.js"}
+        {load_js file="jquery.cookie.js"}
+        {load_js file="validate/messages_cn.js"}
+        {load_js file="validate/additional-methods.js"}
+        {load_js file="jqueryui/1.8.11/i18n/jquery.ui.datepicker-zh-CN.js"}
+        {load_js file="jquery-ui-timepicker-addon.js"}
+
+        {* 通用函数库 *}
+        {load_js file="common.js"}
+         {load_js file="admin.js?v={$smarty.const.JS_VERSION}"}
+        {load_js file='jquery.bigcolorpicker.js'}
+    </head>
+    <body>
+        <div class="wrap">
+            <div id="header" class="navbar navbar-inverse">
+                <div class="container-fluid">
+                    <div class="navbar-header"></div>
+                    {if $smarty.const.ONDEV}
+                        <h1 class="navbar-header logotxt">
+                            数字地图<span style="font-size:20px;">（测试平台）</span>
+                        </h1>
+                    {else}
+                        <h1 class="navbar-header logotxt"> 数字地图</h1>
+                    {/if}
+                    <div class="pull-right">
+                        <div class="dropdown">
+<!--                          
+                        <a href="javascript:;" class="dropdown-toggle yingyeting" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></a>
+ -->                            
+                        <a href="javascript:;" class="dropdown-toggle yingyeting" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> 
+                            {$member_id = member_helper::get_member_id()}
+                            {member_helper::get_title_info($member_id)}
+                            <span class="caret"></span> 
+                        </a>
+                              <ul class="dropdown-menu" >
+                                <!-- {if $member_info['ranks'] <= 100}
+                                    <li><a href="{AnUrl("business_hall/admin/bu_user")}"><span class="glyphicon glyphicon-user"></span>&nbsp;修改联系人</a></li>
+                                {/if} -->
+                                    <li><a href="{AnUrl('liangliang/logout')}"><span class="glyphicon glyphicon-off"></span>&nbsp;退出</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <ul class="nav pull-right">
+                        <li>
+                            {$memb_name = member_helper::get_member_info($member_id, 'member_user')}
+                            <a href="javascript:;" target="" class="user">
+                                <img src="{$smarty.const.SITE_URL}/images/admin2/test01.png" width="35" class="img-circle">
+                                <span class="name1">{cut_str($memb_name,5)}</span><span class="name2">{$memb_name}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--end:头部-->
+
+            <!--start:-->
+            <div class="container-fluid">
+                <div class="row">

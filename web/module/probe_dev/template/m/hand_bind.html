@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <title>设备绑定</title>
+     <link rel="stylesheet" type="text/css" href="{$smarty.const.STATIC_URL}/css/m-bang.css">
+     <link href="http://201512awifiprobe.alltosun.net/js/jqueryui/1.8.11/themes/base/jquery-ui.css"/>
+</head>
+
+<body>
+     <form action="{AnUrl('probe_dev/m/binding/bind_business')}" method='post' class="js_bindForm">
+    <div class="bang-wrap">
+        <div class="title"><span class="num-step">1</span>设备绑定</div>
+        <div class="set-form">
+            <div class="item">
+                <label>MAC地址</label>
+                <span class="text"><input type="text" name="device" value="12:23:4D:2E:3R:12" class="js_device"></span>
+            </div>
+            <div class="item">
+                <label>营业厅名称</label>
+                <span class="text"><input type="text" name="title" placeholder="请手动输入" value = "" class="js_title_value selectBusiness"></span>
+            </div>
+        </div>
+        <div class="btn-login btn_style">
+            <button type="submit" class="btn-bang" id="btn" >绑定探针设备</button>
+            
+        </div>
+        <p class="tips">客服电话：<a href="tel:010-58507163" class="tel">010-58507163</a></p>
+    </div>
+    </form>
+     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=dpxOOFiP2SSqem9kSBQTImVt6k5GUsbk"></script>
+    <script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="{$smarty.const.STATIC_URL}/js/jqueryui/1.8.11/jquery-ui.js"></script>
+    
+</body>
+<script>
+$(function(){
+	 var rm = setTimeout(function(){
+		    getcoordinate();
+ },1500);
+	
+}) 
+      function getcoordinate(){
+        var geolocation = new BMap.Geolocation();
+        geolocation.getCurrentPosition(function(r){
+            if(this.getStatus() == BMAP_STATUS_SUCCESS){
+                var mk = new BMap.Marker(r.point);
+                lat =r.point.lat;
+                lng =r.point.lng;
+                console.log(lat);
+                if(lat !='' && lng != ''){
+                    window.location.replace("{$smarty.const.STATIC_URL}/probe_dev/m/binding/auto_registration");
+                }
+            }
+            else {
+                alert('failed'+this.getStatus());
+            }        
+        },{ enableHighAccuracy: true })
+    }
+$('.selectBusiness').autocomplete({ 
+    // 静态的数据源，根据label属性进行显示或模糊匹配，当给输入框设置value属性值
+    source: "/probe_dev/m/ajax/get_info_by_title",
+    
+    //选择
+    select: function(event, ui){
+    	$(this).val(ui.item.label);
+      // 必须阻止事件的默认行为，否则autocomplete默认会把ui.item.value设为输入框的value值
+      event.preventDefault();
+      
+    }
+  })
+  
+  $(".selectBusiness").focus(function(){
+	  var v=$(this).val();
+      if(v){
+    	$('.btn_style').find('button').attr('class','btn-login'); 
+      }
+  });
+  
+  $(".selectBusiness").blur(function(){
+	  var v=$(this).val();
+	  if(!v){
+	      $('.btn_style').find('button').attr('class','btn-bang'); 
+	  }
+  });
+  
+
+
+  
+  $('#btn').click(function(){
+	var clss = $('.btn_style').find('button').attr('class');
+    var js_device = $('.js_device').val();
+    var js_title_value = $('.js_title_value').val();
+
+	if(clss=='btn-bang'){  
+        return false;
+	}
+	if(!js_device){
+		return false;
+	}
+	if(!js_title_value){
+        return false;
+    }
+	 $('.js_bindForm').submit();
+  });
+</script>
+</html>

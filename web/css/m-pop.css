@@ -1,0 +1,74 @@
+@charset "UTF-8";
+/* CSS Document */
+
+body{ font-family:'Microsoft Yahei', Arial, Helvetica, sans-serif; font-size:62.5%; background:#00324b;}
+
+.wrap{ position:absolute; left:0; top:0; width:100%; min-height:100%; height:auto;}
+.wrap .swiper-container{ width:100%; min-height:100%; height:auto;}
+.wrap .swiper-slide{ float:left; width:100vw; height:auto;}
+.intro-list li{ display:block; width:320px; height:auto; padding:35px 0 0;}
+.intro-list li .pic{ width:244px; height:auto; border-radius:15px; box-shadow:0 0 30px rgba(5,0,1,0.8); margin:0 auto 30px; position:relative;}
+.intro-list li .pic img{ width:100%; height:auto; border-radius:15px;}
+.icon-right{ display:block; background:url(../images/m-pop/icon-right.png) no-repeat; background-size:100% auto; width:75px; height:80px; position:absolute; top:-20px; left:-30px; opacity:0;}
+.icon-wrong{ display:block; background:url(../images/m-pop/icon-wrong.png) no-repeat; background-size:100% auto; width:75px; height:80px; position:absolute; top:-20px; left:-30px; opacity:0;}
+.intro-list li .title{ text-indent:-9999px; overflow:hidden; margin:0 0 25px; opacity:0;}
+.intro-list li .title1{ background:url(../images/m-pop/title1.png) center center no-repeat; background-size:auto 100%; height:48px;}
+.intro-list li .title2{ background:url(../images/m-pop/title2.png) center center no-repeat; background-size:auto 100%; height:48px;}
+.intro-list li .title3{ background:url(../images/m-pop/title3.png) center center no-repeat; background-size:auto 100%; height:48px;}
+.intro-list li .btn-close{ display:block; background:url(../images/m-pop/btn-close.png) no-repeat; background-size:100% auto; width:13.6vw; height:13.6vw; text-indent:-9999px; overflow:hidden; margin:0 auto;}
+.intro-list li .btn-view{ display:block; width:180px; height:35px; line-height:35px; text-align:center; color:#fff; font-size:1.8em; background:#0d8cdb; border:2px solid #fff; border-radius:4px; margin:0 auto; opacity:0;}
+.intro-list li .btn-info{ display:inline-block; line-height:30px;  font-size:1.2em; color:#fff; text-decoration:underline; margin:10px 0 0; opacity:0;}
+
+.intro-list li.swiper-slide-active .title,
+.intro-list li.swiper-slide-active .icon-right,
+.intro-list li.swiper-slide-active .icon-wrong,
+.intro-list li.swiper-slide-active .btn-view,
+.intro-list li.swiper-slide-active .btn-info{ opacity:1;}
+.wrap .swiper-container-horizontal>.swiper-pagination{ bottom:80px;}
+.wrap .swiper-pagination .swiper-pagination-bullet{ width:10px; height:10px; background:none; border:none; background:#fff; opacity:1;}
+.wrap .swiper-pagination .swiper-pagination-bullet-active{ background:#ff9933;}
+.tips{ position:absolute; left:0; bottom:20px; z-index:10; width:100%; height:auto; text-align:center; line-height:20px;}
+.tips a{ font-size:12px; text-decoration:underline; color:#fff;}
+
+/*问题*/
+.question{ position:absolute; left:0; top:0; z-index:1001; width:100%; height:100%; overflow:auto; background:#fff;}
+.question .title1{ font-size:1.2em; color:#fff; line-height:20px; word-wrap:break-word; padding:10px 15px; background:#018dcd;}
+.question-list li{ height:auto;}
+.question-list li .title2{ font-size:1.2em; padding:10px 50px 10px 40px; border-bottom:1px solid #dcdcdc; position:relative;}
+.question-list li .title2 .num{ display:inline-block; height:16px; line-height:16px; padding:0 5px; color:#fff; background:#00324b; border:2px solid #ccd6db; border-radius:16px; position:absolute; left:15px; top:10px;}
+.question-list li .title2 .txt{ display:block; width:100%; height:auto; color:#00324b; line-height:20px;}
+.question-list li .title2 em{ display:block; width:19px; height:19px; background:url(../images/m-pop/icon-close2.png) no-repeat; background-size:100% auto; position:absolute; right:15px; top:10px;}
+.question-list li.curr .title2 em{ background:url(../images/m-pop/icon-open.png) no-repeat; background-size:100% auto;}
+.question-list li .con{ padding:10px 15px 10px 40px; font-size:1.2em; line-height:18px; color:#00324b; word-wrap:break-word; border-bottom:1px solid #dcdcdc;}
+.question-list li .con img{ max-width:100%; height:auto;}
+.question-list li.pink .num{ background:#fd628a; border-color:#ffe0e8;}
+.question-list li.pink .txt{ color:#fd628a;}
+
+
+@media screen and (min-height:736px){
+.intro-list li .pic{ width:274px; margin-bottom:40px;}
+}
+
+
+
+@media screen and (max-height:660px){
+.intro-list li .title{ margin-bottom:20px;}
+.intro-list li .pic{ width:204px; margin-bottom:20px;}
+.wrap .swiper-container-horizontal>.swiper-pagination{ bottom:50px;}
+.tips{ bottom:15px;}
+}
+
+@media screen and (max-height:567px){
+
+.intro-list li{ padding:20px 0 0;}
+.intro-list li .title{ margin:0 0 15px;}
+.intro-list li .title1{ height:40px;}
+.intro-list li .pic{ width:180px; margin:0 auto 10px;}
+.intro-list li .btn-info{ margin:5px 0 0;}
+.intro-list li .btn-view{ width:160px;}
+.icon-wrong,
+.icon-right{ width:60px; height:60px; top:-10px;}
+.wrap .swiper-container-horizontal>.swiper-pagination{ bottom:45px;}
+
+}
+

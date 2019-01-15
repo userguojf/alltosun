@@ -1,0 +1,135 @@
+{include_www file="admin/lib/e_header.html" title="探针统计"}
+<section class="container">
+    <div class="column-count4">
+        <div class="choose clearfix">
+            <div class="item left">
+                <em></em>
+                <select>
+                    <option>{$b_info.title}</option>
+                </select>
+            </div>
+            <div class="item right">
+                <em></em>
+                <input type="date" class="js_change js_date" value="{$date}">
+            </div>
+            <div class="item left">
+                <em></em>
+                <select class="js_change js_type">
+                    <option value="1" {if $type == 1} selected {/if}>室外人数{if $type == 1} （{$count}） {/if}</option>
+                    <option value="2" {if $type == 2} selected {/if}>室内人数{if $type == 2} （{$count}） {/if}</option>
+                    <option value="3" {if $type == 3} selected {/if}>新顾客{if $type == 3} （{$count}） {/if}</option>
+                    <option value="4" {if $type == 4} selected {/if}>老顾客{if $type == 4} （{$count}） {/if}</option>
+                </select>
+            </div>
+            {if $hour !== ''}
+                <div class="item right">
+                    <em></em>
+                    <select class="js_change js_hour">
+                        {foreach $hours as $k => $v}
+                            <option value="{$v}" {if $hour == $v} selected {/if}>{$v}:00-{$v}:59</option>
+                        {/foreach}
+                    </select>
+                </div>
+            {/if}
+        </div>
+    </div>
+    <div class="column-list1 column-list2">
+        <table class="js_table">
+            {foreach $list as $k => $v}
+                <tr>
+                    <td>{probe_helper::get_brand($v.mac)}</td>
+                    <td><span class="gray js_mac" style="cursor:pointer;">{probe_helper::mac_encode($v.mac)}</span></td>
+                    <td>{date("H:i", $v.frist_time)}进，共进入<span class="blue js_num" style="cursor:pointer;">{probe_helper::into_num($v.mac, $v.b_id)}</span>次</td>
+                </tr>
+            {/foreach}
+        </table>
+        {if $count > $per_page}
+            <div class="load-more js_more">加载更多</div>
+        {/if}
+    </div>
+</section>
+<script>
+$(function(){
+    var business_id = "{$b_info.id}";
+    var date        = "{$date}";
+    var hour        = "{$hour}";
+    var type        = "{$type}";
+    var page        = {$page + 1};
+    var per_page    = {$per_page};
+
+    $('.js_change').change(function(){
+        var date = $('.js_date').val();
+        var type = $('.js_type').val();
+        var url  = siteUrl + '/e/admin/probe/mac_list'
+
+        url += '?business_id='+ business_id + '&date='+ date + '&type='+ type;
+
+        {if $hour !== ''}
+            var hour = $('.js_hour').val();
+            
+            url += '&hour='+ hour;
+        {/if}
+
+        window.location.href = url;
+    });
+
+    $('.js_num').live('click', function(){
+        var trObj = $(this).closest('tr');
+        var mac   = trObj.find('.js_mac').html();
+        var url   = siteUrl + '/e/admin/probe/mac_detail';
+
+        url += '?business_id='+ business_id + '&date='+ date + '&hour='+ hour + '&mac='+ mac;
+
+        window.location.href = url;
+    });
+
+    $('.js_mac').live('click', function(){
+        var mac   = $(this).html();
+        var url   = siteUrl + '/e/admin/probe/mac_detail';
+
+        url += '?business_id='+ business_id + '&date='+ date + '&hour='+ hour + '&mac='+ mac;
+
+        window.location.href = url;
+    });
+
+    $('.js_more').click(function(){
+        var thisObj = $(this);
+        var url     = siteUrl + '/e/admin/probe/mac_list';
+        var post    = {
+            'business_id' : business_id,
+            'date'        : date,
+            'hour'        : hour,
+            'type'        : type,
+            'page'        : page
+        }
+
+        thisObj.hide();
+
+        $.post(url, post, function(json){
+            if ( json.info != 'ok' ) {
+                alert(json.info);
+                thisObj.show();
+                return false;
+            }
+
+            var html = '';
+            var list = json.list;
+
+            for ( var i = 0; i < list.length; i ++ ) {
+                html += '<tr><td>'+ list[i].brand +'</td>';
+                html += '<td><span class="gray js_mac">'+ list[i].mac +'</span></td>';
+                html += '<td>'+ list[i].hi +'进，共进入<span class="blue js_num">1</span>次</td></tr>';
+            }
+
+            $('.js_table').append(html);
+
+            page ++;
+
+            if ( list.length >= per_page ) {
+                thisObj.show();
+            }
+        }, 'json');
+    });
+});
+</script>
+{include_www file="admin/lib/e_footer.html"}

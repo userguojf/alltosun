@@ -1,0 +1,118 @@
+{include_www file="admin/lib/header_new.html" title="亮屏新增营业厅统计"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    .btn-top{
+        margin-top:5px;
+    }
+    </style>
+<!-- 主内容 start -->
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            
+            <a href="{AnUrl('screen_stat/admin/bestrow_stat')}"><i class="iconfont iconfont-logo2"></i>亮屏覆盖量统计</a>
+            &gt;
+            <span>新增营业厅列表（共{$count}条）</span>
+           <a href="{AnUrl('screen_stat/admin/bestrow_stat')}" class="btn btn-primary btn-sm pull-right">返回</a>
+           <!-- <a style="margin-right:10px;" href="{AnUrl("screen_stat/admin/device_stat/business_hall_list/is_export?is_export=1")}" class="btn btn-primary btn-sm pull-right">导出</a> -->
+        </div>
+        <div class="form-search clearfix">
+          <form action="{AnUrl('screen_stat/admin/bestrow_stat/new_cover_business_hall')}" method='get'>
+            <div class="pull-left">
+              <input type="hidden" name="search_filter[date_type]" value="{$search_filter.date_type}">
+              <input type="hidden" name="res_name" value="{$res_name}">
+              <input type="hidden" name="res_id" value="{$res_id}">
+              <input type="hidden" name="type" value="{$type}">
+              <input type="hidden" name="order_dir" value="{$order_dir}">
+              <input type="hidden" name="order_field" value="{$order_field}">
+              {* 公共分权限搜索模块 *}
+              {* widget model='business_hall' func='get_search_by_member' file='get_search_by_member.html' member_info="{$member_info}" *}
+            </div>
+            <div class="pull-right">
+              <div class="form-inline" id="dateSelectBox" >
+                <div class="form-group">
+                    <label for="exampleInputName2">时间：</label>
+                    <input type="text" class="form-control" style="width:100px; text-align:center;" name="search_filter[start_date]" id="start_time" value="{$search_filter.start_date}" />
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputName2">至</label>
+                  <input type="text" class="form-control" style="width:100px; text-align:center;" name="search_filter[end_date]" id="end_time" value="{$search_filter.end_date}" />
+                </div>
+                <button type="button" class="btn btn-success btn-sm" id="searchData">搜索</button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="list">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th width="8%">省</th>
+                    <th width="8%">市</th>
+                    <th width="10%">厅</th>
+                    <th width="5%">新增设备</th>
+                    <th width="5%">活跃量</th>
+                    {if $member_info.res_name == 'group'}
+                      <th width="8%">
+                          体验时长/秒
+                      {if $order_dir == 'asc' && $order_field == 'experience_time_count'}
+                        <span class="glyphicon  glyphicon-arrow-down order_type" aria-hidden="true" order_field="experience_time_count" order_dir='asc' "></span>
+                      {else}
+                        <span class="glyphicon glyphicon-arrow-up order_type" aria-hidden="true" order_field="experience_time_count" order_dir='desc' ></span>
+                      {/if}
+                      </th>
+                    {/if}
+                </tr>
+                </thead>
+                
+                <tbody>
+                  {foreach $data_list as $k=>$v}
+                  <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+                      <td>{$v.province}</td>
+                      <td>{$v.city}</td>
+                      <td>{$v.business_name}</td>
+                      <td><a href="{AnUrl("screen_stat/admin/bestrow_stat/device_list{$search_filter_str}&res_name=business_hall&res_id={$v.business_id}&type=3")}">{$v.new_device_count}</a></td>
+                      <td><a href="{AnUrl("screen_stat/admin/bestrow_stat/device_list{$search_filter_str}&res_name=business_hall&res_id={$v.business_id}&type=4")}">{$v.active_device_count}</a></td>
+                      {if $member_info.res_name == 'group'}
+                        <td><a href="{AnUrl("screen_stat/admin/bestrow_stat/experience_time_list{$search_filter_str}&res_name=business_hall&res_id={$v.business_id}&type=4")}">{screen_helper::format_timestamp_text($v.experience_time_count)}</a></td>
+                      {/if}
+                  </tr>
+                  {foreachelse}
+                  <tr><td colspan="{if $member_info.res_name == 'group'}9{else}7{/if}">暂无相关信息</td></tr>
+                  {/foreach}
+                </tbody>
+            </table>
+
+            {include_www file="admin/lib/pager_new.html"}
+        </div>
+    </div>
+    <!--end:列表-->
+</div>
+<!-- 内容区块 end -->
+</div>
+<script>
+$(function(){
+  $('#title').autocomplete({
+    source: "/business_hall/admin/ajax/get_title_field",
+  });
+
+//排序
+  $('.order_type').on('click', function () {
+    if ($(this).hasClass('glyphicon-arrow-up')) {
+      var order_dir = 'asc';
+    } else {
+      var order_dir = 'desc';
+    }
+    $('form input[name="order_dir"]').val(order_dir);
+    $('form input[name="order_field"]').val($(this).attr('order_field'));
+    $('form').submit();
+  });
+  
+  $('#searchData').on('click', function () {
+    $('form').submit();
+  });
+  
+})
+</script>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}

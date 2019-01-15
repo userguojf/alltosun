@@ -1,0 +1,123 @@
+{include_www file="admin/lib/header_new.html" title="营业厅标签列表"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+<!--start:右侧-->
+<div class="main pull-right">
+  <div class="column">
+    <div class="position">
+      <a href="{AnUrl("rfid/admin/terminal_stat")}"><i class="iconfont iconfont-logo2"></i>RFID统计</a>
+      &gt;营业厅标签列表
+      <span>({$count}) {$business_hall_title}</span>
+      <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+    </div>
+    <br />
+    
+    {* 时间判断 *}
+<!--     <div class="form-search row clearfix">
+      <div class="tabs2">
+        <div class="form-group" style="float:left;">
+          <select style="width:80px;" id="search_type">
+            <option value="" {if !$search_type}selected{/if}>全部</option>
+            <option value="phone_name" {if $search_type == 'phone_name'}selected{/if}>品牌</option>
+            <option value="phone_version" {if $search_type == 'phone_version'}selected{/if}>型号</option>
+            <option value="label_id" {if $search_type == 'label_id'}selected{/if}>标签ID</option>
+          </select>
+          <input id="business_id" type="hidden" name="business_id" value="{$business_id}">
+          <input id="search_text" type='text' style="width:150px;" name='search_text' value="{$search_text}" text-align:center;" placeholder="请输入搜索内容" />
+        </div>
+        
+        <div class="col-sm-8">
+          <div class="form-inline" id="dateSelectBox" >
+            <div class="form-group">
+              <label for="exampleInputName2">时间：</label>
+              <input type="text" class="form-control" style="width:100px; text-align:center;" name="start_date" id="start_time" value="{$start_date}" />
+            </div>
+            <div class="form-group">
+              <label for="exampleInputName2">至</label>
+              <input type="text" class="form-control" style="width:100px; text-align:center;" name="end_date" id="end_time" value="{$end_date}" />
+            </div>
+            <button type="button" class="btn btn-success btn-sm" id="searchData" data-url="{AnUrl($action_res_url)}" >搜索</button>
+          </div>
+        </div>
+      </div>
+    </div> -->
+    
+    <div class="list">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>省</th>
+            <th>市</th>
+            <th>区</th>
+            <th>厅</th>
+            <th>标签ID</th>
+            <th>品牌</th>
+            <th>型号</th>
+            <th>颜色</th>
+            <th>总时长</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $label_list as $k=>$v}
+          <tr id="dataList{$v.id}" view_id = "{$v.id}" class="view_id">
+            <td>{_uri('province', $v.province_id, 'name')}</td>
+            <td>{_uri('city', $v.city_id, 'name')}</td>
+            <td>{_uri('area', $v.area_id, 'name')}</td>
+            <td>{_uri('business_hall', $v.business_id, 'title')}</td>
+            <td>{$v.label_id}</td>
+            <td>{$v.phone_name}</td>
+            <td>{$v.phone_version}</td>
+            <td>{$v.phone_color}</td>
+            <td>{rfid_helper::format_timestamp_text($v.experience_time_sum)}</td>
+            <td><a class="btn btn-xs btn-success" href="{AnUrl("rfid/admin/terminal_stat/detail{$search_filter_str}&label_id={$v.label_id}&search_filter[phone_name]={$v.phone_name}&search_filter[phone_version]={$v.phone_version}&search_filter[phone_color]={$v.phone_color}")}">查看详情</a></td>
+          </tr>
+          {foreachelse}
+          <tr><td colspan="10">暂无相关信息</td></tr>
+          {/foreach}
+        </tbody>
+      </table>
+      {include_www file="admin/lib/pager_new.html"}
+    </div>
+  </div>
+  <!--end:列表-->
+</div>
+<!-- 主内容 end -->
+{include_www file="admin/lib/footer_new.html"}
+<script>
+$(function () {
+  $('#searchData').on('click',function() {
+    refershUrl();
+  });
+});
+
+function refershUrl(){
+  var $params = { };
+  $params.search_type = $('#search_type').val();
+  $params.start_date  = $('#start_time').val();
+  $params.end_date    = $('#end_time').val();
+  $params.search_text = $('#search_text').val();
+  $params.business_id = $('#business_id').val();
+
+  $a = 1;
+  var urlParam = '';
+  for (var i in $params) {
+    if ($params[i]) {
+      if ($a == 1) {
+        urlParam += '?';
+      } else {
+        urlParam += '&';
+      }
+      
+      urlParam +=  i + '=' + $params[i];
+    }
+    
+    $a += 1;
+  }
+
+  var url = siteUrl+'/rfid/admin/stat/record'+urlParam;
+  window.location.href = url;
+
+}
+
+</script>

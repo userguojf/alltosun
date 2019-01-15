@@ -1,0 +1,166 @@
+{include_www file="admin/lib/header_new.html" title="{$b_info.title}"}
+{include_www file="admin/lib/sidebar_new.html"}
+<style>
+    #main{
+        height:500px;
+        border:1px solid #ccc;
+        margin: 10px;
+        padding:10px;
+    }
+    .em_num {
+       color: red;
+    }
+</style>
+<script src="{$smarty.const.STATIC_URL}/js/echarts-2.2.7/echarts-all.js"></script>
+
+<div class="main pull-right">
+    <div class="column">
+        <div class="position">
+            <a href="{AnUrl('probe_dev/admin')}"><i class="iconfont iconfont-logo2"></i>探针管理</a>
+            &gt;
+            <span>探针统计</span>
+            （{$b_info.title}）
+            <a href="javascript:window.history.back(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+        </div>
+
+        {* 时间判断 *}
+        <div class="form-search row clearfix">
+            <div class="tabs2">
+                <ul class="col-sm-4">
+                    <li class="dateType {if $date_type == 'week'}curr{/if}"><a href='{AnUrl("probe_record/admin/week?b_id={$b_info.id}")}'  value="day">周</a></li>
+                    <li class="dateType {if $date_type == 'day'}curr{/if}"><a href='{AnUrl("probe_record/admin/day?b_id={$b_info.id}")}'  value="day">日</a></li>
+                    <li class="dateType {if $date_type == 'hour'}curr{/if}"><a href='{AnUrl("probe_record/admin/hour?b_id={$b_info.id}")}' value="month">时</a></li>
+                </ul>
+                <div class="col-sm-8">
+                    <div class="form-inline" id="dateSelectBox" >
+                        <div class="form-group">
+                            <label for="exampleInputName2">时间：</label>
+                            <input type="text" class="form-control" style="width:100px; text-align:center;" name="start_date" id="start_time" value="{$date}" />
+                        </div>
+                        <button type="button" class="btn btn-success btn-sm" id="searchData">搜索</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="main"></div>
+
+        <script>
+            var jsonTitle = [];
+            var jsonDate  = [];
+            var indoor    = [];
+            var oudoor    = [];
+            var b_id      = "{$b_info['id']}";
+            var date_type = "{$date_type}";
+            var i = 0;
+
+            // 标题
+            jsonTitle[0] = "室外人数";
+            jsonTitle[1] = "室内人数";
+
+            {foreach $data as $k => $v}
+                {if $date_type == 'hour'}
+                    jsonDate[i] = "{$k}:00";
+                {else}
+                    jsonDate[i] = "{$k}";
+                {/if}
+                indoor[i]  = {$v['indoor']};
+                oudoor[i] = {$v['oudoor']};
+
+                i ++;
+            {/foreach}
+
+            var myChart = echarts.init(document.getElementById('main'));
+
+            myChart.setOption({
+                tooltip : {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data:jsonTitle
+                },
+                toolbox: {
+                    show : true,
+                    feature : {
+                        magicType : { show: true, type: ['line', 'bar'] },
+                    }
+                },
+                calculable : true,
+                xAxis : [
+                    {
+                        type : 'category',
+                        data : jsonDate
+                    }
+                ],
+                yAxis : [
+                    {
+                        type : 'value',
+                        splitArea : { show : true }
+                    }
+                ],
+                series : [
+                    {
+                        name:jsonTitle[0],
+                        type:'line',
+                        itemStyle: { normal: { areaStyle: { type: 'default'} } },
+                        data:oudoor
+                    },
+                    {
+                        name:jsonTitle[1],
+                        type:'line',
+                        itemStyle: { normal: { areaStyle: { type: 'default'} } },
+                        data:indoor
+                    },
+               ]
+           });
+
+           $(function(){
+                $('.em_num').click(function(){
+                    var thisObj = $(this);
+                    var date   = thisObj.closest('tr').attr('date');
+                    var dev    = thisObj.closest('td').attr('dev');
+                    var type   = thisObj.attr('type');
+                    var hour   = thisObj.closest('tr').attr('hour');
+    
+                    if ( !date ) {
+                        alert('请选择时间');
+                        return false;
+                    }
+
+                    if ( typeof(dev) == 'undefined' ) {
+                   	    dev = 0;
+                    }
+   
+                    if ( typeof(hour) == 'undefined' ) {
+                   	    hour = '';
+                    }
+
+                    if ( !type || (type != 'in' && type != 'all')) {
+                   	    alert('类型不正确');
+                   	    return false;
+                    }
+
+                    window.location.href = siteUrl + '/probe_record/admin/detail?date='+ date +'&hour='+ hour +'&dev='+ dev +'&type='+ type +'&b_id='+ b_id;
+                });
+
+                /**
+                 * 按时间搜索
+                 */
+                $('#searchData').click(function(){
+                    var start_time = $('#start_time').val();
+
+                    if ( date_type == 'day' ) {
+                    	var url = siteUrl + '/probe_record/admin/day?date='+ start_time + '&b_id='+ b_id;
+                    } else if ( date_type == 'hour' ) {
+                    	var url = siteUrl + '/probe_record/admin/hour?date='+ start_time + '&b_id='+ b_id;
+                    } else if ( date_type == 'week' ) {
+                    	var url = siteUrl + '/probe_record/admin/week?date='+ start_time + '&b_id='+ b_id;
+                    } else {
+                    	alert('时间类型不正确');
+                    	return false;
+                    }
+
+                    window.location.href = url;
+                });
+            });
+        </script>

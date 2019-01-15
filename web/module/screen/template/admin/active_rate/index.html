@@ -1,0 +1,84 @@
+{include_www file="admin/lib/header_new.html" title="活跃率列表"}
+{include_www file="admin/lib/sidebar_new.html"}   
+<!-- 主内容 start -->
+      <!--start:右侧-->
+      <div class="main pull-right">
+        <div class="column">
+          <div class="position">
+            <a href="{AnUrl('screen/admin/active_rate')}"><i class="iconfont iconfont-logo2"></i>亮屏数据中心</a>
+            &gt;
+            <span>活跃率数据</span>
+            <a href="javascript:history.go(-1);" class="btn btn-primary btn-sm pull-right">返回</a>
+          </div>
+          </br>
+          <div class="form-search row clearfix">
+            <div class="tabs2">
+                 <div class="">
+                  <form action=""{AnUrl("screen/admin/active_rate")}"" method="get" class="searchForm">
+                    <div class="form-inline" id="dateSelectBox" >
+                        <!-- <input type="hidden" name="type" value="{$type}"> -->
+                        <div class="form-group">
+                            <label for="exampleInputName2">时间：</label>
+                            <input type="text" class="form-control" style="width:100px; text-align:center;" name="search_filter[start_time]" id="start_time" value="{$start_time}" />
+                        </div>
+<!--                         <div class="form-group">
+                            <label for="exampleInputName2">至</label>
+                            <input type="text" class="form-control" style="width:100px; text-align:center;" name="end_time" id="end_time" value="{$end_time}" />
+                        </div> -->
+                        <button type="button" class="btn btn-success btn-sm" id="searchData">搜索</button>
+                    </div>
+                  </form>
+                </div> 
+            </div>
+        </div>
+          <div class="list">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th style="text-align:center">省份</th>
+                  <th style="text-align:center">城市</th>
+                  <th style="text-align:center">营业厅</th>
+                  <th style="text-align:center">品牌</th>
+                  <th style="text-align:center">型号</th>
+                  <th style="text-align:center">imei</th>
+                  <th style="text-align:center">第一天活跃率</th>
+                  <th style="text-align:center">第二天活跃率</th>
+                  <th style="text-align:center">第三天活跃率</th>
+                  <th style="text-align:center">第四天活跃率</th>
+                  <th style="text-align:center">第五天活跃率</th>
+                  <th style="text-align:center">第一周活跃率</th>
+                </tr>
+              </thead>
+              <tbody>
+                {foreach $list as $k => $v}
+                  <tr>
+                      <td style="text-align:center">{_uri('province', $v.province_id, 'name')}</td>
+                      <td style="text-align:center">{_uri('city', $v.city_id, 'name')}</td>
+                      <td style="text-align:center">{_uri('business_hall', $v.business_id, 'title')}</td>
+                      <td style="text-align:center">{$v.phone_name}</td>
+                      <td style="text-align:center">{$v.phone_version}</td>
+                      <td style="text-align:center">{if $v.imei}{$v.imei}{else}--{/if}</td>
+                      <td style="text-align:center">{$v.one}</td>
+                      <td style="text-align:center">{$v.two}</td>
+                      <td style="text-align:center">{$v.three}</td>
+                      <td style="text-align:center">{$v.four}</td>
+                      <td style="text-align:center">{$v.five}</td>
+                      <td style="text-align:center">{$v.week}</td>
+                   </tr>
+               {foreachelse}
+                <tr><td colspan="12">暂无相关数据</td></tr>
+               {/foreach}
+              </tbody>
+            </table>
+            {include_www file="admin/lib/pager_new.html"}
+          </div>
+        </div>
+        </div>
+<script>
+  $(function () {
+    $('#searchData').on('click', function () {
+       $('.searchForm').submit();
+    });
+  });
+</script>
+{include_www file="admin/lib/footer_new.html"}
